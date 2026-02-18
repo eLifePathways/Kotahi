@@ -1,5 +1,7 @@
+const { default: axios } = require('axios')
 const { logger, serverUrl, request } = require('@coko/server')
 const { getCrossrefDataViaDoi } = require('./crossRef')
+const { getDataciteViaDoi } = require('./dataCite')
 const { makeAnnouncementOnCOAR, generateUrn } = require('./announcement')
 
 const {
@@ -17,6 +19,27 @@ setImmediate(() => {
     require('../manuscript/manuscript.controllers').archiveManuscript
   /* eslint-enable global-require */
 })
+
+const supportedDoiRegistrationAgencies = ['Crossref', 'DataCite']
+const raUrl = 'https://doi.org/doiRA'
+
+const getDoiRegistrationAgency = async doi => {
+  try {
+    const { data } = await axios.get(`${raUrl}/${doi}`, {})
+
+    if (Array.isArray(data)) {
+      const [{ RA, status }] = data
+
+      return RA ?? status
+    }
+
+    const { RA, status } = data
+    return RA ?? status
+  } catch (error) {
+    console.error(`Failed to find RA for DOI ${doi}`)
+    return error.message
+  }
+}
 
 const sendAnnouncementNotification = (
   notification,
@@ -246,16 +269,35 @@ const getManuscriptByDoi = async (doi, groupId) => {
   return manuscript
 }
 
-const extractManuscriptFromNotification = async (notification, groupId) => {
-  const doi = extractDoi(notification.payload)
-  const crossrefData = await getCrossrefDataViaDoi(doi)
+const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
+  const doi = extractDoi(payload)
+
+  const doiMetadata =
+    doiRa === 'Crossref'
+      ? await getCrossrefDataViaDoi(doi)
+      : await getDataciteViaDoi(doi)
+
+  //   const crossrefData = await getCrossrefDataViaDoi(doi)
   const existingManuscript = await getManuscriptByDoi(doi, groupId)
 
   if (existingManuscript) return null
-  if (!crossrefData) return null
 
-  const { title, topics, publishedDate, abstract, journal, author, url } =
-    crossrefData
+  if (!doiMetadata) {
+    throw new Error(
+      `Could not find metadata for DOI ${doi}. Please verify with ${doiRa}`,
+    )
+  }
+
+  const {
+    title,
+    topics,
+    publishedDate,
+    abstract,
+    journal,
+    author,
+    $authors,
+    url,
+  } = doiMetadata
 
   const newManuscript = {
     submission: {
@@ -267,6 +309,7 @@ const extractManuscriptFromNotification = async (notification, groupId) => {
       $doi: doi,
       url,
       $title: title,
+      $authors,
     },
     status: 'new',
     meta: {
@@ -331,7 +374,7 @@ const linkManuscriptToNotification = async (notification, manuscript) => {
 
 const extractDoi = payload => {
   const doi = payload.object && payload.object['ietf:cite-as']
-  return doi ? doi.replace('https://doi.org/', '') : null
+  return doi ? doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '') : null
 }
 
 const extractNotificationType = payload => {
@@ -402,21 +445,35 @@ const processNotification = async (group, payload) => {
     }
   }
 
+  // may contain the error message to be returned
+  const doiRa = await getDoiRegistrationAgency(doi)
+
+  if (!supportedDoiRegistrationAgencies.includes(doiRa)) {
+    return { status: 400, message: doiRa }
+  }
+
+  let newManuscript
+
+  try {
+    // only returns a new manuscipt, else null for existing
+    newManuscript = await extractManuscriptFromNotification(
+      payload,
+      groupId,
+      doiRa,
+    )
+  } catch (extractError) {
+    return { status: 400, message: extractError.message }
+  }
+
   const notification = await createNotification(payload, groupId)
 
-  // only returns a new manuscipt, else null for existing
-  const manuscript = await extractManuscriptFromNotification(
-    notification,
-    groupId,
-  )
-
   // existing manuscript
-  if (!manuscript) {
+  if (!newManuscript) {
     await CoarNotification.query()
       .findById(notification.id)
       .patch({ status: false })
   } else {
-    await linkManuscriptToNotification(notification, manuscript)
+    await linkManuscriptToNotification(notification, newManuscript)
   }
 
   return { status: 202, message: 'Notification created successfully.' }

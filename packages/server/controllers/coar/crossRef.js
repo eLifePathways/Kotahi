@@ -1,6 +1,8 @@
+const { uuid } = require('@coko/server')
 const axios = require('axios')
+const { getRorOrganisation } = require('./utils')
 
-const apiUrl = 'https://api.crossref.org/v1/works'
+const apiUrl = 'https://api.crossref.org/works/doi'
 
 const getDataByDoi = async doi => {
   try {
@@ -8,7 +10,7 @@ const getDataByDoi = async doi => {
 
     return response.data.message
   } catch (error) {
-    console.error(`Resource not found in crossref for DOI ${doi}`)
+    console.error(`Resource not found in Crossref for DOI ${doi}`)
     return null
   }
 }
@@ -23,7 +25,7 @@ const getPublishedDate = data => {
 
   if (![year, month, date].length) {
     const publish = assertion.find(p => p.name === 'published')
-    return publish.value
+    return publish?.value || ''
   }
 
   return `${date ? `${date}-` : ''}${month ? `${month}-` : ''}${
@@ -39,14 +41,56 @@ const getTopics = data => {
 }
 
 const getJournal = data => {
-  const { institution } = data
-  const { publisher } = data
+  const { institution, publisher } = data
   return institution ? institution[0].name : publisher
 }
 
 const getAuthor = data => {
   const authors = data.author
-  return authors ? authors[0].given : ''
+
+  if (!authors || !Array.isArray(authors)) return ''
+
+  const author = authors.find(a => a.sequence === 'first') ?? authors[0]
+
+  return author ? `${author.family ?? ''}, ${author.given ?? ''}` : ''
+}
+
+const getAuthors = async data => {
+  const { author } = data
+
+  if (!author || !Array.isArray(author)) return []
+
+  return Promise.all(
+    author.map(async a => {
+      const { affiliation, family, given, ORCID } = a
+
+      const ror =
+        (await Promise.all(
+          affiliation?.map(async af => {
+            const value = af.id[0]?.id ?? ''
+
+            const label =
+              value !== '' && af.name
+                ? af.name
+                : await getRorOrganisation(value)
+
+            return { label, value }
+          }),
+        )) ?? []
+
+      const orcid = ORCID?.match(/\d{4}-\d{4}-\d{4}-\d{3}[0-9X]\b/) ?? ''
+
+      return {
+        firstName: given,
+        middleName: '',
+        lastName: family,
+        email: '',
+        id: uuid(),
+        ror,
+        orcid,
+      }
+    }),
+  )
 }
 
 const getCrossrefDataViaDoi = async doi => {
@@ -59,6 +103,7 @@ const getCrossrefDataViaDoi = async doi => {
   const topics = getTopics(data)
   const journal = getJournal(data)
   const author = getAuthor(data)
+  const $authors = await getAuthors(data)
 
   return {
     title: title[0],
@@ -68,10 +113,11 @@ const getCrossrefDataViaDoi = async doi => {
     journal,
     author,
     url: resource?.primary.URL,
+    $authors,
   }
 }
 
 module.exports = {
-  getDataByDoi,
   getCrossrefDataViaDoi,
+  getDataByDoi,
 }
