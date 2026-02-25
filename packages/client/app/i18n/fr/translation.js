@@ -1384,6 +1384,8 @@ const fr = {
       'Field inline': 'Champ en ligne',
       'Field sectioncss': 'CSS de la section du champ',
       'Field isReadOnly': 'Le champ est-il en lecture seule ?',
+      'Field aiPrompt': 'Invite IA',
+      'Field metadataMapping': 'Mappage des métadonnées',
       'Please give the form a name.': 'Veuillez donner un nom au formulaire.',
       'Give the form a title': 'Donnez un titre au formulaire',
       'Edit form settings': 'Modifier les paramètres du formulaire',
@@ -1521,6 +1523,19 @@ const fr = {
       inline: {
         true: 'Oui',
         false: 'Non',
+      },
+      allowFutureDatesOnly: {
+        true: 'Oui',
+        false: 'Non',
+      },
+      embargo: {
+        true: 'Oui',
+        false: 'Non',
+      },
+      metadataMapping: {
+        description:
+          'Mapper automatiquement ce champ à une valeur importée depuis une source tierce',
+        title: 'Mappage des métadonnées',
       },
     },
   },

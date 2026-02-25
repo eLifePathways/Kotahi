@@ -432,6 +432,14 @@ const aiPromptField = {
   },
 }
 
+const metadataMappingField = {
+  component: 'TextField',
+  props: {
+    label: i18next.t('fields.metadataMapping.title'),
+    description: i18next.t('fields.metadataMapping.description'),
+  },
+}
+
 /** Most fields have at least these properties.
  * Components and fields can override these */
 const prototypeComponent = category => ({
@@ -447,6 +455,7 @@ const prototypeComponent = category => ({
   permitPublishing: permitPublishingField,
   publishingTag: publishingTagField,
   aiPrompt: aiPromptField,
+  metadataMapping: category === 'submission' ? metadataMappingField : null,
 })
 
 /** All properties from all components must appear in this list,
@@ -484,6 +493,7 @@ const propertiesOrder = [
   'permitPublishing',
   'publishingTag',
   'aiPrompt',
+  'metadataMapping',
 ]
 
 /** Component types refer to the React component used to represent the field
@@ -551,6 +561,7 @@ const getBaseComponentProperties = category => ({
     shortDescription: hiddenfield,
     publishingTag: hiddenfield,
     aiPrompt: hiddenfield,
+    metadataMapping: hiddenfield,
   },
   CheckboxGroup: {
     label: 'Checkboxes',

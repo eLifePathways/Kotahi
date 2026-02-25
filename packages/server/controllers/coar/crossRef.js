@@ -114,6 +114,7 @@ const getCrossrefDataViaDoi = async doi => {
     author,
     url: resource?.primary.URL,
     $authors,
+    data,
   }
 }
 

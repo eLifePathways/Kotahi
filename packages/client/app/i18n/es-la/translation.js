@@ -1369,6 +1369,8 @@ const esLa = {
       'Field inline': 'Campo en línea',
       'Field sectioncss': 'Campo sectioncss',
       'Field isReadOnly': '¿El campo es de solo lectura?',
+      'Field aiPrompt': 'Prompt de IA',
+      'Field metadataMapping': 'Mapeo de Metadatos',
       'Please give the form a name.':
         'Por favor, asigna un nombre al formulario.',
       'Give the form a title': 'Asigna un título al formulario',
@@ -1507,6 +1509,19 @@ const esLa = {
       inline: {
         true: 'Sí',
         false: 'No',
+      },
+      allowFutureDatesOnly: {
+        true: 'Sí',
+        false: 'No',
+      },
+      embargo: {
+        true: 'Sí',
+        false: 'No',
+      },
+      metadataMapping: {
+        description:
+          'Mapear automáticamente este campo a un valor importado desde una fuente de terceros',
+        title: 'Mapeo de Metadatos',
       },
     },
   },

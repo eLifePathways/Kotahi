@@ -1,4 +1,5 @@
 const { default: axios } = require('axios')
+const { get } = require('lodash')
 const { logger, serverUrl, request } = require('@coko/server')
 const { getCrossrefDataViaDoi } = require('./crossRef')
 const { getDataciteViaDoi } = require('./dataCite')
@@ -11,6 +12,8 @@ const {
   Manuscript,
   User,
 } = require('../../models')
+
+const { getSubmissionForm } = require('../review.controllers')
 
 let archiveManuscript
 setImmediate(() => {
@@ -269,6 +272,22 @@ const getManuscriptByDoi = async (doi, groupId) => {
   return manuscript
 }
 
+const getAdditionalMetadata = async (data, groupId) => {
+  const submissionForm = await getSubmissionForm(groupId)
+
+  const mappedMetadata = submissionForm.structure.children
+    .filter(e => !!e.metadataMapping)
+    .reduce((acc, e) => {
+      const parsedName = e.name && e.name.split('.')[1]
+      if (!parsedName) return acc
+
+      acc[parsedName] = get(data, e.metadataMapping)
+      return acc
+    }, {})
+
+  return mappedMetadata
+}
+
 const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
   const doi = extractDoi(payload)
 
@@ -297,7 +316,13 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
     author,
     $authors,
     url,
+    data: rawDoiData,
   } = doiMetadata
+
+  const additionalMappedMetadata = await getAdditionalMetadata(
+    rawDoiData,
+    groupId,
+  )
 
   const newManuscript = {
     submission: {
@@ -310,6 +335,7 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
       url,
       $title: title,
       $authors,
+      ...additionalMappedMetadata,
     },
     status: 'new',
     meta: {

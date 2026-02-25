@@ -1360,6 +1360,8 @@ const ru = {
       'Field inline': 'Строчное поле',
       'Field sectioncss': 'Дополнительное стили CSS',
       'Field isReadOnly': 'Поле только для чтения?',
+      'Field aiPrompt': 'Запрос ИИ',
+      'Field metadataMapping': 'Сопоставление метаданных',
       'Please give the form a name.': 'Пожалуйста, дайте форме имя.',
       'Give the form a title': 'Дайте форме заголовок',
       'Edit form settings': 'Редактировать настройки формы',
@@ -1496,6 +1498,19 @@ const ru = {
       inline: {
         true: 'Да',
         false: 'Нет',
+      },
+      allowFutureDatesOnly: {
+        true: 'Да',
+        false: 'Нет',
+      },
+      embargo: {
+        true: 'Да',
+        false: 'Нет',
+      },
+      metadataMapping: {
+        description:
+          'Автоматически сопоставлять это поле со значением, импортированным из стороннего источника',
+        title: 'Сопоставление метаданных',
       },
     },
   },

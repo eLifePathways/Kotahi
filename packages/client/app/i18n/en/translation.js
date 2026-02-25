@@ -1313,7 +1313,6 @@ const en = {
       'Field hideFromAuthors': 'Hide from authors?',
       'Field permitPublishing': 'Include when sharing or publishing?',
       'Field publishingTag': 'Hypothesis tag',
-      'Field aiPrompt': 'AI prompt',
       'FieldDescription publishingTag':
         'You may specify a tag to use when sharing this field as a Hypothesis annotation.',
       'Label to display': 'Label to display',
@@ -1340,6 +1339,8 @@ const en = {
       'Field inline': 'Field inline',
       'Field sectioncss': 'Field sectioncss',
       'Field isReadOnly': 'Field is read only?',
+      'Field aiPrompt': 'AI prompt',
+      'Field metadataMapping': 'Metadata Mapping',
       'Please give the form a name.': 'Please give the form a name.',
       'Give the form a title': 'Give the form a title',
       'Edit form settings': 'Edit form settings',
@@ -1485,6 +1486,11 @@ const en = {
       embargo: {
         true: 'Yes',
         false: 'No',
+      },
+      metadataMapping: {
+        description:
+          'Automatically map this field to an imported value from a 3rd party source',
+        title: 'Metadata Mapping',
       },
     },
   },

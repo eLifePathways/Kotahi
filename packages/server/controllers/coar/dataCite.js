@@ -148,6 +148,7 @@ const getDataciteViaDoi = async doi => {
     author,
     url,
     $authors,
+    data,
   }
 }
 
