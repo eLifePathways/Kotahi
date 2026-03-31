@@ -50,8 +50,8 @@ module.exports = async app => {
     } catch (error) {
       message = 'Failed to create notification.'
       logger.error(error)
-      res.status(500).send({ message })
       await sendUnprocessableCoarNotification(message, payload)
+      res.status(500).send({ message })
     }
   })
 }

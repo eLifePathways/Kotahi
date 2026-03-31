@@ -1307,9 +1307,10 @@ const publishManuscript = async (id, groupId) => {
     status: 'published',
   })
 
-  const notification = await CoarNotification.query().findOne({
-    manuscriptId: manuscript.id,
-  })
+  const notification = await CoarNotification.getOfferNotificationForManuscript(
+    manuscript.id,
+    {},
+  )
 
   // This will also collect any properties we may want to update in the DB
   const update = {

@@ -1,0 +1,10 @@
+extend type Query {
+  coarNotificationsForManuscript(manuscriptId: ID!): [CoarNotification!]!
+}
+
+type CoarNotification {
+  id: ID!
+  manuscriptId: ID!
+  payload: String!
+  created: DateTime!
+}

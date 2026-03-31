@@ -6,6 +6,7 @@ const anyStyleResolvers = require('./anyStyle/anyStyle.resolvers')
 const articleTemplatesResolvers = require('./articleTemplates/articleTemplates.resolvers')
 const channelResolvers = require('./channel/channel.resolvers')
 const cmsResolvers = require('./cms/cms.resolvers')
+const coarResolvers = require('./coar/coar.resolvers')
 const configResolvers = require('./config/config.resolvers')
 const docmapResolvers = require('./docmap/docmap.resolvers')
 const emailTemplateResolvers = require('./emailTemplate/emailTemplate.resolvers')
@@ -44,6 +45,7 @@ const typeDefFilePaths = [
   'articleTemplates/articleTemplates.graphql',
   'channel/channel.graphql',
   'cms/cms.graphql',
+  'coar/coar.graphql',
   'config/config.graphql',
   'docmap/docmap.graphql',
   'emailTemplate/emailTemplate.graphql',
@@ -90,6 +92,7 @@ const resolvers = merge(
   articleTemplatesResolvers,
   channelResolvers,
   cmsResolvers,
+  coarResolvers,
   configResolvers,
   docmapResolvers,
   emailTemplateResolvers,

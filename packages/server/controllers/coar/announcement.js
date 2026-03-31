@@ -2,7 +2,13 @@ const config = require('config')
 
 const { clientUrl, serverUrl, request, uuid } = require('@coko/server')
 
-const { Config, Group, Identity, Review } = require('../../models')
+const {
+  Config,
+  Group,
+  Identity,
+  Review,
+  CoarNotification,
+} = require('../../models')
 
 const flaxConfig = config['flax-site']
 
@@ -194,7 +200,9 @@ const makeAnnouncementOnCOAR = async (
     options,
   )
 
-  const inboxUrl = JSON.parse(requestData).target.inbox
+  const payload = JSON.parse(requestData)
+
+  const inboxUrl = payload.target.inbox
   const requestLength = requestData.length
 
   if (!isReviewDoi() && !isFlaxSetup() && type === 'review') {
@@ -212,7 +220,11 @@ const makeAnnouncementOnCOAR = async (
       data: requestData,
     })
 
-    return response ? response.data : false
+    const { groupId, id: manuscriptId } = manuscript
+
+    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+
+    return response?.data || false
   } catch (err) {
     console.error(err)
     throw err

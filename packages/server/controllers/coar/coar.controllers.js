@@ -1,4 +1,3 @@
-const { default: axios } = require('axios')
 const { get } = require('lodash')
 const { logger, serverUrl, request } = require('@coko/server')
 const { getCrossrefDataViaDoi } = require('./crossRef')
@@ -28,7 +27,7 @@ const raUrl = 'https://doi.org/doiRA'
 
 const getDoiRegistrationAgency = async doi => {
   try {
-    const { data } = await axios.get(`${raUrl}/${doi}`, {})
+    const { data } = await request({ method: 'get', url: `${raUrl}/${doi}` })
 
     if (Array.isArray(data)) {
       const [{ RA, status }] = data
@@ -121,6 +120,8 @@ const sendTentativeAcceptCoarNotification = async (
       data: stringifiedPayload,
     })
 
+    await createNotification(tentativeAcceptPayload, group.id, manuscript.id)
+
     return response ? response.data : false
   } catch (e) {
     logger.error(e)
@@ -198,6 +199,8 @@ const sendRejectCoarNotification = async (
       data: stringifiedPayload,
     })
 
+    await createNotification(rejectPayload, group.id, manuscript.id)
+
     return response ? response.data : false
   } catch (e) {
     logger.error(e)
@@ -208,6 +211,8 @@ const sendRejectCoarNotification = async (
 const sendUnprocessableCoarNotification = async (
   reason,
   originalPayload = {},
+  manuscriptId = null,
+  groupId = null,
 ) => {
   const { id: notificationId, origin, target } = originalPayload
 
@@ -251,6 +256,10 @@ const sendUnprocessableCoarNotification = async (
       data: stringifiedPayload,
     })
 
+    if (manuscriptId) {
+      await CoarNotification.query().insert({ payload, manuscriptId, groupId })
+    }
+
     return response ? response.data : false
   } catch (e) {
     logger.error(e)
@@ -258,10 +267,11 @@ const sendUnprocessableCoarNotification = async (
   }
 }
 
-const createNotification = async (payload, groupId) => {
+const createNotification = async (payload, groupId, manuscriptId = null) => {
   const notification = await CoarNotification.query().insert({
     payload,
     groupId,
+    ...(manuscriptId ? { manuscriptId } : {}),
   })
 
   return notification
@@ -458,7 +468,7 @@ const processNotification = async (group, payload) => {
       return { status: 404, message: 'Manuscript not found' }
     }
 
-    await createNotification(payload, groupId)
+    await createNotification(payload, groupId, existingManuscript.id)
     await archiveManuscript(existingManuscript.id)
 
     return { status: 202, message: 'Manuscript archived successfully' }
@@ -505,7 +515,16 @@ const processNotification = async (group, payload) => {
   return { status: 202, message: 'Notification created successfully.' }
 }
 
+const getNotificationsForManuscript = async manuscriptId => {
+  const notifications = (
+    await CoarNotification.getNotificationsForManuscript(manuscriptId)
+  ).map(n => ({ ...n, payload: JSON.stringify(n.payload) }))
+
+  return notifications
+}
+
 module.exports = {
+  getNotificationsForManuscript,
   sendAnnouncementNotification,
   sendTentativeAcceptCoarNotification,
   sendRejectCoarNotification,
