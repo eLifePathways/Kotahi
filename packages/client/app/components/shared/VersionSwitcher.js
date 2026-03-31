@@ -7,6 +7,7 @@ import PlainOrRichText from './PlainOrRichText'
 import { VersionIndicator, VersionLabelWrapper, VersionTitle } from './General'
 
 const Container = styled.div`
+  height: 100%;
   margin-top: ${grid(2)};
 `
 

@@ -102,6 +102,7 @@ module.exports = {
       'Manuscript text',
       'Metadata',
       'Tasks & Notifications',
+      'COAR Notify Metadata',
     ],
     hideReview: false,
     sharedReview: false,

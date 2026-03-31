@@ -388,6 +388,10 @@ export const generateSchemas = ({
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
                   },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
+                  },
                 ],
                 // enum: [
                 //   'Team',
@@ -1595,6 +1599,10 @@ export const generateSchemas = ({
                   {
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
+                  },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
                   },
                 ],
                 // enum: [
@@ -2830,6 +2838,7 @@ export const generateSchemas = ({
                 'Manuscript text',
                 'Metadata',
                 'Tasks & Notifications',
+                'COAR Notify Metadata',
               ],
               items: {
                 type: 'string',
@@ -2857,6 +2866,10 @@ export const generateSchemas = ({
                   {
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
+                  },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
                   },
                 ],
                 // enum: [
@@ -4087,6 +4100,7 @@ export const generateSchemas = ({
                 'Manuscript text',
                 'Metadata',
                 'Tasks & Notifications',
+                'COAR Notify Metadata',
               ],
               items: {
                 type: 'string',
@@ -4114,6 +4128,10 @@ export const generateSchemas = ({
                   {
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
+                  },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
                   },
                 ],
                 // enum: [

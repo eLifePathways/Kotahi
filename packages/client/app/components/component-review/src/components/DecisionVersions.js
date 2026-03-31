@@ -23,9 +23,11 @@ const DecisionVersions = ({
   decisionForm,
   chatProps,
   channels,
+  coarMessages,
   form,
   handleChange,
   hideChat,
+  isCoarLoading,
   onRefreshAdaStatus,
   updateManuscript,
   manuscript,
@@ -126,6 +128,7 @@ const DecisionVersions = ({
                 allUsers={allUsers}
                 assignAuthorForProofing={assignAuthorForProofing}
                 canHideReviews={canHideReviews}
+                coarMessages={coarMessages}
                 createFile={createFile}
                 createTaskEmailNotificationLog={createTaskEmailNotificationLog}
                 createTeam={createTeam}
@@ -140,6 +143,7 @@ const DecisionVersions = ({
                 externalEmail={externalEmail}
                 form={form}
                 invitations={version.manuscript.invitations || []}
+                isCoarLoading={isCoarLoading}
                 isCurrentVersion={index === 0}
                 key={version.manuscript.id}
                 lockUnlockReview={lockUnlockReview}

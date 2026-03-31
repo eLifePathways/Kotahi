@@ -28,6 +28,7 @@ import InviteReviewer from './reviewers/InviteReviewer'
 import { ConfigContext } from '../../../config/src'
 import { getActiveTab } from '../../../../shared/manuscriptUtils'
 import { transformTeamsToLegacy } from '../../../utils'
+import CoarMessages from './coar/CoarMessages'
 
 const TaskSectionRow = styled(SectionRow)`
   padding: 12px 0 18px;
@@ -47,10 +48,12 @@ const DecisionVersion = ({
   roles,
   decisionForm,
   form,
+  coarMessages,
   currentDecisionData,
   currentUser,
   version,
   versionNumber,
+  isCoarLoading,
   isCurrentVersion,
   parent,
   updateManuscript, // To handle manuscript editing
@@ -639,6 +642,12 @@ const DecisionVersion = ({
     }
   }
 
+  const coarMessagesSection = () => ({
+    content: <CoarMessages loading={isCoarLoading} messages={coarMessages} />,
+    key: 'coarMessages',
+    label: t('decisionPage.COAR Notify Metadata'),
+  })
+
   let defaultActiveKey
 
   switch (config?.controlPanel?.showTabs[0]) {
@@ -659,6 +668,9 @@ const DecisionVersion = ({
       break
     case 'Tasks & Notifications':
       defaultActiveKey = `tasks`
+      break
+    case 'COAR Notify Metadata':
+      defaultActiveKey = `coarMessages`
       break
     default:
       defaultActiveKey = `team`
@@ -687,6 +699,8 @@ const DecisionVersion = ({
       sections.push(metadataSection())
     if (config?.controlPanel?.showTabs.includes('Tasks & Notifications'))
       sections.push(tasksAndNotificationsSection())
+    if (config?.controlPanel?.showTabs.includes('COAR Notify Metadata'))
+      sections.push(coarMessagesSection())
   }
 
   return (
