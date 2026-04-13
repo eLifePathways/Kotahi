@@ -97,6 +97,12 @@ const esLa = {
         day: 'día',
         day_plural: 'días',
       },
+      statuses: {
+        success: 'Éxito',
+        info: 'Información',
+        warning: 'Advertencia',
+        error: 'Error',
+      },
     },
     leftMenu: {
       'Summary Info': 'Información Resumen',
@@ -791,6 +797,13 @@ const esLa = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: 'Token de autenticación de COAR Notify',
+        refreshAuthToken: 'Actualizar token de autenticación',
+        copyMessage: '¡El token de autenticación solo se muestra una vez!',
+        copyDescription:
+          'Por favor copie el token de autenticación ahora y guárdelo en su sistema COAR Notify de terceros. Siempre puede actualizar el token aquí, pero los tokens anteriores quedarán invalidados.',
       },
     },
     notificationPage: {

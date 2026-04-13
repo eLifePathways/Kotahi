@@ -98,6 +98,12 @@ const ru = {
         day_few: 'дня',
         day_many: 'дней',
       },
+      statuses: {
+        success: 'Успех',
+        info: 'Информация',
+        warning: 'Предупреждение',
+        error: 'Ошибка',
+      },
     },
     leftMenu: {
       'Summary Info': 'Сводная информация',
@@ -788,6 +794,13 @@ const ru = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: 'Токен аутентификации COAR Notify',
+        refreshAuthToken: 'Обновить токен аутентификации',
+        copyMessage: 'Токен аутентификации отображается только один раз!',
+        copyDescription:
+          'Пожалуйста, скопируйте токен аутентификации сейчас и сохраните его в вашей сторонней системе COAR Notify. Вы всегда можете обновить токен здесь, но предыдущие токены будут аннулированы.',
       },
     },
     notificationPage: {

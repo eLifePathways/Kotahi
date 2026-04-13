@@ -96,6 +96,12 @@ const en = {
         day: 'day',
         day_plural: 'days',
       },
+      statuses: {
+        success: 'Success',
+        info: 'Information',
+        warning: 'Warning',
+        error: 'Error',
+      },
     },
     leftMenu: {
       'Summary Info': 'Summary Info',
@@ -776,6 +782,13 @@ const en = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: 'COAR Notify auth token',
+        refreshAuthToken: 'Refresh auth token',
+        copyMessage: 'Auth token is only shown once!',
+        copyDescription:
+          'Please copy the auth token now, and store it in your third-party COAR Notify system. You can always refresh the token here, but previous tokens will be invalidated.',
       },
     },
     notificationPage: {

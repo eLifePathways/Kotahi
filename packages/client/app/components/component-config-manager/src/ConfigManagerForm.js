@@ -208,6 +208,7 @@ const ConfigManagerForm = ({
   config,
   liveValidate = true,
   omitExtraData = true,
+  onRefreshCoarAuthToken,
   updateConfig,
   updateConfigStatus,
   emailTemplates,
@@ -250,6 +251,7 @@ const ConfigManagerForm = ({
       config,
       t,
       logoAndFavicon,
+      onRefreshCoarAuthToken,
       submissionOptions,
       ...emailOptions,
     })

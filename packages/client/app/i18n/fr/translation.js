@@ -96,6 +96,12 @@ const fr = {
         day: 'jour',
         day_plural: 'jours',
       },
+      statuses: {
+        success: 'Succès',
+        info: 'Information',
+        warning: 'Avertissement',
+        error: 'Erreur',
+      },
     },
     leftMenu: {
       'Summary Info': 'Résumé des infos',
@@ -802,6 +808,14 @@ const fr = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: "Jeton d'authentification COAR Notify",
+        refreshAuthToken: "Actualiser le jeton d'authentification",
+        copyMessage:
+          "Le jeton d'authentification n'est affiché qu'une seule fois !",
+        copyDescription:
+          "Veuillez copier le jeton d'authentification maintenant et le stocker dans votre système COAR Notify tiers. Vous pouvez toujours actualiser le jeton ici, mais les jetons précédents seront invalidés.",
       },
     },
     notificationPage: {

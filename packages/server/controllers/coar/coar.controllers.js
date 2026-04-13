@@ -10,6 +10,7 @@ const {
   Group,
   Manuscript,
   User,
+  Token,
 } = require('../../models')
 
 const { getSubmissionForm } = require('../review.controllers')
@@ -377,6 +378,20 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
   return manuscript
 }
 
+const validateAuthToken = async (authHeader, groupId) => {
+  const coarAuthToken = await Token.getTokenByNameAndGroupId('coar', groupId)
+
+  if (!coarAuthToken) {
+    return true
+  }
+
+  const providedToken = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null
+
+  return coarAuthToken === providedToken
+}
+
 const validateIPs = async (requestIP, group) => {
   const groupId = group.id
 
@@ -530,5 +545,6 @@ module.exports = {
   sendRejectCoarNotification,
   sendUnprocessableCoarNotification,
   processNotification,
+  validateAuthToken,
   validateIPs,
 }

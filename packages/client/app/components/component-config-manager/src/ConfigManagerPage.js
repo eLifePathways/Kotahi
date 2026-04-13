@@ -6,6 +6,7 @@ import { UPDATE_CONFIG } from '../../../queries'
 import {
   createFileMutation,
   deleteFileMutation,
+  generateNewCoarAuthTokenMutation,
 } from '../../component-cms-manager/src/queries'
 
 import getSubmissionForm from './ConfigManager.queries'
@@ -59,6 +60,11 @@ const ConfigManagerPage = ({ match, ...props }) => {
   const [update] = useMutation(UPDATE_CONFIG)
   const [createFile] = useMutation(createFileMutation)
   const [deleteFile] = useMutation(deleteFileMutation)
+
+  const [generateNewCoarAuthToken] = useMutation(
+    generateNewCoarAuthTokenMutation,
+  )
+
   const [updateConfigStatus, setUpdateConfigStatus] = useState(null)
 
   const { data: metadata, loading: loadingMetadata } = useQuery(
@@ -74,6 +80,28 @@ const ConfigManagerPage = ({ match, ...props }) => {
     variables: { id: config?.id },
     fetchPolicy: 'network-only',
   })
+
+  const handleRefreshCoarAuthToken = async () => {
+    const { data: coarRefreshData, errors: coarRefreshError } =
+      await generateNewCoarAuthToken({
+        variables: { name: 'coar', groupId: config.groupId },
+        errorPolicy: 'all',
+      })
+
+    if (coarRefreshError) {
+      console.error(
+        'Error refreshing COAR Notify auth token:',
+        coarRefreshError,
+      )
+    }
+
+    return {
+      authToken: coarRefreshData?.generateNewToken,
+      error: coarRefreshError
+        ? JSON.stringify(coarRefreshError[0], null, 2)
+        : undefined,
+    }
+  }
 
   if ((loading && !data) || (!metadata && loadingMetadata)) return <Spinner />
 
@@ -115,6 +143,7 @@ const ConfigManagerPage = ({ match, ...props }) => {
       disabled={!data.config.active}
       emailTemplates={data.emailTemplates}
       formData={JSON.parse(data.config.formData)}
+      onRefreshCoarAuthToken={handleRefreshCoarAuthToken}
       submissionForm={form}
       updateConfig={updateConfig}
       updateConfigStatus={updateConfigStatus}
