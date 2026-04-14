@@ -97,6 +97,12 @@ const esLa = {
         day: 'día',
         day_plural: 'días',
       },
+      statuses: {
+        success: 'Éxito',
+        info: 'Información',
+        warning: 'Advertencia',
+        error: 'Error',
+      },
     },
     leftMenu: {
       'Summary Info': 'Información Resumen',
@@ -249,6 +255,7 @@ const esLa = {
       'Manuscript text': 'Texto del Manuscrito',
       Metadata: 'Metadatos',
       'Tasks & Notifications': 'Tareas y Notificaciones',
+      'COAR Notify Metadata': 'Metadatos de COAR Notify',
       'Assign Editors': 'Asignar Editores',
       'Reviewer Status': 'Estado del Revisor',
       authorStatus: 'Estado del autor',
@@ -338,6 +345,26 @@ const esLa = {
       'Delete this author': 'Eliminar este autor',
       invalidDoi: 'El DOI es inválido',
       unauthorized: 'Este recurso no es accesible.',
+      coarTab: {
+        noMessages: 'No hay mensajes de COAR Notify',
+        Offer: 'Ofrecer',
+        Accept: 'Aceptar',
+        Reject: 'Rechazar',
+        TentativeAccept: 'Aceptar provisionalmente',
+        TentativeReject: 'Rechazar provisionalmente',
+        Announce: 'Anunciar',
+        Flag: 'Marcar',
+        Undo: 'Deshacer',
+        EndorsementAction: 'Respaldo',
+        ReviewAction: 'Revisión',
+        RelationshipAction: 'Relación',
+        UnprocessableNotification: 'Notificación no procesable',
+        IngestAction: 'Incorporar',
+        actor: 'Actor',
+        resourceUrl: 'URL del recurso',
+        from: 'De',
+        rawPayload: 'Carga útil sin procesar',
+      },
     },
     editorSection: {
       noFileLoaded: 'No se ha cargado ningún archivo de manuscrito',
@@ -698,6 +725,7 @@ const esLa = {
         'Manuscript text': 'Texto del Manuscrito',
         Metadata: 'Metadatos',
         'Tasks & Notifications': 'Tareas y Notificaciones',
+        'COAR Notify Metadata': 'Metadatos de COAR Notify',
       },
       crossrefRetrievalEmail: 'Correo electrónico para búsqueda de citas',
       crossrefSearchResultCount:
@@ -769,6 +797,17 @@ const esLa = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: 'Token de autenticación de COAR Notify',
+        refreshAuthToken: 'Actualizar token de autenticación',
+        copyMessage: '¡El token de autenticación solo se muestra una vez!',
+        copyDescription:
+          'Por favor copie el token de autenticación ahora y guárdelo en su sistema COAR Notify de terceros. Siempre puede actualizar el token aquí, pero los tokens anteriores quedarán invalidados.',
+      },
+      warnings: {
+        'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress':
+          'La lista de direcciones IP ha sido descontinuada y pronto será eliminada. Por favor, utiliza la opción "Token de autenticación de COAR Notify" a continuación para autenticarte.',
       },
     },
     notificationPage: {
@@ -1369,6 +1408,8 @@ const esLa = {
       'Field inline': 'Campo en línea',
       'Field sectioncss': 'Campo sectioncss',
       'Field isReadOnly': '¿El campo es de solo lectura?',
+      'Field aiPrompt': 'Prompt de IA',
+      'Field metadataMapping': 'Mapeo de Metadatos',
       'Please give the form a name.':
         'Por favor, asigna un nombre al formulario.',
       'Give the form a title': 'Asigna un título al formulario',
@@ -1507,6 +1548,19 @@ const esLa = {
       inline: {
         true: 'Sí',
         false: 'No',
+      },
+      allowFutureDatesOnly: {
+        true: 'Sí',
+        false: 'No',
+      },
+      embargo: {
+        true: 'Sí',
+        false: 'No',
+      },
+      metadataMapping: {
+        description:
+          'Mapear automáticamente este campo a un valor importado desde una fuente de terceros',
+        title: 'Mapeo de Metadatos',
       },
     },
   },

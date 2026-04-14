@@ -63,6 +63,7 @@ structure {
     permitPublishing
     publishingTag
     aiPrompt
+	metadataMapping
   }
 }
 `

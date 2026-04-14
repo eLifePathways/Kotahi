@@ -60,6 +60,7 @@ input FormElementInput {
   publishingTag: String
   aiPrompt: String
   isReadOnly: String
+  metadataMapping: String
 }
 
 input FormElementOptionInput {
@@ -125,6 +126,7 @@ type FormElement {
   publishingTag: String
   aiPrompt: String
   isReadOnly: String
+  metadataMapping: String
 }
 
 type FormElementOption {

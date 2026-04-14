@@ -1,16 +1,16 @@
 import React from 'react'
-import Collapse from '../../app/components/shared/Collapse'
+import ChatCollapse from '../../app/components/shared/ChatCollapse'
 import DesignEmbed from '../common/utils'
 
 export const Base = args => (
-  <Collapse defaultWidth={300}>
+  <ChatCollapse defaultWidth={300}>
     <p>hello</p>
-  </Collapse>
+  </ChatCollapse>
 )
 
 export default {
   title: 'Shared/CollapseWrapper',
-  component: Collapse,
+  component: ChatCollapse,
   parameters: {
     docs: {
       page: () => (

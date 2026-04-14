@@ -4,7 +4,7 @@
 import React, { useMemo, useRef, useState } from 'react'
 import Form from '@rjsf/core'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { isEqual } from 'lodash'
 import { grid } from '@coko/client'
 import {
@@ -20,6 +20,7 @@ import {
   Heading,
   SectionContent,
   HiddenTabs,
+  Alert,
 } from '../../shared'
 import { color, space } from '../../../theme'
 import EmailTemplatesPage from '../../component-email-templates/src/EmailTemplatesPage'
@@ -136,6 +137,13 @@ const EmailsTabWrapper = styled(StyledSectionContent)`
 
 // TODO Improve on this hardcoded hack to hide the "Publishing" heading.
 const StyledWrapper = styled.div`
+  ${p =>
+    p.$showGap &&
+    css`
+      display: grid;
+      gap: ${grid(2)};
+    `}
+
   /* stylelint-disable-next-line selector-id-pattern */
   #form-integrations_publishing > legend:nth-of-type(1) {
     display: ${p => (p.$hideFirstLegend ? 'none' : 'block')};
@@ -167,14 +175,30 @@ const FieldTemplate = props => {
     'form-emailNotifications_emailNotification_advancedSettings_requireTLS',
   ]
 
+  const alertFields = [
+    'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress',
+  ]
+
   const hideLabel = suppressedLabels.includes(id)
   const hideDescription = supressedDescriptions.includes(id)
+
+  const showWarning = alertFields.includes(id)
 
   const getFieldName = key => description._owner.key === key
   // eslint-disable-next-line no-nested-ternary
   return !showInstanceType ? (
     !getFieldName('instanceName') ? (
-      <StyledWrapper $hideFirstLegend={getFieldName('publishing')}>
+      <StyledWrapper
+        $hideFirstLegend={getFieldName('publishing')}
+        $showGap={showWarning}
+      >
+        {showWarning && (
+          <Alert
+            message={t(`configPage.warnings.${id}`)}
+            showIcon
+            type="warning"
+          />
+        )}
         <div className={classNames}>
           {label && showLabel && !hideLabel && !hideDescription && (
             <label htmlFor={id}>{label}</label>
@@ -208,6 +232,7 @@ const ConfigManagerForm = ({
   config,
   liveValidate = true,
   omitExtraData = true,
+  onRefreshCoarAuthToken,
   updateConfig,
   updateConfigStatus,
   emailTemplates,
@@ -250,6 +275,7 @@ const ConfigManagerForm = ({
       config,
       t,
       logoAndFavicon,
+      onRefreshCoarAuthToken,
       submissionOptions,
       ...emailOptions,
     })

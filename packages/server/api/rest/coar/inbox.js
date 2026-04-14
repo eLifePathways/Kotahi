@@ -6,6 +6,7 @@ const {
   processNotification,
   sendUnprocessableCoarNotification,
   validateIPs,
+  validateAuthToken,
 } = require('../../../controllers/coar/coar.controllers')
 
 module.exports = async app => {
@@ -13,6 +14,7 @@ module.exports = async app => {
     const payload = req.body
     const groupName = req.params.group
     const requestIP = req.socket.localAddress.split(':').pop()
+    const authHeader = req.headers.authorization
 
     let message = ''
     let hasError = false
@@ -25,6 +27,13 @@ module.exports = async app => {
       hasError = true
     }
 
+    if (!hasError && !(await validateAuthToken(authHeader, group.id))) {
+      message = 'Unauthorized Request'
+      res.status(403).send({ message })
+      hasError = true
+    }
+
+    // TODO: remove
     if (!hasError && !(await validateIPs(requestIP, group))) {
       message = 'Unauthorized Request'
       res.status(403).send({ message })
@@ -50,8 +59,8 @@ module.exports = async app => {
     } catch (error) {
       message = 'Failed to create notification.'
       logger.error(error)
-      res.status(500).send({ message })
       await sendUnprocessableCoarNotification(message, payload)
+      res.status(500).send({ message })
     }
   })
 }

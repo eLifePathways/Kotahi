@@ -304,6 +304,12 @@ export const deleteFileMutation = gql`
   }
 `
 
+export const generateNewCoarAuthTokenMutation = gql`
+  mutation ($name: String!, $groupId: ID!) {
+    generateNewToken(name: $name, groupId: $groupId)
+  }
+`
+
 export const updateCollectionMutation = gql`
   mutation ($id: ID!, $input: PublishCollectionInput!) {
     updateCollection(id: $id, input: $input) {

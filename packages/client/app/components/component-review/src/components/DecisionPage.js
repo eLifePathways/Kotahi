@@ -36,6 +36,7 @@ import {
   CREATE_TASK_EMAIL_NOTIFICATION_LOGS,
   DELETE_TASK_NOTIFICATION,
   GET_BLACKLIST_INFORMATION,
+  GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT,
   REFRESH_ADA_STATUS,
   UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER_MUTATION,
   UPDATE_TASK,
@@ -133,6 +134,8 @@ const useChatGpt = gql`
 let debouncers = {}
 
 const DecisionPage = ({ currentUser, match }) => {
+  const manuscriptId = match.params.version
+
   const { t } = useTranslation()
   // start of code from submit page to handle possible form changes
   const client = useApolloClient()
@@ -167,7 +170,7 @@ const DecisionPage = ({ currentUser, match }) => {
     refetch: refetchManuscript,
   } = useQuery(query, {
     variables: {
-      id: match.params.version,
+      id: manuscriptId,
       groupId: config.groupId,
     },
   })
@@ -230,6 +233,14 @@ const DecisionPage = ({ currentUser, match }) => {
 
   const selectedEmailIsBlacklisted =
     !!blacklistInfoQuery.data?.getBlacklistInformation?.length
+
+  const {
+    data: coarData,
+    loading: coarLoading,
+    refetch: refetchCoar,
+  } = useQuery(GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT, {
+    variables: { manuscriptId },
+  })
 
   const [sendEmailMutation] = useMutation(sendEmail)
 
@@ -470,7 +481,7 @@ const DecisionPage = ({ currentUser, match }) => {
       } = await client.query({
         query,
         variables: {
-          id: match.params.version,
+          id: manuscriptId,
           groupId: config.groupId,
         },
         partialRefetch: true,
@@ -527,6 +538,11 @@ const DecisionPage = ({ currentUser, match }) => {
     return <CommsErrorBanner error={error} />
   }
 
+  const refetchData = async () => {
+    await refetchManuscript()
+    await refetchCoar()
+  }
+
   const updateManuscript = (versionId, manuscriptDelta) =>
     doUpdateManuscript({
       variables: {
@@ -547,7 +563,7 @@ const DecisionPage = ({ currentUser, match }) => {
       },
     })
 
-  const updateReview = async (reviewId, reviewData, manuscriptId) => {
+  const updateReview = async (reviewId, reviewData, id) => {
     doUpdateReview({
       variables: {
         id: reviewId || undefined,
@@ -557,7 +573,7 @@ const DecisionPage = ({ currentUser, match }) => {
         cache.modify({
           id: cache.identify({
             __typename: 'Manuscript',
-            id: manuscriptId,
+            id,
           }),
           fields: {
             /* eslint-disable-next-line default-param-last */
@@ -597,6 +613,8 @@ const DecisionPage = ({ currentUser, match }) => {
     doisToRegister,
     emailTemplates,
   } = data
+
+  const { coarNotificationsForManuscript } = coarData ?? {}
 
   const currentUserRoles = getRoles(manuscript, currentUser.id)
 
@@ -640,14 +658,14 @@ const DecisionPage = ({ currentUser, match }) => {
       },
     })
 
-    await refetchManuscript()
+    await refetchData()
 
     return response
   }
 
   const handleCreateTeam = async createTeamVariables => {
     const createTeamResponse = await createTeam(createTeamVariables)
-    await refetchManuscript()
+    await refetchData()
 
     return createTeamResponse
   }
@@ -684,12 +702,12 @@ const DecisionPage = ({ currentUser, match }) => {
 
   const handleCompleteComment = async options => {
     await completeComment(options)
-    await refetchManuscript()
+    await refetchData()
   }
 
   const handlePublishManuscript = async options => {
     const res = await publishManuscript(options)
-    await refetchManuscript()
+    await refetchData()
     return res
   }
 
@@ -711,6 +729,7 @@ const DecisionPage = ({ currentUser, match }) => {
       canHideReviews={config?.controlPanel?.hideReview}
       channels={channels}
       chatProps={chatProps}
+      coarMessages={coarNotificationsForManuscript}
       createFile={createFile}
       createTaskEmailNotificationLog={createTaskEmailNotificationLog}
       createTeam={handleCreateTeam}
@@ -727,6 +746,7 @@ const DecisionPage = ({ currentUser, match }) => {
       form={form}
       handleChange={handleChange}
       hideChat={hideAuthorChat && hideDiscussionFromEditorsReviewersAuthors}
+      isCoarLoading={coarLoading}
       lockUnlockReview={lockUnlockReview}
       makeDecision={makeDecision}
       manuscript={manuscript}
@@ -734,7 +754,7 @@ const DecisionPage = ({ currentUser, match }) => {
       publishManuscript={handlePublishManuscript}
       queryAI={queryAI}
       refetch={() => {
-        refetchManuscript()
+        refetchData()
       }}
       removeAuthor={removeAuthor}
       removeInvitation={removeInvitation}

@@ -34,6 +34,17 @@ export const GET_BLACKLIST_INFORMATION = gql`
   }
 `
 
+export const GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT = gql`
+  query getCoarNotificationsForManuscript($manuscriptId: ID!) {
+    coarNotificationsForManuscript(manuscriptId: $manuscriptId) {
+      id
+      manuscriptId
+      payload
+      created
+    }
+  }
+`
+
 export const GET_EMAIL_INVITED_REVIEWERS = gql`
   query getEmailInvitedReviewers($manuscriptId: ID!) {
     getEmailInvitedReviewers(manuscriptId: $manuscriptId) {

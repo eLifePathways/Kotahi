@@ -35,6 +35,7 @@ const modelPaths = [
   'team',
   'teamMember',
   'threadedDiscussion',
+  'token',
   'user',
   'collaborative-doc',
   'notification',

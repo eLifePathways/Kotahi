@@ -14678,6 +14678,7 @@ __metadata:
     "@fontsource/roboto": "npm:^4.5.8"
     "@rjsf/core": "npm:4.2.3"
     "@uiw/react-codemirror": "npm:^4.21.20"
+    antd: "npm:^5.6.1"
     apollo-upload-client: "npm:14.1.2"
     atob: "npm:^2.1.2"
     babel-jest: "npm:23.6.0"

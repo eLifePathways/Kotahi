@@ -98,6 +98,12 @@ const ru = {
         day_few: 'дня',
         day_many: 'дней',
       },
+      statuses: {
+        success: 'Успех',
+        info: 'Информация',
+        warning: 'Предупреждение',
+        error: 'Ошибка',
+      },
     },
     leftMenu: {
       'Summary Info': 'Сводная информация',
@@ -253,6 +259,7 @@ const ru = {
       'Manuscript text': 'Текст статьи',
       Metadata: 'Основные данные',
       'Tasks & Notifications': 'Задачи и уведомления',
+      'COAR Notify Metadata': 'Метаданные COAR Notify',
       'Assign Editors': 'Назначить редактора',
       'Reviewer Status': 'Этап рецензирования',
       authorStatus: 'Статус автора',
@@ -341,6 +348,26 @@ const ru = {
       'Delete this author': 'Удалить',
       invalidDoi: 'DOI недействителен',
       unauthorized: 'Этот ресурс недоступен.',
+      coarTab: {
+        noMessages: 'Нет сообщений COAR Notify',
+        Offer: 'Предложить',
+        Accept: 'Принять',
+        Reject: 'Отклонить',
+        TentativeAccept: 'Предварительно принять',
+        TentativeReject: 'Предварительно отклонить',
+        Announce: 'Объявить',
+        Flag: 'Пометить',
+        Undo: 'Отменить',
+        EndorsementAction: 'Поддержка',
+        ReviewAction: 'Рецензирование',
+        RelationshipAction: 'Связь',
+        UnprocessableNotification: 'Уведомление не может быть обработано',
+        IngestAction: 'Импортировать',
+        actor: 'Субъект',
+        resourceUrl: 'URL ресурса',
+        from: 'От',
+        rawPayload: 'Необработанная полезная нагрузка',
+      },
     },
     editorSection: {
       noFileLoaded: 'Файл рукописи не загружен',
@@ -694,6 +721,7 @@ const ru = {
         'Manuscript text': 'Текст статьи',
         Metadata: 'Основные данные',
         'Tasks & Notifications': 'Задачи и уведомления',
+        'COAR Notify Metadata': 'Метаданные COAR Notify',
       },
       crossrefRetrievalEmail:
         'Адрес электронной почты, который будет использоваться для поиска цитат',
@@ -766,6 +794,17 @@ const ru = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: 'Токен аутентификации COAR Notify',
+        refreshAuthToken: 'Обновить токен аутентификации',
+        copyMessage: 'Токен аутентификации отображается только один раз!',
+        copyDescription:
+          'Пожалуйста, скопируйте токен аутентификации сейчас и сохраните его в вашей сторонней системе COAR Notify. Вы всегда можете обновить токен здесь, но предыдущие токены будут аннулированы.',
+      },
+      warnings: {
+        'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress':
+          'Список IP-адресов устарел и скоро будет удалён. Пожалуйста, используйте опцию «Токен аутентификации COAR Notify» ниже для аутентификации.',
       },
     },
     notificationPage: {
@@ -1360,6 +1399,8 @@ const ru = {
       'Field inline': 'Строчное поле',
       'Field sectioncss': 'Дополнительное стили CSS',
       'Field isReadOnly': 'Поле только для чтения?',
+      'Field aiPrompt': 'Запрос ИИ',
+      'Field metadataMapping': 'Сопоставление метаданных',
       'Please give the form a name.': 'Пожалуйста, дайте форме имя.',
       'Give the form a title': 'Дайте форме заголовок',
       'Edit form settings': 'Редактировать настройки формы',
@@ -1496,6 +1537,19 @@ const ru = {
       inline: {
         true: 'Да',
         false: 'Нет',
+      },
+      allowFutureDatesOnly: {
+        true: 'Да',
+        false: 'Нет',
+      },
+      embargo: {
+        true: 'Да',
+        false: 'Нет',
+      },
+      metadataMapping: {
+        description:
+          'Автоматически сопоставлять это поле со значением, импортированным из стороннего источника',
+        title: 'Сопоставление метаданных',
       },
     },
   },

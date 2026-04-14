@@ -1,5 +1,7 @@
+const { get } = require('lodash')
 const { logger, serverUrl, request } = require('@coko/server')
 const { getCrossrefDataViaDoi } = require('./crossRef')
+const { getDataciteViaDoi } = require('./dataCite')
 const { makeAnnouncementOnCOAR, generateUrn } = require('./announcement')
 
 const {
@@ -8,7 +10,10 @@ const {
   Group,
   Manuscript,
   User,
+  Token,
 } = require('../../models')
+
+const { getSubmissionForm } = require('../review.controllers')
 
 let archiveManuscript
 setImmediate(() => {
@@ -17,6 +22,27 @@ setImmediate(() => {
     require('../manuscript/manuscript.controllers').archiveManuscript
   /* eslint-enable global-require */
 })
+
+const supportedDoiRegistrationAgencies = ['Crossref', 'DataCite']
+const raUrl = 'https://doi.org/doiRA'
+
+const getDoiRegistrationAgency = async doi => {
+  try {
+    const { data } = await request({ method: 'get', url: `${raUrl}/${doi}` })
+
+    if (Array.isArray(data)) {
+      const [{ RA, status }] = data
+
+      return RA ?? status
+    }
+
+    const { RA, status } = data
+    return RA ?? status
+  } catch (error) {
+    console.error(`Failed to find RA for DOI ${doi}`)
+    return error.message
+  }
+}
 
 const sendAnnouncementNotification = (
   notification,
@@ -95,6 +121,8 @@ const sendTentativeAcceptCoarNotification = async (
       data: stringifiedPayload,
     })
 
+    await createNotification(tentativeAcceptPayload, group.id, manuscript.id)
+
     return response ? response.data : false
   } catch (e) {
     logger.error(e)
@@ -172,6 +200,8 @@ const sendRejectCoarNotification = async (
       data: stringifiedPayload,
     })
 
+    await createNotification(rejectPayload, group.id, manuscript.id)
+
     return response ? response.data : false
   } catch (e) {
     logger.error(e)
@@ -182,6 +212,8 @@ const sendRejectCoarNotification = async (
 const sendUnprocessableCoarNotification = async (
   reason,
   originalPayload = {},
+  manuscriptId = null,
+  groupId = null,
 ) => {
   const { id: notificationId, origin, target } = originalPayload
 
@@ -225,6 +257,10 @@ const sendUnprocessableCoarNotification = async (
       data: stringifiedPayload,
     })
 
+    if (manuscriptId) {
+      await CoarNotification.query().insert({ payload, manuscriptId, groupId })
+    }
+
     return response ? response.data : false
   } catch (e) {
     logger.error(e)
@@ -232,10 +268,11 @@ const sendUnprocessableCoarNotification = async (
   }
 }
 
-const createNotification = async (payload, groupId) => {
+const createNotification = async (payload, groupId, manuscriptId = null) => {
   const notification = await CoarNotification.query().insert({
     payload,
     groupId,
+    ...(manuscriptId ? { manuscriptId } : {}),
   })
 
   return notification
@@ -246,16 +283,57 @@ const getManuscriptByDoi = async (doi, groupId) => {
   return manuscript
 }
 
-const extractManuscriptFromNotification = async (notification, groupId) => {
-  const doi = extractDoi(notification.payload)
-  const crossrefData = await getCrossrefDataViaDoi(doi)
+const getAdditionalMetadata = async (data, groupId) => {
+  const submissionForm = await getSubmissionForm(groupId)
+
+  const mappedMetadata = submissionForm.structure.children
+    .filter(e => !!e.metadataMapping)
+    .reduce((acc, e) => {
+      const parsedName = e.name && e.name.split('.')[1]
+      if (!parsedName) return acc
+
+      acc[parsedName] = get(data, e.metadataMapping)
+      return acc
+    }, {})
+
+  return mappedMetadata
+}
+
+const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
+  const doi = extractDoi(payload)
+
+  const doiMetadata =
+    doiRa === 'Crossref'
+      ? await getCrossrefDataViaDoi(doi)
+      : await getDataciteViaDoi(doi)
+
+  //   const crossrefData = await getCrossrefDataViaDoi(doi)
   const existingManuscript = await getManuscriptByDoi(doi, groupId)
 
   if (existingManuscript) return null
-  if (!crossrefData) return null
 
-  const { title, topics, publishedDate, abstract, journal, author, url } =
-    crossrefData
+  if (!doiMetadata) {
+    throw new Error(
+      `Could not find metadata for DOI ${doi}. Please verify with ${doiRa}`,
+    )
+  }
+
+  const {
+    title,
+    topics,
+    publishedDate,
+    abstract,
+    journal,
+    author,
+    $authors,
+    url,
+    data: rawDoiData,
+  } = doiMetadata
+
+  const additionalMappedMetadata = await getAdditionalMetadata(
+    rawDoiData,
+    groupId,
+  )
 
   const newManuscript = {
     submission: {
@@ -267,6 +345,8 @@ const extractManuscriptFromNotification = async (notification, groupId) => {
       $doi: doi,
       url,
       $title: title,
+      $authors,
+      ...additionalMappedMetadata,
     },
     status: 'new',
     meta: {
@@ -296,6 +376,20 @@ const extractManuscriptFromNotification = async (notification, groupId) => {
   )
 
   return manuscript
+}
+
+const validateAuthToken = async (authHeader, groupId) => {
+  const coarAuthToken = await Token.getTokenByNameAndGroupId('coar', groupId)
+
+  if (!coarAuthToken) {
+    return true
+  }
+
+  const providedToken = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null
+
+  return coarAuthToken === providedToken
 }
 
 const validateIPs = async (requestIP, group) => {
@@ -331,7 +425,7 @@ const linkManuscriptToNotification = async (notification, manuscript) => {
 
 const extractDoi = payload => {
   const doi = payload.object && payload.object['ietf:cite-as']
-  return doi ? doi.replace('https://doi.org/', '') : null
+  return doi ? doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '') : null
 }
 
 const extractNotificationType = payload => {
@@ -389,7 +483,7 @@ const processNotification = async (group, payload) => {
       return { status: 404, message: 'Manuscript not found' }
     }
 
-    await createNotification(payload, groupId)
+    await createNotification(payload, groupId, existingManuscript.id)
     await archiveManuscript(existingManuscript.id)
 
     return { status: 202, message: 'Manuscript archived successfully' }
@@ -402,31 +496,55 @@ const processNotification = async (group, payload) => {
     }
   }
 
+  // may contain the error message to be returned
+  const doiRa = await getDoiRegistrationAgency(doi)
+
+  if (!supportedDoiRegistrationAgencies.includes(doiRa)) {
+    return { status: 400, message: doiRa }
+  }
+
+  let newManuscript
+
+  try {
+    // only returns a new manuscipt, else null for existing
+    newManuscript = await extractManuscriptFromNotification(
+      payload,
+      groupId,
+      doiRa,
+    )
+  } catch (extractError) {
+    return { status: 400, message: extractError.message }
+  }
+
   const notification = await createNotification(payload, groupId)
 
-  // only returns a new manuscipt, else null for existing
-  const manuscript = await extractManuscriptFromNotification(
-    notification,
-    groupId,
-  )
-
   // existing manuscript
-  if (!manuscript) {
+  if (!newManuscript) {
     await CoarNotification.query()
       .findById(notification.id)
       .patch({ status: false })
   } else {
-    await linkManuscriptToNotification(notification, manuscript)
+    await linkManuscriptToNotification(notification, newManuscript)
   }
 
   return { status: 202, message: 'Notification created successfully.' }
 }
 
+const getNotificationsForManuscript = async manuscriptId => {
+  const notifications = (
+    await CoarNotification.getNotificationsForManuscript(manuscriptId)
+  ).map(n => ({ ...n, payload: JSON.stringify(n.payload) }))
+
+  return notifications
+}
+
 module.exports = {
+  getNotificationsForManuscript,
   sendAnnouncementNotification,
   sendTentativeAcceptCoarNotification,
   sendRejectCoarNotification,
   sendUnprocessableCoarNotification,
   processNotification,
+  validateAuthToken,
   validateIPs,
 }
