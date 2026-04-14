@@ -805,6 +805,10 @@ const esLa = {
         copyDescription:
           'Por favor copie el token de autenticación ahora y guárdelo en su sistema COAR Notify de terceros. Siempre puede actualizar el token aquí, pero los tokens anteriores quedarán invalidados.',
       },
+      warnings: {
+        'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress':
+          'La lista de direcciones IP ha sido descontinuada y pronto será eliminada. Por favor, utiliza la opción "Token de autenticación de COAR Notify" a continuación para autenticarte.',
+      },
     },
     notificationPage: {
       title: 'Eventos de Notificación',

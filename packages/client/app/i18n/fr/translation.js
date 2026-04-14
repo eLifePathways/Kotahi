@@ -817,6 +817,10 @@ const fr = {
         copyDescription:
           "Veuillez copier le jeton d'authentification maintenant et le stocker dans votre système COAR Notify tiers. Vous pouvez toujours actualiser le jeton ici, mais les jetons précédents seront invalidés.",
       },
+      warnings: {
+        'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress':
+          "La liste des adresses IP est obsolète et sera bientôt supprimée. Veuillez utiliser l'option « Jeton d'authentification COAR Notify » ci-dessous pour vous authentifier.",
+      },
     },
     notificationPage: {
       title: 'Événements de Notification',

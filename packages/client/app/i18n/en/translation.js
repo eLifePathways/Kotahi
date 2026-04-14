@@ -790,6 +790,10 @@ const en = {
         copyDescription:
           'Please copy the auth token now, and store it in your third-party COAR Notify system. You can always refresh the token here, but previous tokens will be invalidated.',
       },
+      warnings: {
+        'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress':
+          'List of IPs has been deprecated, and will be removed soon. Please use the "COAR Notify auth token" option below to authenitcate.',
+      },
     },
     notificationPage: {
       title: 'Notification Events',
