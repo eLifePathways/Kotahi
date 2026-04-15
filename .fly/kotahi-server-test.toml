@@ -57,7 +57,6 @@ WS_YJS_SERVER_PORT = 8081
 INSTANCE_GROUPS = "journal:journal,prc:prc,single_form:preprint1,preprint2:preprint2"
 MANUSCRIPTS_TABLE_COLUMNS = 'shortId, submission.$title, created, updated, status, author'
 USE_SANDBOXED_ORCID = "true"
-SERVER_PORT = '8080'
 SERVICE_PAGEDJS_PROTOCOL = "https"
 SERVICE_PAGEDJS_HOST = "pagedjs-microservice.fly.dev"
 SERVICE_PAGEDJS_PORT = ""
