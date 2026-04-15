@@ -41,6 +41,6 @@ We use conventional commits and verify that commit messages match the pattern, y
 
 ## Bug reports, feature requests, support questions
 
-This is all done through GitLab using their native issue tracker
+This is all done through GitHub using their native issue tracker
 Visit the master issue tracker for Kotahi (https://github.com/eLifePathways/Kotahi/issues)
 Tag the issue with 'support', 'bug', or 'feature' to identify the nature of your issue

@@ -20,8 +20,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  // organizationName: 'Coko', // Usually your GitHub org/user name.
-  // projectName: 'Coko apps', // Usually your repo name.
+  //   organizationName: 'eLifePathways', // Usually your GitHub org/user name.
+  //   projectName: 'Kotahi', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -55,7 +55,7 @@ const config = {
       navbar: {
         title: 'Kotahi developer documentation',
         logo: {
-          alt: 'Coko foundation',
+          alt: 'eLife Pathways',
           src: 'favicon.ico',
         },
         items: [
@@ -72,10 +72,10 @@ const config = {
             label: 'Deployment',
           },
           {
-            href: 'https://gitlab.coko.foundation/kotahi/kotahi',
+            href: 'https://github.com/eLifePathways/Kotahi',
             position: 'right',
-            className: 'header-gitlab-link',
-            'aria-label': 'Gitlab repository',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
           },
         ],
       },
