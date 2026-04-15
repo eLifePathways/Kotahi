@@ -52,7 +52,7 @@ class Team extends TeamBase {
     }
   }
 
-  // TODO add $beforeDelete once https://gitlab.coko.foundation/cokoapps/server/-/issues/43 is resolved
+  // TODO add $beforeDelete once https://github.com/Coko-Foundation/cokoserver/issues/43 is resolved
   async $beforeInsert(queryContext) {
     await super.$beforeInsert(queryContext)
     evictFromCache(`teamsForObject:${this.objectId}`)

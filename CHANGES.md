@@ -41,7 +41,7 @@ There's a new (optional) `S3_REGION` environment variable that let's you control
 
 If you were previously adding the `pgcrypto` extension to your databases manually, that is no longer necessary. The extension is still necessary, but its addition will happen automatically.
 
-Note that there's a new major version (`2.0.0`) of the pagedjs microservice. If you switch to that, there are a couple of environment variables that you need to change. Check that repo's [changelog](https://gitlab.coko.foundation/cokoapps/pagedjs/-/blob/main/CHANGELOG.md?ref_type=heads) for details. Both versions 1 and 2 will work with kotahi.
+Note that there's a new major version (`2.0.0`) of the pagedjs microservice. If you switch to that, there are a couple of environment variables that you need to change. Check that repo's [changelog](https://github.com/Coko-Foundation/pagedjs-microservice/blob/main/CHANGELOG.md) for details. Both versions 1 and 2 will work with kotahi.
 
 ### Version 3.8.0
 
@@ -49,7 +49,7 @@ We've changed how translation overrides work a little. Instead of mounting files
 
 ### Version 3.7.0
 
-Client and server are now two separate containers in production. This means that your main url (eg. myapp.com) should now point to the client deployment, not the server. You can see the [production compose file](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/3.7.0/docker-compose.production.yml?ref_type=tags) for reference. Both client and server need to have separate, publicly accessible urls.
+Client and server are now two separate containers in production. This means that your main url (eg. myapp.com) should now point to the client deployment, not the server. You can see the [production compose file](https://github.com/eLifePathways/Kotahi/blob/3.7.0/docker-compose.production.yml?ref_type=tags) for reference. Both client and server need to have separate, publicly accessible urls.
 
 eg. If on your deployment, you are running the client on `localhost:4000` and the server on `localhost:3000`, in your nginx or equivalent configuration you will need to point eg. myapp.com to `localhost:4000` and server.myapp.com (or whatever new url you want) to `localhost:3000`.
 
@@ -106,7 +106,7 @@ If you have a `translationOverrides.js` file, it must be moved from `config/` fo
 
 **Development instances only:** Any dev instances hosted on `localhost` will need to their 'Redirect URIs' changed in ORCID, to be able to log in. Alternately, if your port is 4000, you can just change the `ORCID_CLIENT_ID` in your `.env` file to the one supplied in the `.env.example` file, and no further changes should be required.
 
-To change 'Redirect URIs' in ORCID, follow the [instructions in the FAQ](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/main/FAQ.md#how-do-i-setup-orcid-for-development), and replace any Redirect URIs mentioning "localhost" with equivalent URIs containing `127.0.0.1`.
+To change 'Redirect URIs' in ORCID, follow the [instructions in the FAQ](https://github.com/eLifePathways/Kotahi/blob/3.2.0/FAQ.md#how-do-i-setup-orcid-for-development), and replace any Redirect URIs mentioning "localhost" with equivalent URIs containing `127.0.0.1`.
 
 #### Renaming a Group Name
 
@@ -133,7 +133,7 @@ Update the group name in the `.env` file.
 - Replace the 'kotahi' group name with the desired group name.
 - After updating the `.env` file, redeploy the application to apply the changes.
 
-Note: Ensure that you follow the [instructions in the FAQ](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/main/FAQ.md#instance_groups-and-multitenancy) regarding `INSTANCE_GROUPS` and group specifications.
+Note: Ensure that you follow the [instructions in the FAQ](https://github.com/eLifePathways/Kotahi/blob/3.2.0/FAQ.md#instance_groups-and-multitenancy) regarding `INSTANCE_GROUPS` and group specifications.
 
 ### Version 3.1.0
 
@@ -188,7 +188,7 @@ Set `USE_COLAB_BIOPHYSICS_IMPORT=true` in the `.env` file. Without this, imports
 
 Previously, all groups using the `colab` archetype performed these imports, despite them being intended for one organization only.
 
-In future we intend to move all imports into plugins, using the import [plugin architecture](https://docs.coko.foundation/s/f961fad5-f903-4561-9d22-b723129edf15).
+In future we intend to move all imports into plugins, using the import [plugin architecture](https://github.com/eLifePathways/Kotahi/wiki/Plugins).
 
 ### 2023-08-18: Version 2.0.0
 
@@ -198,9 +198,9 @@ Instances affected: **all**.<br/>
 
 `INSTANCE_NAME` environment variable is no longer used (but may be retained in case rollback is required). Instead, the variable `INSTANCE_GROUPS` must be supplied when upgrading Kotahi to version 2.0.0 or later.
 
-`INSTANCE_GROUPS` is a required setting, which determines what multitenanted "groups" should run within a single instance of Kotahi. Typically, when upgrading an existing instance to 2.0.0, `INSTANCE_GROUPS` should specify a single group, though you may subsequently add further groups separated by commas to create new mulitenanted groups, each with their own data, workflow, branding and other settings (see the [FAQ](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/main/FAQ.md#instance_groups-and-multitenancy) for details).
+`INSTANCE_GROUPS` is a required setting, which determines what multitenanted "groups" should run within a single instance of Kotahi. Typically, when upgrading an existing instance to 2.0.0, `INSTANCE_GROUPS` should specify a single group, though you may subsequently add further groups separated by commas to create new mulitenanted groups, each with their own data, workflow, branding and other settings (see the [FAQ](https://github.com/eLifePathways/Kotahi/blob/3.2.0/FAQ.md#instance_groups-and-multitenancy) for details).
 
-`INSTANCE_GROUPS` must contain one or more _group specifications_ separated by commas. Each _group specification_ consists of a _group name_ followed by a colon followed by a _group type_, e.g. `ourjournal:aperture`. The _group name_ (before the colon) may only contain lowercase `a`-`z`, `0`-`9` and the `_` character. The _group type_ (after the colon) must be either 'aperture', 'colab', 'elife' or 'ncrc'. (These [_group types_](https://docs.coko.foundation/doc/instance-archetypes-LFnzu7leM7) will be given more descriptive and generic names in the near future.)
+`INSTANCE_GROUPS` must contain one or more _group specifications_ separated by commas. Each _group specification_ consists of a _group name_ followed by a colon followed by a _group type_, e.g. `ourjournal:aperture`. The _group name_ (before the colon) may only contain lowercase `a`-`z`, `0`-`9` and the `_` character. The _group type_ (after the colon) must be either 'aperture', 'colab', 'elife' or 'ncrc'. (These _group types_ will be given more descriptive and generic names in the near future.)
 
 Typically, to keep URLs to pages unchanged it is recommended that the _group name_ "kotahi" be used: thus, if you had `INSTANCE_NAME=aperture`, you would set `INSTANCE_GROUPS=kotahi:aperture`.
 
@@ -254,7 +254,7 @@ eLife only: To publish fields to Hypothesis in reverse order, so that they appea
 
 Fields for publishing are now specified in the form-builder, rather than via `HYPOTHESIS_PUBLISH_FIELDS` in the `.env` file. If `HYPOTHESIS_PUBLISH_FIELDS` is not specified, no action is necessary. Otherwise, to retain your existing publishing options, you should:
 
-1. Determine what fields are selected in `HYPOTHESIS_PUBLISH_FIELDS`. Fields are separated by commas, and may consist of either a field name, or a field name and a tag separated by a colon (e.g. `fieldName:hypothesis tag`). You may also have a special `decision` or `reviews` pseudo-field specified. For full details of these old settings, [see here](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/c51b72ec81e74aab915c46f0bdadc3975cc61bd9/FAQ.md#hypothesis).
+1. Determine what fields are selected in `HYPOTHESIS_PUBLISH_FIELDS`. Fields are separated by commas, and may consist of either a field name, or a field name and a tag separated by a colon (e.g. `fieldName:hypothesis tag`). You may also have a special `decision` or `reviews` pseudo-field specified. For full details of these old settings, [see here](https://github.com/eLifePathways/Kotahi/blob/c51b72ec81e74aab915c46f0bdadc3975cc61bd9/FAQ.md#hypothesis).
 2. For each ordinary field that was specified in `HYPOTHESIS_PUBLISH_FIELDS`, locate that field in the submission form in the form-builder, and enable "Include when sharing or publishing".
 3. If a tag was specified for that field, enter it in the "Hypothes.is tag" text box.
 4. If the `decision` pseudo-field was specified, locate the field in your decision form with the internal name "comment": enable "Include when sharing or publishing", and set a hypothes.is tag if one was specified.

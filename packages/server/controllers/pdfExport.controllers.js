@@ -30,9 +30,7 @@ const copyFile = promisify(fs.copyFile)
 // THINGS TO KNOW ABOUT THIS:
 //
 // 1. It is expecting two .env variables: PAGED_JS_CLIENT_ID and PAGED_JS_CLIENT_SECRET
-//    The process for generating these is here: https://gitlab.coko.foundation/cokoapps/pagedjs#creating-clients-credentials
-//
-// editoria version of this code is here: https://gitlab.coko.foundation/editoria/editoria/-/blob/master/server/api/useCases/services.js
+//    The process for generating these is here: https://github.com/Coko-Foundation/pagedjs-microservice#creating-clients-credentials
 
 const randomBytes = promisify(crypto.randomBytes)
 

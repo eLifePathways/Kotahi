@@ -34,7 +34,7 @@ Click **Dashboard** in the upper right. You'll be taken to the login flow.
 
 ### How do I publish from Kotahi?
 
-While Kotahi deals with importing, reviewing, editing and preproduction, the final step of publishing to the web (or to print) is relegated to other tools. A wide variety of tools exist for building a static website from structured data; you may wish to use Coko Flax which is built expressly for this task.
+While Kotahi deals with importing, reviewing, editing and preproduction, the final step of publishing to the web (or to print) is relegated to other tools. A wide variety of tools exist for building a static website from structured data; you may wish to use Flax which is built expressly for this task.
 
 Kotahi provides a GraphQL API for obtaining published article data; see [API](#api) below.
 
@@ -211,7 +211,7 @@ Note that publishing of review fields to hypothes.is is not yet supported.
 
 #### Publishing Hypothesis annotations with DocMaps
 
-Alternatively (or as well), you can specify one or more Hypothesis annotations to create for each published manuscript, each containing whatever field or combination of fields you choose, by providing a file `config/journal/docmaps_scheme.json` on your server. This mechanism allows more complex selections of data to be published; furthermore, a [DocMap](https://docmaps.knowledgefutures.org/) will also be created at time of publishing, which can be retrieved using kotahi's public API (see below). An example file, [`config/journal/example_docmaps_scheme.json`](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/main/config/journal/example_docmaps_scheme.json), is supplied.
+Alternatively (or as well), you can specify one or more Hypothesis annotations to create for each published manuscript, each containing whatever field or combination of fields you choose, by providing a file `config/journal/docmaps_scheme.json` on your server. This mechanism allows more complex selections of data to be published; furthermore, a [DocMap](https://docmaps.knowledgefutures.org/) will also be created at time of publishing, which can be retrieved using kotahi's public API (see below). An example file, [`config/journal/example_docmaps_scheme.json`](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/config/journal/example_docmaps_scheme.json), is supplied.
 
 The `docmaps_scheme.json` file specifies the _actions_ to perform when a manuscript is published, complete with participant information and directives to determine how the outputs are generated. Essentially, its structure is copied into the `actions` node of a full DocMap, expanding any templated values and replacing special directives with generated data.
 
@@ -264,7 +264,7 @@ Kotahi exposes a graphql API for external access. The available queries are:
 - `unreviewedPreprints(token: String!, groupName: String): [Preprint!]!` returns a list of manuscripts with the `readyToEvaluate` label, for the specified group. `groupName` can be omitted if there is only one active group.
 - `docmap(externalId: String!, groupName: String): String!` returns a [DocMap](https://docmaps.knowledgefutures.org/) from the specified group, representing the relationship between a given preprint (`externalId` is the preprint's URL) and related artifacts such as evaluations that have been published from Kotahi. See above for how to enable this. `groupName` can be omitted if there is only one active group.
 
-Consult the code [here](https://gitlab.coko.foundation/kotahi/kotahi/blob/main/server/model-manuscript/src/graphql.js) and [here](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/a3f6620a553ec3f8a6c869a75021b211019280fd/server/model-docmap/src/graphql.js) for details, or the graphql playground (typically at http://localhost:4000/graphql, when your dev environment is running).
+Consult the code [here](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/api/graphql/manuscript/manuscript.graphql) and [here](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/api/graphql/docmap/docmap.graphql) for details, or the [graphql sandbox](https://studio.apollographql.com/sandbox/explorer), when your dev environment is running.
 
 While these queries are publicly exposed and don't need a JWT token, the `unreviewedPreprints` query expects a `token` parameter for authentication; this must match a secret token set in the `KOTAHI_API_TOKENS` environment variable in the `.env` file. Tokens may contain any characters other than commas, and may not start or end with whitespace. Multiple tokens may be stored, separated by commas. We recommend that each token contain a human-readable identifier and a strong random string, e.g.:
 
@@ -332,7 +332,7 @@ To archive a group you no longer wish to have active, stop all containers, remov
 
 ### Upgrading from old versions
 
-When upgrading from an earlier version of Kotahi prior to 2.0, it is recommended to specify only a single group, with the _group name_ "kotahi" and the same _group type_ as previously specified for the `INSTANCE_NAME` setting. This will keep existing settings and page URLs unchanged. See [CHANGES.md](https://gitlab.coko.foundation/kotahi/kotahi/-/blob/main/CHANGES.md#2023-07-07) for instructions. You can later change or add groups as you wish.
+When upgrading from an earlier version of Kotahi prior to 2.0, it is recommended to specify only a single group, with the _group name_ "kotahi" and the same _group type_ as previously specified for the `INSTANCE_NAME` setting. This will keep existing settings and page URLs unchanged. See [CHANGES.md](https://github.com/eLifePathways/Kotahi/blob/main/CHANGES.md#2023-08-18-version-200) for instructions. You can later change or add groups as you wish.
 
 ### Configuring the Manuscripts table for your group
 
