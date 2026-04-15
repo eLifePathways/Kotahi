@@ -5,7 +5,7 @@
   "description": "Kotahi - open journals",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.coko.foundation/kotahi/kotahi"
+    "url": "https://github.com/eLifePathways/Kotahi"
   },
   "license": "MIT",
   "scripts": {

@@ -96,7 +96,7 @@ const getXsweet = async url => {
       method: 'post',
       url: `${serverUrl}/api/v1/sync/DOCXToHTML`,
       // NOTE THAT THERE ARE OTHER WAYS TO DO THIS!
-      // See https://gitlab.coko.foundation/cokoapps/xsweet/-/blob/master/server/api/api.js
+      // See https://github.com/Coko-Foundation/xsweet-microservice/blob/master/server/api/api.js
       // – that's different from what's in the README, which is wrong.
       maxContentLength: Infinity,
       maxBodyLength: Infinity,

@@ -28,7 +28,7 @@ Kotahi is currently under development by the [Kotahi Foundation](https://kotahi.
 
 ## Bug reporting
 
-To report a bug, [open a GitLab issue](https://gitlab.coko.foundation/kotahi/kotahi/-/issues/new) and use the bug-report template contained in the issue.
+To report a bug, [open a GitHub issue](https://github.com/eLifePathways/Kotahi/issues/new) and use the bug type contained in the issue.
 
 ## Deploying kotahi
 
@@ -36,8 +36,7 @@ You can find our deployment documentation [here](https://kotahi-dev-docs.fly.dev
 
 ## Running kotahi for development
 
-You can find development documentation [here](https://kotahi-dev-docs.fly.dev/docs/development/Getting%20started).  
-Documentation for underlying coko libraries can be found [here](https://coko-dev-docs.fly.dev/).
+You can find development documentation [here](https://kotahi-dev-docs.fly.dev/docs/development/Getting%20started).
 
 ## Further info
 

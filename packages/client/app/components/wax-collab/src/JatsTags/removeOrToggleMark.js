@@ -3,10 +3,10 @@ import { Commands, DocumentHelpers } from 'wax-prosemirror-core'
 
 // Sources:
 // This function:
-// https://gitlab.coko.foundation/wax/wax-prosemirror/-/blob/master/wax-prosemirror-core/src/utilities/commands/Commands.js#L29
+// https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/utilities/commands/Commands.js#L30
 // (discussed and based on what's here: hhttps://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478)
 // tells you if a given mark is active. If that is the case, we can use this function:
-// https://gitlab.coko.foundation/wax/wax-prosemirror/-/blob/master/wax-prosemirror-core/src/utilities/document/DocumentHelpers.js#L161
+// https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/utilities/document/DocumentHelpers.js#L163
 // to expand the current text selection to the outside mark boundary.
 
 const removeOrToggleMark = (state, dispatch, markName) => {
