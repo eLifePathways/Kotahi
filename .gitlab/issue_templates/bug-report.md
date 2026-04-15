@@ -25,4 +25,4 @@
 
 <!-- If known, provide details on how to fix the bug.-->
 
-<!-- After creating this issue you can link other related or blocking issues with the Gitlab's Linked issues functionality. -->
+<!-- After creating this issue you can link other related or blocking issues with the GitHub's Linked issues functionality. -->

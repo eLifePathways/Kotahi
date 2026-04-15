@@ -36,6 +36,7 @@ const TaskEmailNotificationLog = require('./taskEmailNotificationLog/taskEmailNo
 const Team = require('./team/team.model')
 const TeamMember = require('./teamMember/teamMember.model')
 const ThreadedDiscussion = require('./threadedDiscussion/threadedDiscussion.model')
+const Token = require('./token/token.model')
 const User = require('./user/user.model')
 
 module.exports = {
@@ -73,5 +74,6 @@ module.exports = {
   Team,
   TeamMember,
   ThreadedDiscussion,
+  Token,
   User,
 }

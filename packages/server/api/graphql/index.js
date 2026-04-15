@@ -6,6 +6,7 @@ const anyStyleResolvers = require('./anyStyle/anyStyle.resolvers')
 const articleTemplatesResolvers = require('./articleTemplates/articleTemplates.resolvers')
 const channelResolvers = require('./channel/channel.resolvers')
 const cmsResolvers = require('./cms/cms.resolvers')
+const coarResolvers = require('./coar/coar.resolvers')
 const configResolvers = require('./config/config.resolvers')
 const docmapResolvers = require('./docmap/docmap.resolvers')
 const emailTemplateResolvers = require('./emailTemplate/emailTemplate.resolvers')
@@ -34,6 +35,7 @@ const rorResolvers = require('./ror/ror.resolvers')
 const taskResolvers = require('./task/task.resolvers')
 const teamResolvers = require('./team/team.resolvers')
 const threadedDiscussionResolvers = require('./threadedDiscussion/threadedDiscussion.resolvers')
+const tokenResolvers = require('./token/token.resolvers')
 const userResolvers = require('./user/user.resolvers')
 const xsweetResolvers = require('./xsweet/xsweet.resolvers')
 
@@ -44,6 +46,7 @@ const typeDefFilePaths = [
   'articleTemplates/articleTemplates.graphql',
   'channel/channel.graphql',
   'cms/cms.graphql',
+  'coar/coar.graphql',
   'config/config.graphql',
   'docmap/docmap.graphql',
   'emailTemplate/emailTemplate.graphql',
@@ -72,6 +75,7 @@ const typeDefFilePaths = [
   'task/task.graphql',
   'team/team.graphql',
   'threadedDiscussion/threadedDiscussion.graphql',
+  'token/token.graphql',
   'user/user.graphql',
   'xsweet/xsweet.graphql',
 ]
@@ -90,6 +94,7 @@ const resolvers = merge(
   articleTemplatesResolvers,
   channelResolvers,
   cmsResolvers,
+  coarResolvers,
   configResolvers,
   docmapResolvers,
   emailTemplateResolvers,
@@ -118,6 +123,7 @@ const resolvers = merge(
   taskResolvers,
   teamResolvers,
   threadedDiscussionResolvers,
+  tokenResolvers,
   userResolvers,
   xsweetResolvers,
 )

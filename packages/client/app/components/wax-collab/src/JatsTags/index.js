@@ -512,7 +512,7 @@ class JatsTagsService extends Service {
         excludes: 'citationMarks',
         inclusive: false, // see: https://prosemirror.net/examples/schema/
         parseDOM: [
-          // but see https://gitlab.coko.foundation/wax/wax-prosemirror/-/blob/master/wax-prosemirror-schema/src/marks/linkMark.js
+          // but see https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-services/src/LinkService/schema/linkMark.js
           {
             tag: 'a.doi',
             getAttrs(dom) {

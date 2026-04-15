@@ -16,6 +16,12 @@ class CoarNotification extends BaseModel {
     }
   }
 
+  static async getNotificationsForManuscript(manuscriptId, options = {}) {
+    const { trx } = options
+
+    return this.query(trx).where({ manuscriptId })
+  }
+
   static async getOfferNotificationForManuscript(manuscriptId, options = {}) {
     const { trx } = options
 

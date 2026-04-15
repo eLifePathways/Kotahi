@@ -39,7 +39,7 @@ body {
   font-size: 7rem;
 }
 
-.header-gitlab-link::before {
+.header-github-link::before {
   background-color: var(--ifm-navbar-link-color);
   content: '';
   display: flex;
@@ -47,7 +47,7 @@ body {
   transition: background-color var(--ifm-transition-fast)
     var(--ifm-transition-timing-default);
 
-  mask-image: url('../../static/custom/gitlab.svg');
+  mask-image: url('../../static/custom/github.svg');
   mask-repeat: no-repeat;
 
   width: 24px;

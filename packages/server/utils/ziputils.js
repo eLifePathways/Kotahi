@@ -4,8 +4,6 @@ const crypto = require('crypto')
 const list = require('list-contents')
 const fs = require('fs-extra')
 
-// this is mostly taken from https://gitlab.coko.foundation/editoria/editoria/-/blob/master/server/api/helpers/utils.js
-
 const dirContents = async pathString =>
   new Promise((resolve, reject) => {
     list(pathString, o => {

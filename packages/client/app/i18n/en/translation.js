@@ -96,6 +96,12 @@ const en = {
         day: 'day',
         day_plural: 'days',
       },
+      statuses: {
+        success: 'Success',
+        info: 'Information',
+        warning: 'Warning',
+        error: 'Error',
+      },
     },
     leftMenu: {
       'Summary Info': 'Summary Info',
@@ -248,6 +254,7 @@ const en = {
       'read-only': ' (read-only)',
       Metadata: 'Metadata',
       'Tasks & Notifications': 'Tasks & Notifications',
+      'COAR Notify Metadata': 'COAR Notify Metadata',
       'Assign Editors': 'Assign Editors',
       'Reviewer Status': 'Reviewer Status',
       authorStatus: 'Author Status',
@@ -334,6 +341,26 @@ const en = {
       'Delete this author': 'Delete this author',
       invalidDoi: 'DOI is invalid',
       unauthorized: 'This resource is not accessible.',
+      coarTab: {
+        noMessages: 'There are no COAR Notify messages',
+        Offer: 'Offer',
+        Accept: 'Accept',
+        Reject: 'Reject',
+        TentativeAccept: 'Tentatively Accept',
+        TentativeReject: 'Tentatively Reject',
+        Announce: 'Announce',
+        Flag: 'Flag',
+        Undo: 'Undo',
+        EndorsementAction: 'Endorsement',
+        ReviewAction: 'Review',
+        RelationshipAction: 'Relationship',
+        UnprocessableNotification: 'Unprocessable Notification',
+        IngestAction: 'Ingest',
+        actor: 'Actor',
+        resourceUrl: 'Resource URL',
+        from: 'From',
+        rawPayload: 'Raw Payload',
+      },
     },
     editorSection: {
       noFileLoaded: 'No manuscript file loaded',
@@ -682,6 +709,7 @@ const en = {
         'Manuscript text': 'Manuscript text',
         Metadata: 'Metadata',
         'Tasks & Notifications': 'Tasks & Notifications',
+        'COAR Notify Metadata': 'COAR Notify Metadata',
       },
       crossrefRetrievalEmail: 'Email to use for citation search',
       crossrefSearchResultCount:
@@ -754,6 +782,17 @@ const en = {
         'University of Chicago Press': 'University of Chicago Press',
         Wiley: 'Wiley',
         'Wolters Kluwer': 'Wolters Kluwer',
+      },
+      coar: {
+        authToken: 'COAR Notify auth token',
+        refreshAuthToken: 'Refresh auth token',
+        copyMessage: 'Auth token is only shown once!',
+        copyDescription:
+          'Please copy the auth token now, and store it in your third-party COAR Notify system. You can always refresh the token here, but previous tokens will be invalidated.',
+      },
+      warnings: {
+        'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress':
+          'List of IPs has been deprecated, and will be removed soon. Please use the "COAR Notify auth token" option below to authenitcate.',
       },
     },
     notificationPage: {
@@ -1313,7 +1352,6 @@ const en = {
       'Field hideFromAuthors': 'Hide from authors?',
       'Field permitPublishing': 'Include when sharing or publishing?',
       'Field publishingTag': 'Hypothesis tag',
-      'Field aiPrompt': 'AI prompt',
       'FieldDescription publishingTag':
         'You may specify a tag to use when sharing this field as a Hypothesis annotation.',
       'Label to display': 'Label to display',
@@ -1340,6 +1378,8 @@ const en = {
       'Field inline': 'Field inline',
       'Field sectioncss': 'Field sectioncss',
       'Field isReadOnly': 'Field is read only?',
+      'Field aiPrompt': 'AI prompt',
+      'Field metadataMapping': 'Metadata Mapping',
       'Please give the form a name.': 'Please give the form a name.',
       'Give the form a title': 'Give the form a title',
       'Edit form settings': 'Edit form settings',
@@ -1485,6 +1525,11 @@ const en = {
       embargo: {
         true: 'Yes',
         false: 'No',
+      },
+      metadataMapping: {
+        description:
+          'Automatically map this field to an imported value from a 3rd party source',
+        title: 'Metadata Mapping',
       },
     },
   },

@@ -2,8 +2,6 @@ const { useTransaction, logger } = require('@coko/server')
 
 const Config = require('../config.model')
 
-// as requested here: https://gitlab.coko.foundation/kotahi/kotahi/-/merge_requests/1258#note_142075
-
 exports.up = async knex => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)

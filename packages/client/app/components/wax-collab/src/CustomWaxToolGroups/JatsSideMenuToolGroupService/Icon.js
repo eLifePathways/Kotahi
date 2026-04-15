@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { icons } from 'wax-prosemirror-core'
 import { color } from '../../../../../theme'
 
-// Source: https://gitlab.coko.foundation/wax/wax-prosemirror/-/blob/master/wax-prosemirror-components/src/helpers/Icon.js
-// modified to allow more icons, which can be defined like this:  https://gitlab.coko.foundation/wax/wax-prosemirror/-/blob/master/wax-prosemirror-components/src/icons/icons.js
+// Source: https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/components/icons/Icon.js
+// modified to allow more icons, which can be defined like this:  https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/components/icons/icons.js
 
 const Svg = styled.svg.attrs(() => ({
   version: '1.1',

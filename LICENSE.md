@@ -8,7 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The UI for chat ([code](https://gitlab.coko.foundation/kotahi/kotahi/tree/main/app/components/component-chat/src)) is based on parts of the [Spectrum application](https://github.com/withspectrum/spectrum). While heavily adapted and customized that part of the code also retains the original BSD-3 license below:
+The UI for chat ([code](https://github.com/eLifePathways/Kotahi/tree/main/packages/client/app/components/component-chat/src)) is based on parts of the [Spectrum application](https://github.com/withspectrum/spectrum). While heavily adapted and customized that part of the code also retains the original BSD-3 license below:
 
 Copyright 2018 Space Program Inc.
 

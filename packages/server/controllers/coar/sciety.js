@@ -88,12 +88,15 @@ const getRequestData = async manuscript => {
 }
 
 const sendAnnouncementNotificationToSciety = async manuscript => {
+  const { groupId, id: manuscriptId } = manuscript
   const requestData = await getRequestData(manuscript)
-  const inboxUrl = await getScietyInboxUrl(manuscript.groupId)
+  const inboxUrl = await getScietyInboxUrl(groupId)
 
   if ((!isReviewDoi() && !isFlaxSetup()) || !inboxUrl || !requestData) {
     return false
   }
+
+  const payload = JSON.parse(requestData)
 
   try {
     const response = await request({
@@ -104,6 +107,8 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
       },
       data: requestData,
     })
+
+    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
 
     return response ? response.data : false
   } catch (err) {

@@ -11,7 +11,7 @@ app = "bash -c 'sh /custom/start.sh && exec yarn coko-server start'"
 auto_start_machines = true
 auto_stop_machines = true
 force_https = true
-internal_port = 8_080
+internal_port = 8080
 min_machines_running = 0
 processes = ["app"]
 

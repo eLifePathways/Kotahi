@@ -4,9 +4,10 @@ import React from 'react'
 import BrandIcon from './BrandIcon'
 import ListSubmissionFields from './ListSubmissionFields'
 
-import { Select } from '../../../pubsweet'
-import { ColorPicker } from '../../../shared'
+import { Button, Select, TextField } from '../../../pubsweet'
+import { ActionButton, ColorPicker } from '../../../shared'
 import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
+import CoarAuthToken from './CoarAuthToken'
 
 export const configTabLabels = {
   general: 'General',
@@ -47,6 +48,7 @@ export const generateSchemas = ({
   defaultCollaborativeReviewerInvitationTemplate,
   defaultAuthorProofingInvitationTemplate,
   defaultAuthorProofingSubmittedTemplate,
+  onRefreshCoarAuthToken,
   t,
   logoAndFavicon,
   submissionOptions,
@@ -387,6 +389,10 @@ export const generateSchemas = ({
                   {
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
+                  },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
                   },
                 ],
                 // enum: [
@@ -900,6 +906,10 @@ export const generateSchemas = ({
                 repoIpAddress: {
                   type: ['string', 'null'],
                   description: t('configPage.allowedIPs'),
+                },
+                authToken: {
+                  type: ['string', 'null'],
+                  description: t('configPage.coar.authToken'),
                 },
                 scietyInboxUrl: {
                   type: ['string', 'null'],
@@ -1596,6 +1606,10 @@ export const generateSchemas = ({
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
                   },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
+                  },
                 ],
                 // enum: [
                 //   'Team',
@@ -2109,6 +2123,10 @@ export const generateSchemas = ({
                 repoIpAddress: {
                   type: ['string', 'null'],
                   description: t('configPage.allowedIPs'),
+                },
+                authToken: {
+                  type: ['string', 'null'],
+                  description: t('configPage.coar.authToken'),
                 },
                 scietyInboxUrl: {
                   type: ['string', 'null'],
@@ -2830,6 +2848,7 @@ export const generateSchemas = ({
                 'Manuscript text',
                 'Metadata',
                 'Tasks & Notifications',
+                'COAR Notify Metadata',
               ],
               items: {
                 type: 'string',
@@ -2857,6 +2876,10 @@ export const generateSchemas = ({
                   {
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
+                  },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
                   },
                 ],
                 // enum: [
@@ -3361,6 +3384,10 @@ export const generateSchemas = ({
                 repoIpAddress: {
                   type: ['string', 'null'],
                   description: t('configPage.allowedIPs'),
+                },
+                authToken: {
+                  type: ['string', 'null'],
+                  description: t('configPage.coar.authToken'),
                 },
                 scietyInboxUrl: {
                   type: ['string', 'null'],
@@ -4087,6 +4114,7 @@ export const generateSchemas = ({
                 'Manuscript text',
                 'Metadata',
                 'Tasks & Notifications',
+                'COAR Notify Metadata',
               ],
               items: {
                 type: 'string',
@@ -4114,6 +4142,10 @@ export const generateSchemas = ({
                   {
                     const: 'Tasks & Notifications',
                     title: t('configPage.showTabs.Tasks & Notifications'),
+                  },
+                  {
+                    const: 'COAR Notify Metadata',
+                    title: t('configPage.showTabs.COAR Notify Metadata'),
                   },
                 ],
                 // enum: [
@@ -4618,6 +4650,10 @@ export const generateSchemas = ({
                 repoIpAddress: {
                   type: ['string', 'null'],
                   description: t('configPage.allowedIPs'),
+                },
+                authToken: {
+                  type: ['string', 'null'],
+                  description: t('configPage.coar.authToken'),
                 },
                 scietyInboxUrl: {
                   type: ['string', 'null'],
@@ -5188,6 +5224,11 @@ export const generateSchemas = ({
         },
         coarNotify: {
           classNames: 'col-md-12 col-md-offset-0',
+          authToken: {
+            'ui:widget': props => (
+              <CoarAuthToken onRefreshCoarAuthToken={onRefreshCoarAuthToken} />
+            ),
+          },
         },
         aiDesignStudio: {
           classNames: 'col-md-12 col-md-offset-0',

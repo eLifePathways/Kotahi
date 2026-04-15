@@ -5,7 +5,7 @@
   "description": "Kotahi - open journals",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.coko.foundation/kotahi/kotahi"
+    "url": "https://github.com/eLifePathways/Kotahi"
   },
   "license": "MIT",
   "scripts": {
@@ -35,6 +35,7 @@
     "@fontsource/roboto": "^4.5.8",
     "@rjsf/core": "4.2.3",
     "@uiw/react-codemirror": "^4.21.20",
+    "antd": "^5.6.1",
     "apollo-upload-client": "14.1.2",
     "atob": "^2.1.2",
     "cheerio": "1.0.0-rc.10",
