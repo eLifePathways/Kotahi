@@ -41,8 +41,10 @@ class CollaborativeDoc extends BaseModel {
     }
   }
 
-  static async getFormData(objectId, form) {
-    const collaborativeDoc = await CollaborativeDoc.query().findOne({
+  static async getFormData(objectId, form, options = {}) {
+    const { trx } = options
+
+    const collaborativeDoc = await CollaborativeDoc.query(trx).findOne({
       objectId,
     })
 

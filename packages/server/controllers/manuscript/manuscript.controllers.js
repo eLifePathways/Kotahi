@@ -3,7 +3,7 @@ const { chunk, orderBy, uniqBy, flatten } = require('lodash')
 const { ref, raw } = require('objection')
 const axios = require('axios')
 
-const { File } = require('@coko/server')
+const { File, useTransaction } = require('@coko/server')
 
 const {
   CoarNotification,
@@ -118,6 +118,8 @@ const {
 
 const { applyTemplate, generateCss } = require('../../utils/applyTemplate')
 const { decrypt } = require('../../utils/encryptDecryptUtils')
+const { usersLoader } = require('../../models/review/review.loaders')
+const { defaultIdentitiesLoader } = require('../../models/user/user.loaders')
 
 // #endregion import
 
@@ -704,16 +706,18 @@ const getRelatedReviews = async (
   manuscript,
   userId,
   shouldGetPublicReviewsOnly = false,
+  options = {},
 ) => {
-  const reviewForm = await getReviewForm(manuscript.groupId)
-  const decisionForm = await getDecisionForm(manuscript.groupId)
+  const { trx } = options
+  const reviewForm = await getReviewForm(manuscript.groupId, { trx })
+  const decisionForm = await getDecisionForm(manuscript.groupId, { trx })
 
   let reviews =
     manuscript.reviews ||
-    (await Manuscript.relatedQuery('reviews').for(manuscript.id)) ||
+    (await Manuscript.relatedQuery('reviews', trx).for(manuscript.id)) ||
     []
 
-  reviews = await ReviewModel.orderReviewPerUsername(reviews)
+  reviews = await ReviewModel.orderReviewPerUsername(reviews, { trx })
 
   // eslint-disable-next-line no-restricted-syntax
   for (const review of reviews) {
@@ -721,15 +725,19 @@ const getRelatedReviews = async (
     await convertFilesToFullObjects(
       review,
       review.isDecision ? decisionForm : reviewForm,
-      async ids => File.query().findByIds(ids),
+      async ids => File.query(trx).findByIds(ids),
     )
   }
 
   const userRoles = shouldGetPublicReviewsOnly
     ? {}
-    : await getUserRolesInManuscript(userId, manuscript.id)
+    : await getUserRolesInManuscript(userId, manuscript.id, { trx })
 
-  const sharedReviewersIds = await getSharedReviewersIds(manuscript.id, userId)
+  const sharedReviewersIds = await getSharedReviewersIds(
+    manuscript.id,
+    userId,
+    { trx },
+  )
 
   // Insert isShared flag before userIds are stripped
   // TODO Should this step and the removal of confidential data be moved to the review resolver?
@@ -1141,51 +1149,57 @@ const publishedManuscript = async id => {
 }
 
 const publishedManuscriptDecisions = async (manuscript, userId) => {
-  // filtering decisions in Kotahi itself so that we can change
-  // the logic easily in future.
-  const reviews = await getRelatedReviews(manuscript, userId)
+  return useTransaction(async trx => {
+    // filtering decisions in Kotahi itself so that we can change
+    // the logic easily in future.
+    const reviews = await getRelatedReviews(manuscript, userId, false, { trx })
 
-  if (!Array.isArray(reviews)) {
-    return []
-  }
+    if (!Array.isArray(reviews)) {
+      return []
+    }
 
-  const decisions = reviews.filter(review => review.isDecision)
-  const decisionForm = await getDecisionForm(manuscript.groupId)
+    const decisions = reviews.filter(review => review.isDecision)
+    const decisionForm = await getDecisionForm(manuscript.groupId, { trx })
 
-  const threadedDiscussions =
-    manuscript.threadedDiscussions ||
-    (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
+    const threadedDiscussions =
+      manuscript.threadedDiscussions ||
+      (await getThreadedDiscussionsForManuscript(manuscript, getUsersById, {
+        trx,
+      }))
 
-  return getPublishableReviewFields(
-    decisions,
-    decisionForm,
-    threadedDiscussions,
-    manuscript,
-  )
+    return getPublishableReviewFields(
+      decisions,
+      decisionForm,
+      threadedDiscussions,
+      manuscript,
+    )
+  })
 }
 
 const publishedManuscriptEditors = async manuscript => {
-  const teams = await Team.query()
-    .where({ objectId: manuscript.id })
-    .whereIn('role', ['seniorEditor', 'handlingEditor', 'editor'])
+  return useTransaction(async trx => {
+    const teams = await Team.query(trx)
+      .where({ objectId: manuscript.id })
+      .whereIn('role', ['seniorEditor', 'handlingEditor', 'editor'])
 
-  const teamMembers = await TeamMember.query().whereIn(
-    'team_id',
-    teams.map(t => t.id),
-  )
+    const teamMembers = await TeamMember.query(trx).whereIn(
+      'team_id',
+      teams.map(t => t.id),
+    )
 
-  const editorAndRoles = await Promise.all(
-    teamMembers.map(async member => {
-      const user = await User.query().findById(member.userId)
-      const team = teams.find(t => t.id === member.teamId)
-      return {
-        name: user.username,
-        role: team.role,
-      }
-    }),
-  )
+    const editorAndRoles = await Promise.all(
+      teamMembers.map(async member => {
+        const user = await User.query(trx).findById(member.userId)
+        const team = teams.find(t => t.id === member.teamId)
+        return {
+          name: user.username,
+          role: team.role,
+        }
+      }),
+    )
 
-  return editorAndRoles
+    return editorAndRoles
+  })
 }
 
 const publishedManuscripts = async (sort, offset, limit, groupId) => {
@@ -1209,74 +1223,80 @@ const publishedManuscripts = async (sort, offset, limit, groupId) => {
 }
 
 const publishedManuscriptReviews = async (manuscript, userId) => {
-  let reviews = await getRelatedReviews(manuscript, userId, true)
+  return useTransaction(async trx => {
+    let reviews = await getRelatedReviews(manuscript, userId, true, { trx })
 
-  if (!Array.isArray(reviews)) {
-    return []
-  }
-
-  reviews = reviews.filter(review => !review.isDecision)
-  const reviewForm = await getReviewForm(manuscript.groupId)
-
-  const threadedDiscussions =
-    manuscript.threadedDiscussions ||
-    (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const review of reviews) {
-    const jsonData = JSON.parse(review.jsonData)
-
-    if (review.isCollaborative) {
-      const collaborativeFormData =
-        // eslint-disable-next-line no-await-in-loop
-        await CollaborativeDoc.getFormData(review.id, reviewForm)
-
-      review.jsonData = JSON.stringify({
-        ...jsonData,
-        ...collaborativeFormData,
-      })
+    if (!Array.isArray(reviews)) {
+      return []
     }
-  }
 
-  return getPublishableReviewFields(
-    reviews,
-    reviewForm,
-    threadedDiscussions,
-    manuscript,
-  )
+    reviews = reviews.filter(review => !review.isDecision)
+    const reviewForm = await getReviewForm(manuscript.groupId, { trx })
+
+    const threadedDiscussions =
+      manuscript.threadedDiscussions ||
+      (await getThreadedDiscussionsForManuscript(manuscript, getUsersById, {
+        trx,
+      }))
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const review of reviews) {
+      const jsonData = JSON.parse(review.jsonData)
+
+      if (review.isCollaborative) {
+        const collaborativeFormData =
+          // eslint-disable-next-line no-await-in-loop
+          await CollaborativeDoc.getFormData(review.id, reviewForm, { trx })
+
+        review.jsonData = JSON.stringify({
+          ...jsonData,
+          ...collaborativeFormData,
+        })
+      }
+    }
+
+    return getPublishableReviewFields(
+      reviews,
+      reviewForm,
+      threadedDiscussions,
+      manuscript,
+    )
+  })
 }
 
 const publishedReviewUsers = async review => {
-  if (review.isHiddenReviewerName) {
-    return [{ id: '', username: 'Anonymous User' }]
-  }
+  return useTransaction(async trx => {
+    if (review.isHiddenReviewerName) {
+      return [{ id: '', username: 'Anonymous User' }]
+    }
 
-  let users = []
+    let users = []
 
-  if (review.isCollaborative) {
-    const manuscript = await Manuscript.query().findById(review.manuscriptId)
-
-    const existingTeam = await manuscript
-      .$relatedQuery('teams')
-      .where('role', 'collaborativeReviewer')
-      .first()
-
-    users = await existingTeam.$relatedQuery('users')
-  } else {
-    users = await User.query().where({ id: review.userId })
-  }
-
-  users = await Promise.all(
-    users.map(async user => {
-      const defaultIdentity = await cachedGet(
-        `defaultIdentityOfUser:${user.id}`,
+    if (review.isCollaborative) {
+      const manuscript = await Manuscript.query(trx).findById(
+        review.manuscriptId,
       )
 
-      return { defaultIdentity, ...user }
-    }),
-  )
+      const existingTeam = await manuscript
+        .$relatedQuery('teams', trx)
+        .where('role', 'collaborativeReviewer')
+        .first()
 
-  return users
+      users = await existingTeam.$relatedQuery('users', trx)
+    } else {
+      users = await usersLoader([review.userId], { trx })
+    }
+
+    const defaultIdentities = await defaultIdentitiesLoader(
+      users.map(u => u.id),
+      { trx },
+    )
+
+    return users.map((user, i) => ({
+      ...user,
+      defaultIdentity: defaultIdentities[i],
+    }))
+  })
 }
 
 // TODO: useTransaction to handle rollbacks

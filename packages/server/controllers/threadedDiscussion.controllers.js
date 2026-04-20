@@ -10,9 +10,14 @@ const { getUsersById, getUserRolesInManuscript } = require('./user.controllers')
 const seekEvent = require('../services/notification.service')
 
 /** Get the threaded discussion with "author" user object added to each commentVersion and pendingVersion */
-const addUserObjectsToDiscussion = async (discussion, getUsersByIdFunc) => {
+const addUserObjectsToDiscussion = async (
+  discussion,
+  getUsersByIdFunc,
+  options = {},
+) => {
+  const { trx } = options
   const userIds = getAllUserIdsInDiscussion(discussion)
-  const users = await getUsersByIdFunc(userIds)
+  const users = await getUsersByIdFunc(userIds, { trx })
   const usersMap = {}
   users.forEach(u => (usersMap[u.id] = u))
 
@@ -225,16 +230,19 @@ const getOriginalVersionManuscriptId = async manuscriptId => {
 const getThreadedDiscussionsForManuscript = async (
   manuscript,
   getUsersByIdFunc,
-) =>
-  Promise.all(
+  options = {},
+) => {
+  const { trx } = options
+  return Promise.all(
     (
-      await ThreadedDiscussion.query().where({
+      await ThreadedDiscussion.query(trx).where({
         manuscriptId: manuscript.parentId || manuscript.id,
       })
     ).map(discussion =>
-      addUserObjectsToDiscussion(discussion, getUsersByIdFunc),
+      addUserObjectsToDiscussion(discussion, getUsersByIdFunc, { trx }),
     ),
   )
+}
 
 const isNewEmptyComment = (pendingVersion, commentVersions) =>
   (!pendingVersion || pendingVersion.comment === '<p class="paragraph"></p>') &&
