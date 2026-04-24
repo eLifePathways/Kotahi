@@ -45,7 +45,7 @@ extend type Query {
   """
   publishedManuscript(id: ID!): PublishedManuscript
   unreviewedPreprints(token: String!, groupName: String): [Preprint!]!
-  doisToRegister(id: ID!): [String]
+  #   doisToRegister(id: ID!): [String]
   getManuscriptsData(selectedManuscripts: [ID!]!): [ManuscriptExport!]!
   versionsOfManuscriptCurrentUserIsReviewerOf(manuscriptId: ID!): [ID!]!
 }
