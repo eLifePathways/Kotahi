@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   LineChart,
   Line,
@@ -69,7 +68,7 @@ const dateFormatter = timestamp => {
   return `${monthNames[date.getUTCMonth()]} ${date.getUTCDate()}`
 }
 
-const getTicks = (startTimestamp, endTimestamp, interval) => {
+const getTicks = (startTimestamp, endTimestamp) => {
   const result = []
   let date = new Date(startTimestamp)
   date.setUTCHours(0)

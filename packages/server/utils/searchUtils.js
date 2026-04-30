@@ -4,7 +4,6 @@ const segmentQuery = query => {
   const segments = []
   let currentSegment = ''
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const c of query) {
     if (['"', '(', ')'].includes(c)) {
       if (currentSegment) segments.push(currentSegment)
@@ -33,7 +32,7 @@ const apply_NOT = ex => {
     if (ex.terms[i] === '-') {
       if (i + 1 < ex.terms.length && !['OR', '-'].includes(ex.terms[i + 1])) {
         const subex = { type: 'not', terms: [ex.terms[i + 1]], parent: ex }
-        // eslint-disable-next-line no-param-reassign
+
         ex.terms[i] = subex
         ex.terms.splice(i + 1, 1)
         i += 1
@@ -46,7 +45,7 @@ const apply_NOT = ex => {
 }
 
 /** If one or more terms are 'OR', convert this to an 'or' group */
-/* eslint-disable no-param-reassign, no-restricted-syntax, camelcase */
+/* eslint-disable camelcase */
 const apply_OR = ex => {
   const orGroups = []
   let orGroupTerms = []
@@ -69,10 +68,10 @@ const apply_OR = ex => {
   ex.type = 'or'
   ex.terms = orGroups
 }
-/* eslint-enable no-param-reassign, no-restricted-syntax, camelcase */
+/* eslint-enable camelcase */
 
 /** find 'OR' and '-' items in an expression and use them to create 'or'/'not' subexpressions */
-/* eslint-disable no-param-reassign, no-restricted-syntax, camelcase */
+/* eslint-disable camelcase */
 const apply_OR_NOT_Recursively = (ex, maxDepth = 50) => {
   if (maxDepth <= 0)
     throw new Error('Search expression exceeds maximum nesting depth!')
@@ -91,7 +90,7 @@ const apply_OR_NOT_Recursively = (ex, maxDepth = 50) => {
   apply_NOT(ex)
   apply_OR(ex)
 }
-/* eslint-enable no-param-reassign, no-restricted-syntax, camelcase */
+/* eslint-enable camelcase */
 
 const operatorPrecedence = { not: 0, phrase: 1, and: 2, or: 3 }
 
@@ -99,7 +98,6 @@ const escapeTerm = term => {
   return term.replace(':', '\\:')
 }
 
-/* eslint-disable no-param-reassign */
 const getSubExpressionWithParenthesesIfNeeded = (outerExType, ex, maxDepth) => {
   if (typeof ex === 'string') {
     ex = escapeTerm(ex)
@@ -118,7 +116,6 @@ const getSubExpressionWithParenthesesIfNeeded = (outerExType, ex, maxDepth) => {
 
   if (!ex.terms.length) return null
 
-  /* eslint-disable-next-line no-unreachable-loop */
   while (ex.type !== 'not' && ex.terms.length <= 1)
     return getSubExpressionWithParenthesesIfNeeded(
       outerExType,
@@ -133,7 +130,6 @@ const getSubExpressionWithParenthesesIfNeeded = (outerExType, ex, maxDepth) => {
     return `( ${expressionTreeToPostgresQuery(ex, maxDepth)} )`
   return expressionTreeToPostgresQuery(ex, maxDepth)
 }
-/* eslint-enable no-param-reassign */
 
 const expressionTreeToPostgresQuery = (ex, maxDepth = 50) => {
   if (maxDepth <= 0)
@@ -171,7 +167,6 @@ const expressionTreeToPostgresQuery = (ex, maxDepth = 50) => {
 const generateExpressionTreeWithout_OR_NOT = segments => {
   let expression = { type: 'and', terms: [], parent: null }
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const segment of segments) {
     if (segment === '"') {
       if (expression.type === 'phrase') {

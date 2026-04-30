@@ -1,5 +1,7 @@
-/* eslint react/prop-types: 0 */
-import React, { useContext, useMemo, useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types, react/display-name */
+
+import { useContext, useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import {
   WaxContext,
@@ -22,7 +24,6 @@ const ConnectedTrackChangeStyled = styled.div`
   }
 `
 
-/* eslint-disable-next-line react/function-component-definition */
 export default ({ trackChangeId, top, recalculateTops, trackChange }) => {
   const context = useContext(WaxContext)
   const { app } = useContext(ApplicationContext)
@@ -143,6 +144,5 @@ export default ({ trackChangeId, top, recalculateTops, trackChange }) => {
     [isActive, top],
   )
 
-  /* eslint-disable-next-line react/jsx-no-useless-fragment */
   return <>{MemorizedTrackChange}</>
 }

@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { th } from '@coko/client'
 import styled from 'styled-components'

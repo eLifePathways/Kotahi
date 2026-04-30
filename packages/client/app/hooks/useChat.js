@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/rules-of-hooks, react-hooks/immutability */
+
 import { useEffect } from 'react'
 import { useApolloClient, useQuery, useMutation } from '@apollo/client'
 import { CREATE_MESSAGE, SEARCH_USERS } from '../queries'

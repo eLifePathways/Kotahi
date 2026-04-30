@@ -1,4 +1,4 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const Config = require('../config.model')
 
@@ -9,15 +9,15 @@ const brandConfig = {
   brandName: 'Kotahi',
 }
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const configs = await Config.query(trx)
 
-      logger.info(`Existing Configs: ${configs.length}`)
+      // logger.info(`Existing Configs: ${configs.length}`)
 
       let config = {}
-      let createdConfig = {}
+      // const createdConfig = {}
 
       const publishing = {
         hypothesis: {
@@ -269,11 +269,11 @@ exports.up = async knex => {
         }
 
         config.formData = JSON.stringify(config.formData)
-        createdConfig = await Config.query().insertAndFetch(config)
+        // createdConfig = await Config.query().insertAndFetch(config)
 
-        logger.info(
-          `Created config for instance type "${createdConfig.formData.instanceName}"`,
-        )
+        // logger.info(
+        //   `Created config for instance type "${createdConfig.formData.instanceName}"`,
+        // )
       }
     })
   } catch (error) {

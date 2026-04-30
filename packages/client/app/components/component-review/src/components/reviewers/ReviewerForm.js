@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
+
 import { grid } from '@coko/client'
 import { Field } from 'formik'
 import PropTypes from 'prop-types'
-import React from 'react'
 import styled from 'styled-components'
 import { required } from 'xpub-validators'
 import { useTranslation } from 'react-i18next'
@@ -10,14 +11,12 @@ import { Button, Checkbox, TextField } from '../../../../pubsweet'
 import { ActionButton, Select } from '../../../../shared'
 import { EmailErrorMessageWrapper } from '../emailNotifications'
 
-/* eslint-disable react/destructuring-assignment */
 const OptionRenderer = option => (
   <div>
     <div>{option.username}</div>
     <div>{option.email}</div>
   </div>
 )
-/* eslint-enable react/destructuring-assignment */
 
 const RowGridStyled = styled.div`
   display: grid;

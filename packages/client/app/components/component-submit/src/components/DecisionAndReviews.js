@@ -1,4 +1,6 @@
-import React from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/prop-types */
+
 import { useTranslation } from 'react-i18next'
 // TODO: Sort out the imports, perhaps make DecisionReview a shared component?
 import DecisionReview from '../../../component-review/src/components/decision/DecisionReview'

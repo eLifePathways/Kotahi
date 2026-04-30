@@ -1,4 +1,6 @@
-import React, { Component } from 'react'
+/* eslint-disable react/prop-types */
+
+import { Component } from 'react'
 import styled from 'styled-components'
 import { th, darken, grid } from '@coko/client'
 

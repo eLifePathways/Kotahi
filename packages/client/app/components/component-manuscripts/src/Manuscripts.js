@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
+
 /* eslint-disable no-shadow */
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import styled from 'styled-components'
 import { Trans, useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'

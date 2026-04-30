@@ -1,12 +1,7 @@
-/* stylelint-disable string-quotes */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/refs */
+
 /* stylelint-disable declaration-no-important */
-import React, {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { WaxContext } from 'wax-prosemirror-core'

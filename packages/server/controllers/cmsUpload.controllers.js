@@ -20,10 +20,10 @@ const uploadCms = async (templateId, files) => {
       const insertedFile = await createFile(
         fs.createReadStream(`${file.path}`),
         file.originalname,
-        null,
-        null,
-        ['cmsTemplateFile'],
-        insertedResource.id,
+        {
+          tags: ['cmsTemplateFile'],
+          objectId: insertedResource.id,
+        },
       )
 
       return CmsFileTemplate.query()

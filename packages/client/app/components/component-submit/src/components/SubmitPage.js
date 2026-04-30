@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect, useContext } from 'react'
 import { debounce, set } from 'lodash'
 import { gql, useQuery, useMutation, useApolloClient } from '@apollo/client'
-import ReactRouterPropTypes from 'react-router-prop-types'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import Submit from './Submit'
@@ -92,7 +93,6 @@ const useValidateORCID = () => {
       input: inputValue,
     }
 
-    // eslint-disable-next-line no-return-await
     return refetch(variables)
   }
 
@@ -363,8 +363,8 @@ const SubmitPage = ({ currentUser, match, history }) => {
 }
 
 SubmitPage.propTypes = {
-  history: ReactRouterPropTypes.history.isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
+  // history: ReactRouterPropTypes.history.isRequired,
+  // match: ReactRouterPropTypes.match.isRequired,
 }
 
 export default SubmitPage

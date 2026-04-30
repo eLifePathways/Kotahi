@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import { Radio } from './Radio'
 
@@ -8,7 +9,6 @@ const Flexbox = styled.div`
   justify-content: ${props => (props.center ? 'center' : 'left')};
 `
 
-// eslint-disable-next-line import/prefer-default-export
 export const RadioGroup = ({
   options,
   value: radioValue,

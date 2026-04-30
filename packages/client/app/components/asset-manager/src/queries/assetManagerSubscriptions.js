@@ -1,6 +1,4 @@
-import React from 'react'
-import { Subscription } from '@apollo/client/react/components'
-import { gql } from '@apollo/client'
+import { useSubscription, gql } from '@apollo/client'
 
 const FILES_UPLOADED_SUBSCRIPTION = gql`
   subscription FilesUploaded {
@@ -22,59 +20,20 @@ const FILE_UPDATED_SUBSCRIPTION = gql`
   }
 `
 
-const filesUploadedSubscription = props => {
-  const { render, getEntityFilesQuery } = props
-
-  const triggerRefetch = () => {
-    getEntityFilesQuery.refetch()
-  }
-
-  return (
-    <Subscription
-      onSubscriptionData={triggerRefetch}
-      subscription={FILES_UPLOADED_SUBSCRIPTION}
-    >
-      {render}
-    </Subscription>
-  )
+const useFilesUploadedSubscription = refetch => {
+  useSubscription(FILES_UPLOADED_SUBSCRIPTION, { onData: () => refetch() })
 }
 
-const filesDeletedSubscription = props => {
-  const { render, getEntityFilesQuery } = props
-
-  const triggerRefetch = () => {
-    getEntityFilesQuery.refetch()
-  }
-
-  return (
-    <Subscription
-      onSubscriptionData={triggerRefetch}
-      subscription={FILES_DELETED_SUBSCRIPTION}
-    >
-      {render}
-    </Subscription>
-  )
+const useFilesDeletedSubscription = refetch => {
+  useSubscription(FILES_DELETED_SUBSCRIPTION, { onData: () => refetch() })
 }
 
-const fileUpdatedSubscription = props => {
-  const { render, getEntityFilesQuery } = props
-
-  const triggerRefetch = () => {
-    getEntityFilesQuery.refetch()
-  }
-
-  return (
-    <Subscription
-      onSubscriptionData={triggerRefetch}
-      subscription={FILE_UPDATED_SUBSCRIPTION}
-    >
-      {render}
-    </Subscription>
-  )
+const useFileUpdatedSubscription = refetch => {
+  useSubscription(FILE_UPDATED_SUBSCRIPTION, { onData: () => refetch() })
 }
 
 export {
-  filesUploadedSubscription,
-  filesDeletedSubscription,
-  fileUpdatedSubscription,
+  useFilesUploadedSubscription,
+  useFilesDeletedSubscription,
+  useFileUpdatedSubscription,
 }

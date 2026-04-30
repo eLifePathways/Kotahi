@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
 /* eslint-disable no-nested-ternary */
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from 'react-select'
 import Creatable from 'react-select/creatable'
@@ -13,7 +16,7 @@ import { T } from '../misc/constants'
 import { CleanButton } from '../../component-email-templates/misc/styleds'
 
 const styles = th => ({
-  menu: (provided, state) => ({
+  menu: provided => ({
     ...provided,
     borderRadius: th.borderRadius,
     zIndex: 9999,
@@ -35,8 +38,8 @@ const styles = th => ({
         ? `0 0 0 1px ${color.brand1.base}`
         : 'inset 0px 0px 4px rgba(0, 0, 0, 0.07)'
       : state.isFocused
-      ? `0 0 0 1px ${color.brand1.base}`
-      : th.boxShadow,
+        ? `0 0 0 1px ${color.brand1.base}`
+        : th.boxShadow,
 
     borderRadius: th.borderRadius,
     '&:hover': {
@@ -64,16 +67,15 @@ const styles = th => ({
   }),
 })
 
-// eslint-disable-next-line import/prefer-default-export
 export const Select = props => {
   const {
-    name,
+    // name,
     value,
     isMulti,
     options,
     customStyles,
     hasGroupedOptions = false,
-    dataTestid,
+    // dataTestid,
     ...otherProps
   } = props
 
@@ -90,7 +92,7 @@ export const Select = props => {
             subOption => subOption.value === value,
           )
 
-          optionMatched && setSelectedOption(optionMatched)
+          if (optionMatched) setSelectedOption(optionMatched)
 
           return !!optionMatched
         })
@@ -119,13 +121,13 @@ export const Select = props => {
 
 export const CreatableSelect = props => {
   const {
-    name,
+    // name,
     value,
     isMulti,
     options,
     customStyles,
     hasGroupedOptions = false,
-    dataTestid,
+    // dataTestid,
     ...otherProps
   } = props
 
@@ -142,7 +144,7 @@ export const CreatableSelect = props => {
             subOption => subOption.value === value,
           )
 
-          optionMatched && setSelectedOption(optionMatched)
+          if (optionMatched) setSelectedOption(optionMatched)
 
           return !!optionMatched
         })
@@ -213,7 +215,6 @@ export const RegularInput = ({ $color, label, ...props }) => {
 }
 
 Select.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   value: PropTypes.any,
   isMulti: PropTypes.bool,
   options: PropTypes.arrayOf(PropTypes.any.isRequired).isRequired,

@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import Flexbox from '../../../../pubsweet/Flexbox'
@@ -24,7 +26,6 @@ const CredentialFields = ({ s3Values, onChange }) => {
   })
 
   const onTextChange = field => event => {
-    // eslint-disable-next-line no-shadow
     const { value } = event.target
     const v = credentials
     v[field] = value

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { db, migrationManager } = require('@coko/server')
 const Group = require('../../group/group.model')
 const Config = require('../config.model')
@@ -10,9 +12,7 @@ describe('Config Migrations', () => {
       .select('tablename')
       .where('schemaname', 'public')
 
-    /* eslint-disable-next-line no-restricted-syntax */
     for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
       await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
     }
   })
@@ -202,12 +202,10 @@ describe('Config Migrations', () => {
 
     const inactiveButHasNotifs = eventsToPopulate[0]
 
-    config1.formData.notification.eventsConfig[
-      inactiveButHasNotifs
-    ].active = false
-    config2.formData.notification.eventsConfig[
-      inactiveButHasNotifs
-    ].active = false
+    config1.formData.notification.eventsConfig[inactiveButHasNotifs].active =
+      false
+    config2.formData.notification.eventsConfig[inactiveButHasNotifs].active =
+      false
 
     await config1.$query().patch({ formData: config1.formData })
     await config2.$query().patch({ formData: config2.formData })

@@ -1,15 +1,12 @@
-/* eslint-disable no-unused-vars */
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const Config = require('../../config/config.model')
 const EmailTemplate = require('../emailTemplate.model')
 const defaultEmailTemplates = require('../../../config/defaultEmailTemplates')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)
-
-    logger.info(`Existing Configs count: ${configs.length}`)
 
     const allEmailTemplatesData = []
 
@@ -35,8 +32,6 @@ exports.up = async knex => {
       })
 
       await EmailTemplate.query(trx).insertGraph(allEmailTemplatesData)
-
-      logger.info(`Added collaborativeReviewInvitation email templates.`)
     }
   })
 }

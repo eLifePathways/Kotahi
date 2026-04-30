@@ -23,7 +23,8 @@ const callout = {
             'data-citationcallouttext',
           ),
         })
-        typeof next !== 'undefined' && next()
+
+        if (typeof next !== 'undefined') next()
       },
     },
   ],
@@ -35,7 +36,6 @@ const callout = {
       'data-citationcallouttext': hook?.node?.attrs?.citationCalloutText,
     }
 
-    /* eslint-disable-next-line no-param-reassign */
     hook.value = ['span', attrs, 0]
     next()
   },

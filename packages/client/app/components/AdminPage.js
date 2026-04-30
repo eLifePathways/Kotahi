@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/refs */
+
 import { useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { throttle } from 'lodash'
 import PropTypes from 'prop-types'
-import React, { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import Modal from 'react-modal'
 import {
   matchPath,
@@ -357,7 +359,7 @@ const AdminPage = () => {
   const throttledRefetch = throttle(refetch, 120000, { trailing: false })
 
   // Triggered by captured events onClick and onKeyDown
-  const handleEvent = e => {
+  const handleEvent = () => {
     throttledRefetch()
   }
 

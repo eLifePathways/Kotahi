@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import CollectionForm from './CollectionForm'
 import Modal from '../../../component-modal/src/Modal'
 

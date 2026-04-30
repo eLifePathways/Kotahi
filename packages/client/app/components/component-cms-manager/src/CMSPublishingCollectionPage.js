@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery, gql } from '@apollo/client'
 import { omit } from 'lodash'
-import gql from 'graphql-tag'
 import { ConfigContext } from '../../config/src'
 import {
   createCollectionMutation,

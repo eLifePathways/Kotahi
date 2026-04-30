@@ -41,7 +41,7 @@ module.exports = {
       )
     },
 
-    async searchUsers(_, { teamId, query }, ctx) {
+    async searchUsers(_, { teamId, query }) {
       return searchUsers(teamId, query)
     },
 

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { Trans } from 'react-i18next'
 
 const DescriptionField = ({ id, description }) => {

@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import styled from 'styled-components'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { grid } from '@coko/client'

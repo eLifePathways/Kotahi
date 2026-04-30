@@ -1,6 +1,10 @@
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+
 /* stylelint-disable color-function-notation, alpha-value-notation */
 
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { ChevronUp, ChevronDown, X } from 'react-feather'
 import Color from 'color'

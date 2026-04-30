@@ -113,7 +113,6 @@ const ModalRoot = props => {
     ...rest
   } = props
 
-  // eslint-disable-next-line react/destructuring-assignment
   if (!props.isOpen) return null
   return (
     <StyledModal

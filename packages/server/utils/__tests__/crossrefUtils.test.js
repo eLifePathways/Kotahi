@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { getCrossrefCitationsFromList } = require('../crossrefUtils')
 
 describe('getCrossrefCitationsFromList', () => {

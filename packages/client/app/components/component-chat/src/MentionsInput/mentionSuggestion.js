@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 
-import React from 'react'
 import { UserAvatar } from '../../../component-avatar/src'
 
 import {
@@ -18,6 +17,7 @@ import {
 //   entry: UserInfoType,
 // };
 
+/* eslint-disable-next-line no-unused-vars */
 const MentionSuggestion = ({ entry, search, focused }) => (
   <StyledMentionSuggestion focused={focused}>
     <UserAvatar size={32} user={entry} />

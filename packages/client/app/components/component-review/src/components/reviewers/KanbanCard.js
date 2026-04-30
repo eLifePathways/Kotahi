@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+
 import { grid, th } from '@coko/client'
 import PropTypes from 'prop-types'
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { Mail } from 'react-feather'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'

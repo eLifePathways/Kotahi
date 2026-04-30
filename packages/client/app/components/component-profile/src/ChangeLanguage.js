@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import i18next from 'i18next'

@@ -15,9 +15,8 @@ class TaskEmailNotificationLog extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const Task = require('../task/task.model')
-    /* eslint-disable-next-line global-require */
+
     const EmailTemplate = require('../emailTemplate/emailTemplate.model')
 
     return {

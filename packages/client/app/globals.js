@@ -13,7 +13,6 @@ export const hexa = (hex, alpha) => {
   return `rgb(${r}, ${g}, ${b})`
 }
 
-// eslint-disable-next-line func-names
 export const zIndex = new (function () {
   // Write down a camel-cased element descriptor as the name (e.g. modal or chatInput).
   // Define at a component level here, then use math to handle order at a local level.

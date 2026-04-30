@@ -159,7 +159,7 @@ const getData = async (groupId, ctx) => {
         $title: title,
         firstAuthor: author_corresponding,
         $authors: authors
-          .map(({ family, given, collab }, index) => ({
+          .map(({ family, given }, index) => ({
             firstName: given,
             lastName: family,
             affiliation:

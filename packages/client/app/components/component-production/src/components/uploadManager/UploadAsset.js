@@ -1,5 +1,6 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useCallback, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import { useCallback, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation, gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
@@ -204,7 +205,7 @@ const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
       name: 'id',
       centered: false,
       title: 'ID',
-      // eslint-disable-next-line no-plusplus
+      // eslint-disable-next-line no-plusplus, no-unused-vars
       component: ({ file }) => counter++,
     },
     {
@@ -225,7 +226,7 @@ const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
       name: 'tag',
       centered: false,
       title: 'Used For',
-      /* eslint-disable-next-line react/no-unstable-nested-components */
+
       component: ({ file }) => (
         <TagDropdown tags={file.tags} updateFileFn={updateFileFn(file)} />
       ),
@@ -234,7 +235,7 @@ const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
       name: 'copy-as-image',
       centered: false,
       title: 'Copy as',
-      /* eslint-disable-next-line react/no-unstable-nested-components */
+
       component: ({ file }) => {
         const { mimetype } = file.storedObjects[0]
 
@@ -281,7 +282,7 @@ const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
       name: 'copy-as-url',
       centered: false,
       title: 'Copy as Url',
-      /* eslint-disable-next-line react/no-unstable-nested-components */
+
       component: ({ file }) => (
         <ActionButton onClick={onCopyAsUrl(file)}>Create URL</ActionButton>
       ),
@@ -290,7 +291,7 @@ const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
       name: 'delete',
       centered: false,
       title: 'Delete',
-      /* eslint-disable-next-line react/no-unstable-nested-components */
+
       component: ({ file }) => (
         <ActionButton onClick={() => setFileBeingDeletedId(file.id)}>
           Delete
@@ -337,7 +338,7 @@ const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
             {filesState.length === 0 ? (
               <Placeholder>No Files found</Placeholder>
             ) : (
-              filesState.map((file, key) => (
+              filesState.map(file => (
                 <FileRow
                   columnDefinitions={columnsProps}
                   file={file}

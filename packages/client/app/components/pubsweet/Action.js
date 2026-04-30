@@ -1,4 +1,4 @@
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 
 /*
   Actions arose from current designs (like the Appbar) where we had to blend
@@ -12,7 +12,6 @@
   HAVE LINKS AND BUTTONS THAT LOOK THE SAME IN THE FIRST PLACE.
 */
 
-import React from 'react'
 import styled, { css } from 'styled-components'
 import { th, override } from '@coko/client'
 

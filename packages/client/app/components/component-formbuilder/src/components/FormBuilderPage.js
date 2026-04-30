@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect, useContext } from 'react'
 import { useQuery, useMutation, gql } from '@apollo/client'
 import { cloneDeep, omitBy } from 'lodash'
 import { ConfigContext } from '../../../config/src'

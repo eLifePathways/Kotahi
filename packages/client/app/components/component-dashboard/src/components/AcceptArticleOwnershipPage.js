@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import { Redirect } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { useTranslation } from 'react-i18next'

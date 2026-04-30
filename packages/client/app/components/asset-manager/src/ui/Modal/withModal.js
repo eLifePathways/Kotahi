@@ -1,4 +1,3 @@
-import React from 'react'
 import ModalContext from './ModalContext'
 
 const withModal = props => {

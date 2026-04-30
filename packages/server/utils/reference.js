@@ -179,7 +179,6 @@ const formatCitation = async (cslObject, groupId) => {
       // We are dealing with the array of HTML strings, the second item in the array.
       const results = bib[1]
       // Even if there's a single result, it's in an array.
-      // eslint-disable-next-line prefer-destructuring
       result = results[0]
       // This is CSL-flavored HTML, need to make it JATS-flavored HTML.
       // Not 100% sure that all of the HTML coming out of this will work for us, keep an eye out.
@@ -278,9 +277,9 @@ const formatMultipleCitations = async (
   let error = ''
   let result = []
   const calloutTexts = []
-  // eslint-disable-next-line no-unused-vars
+
   let preCitations = []
-  // eslint-disable-next-line no-unused-vars
+
   let orderedReferenceIds = []
 
   try {
@@ -317,7 +316,7 @@ const formatMultipleCitations = async (
     // logger.info(preCitationIds)
 
     const bib = engine.makeBibliography()
-    // eslint-disable-next-line no-unused-vars
+
     orderedReferenceIds = bib[0].entry_ids.flat()
     // logger.info(bib)
     // logger.info(bib[0]['entry_ids']) // order of citations by ids
@@ -331,7 +330,7 @@ const formatMultipleCitations = async (
       // Not 100% sure that all of the HTML coming out of this will work for us, keep an eye out.
 
       // Worth noting that sometimes there are spaces between tags, sometimes not. We're going to remove them all.
-      // eslint-disable-next-line prefer-destructuring
+
       // html output
       // result = results.map(r =>
       //   r

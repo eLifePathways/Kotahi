@@ -91,7 +91,7 @@ module.exports = {
       resolve: async messageId => {
         return getMessageById(messageId, true)
       },
-      subscribe: async (_, { channelId }, context) => {
+      subscribe: async (_, { channelId }) => {
         return subscriptionManager.asyncIterator(
           `${MESSAGE_UPDATED}.${channelId}`,
         )

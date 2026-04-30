@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { th } from '@coko/client'
@@ -46,7 +47,7 @@ const StyledDeleteControl = styled(DeleteControl)`
 const localizeFields = (origFields, t) => {
   let clonedFieds = JSON.parse(JSON.stringify(origFields))
 
-  clonedFieds = clonedFieds.map((field, index) => {
+  clonedFieds = clonedFieds.map(field => {
     const newField = { ...field }
     newField.label = t(`doisInput.${field.name}.label`)
     newField.placeholder = t(`doisInput.${field.name}.placeholder`)

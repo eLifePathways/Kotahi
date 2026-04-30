@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Wax } from 'wax-prosemirror-core'
 import yjsConfig from '../../../wax-collab/src/config/yjsConfig'
@@ -10,7 +16,7 @@ const FormWaxEditor = ({
   validationStatus,
   readonly,
   autoFocus,
-  onBlur,
+  // onBlur,
   onChange,
   placeholder,
   spellCheck,

@@ -1,4 +1,7 @@
-import React, { useContext, useEffect, useRef } from 'react'
+/* eslint-disable no-return-assign */
+/* eslint-disable react/prop-types */
+
+import { useContext, useEffect, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { fadeIn } from '@coko/client'
 import { Delete } from 'react-feather'
@@ -112,7 +115,7 @@ const MessageContent = styled.div`
 `
 
 // TODO: pass currentUser as prop
-// eslint-disable-next-line react/prop-types
+
 const ChatHistory = ({ settings, currentUser }) => {
   const { selectedCtx, htmlSrc, feedback, deleteLastMessage } =
     useContext(CssAssistantContext)
@@ -143,11 +146,9 @@ const ChatHistory = ({ settings, currentUser }) => {
       {selectedCtx?.history?.length > 0 ? (
         selectedCtx.history.map(({ role, content }, i) => {
           const forgotten =
-            // eslint-disable-next-line react/prop-types
             i < selectedCtx.history.length - settings.historyMax - 1
 
           return (
-            // eslint-disable-next-line react/no-array-index-key
             <span key={role + content + i}>
               <MessageContainer
                 forgotten={forgotten}

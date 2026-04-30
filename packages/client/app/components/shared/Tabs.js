@@ -1,4 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react'
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useContext, useState, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
 import styled, { css } from 'styled-components'
 import { th, override } from '@coko/client'
@@ -155,5 +158,4 @@ const Tabs = ({
   )
 }
 
-/* eslint-disable import/prefer-default-export */
 export { Tabs }

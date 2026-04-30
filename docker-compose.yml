@@ -5,7 +5,7 @@ services:
     build:
       context: ./packages/client
       dockerfile: ./Dockerfile-development
-    command: ['node_modules/.bin/coko-client-dev-js']
+    command: ['node_modules/.bin/coko-client-dev']
     ports:
       - ${CLIENT_PORT:-4000}:${CLIENT_PORT:-4000}
     environment:
@@ -37,10 +37,9 @@ services:
     ports:
       - ${SERVER_PORT:-3000}:3000
       - ${WS_YJS_SERVER_PORT:-5010}:${WS_YJS_SERVER_PORT:-5010}
-      - ${INSPECTOR_PORT:-9229}:${INSPECTOR_PORT:-9229}
+      - ${INSPECTOR_PORT:-9229}:9229
     environment:
       - NODE_ENV=development
-      - INSPECTOR_PORT=${INSPECTOR_PORT:-9229}
       - POSTGRES_USER=${POSTGRES_USER:-dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - POSTGRES_DB=${POSTGRES_DB:-kotahi_dev}
@@ -126,11 +125,17 @@ services:
     volumes:
       - ./packages/server/api:/home/node/app/api
       - ./packages/server/config:/home/node/app/config
+      - ./packages/server/config.ts:/home/node/app/config.ts
+      - ./packages/server/configSchema.ts:/home/node/app/configSchema.ts
       - ./packages/server/controllers:/home/node/app/controllers
+      - ./packages/server/jobQueues.ts:/home/node/app/jobQueues.ts
       - ./packages/server/models:/home/node/app/models
+      - ./packages/server/permissions.js:/home/node/app/permissions.js
       - ./packages/server/scripts:/home/node/app/scripts
       - ./packages/server/services:/home/node/app/services
+      - ./packages/server/startup.js:/home/node/app/startup.js
       - ./packages/server/utils:/home/node/app/utils
+      - ./packages/server/node_modules/@coko/server:/home/node/app/node_modules/@coko/server
     healthcheck:
       test:
         ['CMD-SHELL', 'curl --fail http://localhost:3000/healthcheck || exit 1']
@@ -158,7 +163,7 @@ services:
       - seccomp:unconfined
 
   db-pagedjs:
-    image: postgres:16-alpine
+    image: postgres:18
     environment:
       - POSTGRES_USER=pagedjs_user_dev
       - POSTGRES_DB=pagedjs_dev
@@ -181,14 +186,14 @@ services:
       - POSTGRES_PASSWORD=xsweet_user_password
 
   db-xsweet:
-    image: postgres:16-alpine
+    image: postgres:18
     environment:
       - POSTGRES_DB=xsweet_dev
       - POSTGRES_USER=xsweet_user_dev
       - POSTGRES_PASSWORD=xsweet_user_password
 
   db:
-    image: postgres:16-alpine
+    image: postgres:18
     ports:
       - ${POSTGRES_PORT:-5432}:5432
     environment:
@@ -247,7 +252,7 @@ services:
       - POSTGRES_PASSWORD=anystyle_user_password
 
   db-anystyle:
-    image: postgres:16-alpine
+    image: postgres:18
     environment:
       - POSTGRES_USER=anystyle_user_dev
       - POSTGRES_DB=anystyle_dev

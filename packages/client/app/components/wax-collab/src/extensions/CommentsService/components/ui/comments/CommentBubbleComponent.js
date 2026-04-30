@@ -1,7 +1,10 @@
 /* eslint-disable consistent-return */
 /* eslint-disable default-param-last */
 /* eslint react/prop-types: 0 */
-import React, { useLayoutEffect, useContext } from 'react'
+
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import { useLayoutEffect, useContext } from 'react'
 import { WaxContext, DocumentHelpers } from 'wax-prosemirror-core'
 import { AddMarkStep } from 'prosemirror-transform'
 import { uuid } from '@coko/client'
@@ -31,7 +34,7 @@ const createComment = (
 
   let footnote = false
   let footnoteNode
-  state.doc.nodesBetween($from.pos, $to.pos, (node, from) => {
+  state.doc.nodesBetween($from.pos, $to.pos, node => {
     if (node.type.groups.includes('notes')) {
       footnote = true
       footnoteNode = node
@@ -147,7 +150,7 @@ const createCommentOnFootnote = (
   })
 
   const mergedRanges = []
-  ranges.forEach((item, i) => {
+  ranges.forEach(item => {
     if (item.footnote) {
       mergedRanges[mergedRanges.length - 1].end =
         mergedRanges[mergedRanges.length - 1].end + 1

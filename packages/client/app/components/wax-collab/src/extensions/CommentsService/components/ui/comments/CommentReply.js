@@ -1,4 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import { grid, th, override } from '@coko/client'

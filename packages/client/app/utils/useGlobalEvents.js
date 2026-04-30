@@ -1,8 +1,8 @@
+import { useEffect } from 'react'
 import { isFunction } from 'lodash'
+
 import { onEntries } from '../shared/generalUtils'
 import GlobalState from './GlobalState'
-
-const { useEffect } = require('react')
 
 /**
  * Custom hook to handle event listener addition for GlobalState.
@@ -14,12 +14,12 @@ const useGlobalEvents = (instanceName, listeners = {}) => {
 
   useEffect(() => {
     onEntries(listeners, (name, cb) => {
-      isFunction(cb) && instance.on(name, cb)
+      if (isFunction(cb)) instance.on(name, cb)
     })
 
     return () => {
       onEntries(listeners, (name, listener) => {
-        isFunction(listener) && instance.off(name, listener)
+        if (isFunction(listener)) instance.off(name, listener)
       })
     }
   }, [instance, listeners])

@@ -104,7 +104,9 @@ const updateTeam = async (id, input, groupId) => {
       seekEvent('team-editor-assigned', eventData)
     }
 
-    membersRemoved.length && seekEvent('team-editor-unassigned', eventData)
+    if (membersRemoved.length) {
+      seekEvent('team-editor-unassigned', eventData)
+    }
 
     await updateAlertsUponTeamUpdate(objectId, membersAdded, membersRemoved)
 

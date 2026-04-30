@@ -1,4 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable promise/catch-or-return, promise/always-return */
+
+import { useContext, useEffect, useState } from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import PropTypes from 'prop-types'
 import { Select } from '../../../../shared'

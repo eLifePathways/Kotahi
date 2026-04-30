@@ -17,10 +17,8 @@ const { getSubmissionForm } = require('../review.controllers')
 
 let archiveManuscript
 setImmediate(() => {
-  /* eslint-disable global-require */
   archiveManuscript =
     require('../manuscript/manuscript.controllers').archiveManuscript
-  /* eslint-enable global-require */
 })
 
 const supportedDoiRegistrationAgencies = ['Crossref', 'DataCite']
@@ -39,7 +37,7 @@ const getDoiRegistrationAgency = async doi => {
     const { RA, status } = data
     return RA ?? status
   } catch (error) {
-    console.error(`Failed to find RA for DOI ${doi}`)
+    logger.error(`Failed to find RA for DOI ${doi}`)
     return error.message
   }
 }

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { sanitize } from 'isomorphic-dompurify'
 
 const richTextRegex = /^\s*<p(?: class="paragraph")?>/
@@ -10,7 +11,6 @@ const PlainOrRichText = ({ value, className }) => {
   return (
     <span
       className={className}
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={(() => ({ __html: sanitize(value) }))()}
     />
   )

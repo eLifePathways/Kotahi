@@ -1,6 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { color } from '../../../theme'
 
@@ -46,7 +49,6 @@ const EllipsisDropdown = ({
   }, [show])
 
   return (
-    /* eslint-disable-next-line react/jsx-no-useless-fragment */
     <>
       {show && (
         <DropdownContainer ref={dropdownRef}>

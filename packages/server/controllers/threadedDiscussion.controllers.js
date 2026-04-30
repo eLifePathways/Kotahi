@@ -14,7 +14,10 @@ const addUserObjectsToDiscussion = async (discussion, getUsersByIdFunc) => {
   const userIds = getAllUserIdsInDiscussion(discussion)
   const users = await getUsersByIdFunc(userIds)
   const usersMap = {}
-  users.forEach(u => (usersMap[u.id] = u))
+
+  users.forEach(u => {
+    usersMap[u.id] = u
+  })
 
   return {
     ...discussion,
@@ -44,9 +47,8 @@ const completeComment = async (
 ) => {
   const now = new Date().toISOString()
 
-  const discussion = await ThreadedDiscussion.query().findById(
-    threadedDiscussionId,
-  )
+  const discussion =
+    await ThreadedDiscussion.query().findById(threadedDiscussionId)
 
   if (!discussion)
     throw new Error(
@@ -93,18 +95,15 @@ const completeComments = async (threadedDiscussionId, userId) => {
   const now = new Date().toISOString()
   let hasUpdated = false
 
-  const discussion = await ThreadedDiscussion.query().findById(
-    threadedDiscussionId,
-  )
+  const discussion =
+    await ThreadedDiscussion.query().findById(threadedDiscussionId)
 
   if (!discussion)
     throw new Error(
       `threadedDiscussion with ID ${threadedDiscussionId} not found`,
     )
 
-  /* eslint-disable-next-line no-restricted-syntax */
   for (const thread of discussion.threads) {
-    /* eslint-disable-next-line no-restricted-syntax */
     for (const comment of thread.comments) {
       if (convertUsersPendingVersionsToCommentVersions(userId, comment, now)) {
         hasUpdated = true
@@ -131,12 +130,11 @@ const convertUsersPendingVersionsToCommentVersions = (userId, comment, now) => {
   let hasUpdated = false
 
   // Should be only one pendingVersion for a user, but to be safe we assume there could be multiple
-  /* eslint-disable-next-line no-restricted-syntax */
+
   for (const pendingVersion of comment.pendingVersions.filter(
     pv =>
       pv.userId === userId && !isNewEmptyComment(pv, comment.commentVersions),
   )) {
-    /* eslint-disable-next-line no-param-reassign */
     if (!comment.commentVersions) comment.commentVersions = []
 
     comment.commentVersions.push({
@@ -147,11 +145,10 @@ const convertUsersPendingVersionsToCommentVersions = (userId, comment, now) => {
       comment: pendingVersion.comment,
     })
     hasUpdated = true
-    /* eslint-disable-next-line no-param-reassign */
+
     comment.updated = now
   }
 
-  /* eslint-disable-next-line no-param-reassign */
   comment.pendingVersions = comment.pendingVersions.filter(
     pv => pv.userId !== userId,
   )
@@ -165,9 +162,8 @@ const deletePendingComment = async (
   commentId,
   userId,
 ) => {
-  const discussion = await ThreadedDiscussion.query().findById(
-    threadedDiscussionId,
-  )
+  const discussion =
+    await ThreadedDiscussion.query().findById(threadedDiscussionId)
 
   if (!discussion)
     throw new Error(
@@ -329,9 +325,8 @@ const updatePendingComment = async (
   const now = new Date().toISOString()
   const manuscriptId = await getOriginalVersionManuscriptId(msVersionId)
 
-  let discussion = await ThreadedDiscussion.query().findById(
-    threadedDiscussionId,
-  )
+  let discussion =
+    await ThreadedDiscussion.query().findById(threadedDiscussionId)
   if (!discussion)
     discussion = {
       id: threadedDiscussionId,

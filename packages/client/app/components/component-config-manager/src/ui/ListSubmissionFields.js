@@ -1,5 +1,5 @@
-/* eslint-disable no-shadow */
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import CreatableSelect from 'react-select/creatable'
 
 import styled from 'styled-components'

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { useTranslation } from 'react-i18next'
 import { SectionContent } from '../../../shared'
 import FormTemplate from './FormTemplate'
@@ -51,7 +52,7 @@ const SubmissionForm = ({
         onChange={(value, path) => {
           onChange(value, path, manuscript.id)
         }}
-        onSubmit={async (values, { validateForm, setSubmitting, ...other }) => {
+        onSubmit={async (values, { validateForm, setSubmitting }) => {
           // TODO: Change this to a more Formik idiomatic form
           const isValid = Object.keys(await validateForm()).length === 0
           return isValid

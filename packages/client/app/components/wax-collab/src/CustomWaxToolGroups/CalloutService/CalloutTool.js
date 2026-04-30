@@ -1,4 +1,3 @@
-import React from 'react'
 import { decorate, injectable } from 'inversify'
 import { Fragment } from 'prosemirror-model'
 import { v4 as uuidv4 } from 'uuid'
@@ -46,14 +45,14 @@ class CalloutTool extends Tools {
 
   // eslint-disable-next-line class-methods-use-this
   get enable() {
-    return state => {
+    return () => {
       return false
     }
   }
 
   renderTool(view) {
     if (isEmpty(view)) return null
-    // eslint-disable-next-line no-underscore-dangle
+
     return this._isDisplayed ? (
       <LeftSideButton item={this.toJSON()} key="Callout" view={view} />
     ) : null

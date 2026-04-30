@@ -1,4 +1,7 @@
-import React, { useContext } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/prop-types, new-cap */
+
+import { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import PropTypes from 'prop-types'
 import Color from 'color'
@@ -98,7 +101,7 @@ const ActionButton = ({
   dataTestid,
   title,
   type,
-  dataCy,
+  // dataCy,
 }) => {
   if (disabled)
     return (
@@ -116,7 +119,6 @@ const ActionButton = ({
 
   try {
     isLight = Color(bgColor).isLight()
-    // eslint-disable-next-line no-empty
   } catch {
     bgColor = color.gray90
   }

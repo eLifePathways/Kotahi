@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import { forEach } from 'lodash'
 import styled, { withTheme } from 'styled-components'
@@ -39,7 +41,7 @@ const UnpaddedIcon = styled(Icon)`
   vertical-align: text-top;
 `
 
-const ControlIcon = withTheme(({ children, theme }) => (
+const ControlIcon = withTheme(({ children }) => (
   <UnpaddedIcon color={color.brand1.base()}>{children}</UnpaddedIcon>
 ))
 

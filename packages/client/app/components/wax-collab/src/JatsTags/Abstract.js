@@ -1,4 +1,3 @@
-import React from 'react'
 import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { LeftSideButton, Commands, Tools } from 'wax-prosemirror-core'
@@ -10,7 +9,6 @@ class Abstract extends Tools {
   label = i18next.t('waxEditor.Abstract')
   name = 'Abstract'
 
-  // eslint-disable-next-line class-methods-use-this
   // get run() {
   //   return (state, dispatch) => {
   //     Commands.setBlockType(state.config.schema.nodes.abstractSection)(
@@ -33,7 +31,7 @@ class Abstract extends Tools {
       if (activeViewId !== 'main') return false
 
       const { from, to } = state.selection
-      state.doc.nodesBetween(from, to, (node, pos) => {
+      state.doc.nodesBetween(from, to, node => {
         if (node.type.name === 'abstractSection') {
           isActive = true
         }
@@ -59,7 +57,7 @@ class Abstract extends Tools {
 
   renderTool(view) {
     if (isEmpty(view)) return null
-    // eslint-disable-next-line no-underscore-dangle
+
     return this._isDisplayed ? (
       <LeftSideButton item={this.toJSON()} key="Abstract" view={view} />
     ) : null

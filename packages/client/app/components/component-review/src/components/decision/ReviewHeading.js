@@ -1,4 +1,6 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -180,7 +182,6 @@ const ReviewHeading = ({
 }
 
 ReviewHeading.propTypes = {
-  // eslint-disable-next-line
   journal: PropTypes.object,
   open: PropTypes.bool.isRequired,
   ordinal: PropTypes.number.isRequired,
@@ -188,13 +189,12 @@ ReviewHeading.propTypes = {
   toggleOpen: PropTypes.func.isRequired,
   isCollaborative: PropTypes.bool.isRequired,
   isLock: PropTypes.bool.isRequired,
-  // eslint-disable-next-line
+
   users: PropTypes.array.isRequired,
 }
 ReviewHeading.defaultProps = { recommendation: null }
 
 Bullet.propTypes = {
-  // eslint-disable-next-line
   journal: PropTypes.object,
   recommendation: PropTypes.string.isRequired,
 }

@@ -1,6 +1,6 @@
 /* stylelint-disable string-quotes */
 /* eslint-disable react/prop-types */
-import React from 'react'
+
 import styled from 'styled-components'
 import { color } from '../../../theme'
 

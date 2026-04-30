@@ -1,4 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { withRouter } from 'react-router-dom'

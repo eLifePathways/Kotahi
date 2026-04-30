@@ -1,7 +1,12 @@
+/* eslint-disable react-hooks/immutability */
+
+/* eslint-disable no-unused-expressions */
+/* eslint-disable jsx-a11y/no-autofocus */
+
 /* eslint-disable react/prop-types */
 /* stylelint-disable color-function-notation, alpha-value-notation */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import ChatWaxEditor from '../ChatWaxEditor'
 import color from '../../../../theme/color'
@@ -272,7 +277,6 @@ const EditorMention = ({
             role="listbox"
           >
             {filteredList.map((item, i) => (
-              // eslint-disable-next-line react/jsx-key
               <li
                 aria-selected="false"
                 className={`mentions__suggestions__item ${

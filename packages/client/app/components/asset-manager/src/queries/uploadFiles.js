@@ -1,6 +1,4 @@
-import React from 'react'
-import { Mutation } from '@apollo/client/react/components'
-import { gql } from '@apollo/client'
+import { useMutation, gql } from '@apollo/client'
 
 const UPLOAD_FILES = gql`
   mutation UploadFiles($files: [Upload]!, $fileType: String, $entityId: ID) {
@@ -10,20 +8,7 @@ const UPLOAD_FILES = gql`
   }
 `
 
-const uploadFilesMutation = props => {
-  const { render } = props
-
-  return (
-    <Mutation mutation={UPLOAD_FILES}>
-      {(uploadFiles, uploadFilesResult) =>
-        render({
-          uploadFiles,
-          uploadFilesResult,
-        })
-      }
-    </Mutation>
-  )
-}
+const useUploadFiles = () => useMutation(UPLOAD_FILES)
 
 export { UPLOAD_FILES }
-export default uploadFilesMutation
+export default useUploadFiles

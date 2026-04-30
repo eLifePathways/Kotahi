@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -38,7 +41,6 @@ const generateLabel = (created, versionNumber, count, manuscriptName, t) => {
   )
 }
 
-/* eslint-disable import/prefer-default-export */
 export const VersionSwitcher = ({
   versions = [],
   children,

@@ -20,6 +20,7 @@ const getFile = async (config, fieldName) => {
 
     file.storedObjects = updatedStoredObjects
     return file
+    /* eslint-disable-next-line */
   } catch (error) {
     return null
   }
@@ -65,14 +66,15 @@ const translationOverrides = async groupId => {
   let globalOverrides
 
   try {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    groupOverrides = require(`../../config/translation/${groupName}/translationOverrides`)
+    groupOverrides = require(
+      `../../config/translation/${groupName}/translationOverrides`,
+    )
   } catch {
     groupOverrides = {}
   }
 
   try {
-    // eslint-disable-next-line global-require, import/no-unresolved, import/extensions
+    // eslint-disable-next-line import/no-unresolved, import/extensions
     globalOverrides = require('../../config/translation/translationOverrides')
   } catch {
     globalOverrides = {}

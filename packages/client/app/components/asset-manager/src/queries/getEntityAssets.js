@@ -1,6 +1,4 @@
-import React from 'react'
-import { Query } from '@apollo/client/react/components'
-import { gql } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 
 const GET_ENTITY_FILES = gql`
   query GetEntityFilesQuery($input: EntityFilesInput) {
@@ -28,28 +26,20 @@ const GET_ENTITY_FILES = gql`
   }
 `
 
-const getEntityFilesQuery = props => {
-  const { entityId, render } = props
-
-  return (
-    <Query
-      fetchPolicy="cache-and-network"
-      query={GET_ENTITY_FILES}
-      variables={{
-        input: {
-          entityId,
-          sortingParams: [
-            { key: 'name', order: 'asc' },
-            { key: 'updated', order: 'asc' },
-          ],
-          includeInUse: true,
-        },
-      }}
-    >
-      {render}
-    </Query>
-  )
-}
+const useGetEntityFiles = entityId =>
+  useQuery(GET_ENTITY_FILES, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      input: {
+        entityId,
+        sortingParams: [
+          { key: 'name', order: 'asc' },
+          { key: 'updated', order: 'asc' },
+        ],
+        includeInUse: true,
+      },
+    },
+  })
 
 export { GET_ENTITY_FILES }
-export default getEntityFilesQuery
+export default useGetEntityFiles

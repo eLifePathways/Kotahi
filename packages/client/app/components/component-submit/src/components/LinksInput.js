@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { FieldArray } from 'formik'
 import { cloneDeep, set, get } from 'lodash'
@@ -61,10 +63,10 @@ const LinksInput = ({ form, remove, push, value, name, onChange }) => {
         </li>
         {(value || []).map((link, index) => (
           // TODO: Use a different key.
-          // eslint-disable-next-line react/no-array-index-key
+
           <li key={`link-${index}`}>
             <Spacing>
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              {}
               <Link>
                 Link:&nbsp;
                 {value.length > 1 && (

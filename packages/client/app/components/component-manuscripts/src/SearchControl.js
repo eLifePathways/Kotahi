@@ -1,6 +1,9 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
 
-import React, { useState, useRef, useEffect } from 'react'
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useState, useRef, useEffect } from 'react'
 import styled, { useTheme } from 'styled-components'
 import { X } from 'react-feather'
 import { th, grid } from '@coko/client'
@@ -65,7 +68,7 @@ const SearchControl = ({ currentSearchQuery, applySearchQuery }) => {
             id="enter-search"
             isFilteringResults={!!currentSearchQuery}
             isShowingCurrentSearch={searchText === currentSearchQuery}
-            onBlur={e => {
+            onBlur={() => {
               if (!searchText) setTimeout(() => setIsOpen(false), 400) // Delay so if you click the search button the input doesn't close and then reopen
             }}
             onChange={e => setSearchText(e.target.value)}

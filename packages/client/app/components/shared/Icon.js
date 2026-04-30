@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import * as icons from 'react-feather'
@@ -22,7 +23,6 @@ const IconWrapper = styled.div`
   }
 `
 
-/* eslint-disable import/prefer-default-export */
 export const Icon = ({
   className,
   children,
@@ -32,7 +32,7 @@ export const Icon = ({
   inline,
   top,
   onClick,
-  ...props
+  // ...props
 }) => {
   const name = _.upperFirst(_.camelCase(children))
 

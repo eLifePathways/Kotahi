@@ -1,8 +1,9 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation, useQuery, useSubscription, gql } from '@apollo/client'
 import { Redirect } from 'react-router-dom'
-import ReactRouterPropTypes from 'react-router-prop-types'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import ReviewLayout from './review/ReviewLayout'
@@ -437,8 +438,8 @@ ReviewPage.propTypes = {
   currentUser: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
-  match: ReactRouterPropTypes.match.isRequired,
-  history: ReactRouterPropTypes.history.isRequired,
+  // match: ReactRouterPropTypes.match.isRequired,
+  // history: ReactRouterPropTypes.history.isRequired,
 }
 
 export default ReviewPage

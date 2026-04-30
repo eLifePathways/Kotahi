@@ -1,4 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react'
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useContext, useState, useEffect } from 'react'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { v4 as uuid } from 'uuid'
 // import moment from 'moment-timezone'
@@ -227,7 +230,7 @@ const TaskList = ({
       <MediumColumn>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
+            {provided => (
               <TightColumn {...provided.droppableProps} ref={provided.innerRef}>
                 {!tasks.length && (
                   <AddTaskContainer>

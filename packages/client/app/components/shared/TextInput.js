@@ -1,6 +1,7 @@
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import theme, { color } from '../../theme'
 
@@ -27,7 +28,6 @@ export const StyledInput = styled.input`
   }
 `
 
-// eslint-disable-next-line import/prefer-default-export
 export const TextInput = props => {
   const { readonly, value } = props
   return readonly ? <div>{value}</div> : <StyledInput type="text" {...props} />

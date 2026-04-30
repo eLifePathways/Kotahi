@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+
 import { th } from '@coko/client'
-import React from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { UserAvatar } from '../../../../component-avatar/src'

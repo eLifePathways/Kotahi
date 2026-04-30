@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import styled from 'styled-components'
 
 import { useTranslation } from 'react-i18next'

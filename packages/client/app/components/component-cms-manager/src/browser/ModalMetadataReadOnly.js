@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
 
 import Modal from '../../../component-modal/src/Modal'
 import ManuscriptMetadata from '../article/ManuscriptMetadata'

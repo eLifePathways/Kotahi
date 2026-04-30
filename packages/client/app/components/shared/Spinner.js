@@ -1,6 +1,3 @@
-/* stylelint-disable string-quotes */
-
-import React from 'react'
 import styled from 'styled-components'
 import { rotate360, th } from '@coko/client'
 import { color } from '../../theme'
@@ -34,7 +31,6 @@ const LoadingPage = styled.div`
   width: 100%;
 `
 
-/* eslint-disable import/prefer-default-export */
 export const Spinner = () => (
   <LoadingPage>
     <SpinnerAnimation />

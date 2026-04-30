@@ -1,7 +1,9 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { X as CloseIcon, ChevronUp, ChevronDown } from 'react-feather'
 import { useTranslation } from 'react-i18next'

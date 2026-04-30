@@ -1,4 +1,9 @@
-import React, { useContext } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/prop-types, react/display-name */
+
+/* eslint-disable new-cap */
+
+import { useContext } from 'react'
 import styled from 'styled-components'
 import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
 import { Grid, EditorDiv, Menu, FullWaxEditorGrid } from '../EditorStyles'
@@ -15,7 +20,6 @@ const TopBar = ComponentPlugin('topBar')
 
 const ContentEditorLayout =
   readOnly =>
-  /* eslint-disable-next-line react/function-component-definition */
   ({ useHandlebarsAutocomplete, ...props }) => {
     const { options } = useContext(WaxContext)
 

@@ -1,3 +1,5 @@
+/* eslint-disable promise/always-return */
+
 const { difference, map } = require('lodash')
 const path = require('path')
 const fs = require('fs-extra').promises
@@ -233,9 +235,8 @@ const createGroupAndRelatedData = async (
     }))
 
     // Insert default email templates into the database for group
-    const insertedEmailTemplates = await EmailTemplate.query(trx).insertGraph(
-      emailTemplatesData,
-    )
+    const insertedEmailTemplates =
+      await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
 
     logger.info(
       `    Added ${insertedEmailTemplates.length} number of default email templates for "${group.name}".`,

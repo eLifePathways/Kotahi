@@ -1,4 +1,9 @@
-import React, { useContext, useEffect } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/display-name */
+
+/* eslint-disable new-cap */
+
+import { useContext, useEffect } from 'react'
 import {
   WaxContext,
   WaxView,
@@ -36,91 +41,88 @@ const TopBar = ComponentPlugin('topBar')
 const NotesArea = ComponentPlugin('notesArea')
 const CounterInfo = ComponentPlugin('bottomRightInfo')
 
-const FullWaxEditorLayout =
-  (readOnly, getActiveViewDom) =>
-  /* eslint-disable-next-line react/function-component-definition */
-  props => {
-    const {
-      pmViews: { main },
-      options,
-      activeView,
-    } = useContext(WaxContext)
+const FullWaxEditorLayout = (readOnly, getActiveViewDom) => props => {
+  const {
+    pmViews: { main },
+    options,
+    activeView,
+  } = useContext(WaxContext)
 
-    useEffect(() => {
-      activeView.dom?.outerHTML &&
-        getActiveViewDom &&
-        getActiveViewDom(activeView.dom?.outerHTML)
-    }, [activeView.dom, activeView])
-
-    const notes = (main && getNotes(main)) ?? []
-
-    // added to bring in full screen
-
-    let fullScreenStyles = {}
-
-    if (options.fullScreen) {
-      fullScreenStyles = {
-        backgroundColor: '#fff',
-        height: '100%',
-        left: '0',
-        margin: '0',
-        padding: '0',
-        position: 'fixed',
-        top: '0',
-        width: '100%',
-        zIndex: '99999',
-      }
+  useEffect(() => {
+    if (activeView.dom?.outerHTML && getActiveViewDom) {
+      getActiveViewDom(activeView.dom?.outerHTML)
     }
+  }, [activeView.dom, activeView])
 
-    return (
-      <div id="wax-container" style={fullScreenStyles}>
-        <Grid readonly={readOnly} readOnlyComments>
-          {readOnly ? (
+  const notes = (main && getNotes(main)) ?? []
+
+  // added to bring in full screen
+
+  let fullScreenStyles = {}
+
+  if (options.fullScreen) {
+    fullScreenStyles = {
+      backgroundColor: '#fff',
+      height: '100%',
+      left: '0',
+      margin: '0',
+      padding: '0',
+      position: 'fixed',
+      top: '0',
+      width: '100%',
+      zIndex: '99999',
+    }
+  }
+
+  return (
+    <div id="wax-container" style={fullScreenStyles}>
+      <Grid readonly={readOnly} readOnlyComments>
+        {readOnly ? (
+          <FullWaxEditorGrid useComments={false}>
+            <ReadOnlyEditorDiv className="wax-surface-scroll panelWrapper">
+              <WaxView {...props} />
+            </ReadOnlyEditorDiv>
+            {notes.length > 0 && (
+              <ReadOnlyNotesAreaContainer className="panelWrapper">
+                <NotesContainer id="notes-container">
+                  <NotesHeading>Notes</NotesHeading>
+                  <NotesArea view={main} />
+                </NotesContainer>
+              </ReadOnlyNotesAreaContainer>
+            )}
+            <InfoContainer>
+              <CounterInfo />
+            </InfoContainer>
+          </FullWaxEditorGrid>
+        ) : (
+          <>
+            <Menu className="waxmenu">
+              <TopBar />
+            </Menu>
             <FullWaxEditorGrid useComments={false}>
-              <ReadOnlyEditorDiv className="wax-surface-scroll panelWrapper">
+              <EditorDiv
+                className="wax-surface-scroll panelWrapper"
+                hideComments
+              >
                 <WaxView {...props} />
-              </ReadOnlyEditorDiv>
+              </EditorDiv>
               {notes.length > 0 && (
-                <ReadOnlyNotesAreaContainer className="panelWrapper">
+                <NotesAreaContainer className="panelWrapper">
                   <NotesContainer id="notes-container">
                     <NotesHeading>Notes</NotesHeading>
                     <NotesArea view={main} />
                   </NotesContainer>
-                </ReadOnlyNotesAreaContainer>
+                </NotesAreaContainer>
               )}
               <InfoContainer>
                 <CounterInfo />
               </InfoContainer>
             </FullWaxEditorGrid>
-          ) : (
-            <>
-              <Menu className="waxmenu">
-                <TopBar />
-              </Menu>
-              <FullWaxEditorGrid useComments={false}>
-                <EditorDiv
-                  className="wax-surface-scroll panelWrapper"
-                  hideComments
-                >
-                  <WaxView {...props} />
-                </EditorDiv>
-                {notes.length > 0 && (
-                  <NotesAreaContainer className="panelWrapper">
-                    <NotesContainer id="notes-container">
-                      <NotesHeading>Notes</NotesHeading>
-                      <NotesArea view={main} />
-                    </NotesContainer>
-                  </NotesAreaContainer>
-                )}
-                <InfoContainer>
-                  <CounterInfo />
-                </InfoContainer>
-              </FullWaxEditorGrid>
-            </>
-          )}
-        </Grid>
-      </div>
-    )
-  }
+          </>
+        )}
+      </Grid>
+    </div>
+  )
+}
 
 export default FullWaxEditorLayout

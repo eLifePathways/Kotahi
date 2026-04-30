@@ -1,4 +1,4 @@
-const { uuid } = require('@coko/server')
+const { uuid, logger } = require('@coko/server')
 const axios = require('axios')
 const { getRorOrganisation } = require('./utils')
 
@@ -9,8 +9,9 @@ const getDataByDoi = async doi => {
     const response = await axios.get(`${apiUrl}/${doi}`, {})
 
     return response.data.message
+    /* eslint-disable-next-line */
   } catch (error) {
-    console.error(`Resource not found in Crossref for DOI ${doi}`)
+    logger.error(`Resource not found in Crossref for DOI ${doi}`)
     return null
   }
 }

@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { color } from '../../../../theme'

@@ -1,4 +1,3 @@
-import React from 'react'
 import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { LeftSideButton, Commands, Tools } from 'wax-prosemirror-core'
@@ -85,7 +84,7 @@ class ReferenceTool extends Tools {
 
   renderTool(view) {
     if (isEmpty(view)) return null
-    // eslint-disable-next-line no-underscore-dangle
+
     return this._isDisplayed ? (
       <LeftSideButton item={this.toJSON()} key="Reference" view={view} />
     ) : null

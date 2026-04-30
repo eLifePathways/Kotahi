@@ -109,7 +109,9 @@ export const createOptions = (recipients, emailTemplates, cc) => {
 export const createFieldsStatusObject = notification => {
   const {
     // skipped fields
+    /* eslint-disable-next-line no-unused-vars */
     id: skippedId,
+    /* eslint-disable-next-line no-unused-vars */
     isDefault: skippedIsDefault,
     // fields to validate
     ...fieldsToValidate

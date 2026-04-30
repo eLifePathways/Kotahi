@@ -1,5 +1,7 @@
 /* stylelint-disable declaration-no-important */
-import React from 'react'
+
+/* eslint-disable react/prop-types */
+
 import { useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Icon } from '../../pubsweet'

@@ -1,6 +1,5 @@
-/* eslint-disable prefer-object-spread */
+/* eslint-disable react/prop-types */
 
-import React from 'react'
 import { withTheme } from 'styled-components'
 import { compose } from 'recompose'
 

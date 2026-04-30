@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { Tag as AntTag } from 'antd'
 import PropTypes from 'prop-types'
 import { capitalize } from 'lodash'

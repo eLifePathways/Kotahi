@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { th, grid } from '@coko/client'
@@ -21,7 +20,7 @@ const CommsErrorBanner = ({ error }) => {
 
 CommsErrorBanner.propTypes = {
   /** An error for logging to the console */
-  // eslint-disable-next-line react/forbid-prop-types
+
   error: PropTypes.any,
 }
 

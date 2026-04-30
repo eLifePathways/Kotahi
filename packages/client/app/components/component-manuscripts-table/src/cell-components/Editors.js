@@ -1,4 +1,3 @@
-import React from 'react'
 import { StyledAuthor } from '../style'
 
 const Editors = ({ manuscript }) => {

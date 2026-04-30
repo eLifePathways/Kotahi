@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react-hooks/purity */
+
+import { useContext, useState } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import i18next from 'i18next'
 import Report from './Report'
@@ -131,7 +133,7 @@ const removeTypeName = rows => {
   if (!rows) return []
   return rows.map(row => {
     const newRow = { ...row }
-    // eslint-disable-next-line no-underscore-dangle
+
     delete newRow.__typename
     return newRow
   })

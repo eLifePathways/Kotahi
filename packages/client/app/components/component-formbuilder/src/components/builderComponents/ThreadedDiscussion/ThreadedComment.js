@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext, useState } from 'react'
 import Moment from 'react-moment'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../../../../pubsweet'
@@ -151,7 +153,7 @@ const ThreadedComment = ({
           )}
 
           <Collapse
-            onClick={event => {
+            onClick={() => {
               setCollapse(!collapse)
             }}
             value={collapse}
@@ -184,7 +186,7 @@ const ThreadedComment = ({
             value={modalFieldValue}
           />
           <Button
-            onClick={event => {
+            onClick={() => {
               onSubmitClick()
             }}
             primary

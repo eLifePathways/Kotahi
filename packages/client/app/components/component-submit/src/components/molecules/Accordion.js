@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { Button } from '../../../../pubsweet'

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import { cloneDeep, get } from 'lodash'
 import { FieldArray } from 'formik'
@@ -43,9 +44,12 @@ const Message = styled.div`
 `
 
 const DropzoneAndList = ({
-  form: { values, setFieldValue },
+  form: {
+    values,
+    // setFieldValue
+  },
   push,
-  insert,
+  // insert,
   remove,
   createFile,
   deleteFile,
@@ -66,7 +70,7 @@ const DropzoneAndList = ({
     .map((file, index) => {
       // This is so that we preserve the location of the file in the top-level
       // files array (needed for deletion).
-      /* eslint-disable-next-line no-param-reassign */
+
       file.originalIndex = index
       return file
     })
@@ -283,5 +287,4 @@ FilesUpload.defaultProps = {
   persistentFileLabel: false,
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export { FilesUpload }

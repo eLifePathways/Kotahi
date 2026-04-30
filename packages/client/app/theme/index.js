@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import { css } from 'styled-components'
 import {
   Action,

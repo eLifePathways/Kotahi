@@ -1,6 +1,9 @@
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react/prop-types */
+
 /* eslint-disable no-shadow */
 
-import React, { useState, useContext, useRef, useEffect } from 'react'
+import { useState, useContext, useRef, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useTranslation } from 'react-i18next'
@@ -134,6 +137,7 @@ const ManuscriptsPage = ({ currentUser, history }) => {
           })
 
           const extractedData = refetchData.data.getManuscriptsData.map(
+            /* eslint-disable-next-line no-unused-vars */
             ({ __typename, ...rest }) => rest,
           )
 
@@ -154,6 +158,7 @@ const ManuscriptsPage = ({ currentUser, history }) => {
   useEffect(() => {
     if (!loading && !error && data) {
       const extractedData = data.getManuscriptsData.map(
+        /* eslint-disable-next-line no-unused-vars */
         ({ __typename, ...rest }) => rest,
       )
 

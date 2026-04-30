@@ -1,13 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { adopt } from 'react-adopt'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { debounce, kebabCase } from 'lodash'
 import { required } from 'xpub-validators'
 import { useTranslation } from 'react-i18next'
 
 import { ValidatedFieldFormik } from '../../../pubsweet'
 import { inputFields } from '../FormSettings'
-import { getSpecificFilesQuery } from '../../../asset-manager/src/queries'
-import withModal from '../../../asset-manager/src/ui/Modal/withModal'
+import { useGetSpecificFiles } from '../../../asset-manager/src/queries'
+import ModalContext from '../../../asset-manager/src/ui/Modal/ModalContext'
 import { ConfirmationModal } from '../../../component-modal/src/ConfirmationModal'
 import PublishStatus from '../components/PublishStatus'
 
@@ -21,28 +23,41 @@ import {
   ErrorMessage,
 } from '../style'
 
-// Todo: Currently this is breaking the rules of keeping all the server calls
-// and everything on the top-level component.
-// We need to fix it and pass the getSpecificFilesQuery as a function
-// something like getFilesById which takes the ids and returns the files.
+const CMSPageEditForm = ({
+  isNewPage,
+  onSubmit,
+  onDelete,
+  setFieldValue,
+  setTouched,
+  key,
+  submitButtonText,
+  cmsPage,
+  autoSaveData,
+  autoSubmit,
+  customFormErrors,
+  resetCustomErrors,
+  // currentValues,
+  flaxSiteUrlForGroup,
+}) => {
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
+  const autoSave = useCallback(debounce(autoSaveData ?? (() => {}), 1000), [])
+  useEffect(() => autoSave.flush, [])
 
-const mapper = {
-  getSpecificFilesQuery,
-  withModal,
-}
+  const { t } = useTranslation()
 
-const mapProps = args => ({
-  onAssetManager: cmsPageId => {
+  const {
+    showModal,
+    hideModal,
+    modals,
+    modalKey,
+    data: modalData,
+  } = useContext(ModalContext)
+
+  const { client, query } = useGetSpecificFiles()
+
+  const onAssetManager = cmsPageId => {
     return new Promise((resolve, reject) => {
-      const {
-        withModal: { showModal, hideModal },
-      } = args
-
       const handleImport = async selectedFileIds => {
-        const {
-          getSpecificFilesQuery: { client, query },
-        } = args
-
         const { data } = await client.query({
           query,
           variables: { ids: selectedFileIds },
@@ -76,32 +91,7 @@ const mapProps = args => ({
         })
       }
     })
-  },
-})
-
-const Composed = adopt(mapper, mapProps)
-
-const CMSPageEditForm = ({
-  isNewPage,
-  onSubmit,
-  onDelete,
-  setFieldValue,
-  setTouched,
-  key,
-  submitButtonText,
-  cmsPage,
-  autoSaveData,
-  autoSubmit,
-  customFormErrors,
-  resetCustomErrors,
-  currentValues,
-  flaxSiteUrlForGroup,
-}) => {
-  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
-  const autoSave = useCallback(debounce(autoSaveData ?? (() => {}), 1000), [])
-  useEffect(() => autoSave.flush, [])
-
-  const { t } = useTranslation()
+  }
 
   const onDataChanged = (itemKey, value) => {
     const data = {}
@@ -124,7 +114,7 @@ const CMSPageEditForm = ({
     onDataChanged(fieldKey, titleSlug)
   }
 
-  const getInputFieldSpecificProps = (item, { onAssetManager }) => {
+  const getInputFieldSpecificProps = item => {
     let props = {}
 
     switch (item.type) {
@@ -192,58 +182,65 @@ const CMSPageEditForm = ({
     })
   }
 
+  const ModalComponent = modals?.[modalKey]
+
   return (
-    <Composed>
-      {({ onAssetManager }) => (
-        <Page>
-          <EditorForm key={key} onSubmit={onSubmit}>
-            {localizeInputFields(inputFields).map(item => {
-              return (
-                <Section flexGrow={item.flexGrow || false} key={item.name}>
-                  <p style={{ fontSize: '10px' }}>{item.label}</p>
-                  <ValidatedFieldFormik
-                    component={item.component}
-                    name={item.name}
-                    setTouched={setTouched}
-                    style={{ width: '100%' }}
-                    validate={item.isRequired ? required : null}
-                    {...item.otherProps}
-                    {...getInputFieldSpecificProps(item, { onAssetManager })}
-                  />
-                  {renderCustomErrors(item)}
-                </Section>
-              )
-            })}
-            <ActionButtonContainer>
-              <div>
-                <FormActionButton onClick={onSubmit} primary type="button">
-                  {submitButtonText}
-                </FormActionButton>
-                {!isNewPage && (
-                  <FormActionDelete
-                    onClick={() => setIsConfirmingDelete(true)}
-                    style={{ minWidth: '104px' }}
-                  >
-                    {t('cmsPage.pages.Delete')}
-                  </FormActionDelete>
-                )}
-              </div>
-              {!isNewPage && <PublishStatus cmsComponent={cmsPage} />}
-            </ActionButtonContainer>
-            <ConfirmationModal
-              cancelButtonText={t('modals.cmsPageDelete.Cancel')}
-              closeModal={() => setIsConfirmingDelete(false)}
-              confirmationAction={() => onDelete(cmsPage)}
-              confirmationButtonText={t('modals.cmsPageDelete.Delete')}
-              isOpen={isConfirmingDelete}
-              message={t('modals.cmsPageDelete.permanentlyDelete', {
-                pageName: cmsPage.title,
-              })}
-            />
-          </EditorForm>
-        </Page>
+    <>
+      {modalKey && ModalComponent && (
+        <ModalComponent
+          data={modalData}
+          hideModal={hideModal}
+          isOpen={modalKey !== undefined}
+        />
       )}
-    </Composed>
+      <Page>
+        <EditorForm key={key} onSubmit={onSubmit}>
+          {localizeInputFields(inputFields).map(item => {
+            return (
+              <Section flexGrow={item.flexGrow || false} key={item.name}>
+                <p style={{ fontSize: '10px' }}>{item.label}</p>
+                <ValidatedFieldFormik
+                  component={item.component}
+                  name={item.name}
+                  setTouched={setTouched}
+                  style={{ width: '100%' }}
+                  validate={item.isRequired ? required : null}
+                  {...item.otherProps}
+                  {...getInputFieldSpecificProps(item)}
+                />
+                {renderCustomErrors(item)}
+              </Section>
+            )
+          })}
+          <ActionButtonContainer>
+            <div>
+              <FormActionButton onClick={onSubmit} primary type="button">
+                {submitButtonText}
+              </FormActionButton>
+              {!isNewPage && (
+                <FormActionDelete
+                  onClick={() => setIsConfirmingDelete(true)}
+                  style={{ minWidth: '104px' }}
+                >
+                  {t('cmsPage.pages.Delete')}
+                </FormActionDelete>
+              )}
+            </div>
+            {!isNewPage && <PublishStatus cmsComponent={cmsPage} />}
+          </ActionButtonContainer>
+          <ConfirmationModal
+            cancelButtonText={t('modals.cmsPageDelete.Cancel')}
+            closeModal={() => setIsConfirmingDelete(false)}
+            confirmationAction={() => onDelete(cmsPage)}
+            confirmationButtonText={t('modals.cmsPageDelete.Delete')}
+            isOpen={isConfirmingDelete}
+            message={t('modals.cmsPageDelete.permanentlyDelete', {
+              pageName: cmsPage.title,
+            })}
+          />
+        </EditorForm>
+      </Page>
+    </>
   )
 }
 

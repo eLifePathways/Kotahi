@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+
 import React, { useContext, useRef, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { set, debounce } from 'lodash'
@@ -91,7 +94,7 @@ const DecisionVersion = ({
   refetch,
   updateTask,
   updateTasks,
-  teams,
+  // teams,
   removeAuthor,
   removeInvitation,
   removeReviewer,
@@ -221,7 +224,6 @@ const DecisionVersion = ({
 
     return {
       content: (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
           {!userCanEditMetadata ? (
             <ReadonlyFormTemplate

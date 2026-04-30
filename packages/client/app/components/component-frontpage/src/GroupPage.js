@@ -1,6 +1,6 @@
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { th, grid } from '@coko/client'
@@ -43,7 +43,7 @@ export const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-const GroupPage = ({ ...props }) => {
+const GroupPage = () => {
   const history = useHistory()
   const [selectedOption, setSelectedOption] = useState('')
   const { loading, error, data } = useQuery(GET_GROUPS)

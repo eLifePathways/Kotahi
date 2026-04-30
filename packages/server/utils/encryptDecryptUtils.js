@@ -1,5 +1,5 @@
 const crypto = require('crypto')
-const config = require('config')
+const { config } = require('@coko/server')
 
 const deriveKey = (secret, salt) => {
   return crypto.pbkdf2Sync(secret, salt, 100000, 32, 'sha512')

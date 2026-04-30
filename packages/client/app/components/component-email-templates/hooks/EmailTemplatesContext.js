@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useCallback, useMemo } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+import { createContext, useContext, useCallback, useMemo } from 'react'
 import debounce from 'lodash/debounce'
 import { useTranslation } from 'react-i18next'
 import useEmailTemplates from './useEmailTemplates'

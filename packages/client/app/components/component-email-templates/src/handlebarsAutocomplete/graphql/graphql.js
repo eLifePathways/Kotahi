@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 const GET_VARIABLES = gql`
   query GetVariables($groupId: ID!) {

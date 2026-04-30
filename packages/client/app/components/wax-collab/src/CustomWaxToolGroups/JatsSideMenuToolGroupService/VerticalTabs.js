@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable shorthand-property-no-redundant-values */
 /* stylelint-disable custom-property-pattern, string-quotes */
 

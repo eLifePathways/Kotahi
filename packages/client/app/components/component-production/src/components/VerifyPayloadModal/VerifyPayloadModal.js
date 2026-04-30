@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* stylelint-disable declaration-no-important */
-/* stylelint-disable string-quotes */
-import React, { useEffect, useState } from 'react'
+
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import { useLazyQuery } from '@apollo/client'
@@ -249,7 +251,9 @@ const VerifyPayloadModal = ({
   })
 
   useEffect(() => {
-    apiToCheck && checkApi({ variables: { id: manuscriptId, api: apiToCheck } })
+    if (apiToCheck) {
+      checkApi({ variables: { id: manuscriptId, api: apiToCheck } })
+    }
   }, [apiToCheck])
 
   const handleClose = () => {

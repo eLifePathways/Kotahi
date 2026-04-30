@@ -1,9 +1,9 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { Checkbox } from './Checkbox'
 /* import styled from 'styled-components' */
 /* import theme from '../../theme' */
 
-// eslint-disable-next-line import/prefer-default-export
 export const CheckboxGroup = ({
   options,
   value: values,

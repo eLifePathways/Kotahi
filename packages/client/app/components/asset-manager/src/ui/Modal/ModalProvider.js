@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 
 import ModalContext from './ModalContext'
 
@@ -18,7 +20,6 @@ const ModalProvider = ({ children, modals }) => {
 
   return (
     <ModalContext.Provider
-      /* eslint-disable-next-line react/jsx-no-constructed-context-values */
       value={{
         ...modalState,
         modals,

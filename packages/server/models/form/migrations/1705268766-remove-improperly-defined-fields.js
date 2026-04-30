@@ -11,7 +11,7 @@ const {
 
 const Form = require('../form.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     // let updatedFormsCount = 0
     const forms = await Form.query(trx)

@@ -22,6 +22,7 @@ const getDoi = (suffix, activeConfig) => {
 const getDoiWithoutError = (suffix, activeConfig) => {
   try {
     return getDoi(suffix, activeConfig)
+    /* eslint-disable-next-line */
   } catch (error) {
     return ''
   }

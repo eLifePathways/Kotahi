@@ -1,4 +1,6 @@
-import React, { useState, memo } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState, memo } from 'react'
 import { useLocation } from 'react-router-dom'
 import {
   SubMenuContainer,

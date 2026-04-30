@@ -1,30 +1,32 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import ReactSelect from 'react-select'
 import { ThemeContext } from 'styled-components'
 import { color } from '../../theme'
 
 const styles = th => ({
-  container: (provided, state) => ({
+  container: provided => ({
     ...provided,
     width: '100%',
   }),
-  indicatorSeparator: (provided, state) => ({ ...provided, display: 'none' }),
-  indicatorsContainer: (provided, state) => ({
+  indicatorSeparator: provided => ({ ...provided, display: 'none' }),
+  indicatorsContainer: provided => ({
     ...provided,
     height: 'fit-client',
     width: 'fit-client',
   }),
-  dropdownIndicator: (provided, state) => ({
+  dropdownIndicator: provided => ({
     ...provided,
     margin: '0 -3px',
     padding: '0',
   }),
-  clearIndicator: (provided, state) => ({
+  clearIndicator: provided => ({
     ...provided,
     margin: '0 -2px',
     padding: '0',
   }),
-  menu: (provided, state) => ({
+  menu: provided => ({
     ...provided,
     borderRadius: th.borderRadius,
     zIndex: 9999,
@@ -79,7 +81,6 @@ const styles = th => ({
   },
 })
 
-// eslint-disable-next-line import/prefer-default-export
 export const MinimalSelect = ({
   value,
   isMulti,

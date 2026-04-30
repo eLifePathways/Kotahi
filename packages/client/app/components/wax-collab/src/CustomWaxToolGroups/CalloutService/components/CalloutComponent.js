@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/static-components */
 /* eslint-disable react/prop-types */
-import React, { useContext, useState, useEffect } from 'react'
+
+import { useContext, useState, useEffect } from 'react'
 import { WaxContext, ApplicationContext } from 'wax-prosemirror-core'
 import { sanitize } from 'isomorphic-dompurify'
 import Modal from '../../../../../component-modal/src/Modal'
@@ -19,6 +21,7 @@ import {
   CloseButtonIcon,
 } from './styles'
 
+/* eslint-disable-next-line no-unused-vars */
 const CalloutComponent = ({ node, view, getPos }) => {
   const context = useContext(WaxContext)
 
@@ -28,7 +31,6 @@ const CalloutComponent = ({ node, view, getPos }) => {
   const { state } = activeView
   const posFrom = pmViews[activeViewId].state.selection.from
 
-  // eslint-disable-next-line
   const calloutConfig = app.config._config.config.CalloutService
 
   const { updateCallout, readOnly } = calloutConfig
@@ -69,18 +71,14 @@ const CalloutComponent = ({ node, view, getPos }) => {
     // This returns a "reference" node with the refID from activeView
     let nodeFound
 
-    activeView.state.doc.nodesBetween(
-      getPos(),
-      getPos() + 1,
-      (possibleNode, pos) => {
-        if (
-          possibleNode.type.name === 'callout' &&
-          possibleNode.attrs.id === calloutId
-        ) {
-          nodeFound = possibleNode
-        }
-      },
-    )
+    activeView.state.doc.nodesBetween(getPos(), getPos() + 1, possibleNode => {
+      if (
+        possibleNode.type.name === 'callout' &&
+        possibleNode.attrs.id === calloutId
+      ) {
+        nodeFound = possibleNode
+      }
+    })
 
     return nodeFound
   }
@@ -160,7 +158,6 @@ const CalloutComponent = ({ node, view, getPos }) => {
     }
   }
 
-  /* eslint-disable-next-line react/no-unstable-nested-components */
   const CalloutPopUp = () => {
     return (
       <PopUpWrapper>
@@ -178,9 +175,11 @@ const CalloutComponent = ({ node, view, getPos }) => {
                   key={reference.id}
                   onClick={e => {
                     e.preventDefault()
-                    itemExist
-                      ? removeItem(reference.id)
-                      : setItems(items.concat({ id: reference.id }))
+                    if (itemExist) {
+                      removeItem(reference.id)
+                    } else {
+                      setItems(items.concat({ id: reference.id }))
+                    }
                   }}
                 >
                   <input
@@ -191,7 +190,7 @@ const CalloutComponent = ({ node, view, getPos }) => {
                     }}
                     type="checkbox"
                   />
-                  <div // eslint-disable-next-line
+                  <div
                     dangerouslySetInnerHTML={{
                       __html: sanitize(formattedCitation),
                     }}

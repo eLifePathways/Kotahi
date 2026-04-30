@@ -36,7 +36,12 @@ import CitationService from '../CustomWaxToolGroups/CitationService/CitationServ
 import CalloutService from '../CustomWaxToolGroups/CalloutService/CalloutService'
 import 'wax-table-service/dist/index.css'
 
-const updateTitle = title => {
+// const updateTitle = title => {
+//   // this gets fired when the title is changed in original version of this—not called now, but might still be needed
+//   // console.log(`Title changed: ${title}`)
+// }
+
+const updateTitle = () => {
   // this gets fired when the title is changed in original version of this—not called now, but might still be needed
   // console.log(`Title changed: ${title}`)
 }

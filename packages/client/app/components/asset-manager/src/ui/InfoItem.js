@@ -1,4 +1,9 @@
-import React, { Component } from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/catch-or-return */
+
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { Component } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 
@@ -69,11 +74,11 @@ class InfoItem extends Component {
     this.setState({ newValue: e.target.value })
   }
 
-  handleEditMode(e) {
+  handleEditMode() {
     this.setState({ editMode: true, focus: true })
   }
 
-  handleSave(e) {
+  handleSave() {
     const { updateFile, type } = this.props
     const { newValue } = this.state
     const self = this
@@ -82,7 +87,7 @@ class InfoItem extends Component {
     )
   }
 
-  handleCancel(e) {
+  handleCancel() {
     const { initialValue } = this.state
     this.setState({ editMode: false, newValue: initialValue, focus: false })
   }

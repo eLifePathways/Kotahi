@@ -1,22 +1,16 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 const { chunk } = require('lodash')
 
 const Docmap = require('../docmap.model')
 const Group = require('../../group/group.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const docmaps = await Docmap.query(trx)
     const groups = await Group.query(trx)
 
-    logger.info(`Existing Docmaps count: ${docmaps.length}`)
-    logger.info(`Existing Groups count: ${groups.length}`)
-
     // Existing instances migrating to multi-tenancy groups
     if (groups.length >= 1 && docmaps.length >= 1 && !docmaps[0].group_id) {
-      logger.info('Initiated patch for docmaps table in chunks of 10')
-
-      // eslint-disable-next-line no-restricted-syntax
       for (const someDocmaps of chunk(docmaps, 10)) {
         // eslint-disable-next-line no-await-in-loop
         await Promise.all(
@@ -34,12 +28,8 @@ exports.up = async knex => {
               groupId: groups[0].id,
             })
           }),
-        ).then(res => {
-          logger.info('groupId and Content patched successfully for chunk')
-        })
+        )
       }
-
-      logger.info('Completed patch for docmaps table')
     }
   })
 }

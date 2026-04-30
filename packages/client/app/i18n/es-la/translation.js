@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const esLa = {
   translation: {
     msStatus: {

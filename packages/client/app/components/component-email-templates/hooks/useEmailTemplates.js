@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { GET_EMAIL_TEMPLATES } from '../../../queries'

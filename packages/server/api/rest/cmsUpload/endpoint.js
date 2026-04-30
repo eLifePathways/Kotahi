@@ -30,7 +30,7 @@ module.exports = app => {
     '/api/cmsUploadFiles',
     authBearer,
     upload.array('files'),
-    async (req, res, next) => {
+    async (req, res) => {
       const uploadedFiles = uploadCms(req.body.id, req.files)
       res.send(uploadedFiles)
     },

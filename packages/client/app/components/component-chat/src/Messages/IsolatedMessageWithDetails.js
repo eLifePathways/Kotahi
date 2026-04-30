@@ -1,4 +1,8 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+/* eslint-disable jsx-a11y/no-autofocus */
+
 import styled from 'styled-components'
 import { Wax } from 'wax-prosemirror-core'
 import {

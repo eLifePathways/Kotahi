@@ -1,6 +1,5 @@
-/* stylelint-disable string-quotes */
+/* eslint-disable react/prop-types */
 
-import React from 'react'
 import styled from 'styled-components'
 import { color, space } from '../../theme'
 
@@ -34,7 +33,6 @@ const CheckboxContainer = styled.div`
   }
 `
 
-// eslint-disable-next-line import/prefer-default-export
 export const Checkbox = props => {
   const { checked, id, label, value, style = {}, handleChange } = props
 

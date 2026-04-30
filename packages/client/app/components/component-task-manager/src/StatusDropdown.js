@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable color-function-notation, alpha-value-notation */
 
-import React from 'react'
 import styled from 'styled-components'
 import Dropdown from 'react-dropdown'
 import { useMutation } from '@apollo/client'

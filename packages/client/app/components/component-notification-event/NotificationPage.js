@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable declaration-no-important */
-import React, { Fragment, useEffect, useContext } from 'react'
+import { Fragment, useEffect, useContext } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -34,10 +37,10 @@ const NotificationPage = ({ emailTemplates, wrapper: Root = Fragment }) => {
     onFetch: buildCollapsedState,
     onCreate: selected.set,
     onUpdate: result => {
-      selected.state?.id === result.id && selected.update({ ...result })
+      if (selected.state?.id === result.id) selected.update({ ...result })
     },
     onDelete: id => {
-      selected.state?.id === id && selected.clear()
+      if (selected.state?.id === id) selected.clear()
     },
   }
 

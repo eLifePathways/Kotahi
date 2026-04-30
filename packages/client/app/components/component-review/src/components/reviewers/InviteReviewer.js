@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
+
 import { Formik } from 'formik'
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   SectionContent,

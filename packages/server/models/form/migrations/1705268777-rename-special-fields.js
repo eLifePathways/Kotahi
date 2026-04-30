@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign, no-restricted-syntax, no-await-in-loop */
+/* eslint-disable no-await-in-loop */
 const { useTransaction, logger } = require('@coko/server')
 const { chunk } = require('lodash')
 
@@ -204,7 +204,7 @@ const updateConfig = async (config, instanceType, trx) => {
   })
 }
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const groups = await Group.query(trx)
 
@@ -214,7 +214,6 @@ exports.up = async knex => {
       const activeConfig = configs.find(x => x.active)
       const { instanceName } = activeConfig.formData
 
-      let updatedFormsCount = 0
       const forms = await Form.query(trx).where({ groupId })
       logger.info(`Total forms in group ${groupName}: ${forms.length}`)
 
@@ -225,11 +224,8 @@ exports.up = async knex => {
           )
           form.structure.haspopup = form.structure.haspopup ?? 'false'
           await Form.query(trx).patchAndFetchById(form.id, form)
-          updatedFormsCount += 1
         }),
-      ).then(res => {
-        logger.info(`Updated ${updatedFormsCount} forms`)
-      })
+      )
 
       let updatedManuscriptsCount = 0
 
@@ -247,27 +243,16 @@ exports.up = async knex => {
         `Updated ${updatedManuscriptsCount} manuscripts in group ${groupName}`,
       )
 
-      let updatedReviewsCount = 0
-
       const reviews = await Manuscript.relatedQuery('reviews', trx).for(
         Manuscript.query().where({ groupId }),
       )
 
       for (const someReviews of chunk(reviews, 10)) {
-        updatedReviewsCount += await renameDataInSomeReviews(
-          someReviews,
-          instanceName,
-          trx,
-        )
+        await renameDataInSomeReviews(someReviews, instanceName, trx)
       }
-
-      logger.info(
-        `Updated ${updatedReviewsCount} reviews/decisions in group ${groupName}`,
-      )
 
       for (const config of configs)
         await updateConfig(config, instanceName, trx)
-      logger.info(`Updated ${configs.length} configs in group ${groupName}`)
     }
   })
 }

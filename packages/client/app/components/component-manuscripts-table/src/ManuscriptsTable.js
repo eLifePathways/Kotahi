@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { useTranslation } from 'react-i18next'
 import { ManuscriptsHeaderRow, ManuscriptsTableStyled } from './style'
 import FilterSortHeader from './FilterSortHeader'
@@ -52,7 +53,7 @@ const ManuscriptsTable = ({
           {t('manuscriptsTable.No matching manuscripts were found')}
         </Placeholder>
       ) : (
-        manuscripts.map((manuscript, key) => {
+        manuscripts.map(manuscript => {
           const latestVersion = {
             numVersions: getNumVersions(manuscript),
             ...manuscript,

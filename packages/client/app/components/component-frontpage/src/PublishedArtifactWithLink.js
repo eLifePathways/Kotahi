@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { sanitize } from 'isomorphic-dompurify'
 import { Link as LinkIcon } from 'react-feather'
 import styled from 'styled-components'
@@ -27,7 +28,6 @@ const PublishedArtifactWithLink = ({ artifact }) => {
       }
     >
       <div
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: sanitize(artifact.content),
         }}

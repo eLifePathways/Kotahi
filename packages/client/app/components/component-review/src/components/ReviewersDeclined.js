@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable declaration-block-no-redundant-longhand-properties */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '../../../pubsweet'

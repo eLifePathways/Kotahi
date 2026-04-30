@@ -1,4 +1,8 @@
-import React, { useRef } from 'react'
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+
+import { useRef } from 'react'
 
 import { Wax } from 'wax-prosemirror-core'
 
@@ -23,8 +27,8 @@ const renderImage = file => {
 
 const ContentWaxEditor = ({
   value,
-  placeholder,
-  fileUpload,
+  // placeholder,
+  // fileUpload,
   readonly,
   user,
   onAssetManager,

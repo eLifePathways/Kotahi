@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import ReactPagination from 'react-paginate'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'

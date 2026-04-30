@@ -1,9 +1,10 @@
-import React from 'react'
+/* eslint-disable react/prop-types, react/display-name */
+
 import CollaborativeWax from '../../../wax-collab/src/CollaborativeWax'
 
 const FormCollaborateComponent =
   component =>
-  // eslint-disable-next-line react/function-component-definition
+  /* eslint-disable-next-line no-unused-vars */
   ({ onChange, collaborativeObject, ...rest }) => {
     const { identifier } = collaborativeObject
 

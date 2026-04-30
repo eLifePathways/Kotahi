@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 
 // import { ActionButton } from '../ui'
@@ -22,7 +23,7 @@ const UploadButton = ({
   label,
   disabled,
   id,
-  className,
+  // className,
 }) => {
   const onClick = event => {
     event.preventDefault()

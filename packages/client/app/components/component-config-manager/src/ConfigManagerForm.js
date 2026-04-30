@@ -1,7 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/refs */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable no-unused-expressions */
+
 /* stylelint-disable declaration-no-important */
-/* eslint-disable react/jsx-handler-names */
-/* eslint-disable no-underscore-dangle */
-import React, { useMemo, useRef, useState } from 'react'
+
+import { useMemo, useRef, useState } from 'react'
 import Form from '@rjsf/core'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -103,7 +107,9 @@ const EmailsTabWrapper = styled(StyledSectionContent)`
     span.handlebars {
       background-color: ${getFormBadgeBg('common')};
       border-radius: 5px;
-      box-shadow: 0 0 6px 0 #0001, inset 0 0 4px 0 #0002;
+      box-shadow:
+        0 0 6px 0 #0001,
+        inset 0 0 4px 0 #0002;
       margin: 0;
       padding: 2px 4px;
       text-rendering: geometricPrecision;
@@ -314,7 +320,7 @@ const ConfigManagerForm = ({
 
   const tabSections = useMemo(
     () =>
-      Object.entries(configTabLabels).map(([key, v]) => ({
+      Object.entries(configTabLabels).map(([key]) => ({
         label: t(`configPage.${key}Tab`),
         key,
         content: (
@@ -322,7 +328,6 @@ const ConfigManagerForm = ({
             <StyledForm
               disabled={disabled}
               fields={{ DescriptionField }}
-              /* eslint-disable-next-line react/no-unstable-nested-components */
               FieldTemplate={props => (
                 <FieldTemplate
                   showInstanceType={key === 'general'}
@@ -344,7 +349,7 @@ const ConfigManagerForm = ({
             >
               {/* The blank fragment that follows is to suppress the submit button.
               See https://github.com/rjsf-team/react-jsonschema-form/issues/1602 */}
-              {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
+              {}
               <></>
             </StyledForm>
           </StyledSectionContent>

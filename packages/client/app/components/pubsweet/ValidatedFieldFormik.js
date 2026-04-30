@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types, react/display-name */
+
 import { compose, withHandlers } from 'recompose'
 import { FastField } from 'formik'
 import { get } from 'lodash'
@@ -26,7 +27,6 @@ const ErrorMessage = styled(Message)`
 
 const ValidatedFieldComponent =
   ({ component: Component }) =>
-  /* eslint-disable-next-line react/function-component-definition */
   ({ form: { errors, touched }, input, ...extraProps }) => {
     let validationStatus
     if (get(touched, extraProps.name)) validationStatus = 'success'

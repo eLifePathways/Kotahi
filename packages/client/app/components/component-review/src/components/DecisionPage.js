@@ -1,4 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react'
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/catch-or-return, promise/always-return */
+
+import { useEffect, useState, useContext } from 'react'
 import PropTypes from 'prop-types'
 import {
   gql,
@@ -513,7 +517,7 @@ const DecisionPage = ({ currentUser, match }) => {
       text: [`${userInput}.\nHighlighted text: ${highlightedText}`],
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       refetch({
         system: waxAiToolSystem,
         input: formattedInput,

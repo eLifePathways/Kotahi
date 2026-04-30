@@ -11,9 +11,8 @@ class ArticleTemplate extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const { File } = require('@coko/server')
-    /* eslint-disable-next-line global-require */
+
     const Group = require('../group/group.model')
 
     return {

@@ -1,15 +1,11 @@
-const { BaseModel } = require('@coko/server')
-
-const { modelJsonSchemaTypes } = require('@coko/server')
-
 const {
-  stringNullable,
-  idNullable,
-  teamRoles,
-  booleanDefaultFalse,
-  id,
-  stringNotEmpty,
-} = modelJsonSchemaTypes
+  BaseModel,
+  modelJsonSchemaTypes,
+  teamRolesEnum,
+} = require('@coko/server')
+
+const { stringNullable, idNullable, booleanDefaultFalse, id, stringNotEmpty } =
+  modelJsonSchemaTypes
 
 const EmailTemplate = require('../emailTemplate/emailTemplate.model')
 const Group = require('../group/group.model')
@@ -17,13 +13,6 @@ const Group = require('../group/group.model')
 // REFACTOR: MODELS
 
 const eventsSource = require('../../services/notification/eventsSource')
-
-const recipientType = {
-  anyOf: [
-    { type: 'string', enum: [...teamRoles.enum, 'registeredUser'] },
-    { type: 'string', format: 'email' },
-  ],
-}
 
 const eventsEnum = {
   type: 'string',
@@ -65,6 +54,15 @@ class Notification extends BaseModel {
   }
 
   static get schema() {
+    const rolesEnum = teamRolesEnum()
+
+    const recipientType = {
+      anyOf: [
+        { type: 'string', enum: [...rolesEnum, 'registeredUser'] },
+        { type: 'string', format: 'email' },
+      ],
+    }
+
     return {
       properties: {
         event: eventsEnum,

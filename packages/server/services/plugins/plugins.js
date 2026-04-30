@@ -1,4 +1,4 @@
-/* eslint-disable global-require, no-console, import/no-dynamic-require */
+/* eslint-disable no-console */
 const { getBroker } = require('./broker')
 
 const Group = require('../../models/group/group.model')
@@ -10,6 +10,7 @@ const readPluginGroupsFromManifestFile = async () => {
   try {
     // eslint-disable-next-line import/no-unresolved
     pluginGroups = require('../../config/plugins/plugins_manifest.json')
+    /* eslint-disable-next-line */
   } catch (error) {
     console.info('No plugins manifest found; skipping plugins.')
     return []

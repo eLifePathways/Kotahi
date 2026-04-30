@@ -1,6 +1,6 @@
-const config = require('config')
+const { config } = require('@coko/server')
 
-const { clientUrl, serverUrl, request, uuid } = require('@coko/server')
+const { clientUrl, serverUrl, request, uuid, logger } = require('@coko/server')
 
 const {
   Config,
@@ -10,7 +10,7 @@ const {
   CoarNotification,
 } = require('../../models')
 
-const flaxConfig = config['flax-site']
+const flaxConfig = config.get('flax-site')
 
 // TODO: What is the purpose of this?
 const isReviewDoi = () => {
@@ -226,7 +226,7 @@ const makeAnnouncementOnCOAR = async (
 
     return response?.data || false
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     throw err
   }
 }

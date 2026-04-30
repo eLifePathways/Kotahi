@@ -1,4 +1,6 @@
-import React, { useState, useRef, useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { gql, useQuery } from '@apollo/client'
 import { last } from 'lodash'

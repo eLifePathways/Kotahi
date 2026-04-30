@@ -102,15 +102,18 @@ class GlobalState {
       default: () => false,
     })
 
-    states
-      ? onEntries(states, (k, v) => {
-          const prev = this.#stored[k]
-          this.#stored[k] = v
-          !!emitOnStateSet && this.emit(`${k}`, prev, v, this)
-        })
-      : console.warn(
-          'The state entry must be an object or a function that returns an object',
-        )
+    if (states) {
+      onEntries(states, (k, v) => {
+        const prev = this.#stored[k]
+        this.#stored[k] = v
+        if (emitOnStateSet) this.emit(`${k}`, prev, v, this)
+      })
+    } else {
+      console.warn(
+        'The state entry must be an object or a function that returns an object',
+      )
+    }
+
     return this
   }
 
@@ -154,7 +157,7 @@ class GlobalState {
         set: newValue => {
           const defaultSet = () => ({ state: newValue, safe: true })
           const value = safeCall(set, defaultSet)(k, newValue)
-          value?.safe && this.store({ [k]: value.state })
+          if (value?.safe) this.store({ [k]: value.state })
         },
         enumerable: true,
         configurable: true,
@@ -177,7 +180,7 @@ class GlobalState {
    */
   on(eventName, listener, overwrite = false) {
     if (!isFunction(listener)) return this
-    !this.#events[eventName] && (this.#events[eventName] = [])
+    if (!this.#events[eventName]) this.#events[eventName] = []
 
     if (overwrite && this.#events[eventName].length > 0) {
       this.#events[eventName][0] = { cb: listener }

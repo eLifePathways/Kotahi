@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { grid, rotate360 } from '@coko/client'
 import { Check, AlertCircle } from 'react-feather'

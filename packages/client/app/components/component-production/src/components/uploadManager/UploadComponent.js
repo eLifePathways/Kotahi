@@ -1,4 +1,7 @@
-import React, { useCallback, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useCallback, useState } from 'react'
 import { grid } from '@coko/client'
 import { useDropzone } from 'react-dropzone'
 import styled from 'styled-components'

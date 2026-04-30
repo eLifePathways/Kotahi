@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-handler-names */
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/client'
@@ -52,7 +51,7 @@ const Menu = ({
   }, [menuIsMinimal, navLinkComponents])
 
   const handlers = {
-    pinNavbar: e => {
+    pinNavbar: () => {
       updateMenuState({ variables: { expanded: !menuPinned } })
       setMenuPinned(!menuPinned)
     },
@@ -112,7 +111,7 @@ const Menu = ({
 Menu.propTypes = {
   className: PropTypes.string.isRequired,
   loginLink: PropTypes.string.isRequired,
-  navLinkComponents: PropTypes.arrayOf(PropTypes.object).isRequired, // eslint-disable-line react/forbid-prop-types
+  navLinkComponents: PropTypes.arrayOf(PropTypes.object).isRequired,
   user: PropTypes.oneOfType([PropTypes.object]),
   notice: PropTypes.node.isRequired,
   profileLink: PropTypes.string.isRequired,

@@ -10,7 +10,7 @@ const {
 
 module.exports = {
   Query: {
-    publishingCollection: async (_, { groupId }, ctx) => {
+    publishingCollection: async (_, { groupId }) => {
       return getPublishingCollections(groupId)
     },
   },

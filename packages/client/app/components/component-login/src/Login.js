@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import { Trans, useTranslation } from 'react-i18next'
@@ -14,7 +16,6 @@ const getNextUrl = config => {
   const url = new URL(window.location.href)
 
   const redirectLink = `${
-    /* eslint-disable-next-line no-unsafe-optional-chaining */
     config?.urlFrag + config?.dashboard?.loginRedirectUrl
   }`
 
@@ -110,7 +111,7 @@ const StyledORCIDIcon = styled(ORCIDIcon)`
   }
 `
 
-const Login = ({ logo = null, ...props }) => {
+const Login = () => {
   const config = useContext(ConfigContext)
   const token = getQueryStringByName('token')
   const { t } = useTranslation()

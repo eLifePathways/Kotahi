@@ -1,13 +1,14 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-/* eslint-disable no-param-reassign */
-import React, { createContext, useMemo, useRef, useState } from 'react'
+/* eslint-disable no-return-assign, no-unused-expressions */
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react/prop-types */
+
+import { createContext, useMemo, useRef, useState } from 'react'
 import { takeRight } from 'lodash'
 import { htmlTagNames, safeId, setInlineStyle } from '../utils'
 import { callOn, onEntries, safeCall } from '../../../shared/generalUtils'
 
 export const CssAssistantContext = createContext()
 
-// eslint-disable-next-line react/prop-types
 export const CssAssistantProvider = ({ children }) => {
   const context = useRef([])
   const validSelectors = useRef(null)
@@ -71,7 +72,9 @@ export const CssAssistantProvider = ({ children }) => {
         child => child && makeSelectors(child, selector),
       )
 
-      allChildsSelectors && selectors.push(...allChildsSelectors)
+      if (allChildsSelectors) {
+        selectors.push(...allChildsSelectors)
+      }
     }
 
     return [...new Set(selectors)]
@@ -296,7 +299,6 @@ export const CssAssistantProvider = ({ children }) => {
 
 export const ModalContext = createContext()
 
-// eslint-disable-next-line react/prop-types
 export const ModalProvider = ({ children }) => {
   const [openModal, setOpenModal] = useState(false)
   const modalContent = useRef(null)

@@ -1,4 +1,6 @@
-import React, { useMemo, useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useMemo, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import ManuscriptsTable from '../../../../component-manuscripts-table/src/ManuscriptsTable'
 import buildColumnDefinitions from '../../../../component-manuscripts-table/src/util/buildColumnDefinitions'

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
+
 import Select from 'react-select'
-import React from 'react'
 import { withTheme } from 'styled-components'
 
 const StyledSelect = props => {

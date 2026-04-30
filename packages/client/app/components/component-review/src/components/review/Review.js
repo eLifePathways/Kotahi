@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -123,7 +125,6 @@ const Review = ({
     )
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {!sharedReviews ? (
         <Container>

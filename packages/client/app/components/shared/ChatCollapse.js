@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable color-function-notation, hue-degree-notation */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 const CollapseWrapper = styled.div`

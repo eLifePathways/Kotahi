@@ -1,12 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/purity, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable color-function-notation, alpha-value-notation */
 
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  useCallback,
-} from 'react'
+import { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment-timezone'
 import styled, { css } from 'styled-components'
@@ -231,7 +228,7 @@ const Task = ({
   index,
   updateTask,
   assigneeGroupedOptions,
-  onCancel,
+  // onCancel,
   onDelete,
   isReadOnly,
   editAsTemplate,
@@ -368,7 +365,7 @@ const Task = ({
 
   return (
     <Draggable draggableId={task.id} index={index} key={task.id}>
-      {(provided, snapshot) => (
+      {provided => (
         <>
           <Modal isOpen={isConfirmingDelete}>
             <ModalContainer>

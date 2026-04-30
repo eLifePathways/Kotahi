@@ -1,6 +1,10 @@
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+/* eslint-disable new-cap */
+
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Formik, ErrorMessage } from 'formik'
@@ -199,7 +203,7 @@ const FormTemplate = ({
   initialValues,
   manuscriptId,
   manuscriptShortId,
-  manuscriptStatus,
+  // manuscriptStatus,
   submissionButtonText,
   onChange,
   republish,
@@ -369,12 +373,12 @@ const FormTemplate = ({
                   buttonIsPending || isSubmitting
                     ? 'pending'
                     : publishingResponse?.steps?.some(step => !step.succeeded)
-                    ? 'failure'
-                    : Object.keys(errors).length && submitCount
-                    ? 'failure' // TODO Make this case 'failure', once we've fixed the validation delays in the form
-                    : submitSucceeded
-                    ? 'success'
-                    : ''
+                      ? 'failure'
+                      : Object.keys(errors).length && submitCount
+                        ? 'failure' // TODO Make this case 'failure', once we've fixed the validation delays in the form
+                        : submitSucceeded
+                          ? 'success'
+                          : ''
                   /* eslint-enable no-nested-ternary */
                 }
               >
@@ -455,7 +459,7 @@ const FormTemplate = ({
                   return element
                 })
                 .map(prepareFieldProps)
-                .map((element, i) => {
+                .map(element => {
                   const disabledElement = element.isReadOnly === 'true'
 
                   let threadedDiscussionProps
@@ -731,7 +735,7 @@ FormTemplate.propTypes = {
       PropTypes.shape({
         name: PropTypes.string,
         tags: PropTypes.arrayOf(PropTypes.string.isRequired),
-        // eslint-disable-next-line react/forbid-prop-types
+
         storedObjects: PropTypes.arrayOf(PropTypes.object),
       }).isRequired,
     ),

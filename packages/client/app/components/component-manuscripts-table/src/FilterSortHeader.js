@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import Popup from 'reactjs-popup'
 import { Calendar as FeatherCalendar } from 'react-feather'
@@ -12,6 +13,7 @@ import {
 } from '../../../shared/dateUtils'
 import { color } from '../../../theme'
 
+/* eslint-disable-next-line no-unused-vars */
 const CalendarIcon = styled(({ isActive, ...props }) => (
   <FeatherCalendar {...props} />
 ))`
@@ -40,6 +42,7 @@ const getDateRangeFromFilterString = filterString => {
     const startDate = compactStringToDateLocal(parts[0])
     const endDate = compactStringToDateLocal(parts[1])
     return [startDate, endDate]
+    /* eslint-disable-next-line no-unused-vars */
   } catch (e) {
     console.error(`Could not parse date range '${filterString}'`)
     return []
@@ -93,8 +96,7 @@ const FilterSortHeader = ({
           closeOnEscape
           on="click"
           position="bottom center"
-          /* eslint-disable-next-line react/no-unstable-nested-components */
-          trigger={open => (
+          trigger={() => (
             <IconButton type="button">
               <CalendarIcon isActive={!!columnInfo.filterValue} />
             </IconButton>

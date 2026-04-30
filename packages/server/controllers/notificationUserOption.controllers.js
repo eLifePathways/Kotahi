@@ -69,7 +69,7 @@ const updateNotificationOption = async (userId, groupId, path, option) => {
   }
 
   // If no existing record, create a new one
-  // eslint-disable-next-line no-return-await
+
   return await NotificationUserOption.query().insert({
     userId,
     path,

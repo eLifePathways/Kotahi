@@ -1,8 +1,15 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { sanitize } from 'isomorphic-dompurify'
 import { CitationVersionWrapper } from './styles'
 
-const CitationVersion = ({ text, type, selected, editThis, select }) => {
+const CitationVersion = ({
+  text,
+  type,
+  selected,
+  // editThis,
+  select,
+}) => {
   // If 'text' comes in as '', we're assuming we don't have a way to show the content. But we can still edit.
   return (
     <CitationVersionWrapper
@@ -24,7 +31,6 @@ const CitationVersion = ({ text, type, selected, editThis, select }) => {
       ) : null}
       {text ? (
         <div
-          // eslint-disable-next-line
           dangerouslySetInnerHTML={{
             __html: sanitize(text),
           }}

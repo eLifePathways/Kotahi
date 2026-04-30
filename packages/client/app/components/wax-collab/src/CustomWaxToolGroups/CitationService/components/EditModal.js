@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect, useCallback, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sanitize } from 'isomorphic-dompurify'
 import { debounce } from 'lodash'
@@ -95,7 +98,6 @@ const EditModal = ({
       </h4>
       <CitationVersionWrapper className="static">
         <div
-          // eslint-disable-next-line
           dangerouslySetInnerHTML={{
             __html: sanitize(formattedOriginalText),
           }}
@@ -106,7 +108,6 @@ const EditModal = ({
       </CitationVersionWrapper>
       <CitationVersionWrapper>
         <div
-          // eslint-disable-next-line
           dangerouslySetInnerHTML={{
             __html: sanitize(currentText),
           }}
@@ -118,7 +119,6 @@ const EditModal = ({
       {citationData.citeHtml && (
         <CitationVersionWrapper>
           <div
-            // eslint-disable-next-line
             dangerouslySetInnerHTML={{
               __html: sanitize(`<p class="cite">${citationData.citeHtml}</p>`),
             }}
@@ -131,9 +131,7 @@ const EditModal = ({
       <form key={`form-${reRender}`}>
         {currentCitation.author && currentCitation.author.length
           ? currentCitation.author.map((author, index) => (
-              <InputP
-                key={index /* eslint-disable-line react/no-array-index-key */}
-              >
+              <InputP key={index}>
                 <label htmlFor="family">
                   Author family name:{' '}
                   <input

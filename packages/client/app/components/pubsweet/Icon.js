@@ -1,6 +1,5 @@
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/prop-types, new-cap */
 
-import React from 'react'
 import _ from 'lodash'
 import * as icons from 'react-feather'
 import styled from 'styled-components'

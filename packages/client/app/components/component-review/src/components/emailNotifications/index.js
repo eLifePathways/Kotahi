@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState, useContext } from 'react'
 import { th } from '@coko/client'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -60,13 +60,12 @@ const Reviewer = ({
 }
 
 Reviewer.propTypes = {
-  // eslint-disable-next-line
   isHiddenReviewerName: PropTypes.bool,
   isControlPage: PropTypes.bool,
-  // eslint-disable-next-line
+
   user: PropTypes.object.isRequired,
   currentUserIsEditor: PropTypes.bool,
-  // eslint-disable-next-line
+
   currentUser: PropTypes.object.isRequired,
   canBePublishedPublicly: PropTypes.bool,
 }

@@ -1,3 +1,5 @@
+/* eslint-disable promise/catch-or-return, promise/always-return */
+
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import i18next from 'i18next'

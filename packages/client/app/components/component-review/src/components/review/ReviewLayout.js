@@ -1,4 +1,6 @@
-/* eslint-disable react/default-props-match-prop-types */
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
@@ -353,7 +355,6 @@ const ReviewLayout = ({
           label: decisionForm.name,
         })
 
-      // eslint-disable-next-line consistent-return
       return {
         key: version.id,
         label,
