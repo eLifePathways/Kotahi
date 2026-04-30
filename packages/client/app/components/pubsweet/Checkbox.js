@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import { th, override } from '@coko/client'
 
@@ -44,7 +45,6 @@ const Checkbox = ({
   required,
   onChange,
 }) => {
-  /* eslint-disable-next-line no-param-reassign */
   checked = checked || false
 
   return (

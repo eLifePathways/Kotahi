@@ -1,5 +1,9 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable no-descending-specificity */
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import {
   Clipboard,
@@ -187,7 +191,9 @@ const StyledWindow = styled.div`
 const WindowHeading = styled.div`
   align-items: center;
   background-color: #efefef;
-  box-shadow: inset 0 0 5px #fff4, 0 0 2px #0009;
+  box-shadow:
+    inset 0 0 5px #fff4,
+    0 0 2px #0009;
   color: #777;
   display: flex;
   font-size: 12px;
@@ -298,7 +304,6 @@ const defaultSettings = {
   },
 }
 
-// eslint-disable-next-line react/prop-types
 const AiPDFDesigner = ({
   bookTitle,
   passedSettings,
@@ -385,6 +390,7 @@ const AiPDFDesigner = ({
           feedback &&
             selectedCtx.history.push({ role: 'assistant', content: feedback })
           updatePreview()
+          /* eslint-disable-next-line */
         } catch (err) {
           /* eslint-disable-next-line camelcase */
           if (finishReasons[finish_reason]) {
@@ -462,7 +468,7 @@ const AiPDFDesigner = ({
                     selectedNode !== htmlSrc && selectedCtx.node.innerHTML,
                 }),
               },
-              // eslint-disable-next-line react/prop-types
+
               ...(takeRight(selectedCtx.history, settings.historyMax) || []),
             ],
           },
@@ -595,14 +601,12 @@ const AiPDFDesigner = ({
             <Editor
               stylesFromSource={initialPagedJSCSS}
               updatePreview={updatePreview}
-              // eslint-disable-next-line react/prop-types
               {...settings?.editor}
               currentUser={currentUser}
               manuscript={manuscript}
               setComments={setComments}
             />
             <SelectionBox
-              // eslint-disable-next-line react/prop-types
               advancedTools={settings?.advancedTools}
               icons={settings.ui.icons}
               selectionColor={settings?.editor?.selectionColor}

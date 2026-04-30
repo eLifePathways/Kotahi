@@ -1,4 +1,8 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/catch-or-return, promise/always-return */
+
+import { useCallback, useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -380,9 +384,7 @@ const TaskNotificationDetails = ({
 
         const promises = []
 
-        // eslint-disable-next-line no-restricted-syntax
         for (const team of teamsOfRecipientType) {
-          // eslint-disable-next-line no-restricted-syntax
           for (const member of team.members) {
             const input = {
               selectedEmail: member.user.email,
@@ -636,7 +638,6 @@ const TaskNotificationDetails = ({
       return editors
     }, [])
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const logData of logsData) {
       const emailTemplateOption = emailTemplates.find(
         template => template.id === logData.selectedTemplate,

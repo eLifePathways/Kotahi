@@ -1,10 +1,10 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-} from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { ThemeProvider } from 'styled-components'
 import { debounce } from 'lodash'

@@ -1,4 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { get } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -464,7 +467,7 @@ const ReviewData = ({
       )}
 
       <ReviewItemsContainer>
-        {[...nonFileFields, ...fileFields].map((element, i) => (
+        {[...nonFileFields, ...fileFields].map(element => (
           <ReviewItemContainer key={element.id}>
             <Header>{element.shortDescription || element.title}</Header>
             <ReadonlyFieldData

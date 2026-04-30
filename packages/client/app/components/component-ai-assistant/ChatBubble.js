@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+
 /* eslint-disable react/prop-types */
 
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { CssAssistantContext } from './hooks/CssAssistantContext'
 import { color } from '../../theme'
 

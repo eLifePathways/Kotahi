@@ -9,7 +9,7 @@ const {
   useTransaction,
 } = require('@coko/server')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const files = await File.query(trx)
 

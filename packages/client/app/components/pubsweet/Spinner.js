@@ -1,6 +1,5 @@
-/* eslint-disable react/require-default-props */
+/* eslint-disable new-cap */
 
-import React from 'react'
 import propTypes from 'prop-types'
 import styled, { keyframes } from 'styled-components'
 

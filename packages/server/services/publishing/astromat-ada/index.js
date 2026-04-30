@@ -1,6 +1,6 @@
 const axios = require('axios')
-const { File, fileStorage, logger } = require('@coko/server')
-const config = require('config')
+const { File, fileStorage, logger, config } = require('@coko/server')
+
 const htmlToJats = require('../../jatsexport/htmlToJats')
 
 const {

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { t } from 'i18next'
 import { ConfigurableStatus } from '../../../shared'
 import reviewStatuses from '../../../../../config/journal/review-status'

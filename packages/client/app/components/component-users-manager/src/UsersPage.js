@@ -1,6 +1,6 @@
-import React from 'react'
-import gql from 'graphql-tag'
-import { useQuery, useMutation } from '@apollo/client'
+/* eslint-disable react/prop-types */
+
+import { gql, useQuery, useMutation } from '@apollo/client'
 import { CommsErrorBanner, Spinner } from '../../shared'
 import {
   extractSortData,

@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState, useContext } from 'react'
 import { Redirect } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import styled from 'styled-components'

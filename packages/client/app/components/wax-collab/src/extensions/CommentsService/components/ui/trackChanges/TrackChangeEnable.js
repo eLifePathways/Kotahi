@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* eslint react/prop-types: 0 */
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { MenuButton } from 'wax-prosemirror-core'
 
 const TrackChangeEnable = ({ view = {}, item, enabled }) => {

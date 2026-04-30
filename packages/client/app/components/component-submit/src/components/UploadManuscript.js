@@ -1,4 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useContext, useEffect } from 'react'
 import styled, { css, keyframes, withTheme } from 'styled-components'
 import { th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +12,7 @@ import upload from '../upload'
 import { Dropzone, Action, Spinner } from '../../../shared'
 import { color } from '../../../../theme'
 
-const StatusIcon = withTheme(({ children, theme }) => (
+const StatusIcon = withTheme(({ children }) => (
   <Icon color={color.brand1.base()}>{children}</Icon>
 ))
 
@@ -20,7 +23,7 @@ const Status = styled.div`
   margin-top: -2px;
 `
 
-const StatusIdle = styled(Status).attrs(props => ({
+const StatusIdle = styled(Status).attrs(() => ({
   children: <StatusIcon>plus_circle</StatusIcon>,
 }))``
 
@@ -36,7 +39,7 @@ const spin = keyframes`
   }
 `
 
-const StatusConverting = styled(Status).attrs(props => ({
+const StatusConverting = styled(Status).attrs(() => ({
   children: <StatusIcon>plus_circle</StatusIcon>,
 }))`
   &:hover {
@@ -55,7 +58,7 @@ const StatusConverting = styled(Status).attrs(props => ({
   }
 `
 
-const StatusError = styled(Status).attrs(props => ({
+const StatusError = styled(Status).attrs(() => ({
   children: <StatusIcon>plus_circle</StatusIcon>,
 }))`
   color: ${th('colorDanger')};
@@ -84,7 +87,7 @@ const dash = keyframes`
   }
 `
 
-const StatusCompleted = styled(Status).attrs(props => ({
+const StatusCompleted = styled(Status).attrs(() => ({
   children: <StatusIcon>check_circle</StatusIcon>,
 }))`
   polyline {
@@ -253,7 +256,6 @@ const UploadManuscript = ({
                     <>
                       <p>{t('newSubmission.dragNDrop')}</p>
                       <em
-                        // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{
                           __html:
                             description || t('newSubmission.acceptedFiletypes'),

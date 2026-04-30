@@ -1,6 +1,6 @@
-/* eslint-disable no-nested-ternary */
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import ReadonlyFieldData from './ReadonlyFieldData'
@@ -131,7 +131,7 @@ ReadonlyFormTemplate.propTypes = {
     files: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        storedObjects: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
+        storedObjects: PropTypes.arrayOf(PropTypes.object),
         tags: PropTypes.arrayOf(PropTypes.string.isRequired),
       }).isRequired,
     ),

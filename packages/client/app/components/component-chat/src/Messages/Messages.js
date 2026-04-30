@@ -1,6 +1,7 @@
-/* eslint-disable prefer-object-spread */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import { sanitize } from 'isomorphic-dompurify'
@@ -116,7 +117,6 @@ const Messages = ({
 
   const { hasPreviousPage } = data.messages.pageInfo
 
-  /* eslint-disable-next-line react/no-unstable-nested-components */
   const DateWithUnreadLabelElement = ({ message }) => (
     <UnreadLabelContainer>
       <UnreadLabel>
@@ -126,7 +126,6 @@ const Messages = ({
     </UnreadLabelContainer>
   )
 
-  /* eslint-disable-next-line react/no-unstable-nested-components */
   const DateLabelElement = ({ message }) => (
     <DateLabelContainer>
       <DateLabel>
@@ -135,7 +134,6 @@ const Messages = ({
     </DateLabelContainer>
   )
 
-  /* eslint-disable-next-line react/no-unstable-nested-components */
   const UnreadLabelElement = () => (
     <UnreadLabelContainer>
       <UnreadLabel>{t('chat.Unread messages')}</UnreadLabel>
@@ -177,10 +175,8 @@ const Messages = ({
     return null
   }
 
-  // eslint-disable-next-line no-shadow, react/no-unstable-nested-components
   const MessageRenderer = ({ message }) => {
     return (
-      // eslint-disable-next-line react/no-danger
       <div dangerouslySetInnerHTML={{ __html: sanitize(message.content) }} />
     )
   }

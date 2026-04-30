@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import styled from 'styled-components'
 import fnv from 'fnv-plus'
 import { grid } from '@coko/client'
@@ -13,6 +15,7 @@ const FloatRightButton = styled(RoundIconButton)`
   z-index: 1000;
 `
 
+/* eslint-disable-next-line no-unused-vars */
 const openInNewTab = (url, target = '_blank') => {
   const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
   if (newWindow) newWindow.opener = null

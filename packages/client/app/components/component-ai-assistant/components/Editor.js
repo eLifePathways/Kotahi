@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability */
+
 /* eslint-disable react/prop-types */
-import React, { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { CssAssistantContext } from '../hooks/CssAssistantContext'
 import { setImagesDefaultStyles } from '../utils'
@@ -81,7 +83,10 @@ const Editor = ({
       styleSheetRef.current = createStyleSheet(styleTag =>
         htmlSrc.parentNode.insertBefore(styleTag, htmlSrc),
       )
-      stylesFromSource && (styleSheetRef.current.textContent = stylesFromSource)
+
+      if (stylesFromSource) {
+        styleSheetRef.current.textContent = stylesFromSource
+      }
 
       addToCtx(newCtx(htmlSrc))
       setSelectedCtx(getCtxBy('node', htmlSrc))
@@ -108,10 +113,12 @@ const Editor = ({
   }, [])
 
   useEffect(() => {
-    editorRef?.current && setHtmlSrc(editorRef.current)
-    editorRef?.current && getValidSelectors(editorRef.current)
-    // ;[...editorRef.current.children].forEach(removeStyleAttribute)
-    editorRef?.current && setImagesDefaultStyles(editorRef.current)
+    if (editorRef?.current) {
+      setHtmlSrc(editorRef.current)
+      getValidSelectors(editorRef.current)
+      // ;[...editorRef.current.children].forEach(removeStyleAttribute)
+      setImagesDefaultStyles(editorRef.current)
+    }
   }, [passedContent])
 
   const handleSelection = e => {
@@ -122,9 +129,12 @@ const Editor = ({
     selectionHandler(e, target => {
       if (htmlSrc.contains(target)) {
         // update the node in ctx if it was recreated
-        !getCtxBy('node', target) &&
-          getCtxBy('dataRef', target.dataset.aidctx) &&
-          (getCtxBy('dataRef', target.dataset.aidctx).node = target)
+        if (
+          !getCtxBy('node', target) &&
+          getCtxBy('dataRef', target.dataset.aidctx)
+        ) {
+          getCtxBy('dataRef', target.dataset.aidctx).node = target
+        }
 
         const ctx =
           getCtxBy('node', target) ||
@@ -138,7 +148,7 @@ const Editor = ({
         setSelectedNode(htmlSrc)
       }
 
-      !contentEditable && promptRef.current.focus()
+      if (!contentEditable) promptRef.current.focus()
     })
   }
 

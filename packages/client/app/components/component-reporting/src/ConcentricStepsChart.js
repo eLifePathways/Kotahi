@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types, react/display-name */
+
 import {
   Customized,
   RadialBarChart,
@@ -18,7 +19,6 @@ const pc = percentageString =>
 
 const getCustomLabelsWithColors =
   colors =>
-  /* eslint-disable-next-line react/function-component-definition */
   ({ barGap, cx, cy, data, height, innerRadius, outerRadius, width }) => {
     const stepY =
       data.length > 0

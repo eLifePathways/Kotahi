@@ -1,4 +1,6 @@
-import React, { useState, useRef } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState, useRef } from 'react'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import CMSPageEditForm from './CMSPageEditForm'

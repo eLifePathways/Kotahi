@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
@@ -84,7 +87,7 @@ const PartnerFileListing = ({
   const renderFileItems = (file, index) => {
     return (
       <Draggable draggableId={file.id} index={index} key={file.id}>
-        {(provided, snapshot) => (
+        {provided => (
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
@@ -109,7 +112,7 @@ const PartnerFileListing = ({
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable direction="horizontal" droppableId="droppable">
-        {(provided, snapshot) => (
+        {provided => (
           <Files ref={provided.innerRef} {...provided.droppableProps}>
             {orderedPartnerFiles.map((file, index) =>
               renderFileItems(file, index),

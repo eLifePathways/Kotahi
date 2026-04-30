@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 const {
   useTransaction,
   // logger
@@ -8,7 +7,7 @@ const { map } = require('lodash')
 
 const Form = require('../form.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const forms = await Form.query(trx).where({

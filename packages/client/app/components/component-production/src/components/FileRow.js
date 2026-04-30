@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import 'rc-tooltip/assets/bootstrap_white.css'
-import React from 'react'
+
 import { Cell, StyledFileRow } from './styles'
 
 const FileRow = ({ file, columnDefinitions }) => {

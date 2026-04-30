@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/prop-types */
+/* eslint-disable import/namespace */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { isEmpty } from 'lodash'
 import { ErrorMessage, Formik } from 'formik'
@@ -181,6 +185,7 @@ const FieldSettingsModal = ({
 
   const editableProperties = Object.entries(
     componentOption?.props || {},
+    /* eslint-disable-next-line no-unused-vars */
   ).filter(([key, value]) => value.component !== 'Hidden')
 
   // New helper to avoid no-nested-ternary
@@ -221,7 +226,7 @@ const FieldSettingsModal = ({
       }}
       validateOnBlur
     >
-      {({ errors, handleSubmit, setFieldValue, touched, values }) => {
+      {({ errors, handleSubmit, setFieldValue, values }) => {
         const populateDefaultValues = (newFieldType, newComponentType) => {
           const newFieldOption = fieldOpts.find(
             opt => opt.fieldType === newFieldType,
@@ -323,6 +328,7 @@ const FieldSettingsModal = ({
                 </Section>
               )}
               {editableProperties
+                /* eslint-disable-next-line no-unused-vars */
                 .filter(([compKey, compValue]) => {
                   return compValue?.props?.toggleShow
                     ? compValue.props.toggleShow(values)

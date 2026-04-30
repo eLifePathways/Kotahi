@@ -1,6 +1,7 @@
-/* stylelint-disable string-quotes */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
 
-import React, { useCallback, useEffect, useState, useContext } from 'react'
+import { useCallback, useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { withRouter } from 'react-router-dom'
@@ -96,7 +97,7 @@ const Production = ({
   form,
   manuscript,
   currentUser,
-  currentUserRole,
+  // currentUserRole,
   makePdf,
   makeJats,
   submitAuthorProofingFeedback,
@@ -210,7 +211,6 @@ const Production = ({
 
   const editorSection = {
     content: (
-      // eslint-disable-next-line react/jsx-no-useless-fragment
       <>
         {showContent ? (
           <SectionContent>
@@ -264,7 +264,7 @@ const Production = ({
           )}
         <PreviousFeedBackSection>
           <VersionSwitcher fullWidth>
-            {versions.map((version, i) => (
+            {versions.map(version => (
               <PreviousFeedbackSubmissions
                 key={version.manuscript.id}
                 version={version.manuscript}
@@ -380,7 +380,7 @@ const Production = ({
     tabSections.push(feedbackSection)
   } else {
     // The manuscript Editor / Admin / groupManager can view feedbackSection in readonly view if minimum one previous feedback exist!
-    /* eslint-disable no-lonely-if */
+
     if (showFeedbackTab) {
       tabSections.push(feedbackSection)
     }

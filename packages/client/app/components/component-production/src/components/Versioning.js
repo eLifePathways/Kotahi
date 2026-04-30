@@ -1,4 +1,7 @@
-import React, { useState } from 'react'
+/* eslint-disable react-hooks/purity */
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import styled from 'styled-components'
 import i18next from 'i18next'
 import diff from 'node-htmldiff'

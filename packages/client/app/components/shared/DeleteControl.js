@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Icon } from '../pubsweet'

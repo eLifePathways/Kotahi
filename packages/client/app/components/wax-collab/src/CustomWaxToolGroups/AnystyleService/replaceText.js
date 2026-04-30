@@ -1,4 +1,6 @@
-// import { v4 as uuidv4 } from 'uuid'
+/* eslint-disable promise/catch-or-return, promise/always-return */
+/* eslint-disable new-cap */
+
 import { DOMParser, Fragment } from 'prosemirror-model'
 
 const findPlaceholder = (state, id, placeholderPlugin) => {

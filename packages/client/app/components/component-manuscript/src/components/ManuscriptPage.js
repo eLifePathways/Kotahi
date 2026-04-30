@@ -1,6 +1,6 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { useQuery, gql } from '@apollo/client'
-import ReactRouterPropTypes from 'react-router-prop-types'
 import Manuscript from './Manuscript'
 import { Spinner, CommsErrorBanner } from '../../../shared'
 
@@ -34,7 +34,7 @@ const query = gql`
   }
 `
 
-const ManuscriptPage = ({ currentUser, match, ...props }) => {
+const ManuscriptPage = ({ currentUser, match }) => {
   const { data, loading, error } = useQuery(query, {
     variables: {
       id: match.params.version,
@@ -57,7 +57,7 @@ const ManuscriptPage = ({ currentUser, match, ...props }) => {
 }
 
 ManuscriptPage.propTypes = {
-  match: ReactRouterPropTypes.match.isRequired,
+  // match: ReactRouterPropTypes.match.isRequired,
 }
 
 export default ManuscriptPage

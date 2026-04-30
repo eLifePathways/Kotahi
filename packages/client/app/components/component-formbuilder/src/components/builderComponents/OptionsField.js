@@ -1,4 +1,7 @@
-import React, { useState, useCallback } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { FieldArray } from 'formik'
 import { th, grid } from '@coko/client'
@@ -135,6 +138,7 @@ const FileReaderComponent = ({ push, setFieldValue }) => {
           })
 
           setError(null)
+          /* eslint-disable-next-line */
         } catch (e) {
           setError('Please select a valid JSON file.')
         }
@@ -185,7 +189,7 @@ const RenderOptions = ({ form: { values, setFieldValue }, push, remove }) => {
               <input
                 checked={option?.defaultValue || false}
                 name={`defaultValue-${index}`}
-                onChange={e => {
+                onChange={() => {
                   values.options.forEach((el, i) => {
                     if (el?.defaultValue === 1)
                       setFieldValue(`options.${i}.defaultValue`, 0)

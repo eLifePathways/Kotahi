@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useEffect } from 'react'
 import { isEmpty, isEqual } from 'lodash'
 import { grid } from '@coko/client'
 import styled from 'styled-components'
@@ -64,10 +67,15 @@ const EventContent = ({
 
   const handleSave = () => {
     const {
+      /* eslint-disable-next-line no-unused-vars */
       __typename,
+      /* eslint-disable-next-line no-unused-vars */
       groupId,
+      /* eslint-disable-next-line no-unused-vars */
       id: notificationId,
+      /* eslint-disable-next-line no-unused-vars */
       active,
+      /* eslint-disable-next-line no-unused-vars */
       isDefault,
       event,
       ...rest
@@ -80,7 +88,12 @@ const EventContent = ({
 
     const variables = { id, input }
 
-    isNew ? create({ variables }) : save({ variables })
+    if (isNew) {
+      create({ variables })
+    } else {
+      save({ variables })
+    }
+
     isSaved.on()
   }
 

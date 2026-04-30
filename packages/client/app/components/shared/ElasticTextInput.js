@@ -1,4 +1,7 @@
-import React, { useRef, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useRef, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import { escape } from 'lodash'
 import styled from 'styled-components'
@@ -52,7 +55,7 @@ const ElasticTextInput = ({
       onChange={e => onChange(stripTags(e.target.value))}
       onFocus={e => onFocus && onFocus(e)}
       onKeyDown={e => {
-        onKeyDown && onKeyDown(e)
+        if (onKeyDown) onKeyDown(e)
         if (e.defaultPrevented) return
 
         if (e.key === 'Enter') {

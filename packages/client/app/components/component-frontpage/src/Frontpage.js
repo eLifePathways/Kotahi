@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import styled from 'styled-components'
 import { useQuery } from '@apollo/client'
 import { th, grid } from '@coko/client'

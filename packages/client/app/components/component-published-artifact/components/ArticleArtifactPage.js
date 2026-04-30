@@ -1,4 +1,3 @@
-import React from 'react'
 import { useQuery } from '@apollo/client'
 import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
@@ -83,7 +82,6 @@ const ArticleArtifactPage = ({ match }) => {
         )}
         <Heading>{artifact.title}</Heading>
         <div
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: sanitize(artifact.content),
           }}
@@ -94,7 +92,6 @@ const ArticleArtifactPage = ({ match }) => {
 }
 
 ArticleArtifactPage.propTypes = {
-  // eslint-disable-next-line
   match: PropTypes.object.isRequired,
 }
 

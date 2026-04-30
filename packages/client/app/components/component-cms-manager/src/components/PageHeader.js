@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
 
 import { Button } from '../../../pubsweet'
 import SearchControl from '../../../component-manuscripts/src/SearchControl'

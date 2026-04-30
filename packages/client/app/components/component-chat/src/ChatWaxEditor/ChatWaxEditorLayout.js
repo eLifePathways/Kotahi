@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/display-name */
+
+/* eslint-disable new-cap */
+
 import React, { useContext } from 'react'
 import {
   ComponentPlugin,
@@ -38,71 +43,67 @@ const SendButton = styled(Button)`
 const TopBar = ComponentPlugin('topBar')
 const CounterInfo = ComponentPlugin('bottomRightInfo')
 
-// eslint-disable-next-line react/prop-types
-const ChatWaxEditorLayout =
-  readonly =>
-  /* eslint-disable-next-line react/function-component-definition */
-  props => {
-    const {
-      pmViews: { main },
-    } = useContext(WaxContext)
+const ChatWaxEditorLayout = readonly => props => {
+  const {
+    pmViews: { main },
+  } = useContext(WaxContext)
 
-    const [isTopBarOpen, setIsTopBarOpen] = React.useState(false)
-    const { t } = useTranslation()
-    const sendTooltip = t('chat.Send') // For accessibility
+  const [isTopBarOpen, setIsTopBarOpen] = React.useState(false)
+  const { t } = useTranslation()
+  const sendTooltip = t('chat.Send') // For accessibility
 
-    const onClickSend = () => {
-      Commands.simulateKey(main, 13, 'Enter')
-      main.focus()
-    }
-
-    return (
-      <div>
-        <SimpleGrid readonly={readonly}>
-          {readonly ? (
-            <ReadOnlySimpleEditorDiv className="wax-surface-scroll">
-              <WaxView {...props} />
-            </ReadOnlySimpleEditorDiv>
-          ) : (
-            <>
-              {isTopBarOpen && (
-                <SimpleMenu>
-                  <TopBar />
-                </SimpleMenu>
-              )}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                }}
-              >
-                <ToolbarButton
-                  isTopBarOpen={isTopBarOpen}
-                  onClick={() => setIsTopBarOpen(!isTopBarOpen)}
-                />
-                <SimpleEditorDiv className="wax-surface-scroll">
-                  <WaxView {...props} />
-                </SimpleEditorDiv>
-                <SendButton
-                  aria-label={sendTooltip}
-                  data-cy="chat-input-send-button"
-                  onClick={onClickSend}
-                  primary
-                  title={sendTooltip}
-                >
-                  <Send color="white" size={18} />
-                </SendButton>
-              </div>
-            </>
-          )}
-        </SimpleGrid>
-        {!readonly && (
-          <SimpleInfoContainer>
-            <CounterInfo />
-          </SimpleInfoContainer>
-        )}
-      </div>
-    )
+  const onClickSend = () => {
+    Commands.simulateKey(main, 13, 'Enter')
+    main.focus()
   }
+
+  return (
+    <div>
+      <SimpleGrid readonly={readonly}>
+        {readonly ? (
+          <ReadOnlySimpleEditorDiv className="wax-surface-scroll">
+            <WaxView {...props} />
+          </ReadOnlySimpleEditorDiv>
+        ) : (
+          <>
+            {isTopBarOpen && (
+              <SimpleMenu>
+                <TopBar />
+              </SimpleMenu>
+            )}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-end',
+              }}
+            >
+              <ToolbarButton
+                isTopBarOpen={isTopBarOpen}
+                onClick={() => setIsTopBarOpen(!isTopBarOpen)}
+              />
+              <SimpleEditorDiv className="wax-surface-scroll">
+                <WaxView {...props} />
+              </SimpleEditorDiv>
+              <SendButton
+                aria-label={sendTooltip}
+                data-cy="chat-input-send-button"
+                onClick={onClickSend}
+                primary
+                title={sendTooltip}
+              >
+                <Send color="white" size={18} />
+              </SendButton>
+            </div>
+          </>
+        )}
+      </SimpleGrid>
+      {!readonly && (
+        <SimpleInfoContainer>
+          <CounterInfo />
+        </SimpleInfoContainer>
+      )}
+    </div>
+  )
+}
 
 export default ChatWaxEditorLayout

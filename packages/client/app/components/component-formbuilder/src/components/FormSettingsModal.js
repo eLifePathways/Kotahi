@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { omitBy } from 'lodash'
 import styled from 'styled-components'
@@ -39,6 +43,7 @@ const MakeActiveButton = styled(ActionButton)`
 const prepareForSubmit = (form, values) => {
   const cleanedValues = omitBy(values, value => value === '')
 
+  /* eslint-disable-next-line no-unused-vars */
   const { created, updated, ...rest } = cleanedValues
 
   const updatedForm = {
@@ -149,7 +154,7 @@ const FormSettingsModal = ({
                 component={RadioBox}
                 inline
                 name="haspopup"
-                onChange={(input, value) => {
+                onChange={input => {
                   setFieldValue('haspopup', input)
                 }}
                 options={[

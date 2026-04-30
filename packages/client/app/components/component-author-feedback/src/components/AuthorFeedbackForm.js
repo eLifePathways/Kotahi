@@ -1,4 +1,7 @@
-import React, { useState } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Formik } from 'formik'
 import { useMutation } from '@apollo/client'

@@ -1,5 +1,7 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react'
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import { Formik } from 'formik'
 import { FilesUpload } from '../../../shared'
 import { CompactSection } from '../../../component-cms-manager/src/style'
@@ -45,7 +47,7 @@ const BrandIcon = ({
 
   const handleFileChange = file => {
     setSelectedFile(file)
-    // eslint-disable-next-line no-param-reassign
+
     tempStoredFiles.current[fieldName] = file
   }
 

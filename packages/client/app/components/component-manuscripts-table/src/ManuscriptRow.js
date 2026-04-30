@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
 import 'rc-tooltip/assets/bootstrap_white.css'
-import React from 'react'
+
 import { useHistory } from 'react-router-dom'
 import { getFieldValueAndDisplayValue } from '../../../shared/manuscriptUtils'
 import {
@@ -81,13 +83,13 @@ const ManuscriptRow = ({
 
 ManuscriptRow.propTypes = {
   manuscript: PropTypes.shape({
-    teams: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
+    teams: PropTypes.arrayOf(PropTypes.object),
     created: PropTypes.string.isRequired,
     id: PropTypes.string,
     updated: PropTypes.string,
     status: PropTypes.string.isRequired,
     // Disabled because submission can have different fields
-    // eslint-disable-next-line
+
     submission: PropTypes.object.isRequired,
   }).isRequired,
   columnDefinitions: PropTypes.arrayOf(

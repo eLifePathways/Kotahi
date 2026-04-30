@@ -119,7 +119,7 @@ function liftToOuterList(state, dispatch, itemType, range) {
         true,
       ),
     )
-    // eslint-disable-next-line no-param-reassign
+
     range = new NodeRange(
       tr.doc.resolve(range.$from.pos),
       tr.doc.resolve(endOfList),
@@ -201,7 +201,7 @@ function liftOutOfList(state, dispatch, range, newType, newClass) {
 
   const { from, to } = state.selection
   let citationNumber = ''
-  state.doc.nodesBetween(from, to, (node, pos, parent) => {
+  state.doc.nodesBetween(from, to, (node, pos) => {
     if (node.type.name === 'list_item' && node.attrs.listnumber) {
       citationNumber = node.attrs.listnumber
     }

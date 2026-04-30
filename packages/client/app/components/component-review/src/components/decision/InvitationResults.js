@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import { th } from '@coko/client'
@@ -190,7 +192,6 @@ const InvitationResult = ({ invitation }) => {
               <>
                 <SectionHeader>Suggested Reviewers</SectionHeader>
                 {suggestedReviewers.map((suggestedReviewer, i) => (
-                  /* eslint-disable react/no-array-index-key */
                   <SuggestedReviewerContainer key={`suggestedReviewer-${i}`}>
                     <SuggestedReviewerInnerContainer>
                       <SuggestedReviewerInnerRow>
@@ -229,7 +230,6 @@ const InvitationResult = ({ invitation }) => {
 
 const InvitationResults = ({ invitations }) => {
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {invitations &&
         invitations.map(invitation => {
@@ -247,7 +247,6 @@ ToggleInvitation.propTypes = {
 }
 
 Bullet.propTypes = {
-  // eslint-disable-next-line
   journal: PropTypes.object,
   recommendation: PropTypes.string.isRequired,
 }

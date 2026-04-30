@@ -1,5 +1,9 @@
-/* eslint react/prop-types: 0 */
-import React, { useEffect, useState, useContext } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/static-components */
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/always-return */
+/* eslint-disable new-cap, no-constant-binary-expression */
+
+import { useEffect, useState, useContext } from 'react'
 import { DOMParser, DOMSerializer, Fragment } from 'prosemirror-model'
 import {
   WaxContext,
@@ -142,18 +146,14 @@ const CitationComponent = ({ node, getPos }) => {
     // This returns a "reference" node with the refID from activeView
     let nodeFound
 
-    activeView.state.doc.nodesBetween(
-      getPos(),
-      getPos() + 1,
-      (possibleNode, pos) => {
-        if (
-          possibleNode.type.name === 'reference' &&
-          possibleNode.attrs.refId === id
-        ) {
-          nodeFound = possibleNode
-        }
-      },
-    )
+    activeView.state.doc.nodesBetween(getPos(), getPos() + 1, possibleNode => {
+      if (
+        possibleNode.type.name === 'reference' &&
+        possibleNode.attrs.refId === id
+      ) {
+        nodeFound = possibleNode
+      }
+    })
 
     return nodeFound
   }
@@ -185,7 +185,6 @@ const CitationComponent = ({ node, getPos }) => {
 
       newNode.content = onlyAttrs ? thisNode.content : fragment
 
-      // eslint-disable-next-line
       for (const [key, value] of Object.entries(attrs)) {
         // check if the value is different from the current value
 
@@ -499,7 +498,6 @@ const CitationComponent = ({ node, getPos }) => {
     }
   }, [currentText])
 
-  /* eslint-disable-next-line react/no-unstable-nested-components */
   const CitationPopUp = () => {
     const areOtherComponentsLoading = () => {
       // console.log('Running areOtherComponentsLoading')
@@ -675,10 +673,7 @@ const CitationComponent = ({ node, getPos }) => {
                   (crossRefVersion, crossRefId) =>
                     crossRefVersion.formattedCitation && (
                       <CitationVersion
-                        key={
-                          // eslint-disable-next-line
-                          `citationversion-${crossRefId}`
-                        }
+                        key={`citationversion-${crossRefId}`}
                         select={() => {
                           setPotentialCsl(crossRefVersion)
                           setPotentialText(crossRefVersion.formattedCitation)
@@ -787,7 +782,7 @@ const CitationComponent = ({ node, getPos }) => {
       >
         <CitationWrapper>
           {currentText.length > 19 ? (
-            <div // eslint-disable-next-line
+            <div
               dangerouslySetInnerHTML={{
                 __html: sanitize(currentText),
               }}

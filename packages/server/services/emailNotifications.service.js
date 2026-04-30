@@ -20,7 +20,6 @@ const getRecipientsEmails = async ({
   manuscriptId: msId,
   groupId: gId,
   contextRecipient: ctxFrom,
-  getTeam = false,
 }) => {
   const eventFrom = (await getRecipient(recipient, msId, gId, false)) ?? []
   const eventCCs = (await getRecipient(ccEmails, msId, gId, true)) ?? []
@@ -28,7 +27,9 @@ const getRecipientsEmails = async ({
   const ctxRecipient =
     ctxFrom && (await getRecipient(ctxFrom, msId, gId, false))
 
-  ctxRecipient && eventFrom && eventCCs.push(eventFrom)
+  if (ctxRecipient && eventFrom) {
+    eventCCs.push(eventFrom)
+  }
 
   const to = ctxRecipient || eventFrom
   const ccWithoutTo = eventCCs.filter(em => em !== to)
@@ -91,7 +92,6 @@ const getRecipient = async (recipient, manuscriptId, groupId, getTeam) => {
 }
 
 const send = async (mailPayload, groupId) => {
-  // eslint-disable-next-line global-require
   const { Config } = require('../models')
 
   try {

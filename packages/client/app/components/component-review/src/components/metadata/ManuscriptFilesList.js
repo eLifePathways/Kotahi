@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
-import React from 'react'
 import { Attachment } from '../../../../shared'
 import { SectionRowGrid, Heading, Cell } from '../style'
 
@@ -35,7 +36,7 @@ ManuscriptFilesList.propTypes = {
   files: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
-      storedObjects: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
+      storedObjects: PropTypes.arrayOf(PropTypes.object),
       tags: PropTypes.arrayOf(PropTypes.string.isRequired),
     }).isRequired,
   ),

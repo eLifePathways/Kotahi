@@ -1,6 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable color-function-notation, alpha-value-notation */
 
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { useTranslation } from 'react-i18next'

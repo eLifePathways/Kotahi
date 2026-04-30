@@ -3,7 +3,7 @@ const { useTransaction } = require('@coko/server')
 const CollaborativeDoc = require('../collaborativeDoc.model')
 const Review = require('../../review/review.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   // At the current time the object Type is always Review,
   // since we dont have any other collabaorative forms.
   return useTransaction(async trx => {

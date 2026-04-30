@@ -1,4 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { X } from 'react-feather'
 import { th } from '@coko/client'

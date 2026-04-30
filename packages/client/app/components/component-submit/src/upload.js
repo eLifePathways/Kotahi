@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import { gql } from '@apollo/client'
 import * as cheerio from 'cheerio'
 
@@ -477,7 +479,7 @@ const createManuscriptPromise = (
 
   if (file) {
     source = typeof response === 'string' ? response : undefined
-    /* eslint-disable-next-line no-param-reassign */
+
     delete data.uploadFile.storedObjects[0].url
     files = [
       {

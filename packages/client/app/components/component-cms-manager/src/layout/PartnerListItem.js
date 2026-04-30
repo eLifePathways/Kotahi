@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
 import React, { useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'

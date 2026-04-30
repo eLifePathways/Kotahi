@@ -1,4 +1,6 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable new-cap */
+
 import Moment from 'react-moment'
 import { get } from 'lodash'
 import FormCollaborateWax from '../../../../component-formbuilder/src/components/FormCollaborativeWax'
@@ -53,7 +55,6 @@ const ReadonlyFieldData = ({
       const affiliation = author.affiliation ? ` (${author.affiliation})` : ''
 
       return (
-        // eslint-disable-next-line react/no-array-index-key
         <p key={i}>
           {lastName}, {firstName}
           <Affiliation>{affiliation}</Affiliation> <Email>{author.email}</Email>
@@ -91,7 +92,6 @@ const ReadonlyFieldData = ({
       const doi = d.name || d.doi || '?'
 
       return (
-        // eslint-disable-next-line react/no-array-index-key
         <p key={`doi-${i}`}>
           <a
             href={`https://doi.org/${doi}`}

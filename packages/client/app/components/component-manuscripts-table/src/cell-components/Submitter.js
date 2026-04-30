@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { UserCombo, Primary, Secondary, UserInfo } from '../../../shared'
 import { UserAvatar } from '../../../component-avatar/src'
 

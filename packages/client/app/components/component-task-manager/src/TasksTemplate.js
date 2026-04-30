@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import TaskList from './TaskList'

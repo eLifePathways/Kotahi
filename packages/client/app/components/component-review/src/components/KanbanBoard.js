@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-constant-binary-expression */
+
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
-import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
@@ -148,10 +150,15 @@ const KanbanBoard = ({
         existingReviewer.isEmail = true
 
         const {
+          /* eslint-disable-next-line no-unused-vars */
           isShared,
+          /* eslint-disable-next-line no-unused-vars */
           user,
+          /* eslint-disable-next-line no-unused-vars */
           userId,
+          /* eslint-disable-next-line no-unused-vars */
           status,
+          /* eslint-disable-next-line no-unused-vars */
           updated,
           ...invitationChosenFields
         } = invitation
@@ -164,6 +171,7 @@ const KanbanBoard = ({
       if (isAuthorBoard && existingAuthor) {
         existingAuthor.isEmail = true
 
+        /* eslint-disable-next-line no-unused-vars */
         const { isShared, user, userId, updated, ...invitationChosenFields } =
           invitation
 

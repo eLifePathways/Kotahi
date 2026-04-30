@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
 
 import { SectionContent, PaddedContent } from '../../../shared'
 import { ActionButtonContainer, FormActionButton } from '../style'

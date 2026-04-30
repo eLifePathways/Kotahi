@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext, useState } from 'react'
 import { isObject, find } from 'lodash'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -122,7 +124,6 @@ const DecisionReview = ({
 }
 
 DecisionReview.propTypes = {
-  // eslint-disable-next-line
   review: PropTypes.object,
   ordinal: PropTypes.number.isRequired,
   currentUser: PropTypes.shape({

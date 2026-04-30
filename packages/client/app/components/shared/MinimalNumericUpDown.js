@@ -1,4 +1,9 @@
-import React, { useContext, useState, useRef, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useContext, useState, useRef, useEffect } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { ChevronUp, ChevronDown } from 'react-feather'
 import { th, grid } from '@coko/client'

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import Tooltip from 'rc-tooltip'
 import { StyledAlertCircle } from '../style'
 

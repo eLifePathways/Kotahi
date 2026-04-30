@@ -1,3 +1,5 @@
+/* eslint-disable promise/always-return */
+
 import { useQuery } from '@apollo/client'
 import { SEARCH_ROR } from '../../userManuscriptFormQuery'
 import { VALIDATE_ORCID } from '../../../../../shared/commsUtils'

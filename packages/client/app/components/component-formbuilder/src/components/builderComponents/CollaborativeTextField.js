@@ -1,4 +1,9 @@
-import React, { useEffect, useContext, useCallback, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+
+import { useEffect, useContext, useCallback, useState } from 'react'
 import { omit } from 'lodash'
 import styled from 'styled-components'
 import Color from 'color'
@@ -68,7 +73,6 @@ const CollaborativeTextFieldBuilder = ({ collaborativeObject, ...input }) => {
 
   useEffect(() => {
     return () => {
-      // eslint-disable-next-line no-unused-expressions
       areaBinding?.destroy()
     }
   }, [ydoc?.guid])

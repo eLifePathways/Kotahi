@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
 import { useTranslation } from 'react-i18next'
 import ActionButton from '../../../../../shared/ActionButton'
@@ -145,10 +148,9 @@ const ThreadedDiscussion = ({
   }, [updated])
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {comments &&
-        comments.map((comment, index) => {
+        comments.map(comment => {
           const handleUpdateComment = content => {
             updatePendingComment({
               variables: {

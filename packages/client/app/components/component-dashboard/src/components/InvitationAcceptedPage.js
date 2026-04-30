@@ -1,4 +1,6 @@
-import React, { useEffect, useContext, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
+
+import { useEffect, useContext, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import { Redirect } from 'react-router-dom'

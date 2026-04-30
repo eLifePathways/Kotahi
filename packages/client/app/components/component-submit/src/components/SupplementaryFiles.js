@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { Attachment } from '../../../shared'
 import { Section, Legend } from '../style'
 

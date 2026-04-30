@@ -1,3 +1,7 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/always-return */
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { th } from '@coko/client'

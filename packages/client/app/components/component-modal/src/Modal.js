@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import ReactModal from 'react-modal'
 import styled, { ThemeContext } from 'styled-components'
 import { th, grid } from '@coko/client'

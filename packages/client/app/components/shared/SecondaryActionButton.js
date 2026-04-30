@@ -1,6 +1,6 @@
 /* stylelint-disable alpha-value-notation, color-function-notation, string-quotes */
 
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import styled, { ThemeContext } from 'styled-components'
 import { Check, AlertCircle } from 'react-feather'
@@ -82,8 +82,8 @@ const SecondaryActionButton = ({
   title,
   type,
   status,
-  secondaryButton,
-  color: col,
+  // secondaryButton,
+  // color: col,
 }) => {
   const themeContext = useContext(ThemeContext)
 

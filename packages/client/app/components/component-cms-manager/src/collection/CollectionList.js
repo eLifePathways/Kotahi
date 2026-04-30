@@ -1,8 +1,7 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react'
-/* eslint-disable import/no-unresolved */
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
+
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { v4 as uuid } from 'uuid'
@@ -181,7 +180,7 @@ const CollectionList = ({
       name: 'active',
       centered: false,
       title: 'Active',
-      /* eslint-disable-next-line react/no-unstable-nested-components */
+
       component: ({ collection }) => {
         return collection && collection.active ? (
           <LabelBadge color="#3aae2a">True</LabelBadge>
@@ -194,7 +193,7 @@ const CollectionList = ({
       name: 'Edit',
       centered: false,
       title: 'Edit',
-      /* eslint-disable-next-line react/no-unstable-nested-components */
+
       component: ({ collection }) => {
         const onClick = () => {
           setActiveCollection(
@@ -236,7 +235,7 @@ const CollectionList = ({
                   <HeadingCell key={info.name}>{info.title}</HeadingCell>
                 ))}
               </CollectionsHeading>
-              {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
+              {}
               <>
                 {publishCollection.length === 0 ? (
                   <NoCollectionSpan>

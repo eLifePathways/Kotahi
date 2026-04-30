@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { sanitize } from 'isomorphic-dompurify'
@@ -80,7 +81,7 @@ Confirm.propTypes = {
     popupdescription: PropTypes.string.isRequired,
   }).isRequired,
   submit: PropTypes.func.isRequired,
-  errors: PropTypes.objectOf(PropTypes.any).isRequired, // eslint-disable-line react/forbid-prop-types
+  errors: PropTypes.objectOf(PropTypes.any).isRequired,
 }
 
 export default Confirm

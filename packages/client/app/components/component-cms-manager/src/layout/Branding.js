@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
 
 import { required } from 'xpub-validators'
 import { useTranslation } from 'react-i18next'

@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useMemo } from 'react'
 import { v4 as uuid } from 'uuid'
 import { useTranslation } from 'react-i18next'

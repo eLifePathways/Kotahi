@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import ReactModal from 'react-modal'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
@@ -65,7 +66,7 @@ export const ConfirmationModal = ({
         <LooseRowCentered>
           <ActionButton
             color={buttonColor}
-            onClick={e => {
+            onClick={() => {
               confirmationAction()
               closeModal()
             }}

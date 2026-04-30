@@ -1,3 +1,5 @@
+const { logger } = require('@coko/server')
+
 const NotificationDigest = require('../models/notificationDigest/notificationDigest.model')
 const Config = require('../models/config/config.model')
 const Group = require('../models/group/group.model')
@@ -35,8 +37,7 @@ const getJobs = async (activeConfig, groupId) => {
         rule: `00 ${activeConfig.formData.manuscript.autoImportHourUtc} * * *`,
       },
       fn: async () => {
-        // eslint-disable-next-line no-console
-        console.info(
+        logger.info(
           `Running scheduler for importing and archiving Manuscripts at ${new Date().toISOString()}`,
         )
 
@@ -47,7 +48,7 @@ const getJobs = async (activeConfig, groupId) => {
           })
           await archiveOldManuscripts(groupId)
         } catch (error) {
-          console.error(error)
+          logger.error(error)
         }
       },
     })
@@ -62,15 +63,14 @@ const getJobs = async (activeConfig, groupId) => {
         rule: `00 00 * * *`,
       },
       fn: async () => {
-        // eslint-disable-next-line no-console
-        console.info(
+        logger.info(
           `Running scheduler for tracking overdue tasks ${new Date().toISOString()}`,
         )
 
         try {
           await createNewTaskAlerts(groupId)
         } catch (error) {
-          console.error(error)
+          logger.error(error)
         }
       },
     },
@@ -82,15 +82,14 @@ const getJobs = async (activeConfig, groupId) => {
         rule: `00 00 * * *`,
       },
       fn: async () => {
-        // eslint-disable-next-line no-console
-        console.info(
+        logger.info(
           `Running scheduler for sending task email notifications ${new Date().toISOString()}`,
         )
 
         try {
           await sendAutomatedTaskEmailNotifications(groupId)
         } catch (error) {
-          console.error(error)
+          logger.error(error)
         }
       },
     },
@@ -102,8 +101,7 @@ const getJobs = async (activeConfig, groupId) => {
         rule: `0 0 * * *`,
       },
       fn: async () => {
-        // eslint-disable-next-line no-console
-        console.info(
+        logger.info(
           `Deleting actioned entries from notification digest ${new Date().toISOString()}`,
         )
 
@@ -111,14 +109,13 @@ const getJobs = async (activeConfig, groupId) => {
           await deleteActionedEntries(groupId)
           await sendAutomatedNotifications(groupId)
         } catch (error) {
-          console.error(error)
+          logger.error(error)
         }
       },
     },
     // Other new jobs..
   )
 
-  // eslint-disable-next-line no-return-await
   const result = await Promise.all(jobs)
   return result
 }
@@ -146,7 +143,6 @@ const sendAutomatedNotifications = async groupId => {
       upcomingNotificationDigest?.maxNotificationTime
 
     if (!upcomingNotificationTime) {
-      // eslint-disable-next-line no-console
       // console.info('No upcoming notifications found.')
       return
     }
@@ -174,8 +170,7 @@ const sendAutomatedNotifications = async groupId => {
           return
         }
 
-        // eslint-disable-next-line no-console
-        console.info(
+        logger.info(
           `Running scheduler to send notifications ${new Date().toISOString()}`,
         )
 
@@ -184,12 +179,12 @@ const sendAutomatedNotifications = async groupId => {
           // Check if another notification is due in future; schedule it if so.
           await sendAutomatedNotifications(groupId)
         } catch (error) {
-          console.error(error)
+          logger.error(error)
         }
       },
     )
   } catch (error) {
-    console.error('Error scheduling job:', error)
+    logger.error('Error scheduling job:', error)
   }
 }
 
@@ -201,8 +196,7 @@ const initiateJobSchedules = async () => {
       const activeConfig = await Config.getCached(group.id)
       const jobs = await getJobs(activeConfig, group.id)
 
-      // eslint-disable-next-line no-console
-      console.info(`Schedule Jobs for group "${group.name}" - ${group.id}`)
+      logger.info(`Schedule Jobs for group "${group.name}" - ${group.id}`)
 
       jobs.forEach(job => {
         const schedule = new ScheduleManager()

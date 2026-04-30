@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * @import {ApolloClient} from '@apollo/client'
  */

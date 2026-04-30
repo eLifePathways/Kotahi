@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { Clock, Plus, Power, Trash } from 'react-feather'
 import styled from 'styled-components'
 import { grid } from '@coko/client'

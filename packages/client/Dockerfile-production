@@ -1,7 +1,9 @@
 ##############################################################
 # IMAGE FOR BUILDING
 
-FROM cokoapps/base:20
+FROM cokoapps/base:24
+
+RUN corepack enable
 
 ENV NODE_ENV='production'
 ENV CLIENT_STATIC_FOLDER_PATH=../public
@@ -22,7 +24,7 @@ RUN yarn coko-client-build-js
 ##############################################################
 # IMAGE FOR RUNNING
 
-FROM cokoapps/base:20
+FROM cokoapps/base:24
 
 WORKDIR /home/node/app
 

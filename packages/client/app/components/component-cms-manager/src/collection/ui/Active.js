@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable string-quotes */
 
-import React from 'react'
 import styled from 'styled-components'
 
 const Label = styled.label`

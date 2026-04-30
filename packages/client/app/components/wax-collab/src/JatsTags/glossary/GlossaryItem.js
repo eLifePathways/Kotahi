@@ -1,4 +1,3 @@
-import React from 'react'
 import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { LeftSideButton, Commands, Tools } from 'wax-prosemirror-core'
@@ -28,7 +27,7 @@ class GlossaryItem extends Tools {
       if (activeViewId !== 'main') return false
 
       const { from, to } = state.selection
-      state.doc.nodesBetween(from, to, (node, pos) => {
+      state.doc.nodesBetween(from, to, node => {
         if (node.type.name === 'glossaryItem') {
           isActive = true
         }
@@ -54,7 +53,7 @@ class GlossaryItem extends Tools {
 
   renderTool(view) {
     if (isEmpty(view)) return null
-    // eslint-disable-next-line no-underscore-dangle
+
     return this._isDisplayed ? (
       <LeftSideButton item={this.toJSON()} key="GlossaryItem" view={view} />
     ) : null

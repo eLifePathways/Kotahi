@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+
 /* eslint-disable react/prop-types */
-/* eslint-disable prefer-object-spread */
 
 /* stylelint-disable alpha-value-notation, color-function-notation */
 

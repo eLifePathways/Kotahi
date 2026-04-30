@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -89,7 +91,7 @@ const getFileExtension = ({ name }) => name.replace(/^.+\./, '')
 
 const UploadingFile = ({
   file,
-  progress,
+  // progress,
   error,
   deleteFile,
   uploaded,

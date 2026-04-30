@@ -1,8 +1,10 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 
 import { Link } from '../../../pubsweet'
 
+/* eslint-disable-next-line no-unused-vars */
 const ControlPageLink = ({ className, children, version, page, id }) => (
   <Link className={className} to={`versions/${id}/decision`}>
     {children}

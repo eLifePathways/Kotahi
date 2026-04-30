@@ -1,9 +1,9 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import { Dropdown } from '../../../../pubsweet'
 
-/* eslint-disable import/prefer-default-export */
 export const TagDropdown = ({ updateFileFn, tags }) => {
   const { t } = useTranslation()
 

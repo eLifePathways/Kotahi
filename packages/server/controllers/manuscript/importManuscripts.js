@@ -1,4 +1,6 @@
-const config = require('config')
+/* eslint-disable promise/catch-or-return */
+
+const { config, logger } = require('@coko/server')
 const { subscriptionManager } = require('@coko/server')
 
 const Config = require('../../models/config/config.model')
@@ -12,7 +14,7 @@ const { runImports } = require('../../services/plugins/imports')
 const importsInProgress = new Set()
 
 const shouldRunDefaultImportsForColab = [true, 'true'].includes(
-  config['import-for-prc'].default_import,
+  config.get('import-for-prc').default_import,
 )
 
 const importManuscripts = async (groupId, ctx) => {
@@ -55,7 +57,7 @@ const importManuscripts = async (groupId, ctx) => {
     if (!promises.length) return false
 
     Promise.all(promises)
-      .catch(error => console.error(error))
+      .catch(error => logger.error(error))
       .finally(async () => {
         subscriptionManager.publish('IMPORT_MANUSCRIPTS_STATUS', {
           manuscriptsImportStatus: true,
@@ -91,7 +93,7 @@ const importManuscriptsFromSemanticScholar = async (groupId, ctx) => {
     if (!promises.length) return false
 
     Promise.all(promises)
-      .catch(error => console.error(error))
+      .catch(error => logger.error(error))
       .finally(async () => {
         subscriptionManager.publish('IMPORT_MANUSCRIPTS_STATUS', {
           manuscriptsImportStatus: true,

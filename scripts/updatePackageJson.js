@@ -42,7 +42,6 @@ const files = [
 ]
 
 files.forEach(item => {
-  /* eslint-disable no-param-reassign */
   item.data.version = newVersion
 
   fs.writeFile(item.path, `${JSON.stringify(item.data, null, 2)}\n`, err => {

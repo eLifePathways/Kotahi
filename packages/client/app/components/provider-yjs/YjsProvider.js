@@ -58,11 +58,9 @@ const YjsProvider = ({ children }) => {
     let provider = null
 
     if (!identifier) {
-      // eslint-disable-next-line no-param-reassign
       identifier = uuid()
     }
 
-    // eslint-disable-next-line no-restricted-globals
     provider = new WebsocketProvider(
       yjsWebSocketServerUrl,
       identifier,

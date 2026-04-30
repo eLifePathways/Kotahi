@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import YjsContext from '../../provider-yjs/YjsProvider'
 
 import Editor from '.'
@@ -8,9 +10,9 @@ import { Spinner } from '../../shared'
 const CollaborativeWax = ({
   editorMode,
   component,
-  user,
+  // user,
   collaborativeObject,
-  identifier,
+  // identifier,
   setComments,
   ...rest
 }) => {

@@ -16,11 +16,11 @@ const profileUpload = async (userId, filePath) => {
     const createdProfilePicture = await createFile(
       fs.createReadStream(filePath),
       `${raw.toString('hex')}${path.extname(filePath)}`,
-      null,
-      null,
-      ['profilePicture'],
-      user.id,
-      { trx },
+      {
+        tags: ['profilePicture'],
+        objectId: user.id,
+        trx,
+      },
     )
 
     await User.query(trx).findById(userId).patch({

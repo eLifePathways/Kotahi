@@ -1,6 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
 /* stylelint-disable custom-property-pattern */
 
-import React, { useContext, useState, useEffect } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { th, override } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -158,5 +161,4 @@ const HiddenTabs = ({
   )
 }
 
-/* eslint-disable import/prefer-default-export */
 export { HiddenTabs }

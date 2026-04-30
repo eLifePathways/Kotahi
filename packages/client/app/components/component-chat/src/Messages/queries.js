@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 export const MESSAGES_SUBSCRIPTION = gql`
   subscription messageCreated($channelId: ID!) {

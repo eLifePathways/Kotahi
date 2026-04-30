@@ -1,7 +1,7 @@
 /* eslint react/prop-types: 0 */
 /* stylelint-disable string-quotes */
 
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import {
   WaxContext,

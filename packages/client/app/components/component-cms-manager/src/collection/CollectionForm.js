@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
+
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react'
-/* eslint-disable import/no-unresolved */
+
+import { useState } from 'react'
+
 import styled from 'styled-components'
 import { omit } from 'lodash'
 import Form from '@rjsf/core'
@@ -90,8 +92,8 @@ const CollectionForm = ({
         {saving
           ? 'Saving...'
           : collection.isNew
-          ? t('cmsPage.metadata.create')
-          : t('cmsPage.metadata.update')}
+            ? t('cmsPage.metadata.create')
+            : t('cmsPage.metadata.update')}
       </ActionButton>
       {collection.isNew !== true && (
         <>

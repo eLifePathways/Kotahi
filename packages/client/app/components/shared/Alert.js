@@ -1,4 +1,3 @@
-import React from 'react'
 import { Alert as AntAlert } from 'antd'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'

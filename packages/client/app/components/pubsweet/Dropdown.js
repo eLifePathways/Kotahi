@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { override, th } from '@coko/client'
@@ -102,7 +104,11 @@ const Dropdown = ({
   if (color) {
     colorIcon = color
   } else {
-    primary ? (colorIcon = '#fff') : (colorIcon = '#0B65CB')
+    if (primary) {
+      colorIcon = '#fff'
+    } else {
+      colorIcon = '#0B65CB'
+    }
   }
 
   const getIconDirection = () => {

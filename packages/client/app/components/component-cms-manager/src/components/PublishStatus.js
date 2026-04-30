@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { useTranslation } from 'react-i18next'
 import { VerticalBar, FlexCenter, StatusInfoText, NewEditText } from '../style'
 import { convertTimestampToDateTimeString } from '../../../../shared/dateUtils'

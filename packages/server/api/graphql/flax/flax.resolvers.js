@@ -5,7 +5,7 @@ const {
 
 module.exports = {
   Query: {
-    flaxHealthCheck: async (_, vars, ctx) => {
+    flaxHealthCheck: async () => {
       let status = 'Nothing'
       const error = 'Nothing'
       status = await healthCheck()

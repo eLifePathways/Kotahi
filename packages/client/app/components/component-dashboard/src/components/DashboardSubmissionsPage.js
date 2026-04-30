@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
 import { useMutation, useQuery } from '@apollo/client'
-import React, { useEffect, useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import { ConfigContext } from '../../../config/src'
 import {
   extractFilters,

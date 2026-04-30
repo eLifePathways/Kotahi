@@ -1,4 +1,7 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/always-return, promise/catch-or-return */
+
+import { useState, useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 import styled from 'styled-components'

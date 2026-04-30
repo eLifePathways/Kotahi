@@ -1,4 +1,4 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const {
   getSubmissionForm,
@@ -37,19 +37,15 @@ const getFieldTitle = (
   return field.title
 }
 
-exports.up = async knex => {
+exports.up = async () => {
   const manuscripts = await Manuscript.query()
     .withGraphFetched('reviews')
     .whereNotNull('evaluationsHypothesisMap')
-
-  logger.info(`Total Manuscripts having hypothesis maps: ${manuscripts.length}`)
 
   if (manuscripts.length > 0) {
     const submissionForm = await getSubmissionForm()
     const reviewForm = await getReviewForm()
     const decisionForm = await getDecisionForm()
-
-    let totalArtifactsCount = 0
 
     await useTransaction(async trx => {
       for (let i = 0; i < manuscripts.length; i += 1) {
@@ -79,16 +75,10 @@ exports.up = async knex => {
           relatedDocumentType: 'preprint',
         }))
 
-        totalArtifactsCount += artifacts.length
-
         // Updating one-by-one rather than all in parallel, to avoid exhausting available connections
         // eslint-disable-next-line no-await-in-loop
         await PublishedArtifact.query(trx).insert(artifacts)
       }
     })
-
-    logger.info(
-      `Finished populating ${totalArtifactsCount} published_artifacts for ${manuscripts.length} manuscripts.`,
-    )
   }
 }

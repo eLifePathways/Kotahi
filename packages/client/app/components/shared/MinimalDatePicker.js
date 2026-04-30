@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Popup from 'reactjs-popup'
 import { Calendar as CalendarIcon } from 'react-feather'
@@ -57,8 +60,7 @@ const MinimalDatePicker = ({
       closeOnEscape
       on="click"
       position={position || 'bottom center'}
-      /* eslint-disable-next-line react/no-unstable-nested-components */
-      trigger={open => (
+      trigger={() => (
         <div>
           <MinimalButton type="button">
             {value.toLocaleDateString('en-CA')}

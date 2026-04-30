@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 // import { map } from 'lodash'
 // import Moment from 'react-moment'
@@ -14,7 +15,10 @@ const Root = styled.div`
 const ordinalLetter = ordinal =>
   ordinal ? String.fromCharCode(96 + ordinal) : null
 
-const Reviewer = ({ reviewer, removeReviewer }) => (
+const Reviewer = ({
+  reviewer,
+  // removeReviewer
+}) => (
   <Root>
     <Avatar
       height={70}

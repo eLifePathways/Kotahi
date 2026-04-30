@@ -3,7 +3,7 @@ const {
   parseCitationsCSL,
 } = require('../../../controllers/anyStyle/anyStyle.controllers')
 
-const buildCitations = async (_, { textReferences }, ctx) => {
+const buildCitations = async (_, { textReferences }) => {
   let outReferences = textReferences
   let error = ''
 

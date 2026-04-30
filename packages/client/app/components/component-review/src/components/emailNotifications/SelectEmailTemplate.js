@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { useTranslation } from 'react-i18next'
 import { Select } from '../../../../shared'
 
@@ -15,7 +16,7 @@ const SelectEmailTemplate = ({
   taskEmailNotification,
   placeholder,
   isClearable,
-  task,
+  // task,
   emailTemplates,
 }) => {
   const emailOptionsToDisplay = emailTemplates.filter(template => {

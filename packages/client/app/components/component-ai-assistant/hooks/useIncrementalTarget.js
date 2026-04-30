@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import { useEffect, useRef } from 'react'
 import { safeCall } from '../../../shared/generalUtils'
 

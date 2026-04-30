@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-import React from 'react'
 import SimpleWaxEditor from '../../../../wax-collab/src/SimpleWaxEditor'
 
 import Image from './Image'

@@ -1,7 +1,6 @@
+/* eslint-disable react/prop-types */
+
 /* eslint-disable class-methods-use-this */
-/* eslint-disable handle-callback-err */
-/* eslint-disable react/sort-comp */
-/* eslint-disable react/destructuring-assignment */
 
 import React from 'react'
 
@@ -11,8 +10,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false }
   }
 
-  /* eslint-disable-next-line node/handle-callback-err */
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI.
     return { hasError: true }
   }
@@ -32,5 +30,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-/* eslint-disable import/prefer-default-export */
 export { ErrorBoundary }

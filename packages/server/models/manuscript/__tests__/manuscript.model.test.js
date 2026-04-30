@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const Manuscript = require('../manuscript.model')
 const Review = require('../../review/review.model')
 const Team = require('../../team/team.model')

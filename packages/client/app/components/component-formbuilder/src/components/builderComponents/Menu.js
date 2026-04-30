@@ -1,6 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Select, TextField, ValidatedFieldFormik } from '../../../../pubsweet'
 import { Legend, Section } from '../style'

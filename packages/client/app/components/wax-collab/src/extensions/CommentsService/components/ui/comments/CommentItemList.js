@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { clone, uniqueId } from 'lodash'

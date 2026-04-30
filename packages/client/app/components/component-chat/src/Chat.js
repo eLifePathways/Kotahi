@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import ChatInput from './SuperChatInput/SuperChatInput'

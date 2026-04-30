@@ -19,7 +19,7 @@ services:
       - db
       - fileHosting
     ports:
-      - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
+      - ${SERVER_PORT:-3000}:3000
       - ${WS_YJS_SERVER_PORT:-5010}:${WS_YJS_SERVER_PORT:-5010}
     environment:
       - NODE_ENV=production

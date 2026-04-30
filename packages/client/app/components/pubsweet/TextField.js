@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import { th, override, validationColor } from '@coko/client'
 import { useUID } from 'react-uid'

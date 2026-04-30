@@ -31,10 +31,8 @@ class Message extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const User = require('../user/user.model')
     const Channel = require('../channel/channel.model')
-    /* eslint-enable global-require */
 
     return {
       channel: {

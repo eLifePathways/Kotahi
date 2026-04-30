@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +16,7 @@ const Divider = styled.div`
 
 const ReviewerItemLinks = ({
   manuscript,
-  urlFrag,
+  // urlFrag,
   reviewerRespond,
   currentUser,
   updateReviewerStatus,

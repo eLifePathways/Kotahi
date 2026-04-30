@@ -1,4 +1,3 @@
-import React from 'react'
 import { grid } from '@coko/client'
 import { Collapse as AntCollapse } from 'antd'
 import styled from 'styled-components'

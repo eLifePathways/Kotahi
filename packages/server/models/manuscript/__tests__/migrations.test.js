@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { db, migrationManager, useTransaction } = require('@coko/server')
 
 const Manuscript = require('../manuscript.model')
@@ -13,9 +15,7 @@ describe('Manuscript Migrations', () => {
       .select('tablename')
       .where('schemaname', 'public')
 
-    /* eslint-disable-next-line no-restricted-syntax */
     for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
       await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
     }
   })

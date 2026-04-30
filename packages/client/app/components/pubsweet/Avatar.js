@@ -1,6 +1,5 @@
-/* stylelint-disable string-quotes */
+/* eslint-disable react/prop-types */
 
-import React from 'react'
 import styled from 'styled-components'
 
 import { th } from '@coko/client'
@@ -9,7 +8,7 @@ const statusColor = props =>
   ({
     declined: props.theme.colorError,
     pending: props.theme.colorSecondary,
-  }[props.status] || props.theme.colorPrimary)
+  })[props.status] || props.theme.colorPrimary
 
 const Container = styled.svg.attrs(() => ({
   viewBox: '0 0 105 70',
@@ -72,11 +71,9 @@ const Reviewer = ({ status, letter }) => {
 const STATUSES = ['accepted', 'pending', 'declined', 'submitted']
 
 const Avatar = ({ status, reviewerLetter }) => {
-  /* eslint-disable-next-line no-param-reassign */
   status = status.toLowerCase()
 
   if (!STATUSES.includes(status)) {
-    /* eslint-disable-next-line no-param-reassign */
     status = 'default'
   }
 

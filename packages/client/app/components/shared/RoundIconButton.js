@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled, { useTheme } from 'styled-components'
 import * as icons from 'react-feather'
 import ActionButton from './ActionButton'

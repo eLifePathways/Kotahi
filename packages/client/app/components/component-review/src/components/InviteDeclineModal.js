@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { convertTimestampToDateString } from '../../../../shared/dateUtils'
@@ -120,7 +121,6 @@ const InviteDeclineModal = ({ invitation, isOpen, onClose }) => {
         <SuggestedReviewerRow>
           <StyledH4>Suggested Reviewers</StyledH4>
           {(invitation.suggestedReviewers || []).map((reviewer, i) => (
-            /* eslint-disable react/no-array-index-key */
             <SuggestedReviewerContainer key={`suggestedReviewer-${i}`}>
               <SuggestedReviewerInnerContainer>
                 <SuggestedReviewerInnerRow>

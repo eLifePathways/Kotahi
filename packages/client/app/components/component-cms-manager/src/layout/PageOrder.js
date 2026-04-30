@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { DragVerticalIcon } from '../../../shared/Icons'
@@ -9,7 +11,7 @@ const reorder = (list, fromIndex, toIndex) => {
   result.splice(toIndex, 0, removed)
 
   const reorderedItems = result.map((item, index) => {
-    item.sequenceIndex = index + 1 // eslint-disable-line no-param-reassign
+    item.sequenceIndex = index + 1
     return item
   })
 
@@ -56,7 +58,7 @@ const PageOrder = ({ initialItems, onPageOrderUpdated }) => {
   const renderItemList = (item, index) => {
     return (
       <Draggable draggableId={item.id} index={index} key={item.id}>
-        {(provided, snapshot) => (
+        {provided => (
           <LayoutHeaderListItem
             ref={provided.innerRef}
             {...provided.draggableProps}

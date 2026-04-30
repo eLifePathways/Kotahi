@@ -1,62 +1,15 @@
-import React, { useContext } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { adopt } from 'react-adopt'
 import { useTranslation } from 'react-i18next'
 import FullWaxEditor from '../../../../wax-collab/src/FullWaxEditor'
 import { ConfigContext } from '../../../../config/src'
 import { Info } from '../style'
-import { getSpecificFilesQuery } from '../../../../asset-manager/src/queries'
-import withModal from '../../../../asset-manager/src/ui/Modal/withModal'
-
-const mapper = {
-  getSpecificFilesQuery,
-  withModal,
-}
-
-const mapProps = args => ({
-  onAssetManager: manuscriptId =>
-    new Promise((resolve, reject) => {
-      const {
-        withModal: { showModal, hideModal },
-      } = args
-
-      const handleImport = async selectedFileIds => {
-        const {
-          getSpecificFilesQuery: { client, query },
-        } = args
-
-        const { data } = await client.query({
-          query,
-          variables: { ids: selectedFileIds },
-        })
-
-        const { getSpecificFiles } = data
-
-        const alteredFiles = getSpecificFiles.map(getSpecificFile => {
-          const mediumSizeFile = getSpecificFile.storedObjects.find(
-            storedObject => storedObject.type === 'medium',
-          )
-
-          return {
-            source: mediumSizeFile.url,
-            mimetype: mediumSizeFile.mimetype,
-            ...getSpecificFile,
-          }
-        })
-
-        hideModal()
-        resolve(alteredFiles)
-      }
-
-      showModal('assetManagerEditor', {
-        manuscriptId,
-        withImport: true,
-        handleImport,
-      })
-    }),
-})
-
-const Composed = adopt(mapper, mapProps)
+import { useGetSpecificFiles } from '../../../../asset-manager/src/queries'
+import ModalContext from '../../../../asset-manager/src/ui/Modal/ModalContext'
 
 const EditorSection = ({
   manuscript,
@@ -70,6 +23,16 @@ const EditorSection = ({
   const {
     submission: { submissionPage = {} },
   } = useContext(ConfigContext)
+
+  const {
+    showModal,
+    hideModal,
+    modals,
+    modalKey,
+    data: modalData,
+  } = useContext(ModalContext)
+
+  const { client, query } = useGetSpecificFiles()
 
   const allowAuthorSubmitFormWithBlankEditor =
     submissionPage?.submitOptions === 'allowAuthorSubmitFormWithBlankEditor'
@@ -88,13 +51,6 @@ const EditorSection = ({
     allowAuthorSubmitFormWithBlankEditor === false
   )
     return <Info>{t('editorSection.noSupportedView')}</Info>
-
-  // React.useEffect(() => {
-  //   // If we have an onBlur function specified, fire it when there's a dismount
-  // eslint-disable-next-line no-console
-  //   console.log('useEffect in EditorSection running')
-  //   return () => (onBlur ? onBlur() : null)
-  // }, [])
 
   const editorTeam = manuscript?.teams?.find(team => {
     return team.role.toLowerCase().includes('editor')
@@ -130,41 +86,73 @@ const EditorSection = ({
     CustomPrompts: config?.groupIdentity?.customAiInputs || [],
   }
 
+  const onAssetManager = manuscriptId =>
+    new Promise(resolve => {
+      const handleImport = async selectedFileIds => {
+        const { data } = await client.query({
+          query,
+          variables: { ids: selectedFileIds },
+        })
+
+        const { getSpecificFiles } = data
+
+        const alteredFiles = getSpecificFiles.map(getSpecificFile => {
+          const mediumSizeFile = getSpecificFile.storedObjects.find(
+            storedObject => storedObject.type === 'medium',
+          )
+
+          return {
+            source: mediumSizeFile.url,
+            mimetype: mediumSizeFile.mimetype,
+            ...getSpecificFile,
+          }
+        })
+
+        hideModal()
+        resolve(alteredFiles)
+      }
+
+      showModal('assetManagerEditor', {
+        manuscriptId,
+        withImport: true,
+        handleImport,
+      })
+    })
+
+  const ModalComponent = modals?.[modalKey]
+
   return (
-    <Composed
-      currentUser={currentUser}
-      isAuthorMode={isAuthorMode}
-      isCurrentUserAuthor={currentUserIsAuthor}
-      isCurrentUserEditor={currentUserIsEditor}
-      manuscript={manuscript}
-      readonly={readonly}
-      saveSource={saveSource}
-    >
-      {({ onAssetManager }) => (
-        <div>
-          <FullWaxEditor
-            aiConfig={aiConfig}
-            authorComments={isAuthorMode}
-            getComments={saveComments}
-            manuscriptId={manuscript.id}
-            onAssetManager={onAssetManager}
-            readonly={readonly}
-            saveSource={saveSource}
-            setComments={() => JSON.parse(manuscript.meta.comments) || []}
-            useComments={
-              !!(
-                currentUserIsEditor ||
-                currentUser.groupRoles.includes('groupAdmin') ||
-                currentUser.groupRoles.includes('groupManager') ||
-                (currentUserIsAuthor && readonly)
-              )
-            }
-            user={currentUser}
-            value={manuscript.meta.source}
-          />
-        </div>
+    <>
+      {modalKey && ModalComponent && (
+        <ModalComponent
+          data={modalData}
+          hideModal={hideModal}
+          isOpen={modalKey !== undefined}
+        />
       )}
-    </Composed>
+      <div>
+        <FullWaxEditor
+          aiConfig={aiConfig}
+          authorComments={isAuthorMode}
+          getComments={saveComments}
+          manuscriptId={manuscript.id}
+          onAssetManager={onAssetManager}
+          readonly={readonly}
+          saveSource={saveSource}
+          setComments={() => JSON.parse(manuscript.meta.comments) || []}
+          useComments={
+            !!(
+              currentUserIsEditor ||
+              currentUser.groupRoles.includes('groupAdmin') ||
+              currentUser.groupRoles.includes('groupManager') ||
+              (currentUserIsAuthor && readonly)
+            )
+          }
+          user={currentUser}
+          value={manuscript.meta.source}
+        />
+      </div>
+    </>
   )
 }
 

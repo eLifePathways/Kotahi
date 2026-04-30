@@ -1,4 +1,6 @@
-import React, { createContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { createContext, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
 const ThemeUpdateContext = createContext()

@@ -1,8 +1,10 @@
-import React from 'react'
+/* eslint-disable react/prop-types, new-cap */
+
 import styled, { css } from 'styled-components'
 import Color from 'color'
 import { th, grid } from '@coko/client'
 
+/* eslint-disable-next-line no-unused-vars */
 const BadgeDiv = ({ color, children, ...rest }) => (
   <div {...rest}>{children}</div>
 )

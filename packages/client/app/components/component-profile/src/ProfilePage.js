@@ -1,7 +1,10 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable promise/always-return */
+
+import { useContext, useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import gql from 'graphql-tag'
-import { useQuery, useMutation } from '@apollo/client'
+import { gql, useQuery, useMutation } from '@apollo/client'
 
 import { serverUrl } from '@coko/client'
 

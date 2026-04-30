@@ -30,15 +30,15 @@ import CitationService from '../CustomWaxToolGroups/CitationService/CitationServ
 import CalloutService from '../CustomWaxToolGroups/CalloutService/CalloutService'
 import 'wax-table-service/dist/index.css'
 
+/* eslint-disable-next-line no-unused-vars */
 const updateTrackStatus = change => {
   // this returns "true" when Suggesting Mode is turned on.
-  // eslint-disable-next-line no-console
   // console.log(change)
 }
 
+/* eslint-disable-next-line no-unused-vars */
 const updateTitle = title => {
   // this gets fired when the title is changed in original version of this—not called now, but might still be needed
-  // eslint-disable-next-line no-console
   // console.log(`Title changed: ${title}`)
 }
 

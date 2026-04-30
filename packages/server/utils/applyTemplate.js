@@ -117,6 +117,7 @@ const applyTemplate = async (
       template = userTemplateEnv.getTemplate('article.njk')
       env = userTemplateEnv
     }
+    /* eslint-disable-next-line  */
   } catch (e) {
     logger.error('No user template found, using default')
     template = defaultTemplateEnv.getTemplate('article.njk')

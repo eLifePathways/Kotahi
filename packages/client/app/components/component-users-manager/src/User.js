@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types */
+
+import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Action } from '../../pubsweet'
 import { UserAvatar } from '../../component-avatar/src'

@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import { th, grid } from '@coko/client'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'

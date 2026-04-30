@@ -2,7 +2,7 @@ const { useTransaction } = require('@coko/server')
 
 const EmailTemplate = require('../emailTemplate.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     if (
       process.env.USE_COLAB_EMAIL &&

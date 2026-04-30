@@ -1,5 +1,6 @@
-/* eslint-disable import/prefer-default-export */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
 /* eslint-disable consistent-return */
+/* eslint-disable no-return-assign */
 
 import { useState, useEffect } from 'react'
 

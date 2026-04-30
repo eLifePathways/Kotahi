@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
 import React from 'react'
 import { Field, FastField, useFormikContext } from 'formik'
 import { get } from 'lodash'
@@ -47,7 +50,7 @@ const ValidatedField = ({
 
   return (
     <FormikComponent {...props}>
-      {({ form: { errors, touched }, field, meta }) => {
+      {({ form: { errors, touched }, field }) => {
         let validationStatus
         if (get(touched, name)) validationStatus = 'success'
         if (get(touched, name) && get(errors, name)) validationStatus = 'error'

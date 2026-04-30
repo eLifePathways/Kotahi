@@ -1,4 +1,6 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/purity */
+
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { forEach, map } from 'lodash'
@@ -175,7 +177,6 @@ const getTableDataWithSparkBars = (rows, labelMapper) => {
       if (typeof val !== 'number')
         return labelMapper ? labelMapper(val, key) : val
       return (
-        // eslint-disable-next-line react/jsx-key
         <SparkBar
           color={color.brand2.tint70()}
           label={labelMapper && labelMapper(val, key)}

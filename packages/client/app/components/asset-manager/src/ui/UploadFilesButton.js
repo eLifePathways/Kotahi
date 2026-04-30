@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/catch-or-return, promise/always-return */
+
 import React from 'react'
 import { mimetypeHelpers } from './Modal'
 

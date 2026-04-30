@@ -1,4 +1,3 @@
-/* eslint-disable global-require */
 const checkIfInvitationWasAccepted = async ctx => {
   const { Invitation } = require('../../models')
   const { invitation: ctxInvitation } = ctx ?? {}
@@ -78,7 +77,10 @@ const sendNotification = async ({ data }) => {
   }
 
   await sendEmail(mailOptions, groupId)
-  message?.content && (await Message.createMessage(message))
+
+  if (message?.content) {
+    await Message.createMessage(message)
+  }
 }
 
 module.exports = sendNotification

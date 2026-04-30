@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useCallback, useEffect, useState } from 'react'
 import { isArray, isObject, mergeWith } from 'lodash'
 import { isNonNullObject, safeCall } from '../shared/generalUtils'
@@ -35,7 +37,11 @@ export const useBool = (options = {}) => {
 
   useEffect(() => {
     if (!onTrue && !onFalse && !onToggle) return
-    boolean ? safeCall(onTrue)() : safeCall(onFalse)()
+    if (boolean) {
+      safeCall(onTrue)()
+    } else {
+      safeCall(onFalse)()
+    }
     safeCall(onToggle)(boolean)
   }, [boolean])
 
@@ -72,7 +78,7 @@ export const useObject = (options = {}) => {
   const set = useCallback(
     state => {
       const prev = object
-      isObject(state) && !isArray(state) && setObject(state)
+      if (isObject(state) && !isArray(state)) setObject(state)
       safeCall(onUpdate)(state, prev)
     },
     [onUpdate],
@@ -336,7 +342,7 @@ export const useArray = (startState = [], options = {}) => {
 
   const set = useCallback(
     state => {
-      Array.isArray(state) && setArray(state)
+      if (Array.isArray(state)) setArray(state)
     },
     [array, onUpdate],
   )

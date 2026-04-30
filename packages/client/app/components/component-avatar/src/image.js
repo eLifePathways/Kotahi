@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 
-import * as React from 'react'
 import VisibilitySensor from 'react-visibility-sensor'
 
 import { serverUrl } from '@coko/client'

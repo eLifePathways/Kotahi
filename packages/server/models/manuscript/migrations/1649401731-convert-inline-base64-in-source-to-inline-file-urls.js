@@ -3,7 +3,7 @@ const { map } = require('lodash')
 const atob = require('atob')
 const { Duplex } = require('stream')
 
-const { useTransaction, logger, createFile } = require('@coko/server')
+const { useTransaction, createFile } = require('@coko/server')
 
 const {
   // Blob,
@@ -31,7 +31,6 @@ class Blob {
     this[CLOSED] = false
     this[TYPE] = ''
 
-    /* eslint-disable prefer-rest-params */
     const blobParts = arguments[0]
     const options = arguments[1]
 
@@ -203,26 +202,18 @@ const uploadImage = async (image, manuscriptId) => {
 
   const fileStream = bufferToStream(Buffer.from(blob.buffer, 'binary'))
 
-  const createdFile = await createFile(
-    fileStream,
-    filename,
-    null,
-    null,
-    ['manuscriptImage'],
-    manuscriptId,
-  )
+  const createdFile = await createFile(fileStream, filename, {
+    tags: ['manuscriptImage'],
+    objectId: manuscriptId,
+  })
 
   return createdFile
 }
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const manuscripts = await Manuscript.query(trx)
-
-      logger.info(`Total Manuscripts: ${manuscripts.length}`)
-
-      let convertedManuscripts = 0
 
       return Promise.all(
         manuscripts.map(async manuscript => {
@@ -247,9 +238,8 @@ exports.up = async knex => {
                 }),
               )
 
-              const uploadedImagesWithUrl = await getFilesWithUrl(
-                uploadedImages,
-              )
+              const uploadedImagesWithUrl =
+                await getFilesWithUrl(uploadedImages)
 
               const $ = cheerio.load(source)
 
@@ -268,19 +258,14 @@ exports.up = async knex => {
 
               manuscript.meta.source = $.html()
 
-              /* eslint no-param-reassign: "error" */
               await Manuscript.query().updateAndFetchById(
                 manuscript.id,
                 manuscript,
               )
             }
           }
-
-          convertedManuscripts += 1
         }),
-      ).then(res => {
-        logger.info(`Total Converted Manuscripts: ${convertedManuscripts}`)
-      })
+      )
     })
   } catch (error) {
     throw new Error(error)

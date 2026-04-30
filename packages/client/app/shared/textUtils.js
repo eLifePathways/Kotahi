@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export const convertCamelCaseToTitleCase = string =>
   Array.from(string).reduce((acc, cur) => {
     if (!acc) return cur.toUpperCase()

@@ -1,5 +1,5 @@
-/* eslint-disable react/destructuring-assignment */
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import { Sidebar } from 'react-feather'
 
 const PinButton = props => {

@@ -1,4 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
@@ -126,7 +130,7 @@ const TaskEditModal = ({
   updateTask,
   updateTaskNotification: persistTaskNotification,
   assigneeGroupedOptions,
-  isReadOnly,
+  // isReadOnly,
   editAsTemplate,
   dueDateLocalString,
   transposedEndOfToday,
@@ -359,7 +363,7 @@ const TaskEditModal = ({
         <TaskRecipientsContainer>
           {taskEmailNotifications?.length ? (
             <>
-              {taskEmailNotifications.map((notification, key) => (
+              {taskEmailNotifications.map(notification => (
                 <TaskNotificationDetails
                   addReviewer={addReviewer}
                   createTaskEmailNotificationLog={

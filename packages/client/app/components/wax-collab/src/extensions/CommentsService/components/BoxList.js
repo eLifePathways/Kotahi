@@ -1,12 +1,15 @@
 /* eslint react/prop-types: 0 */
+
+/* eslint-disable react/display-name */
+
 import { Mark } from 'prosemirror-model'
-import React from 'react'
+
 import ConnectedComment from './ConnectedComment'
 import ConnectedTrackChange from './ConnectedTrackChange'
 
-/* eslint-disable-next-line react/function-component-definition */
 export default ({ commentsTracks, view, position, recalculateTops }) => {
   if (!position) return null
+
   return (
     <>
       {commentsTracks.map((commentTrack, index) => {

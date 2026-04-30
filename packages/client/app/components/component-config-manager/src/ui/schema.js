@@ -5193,7 +5193,6 @@ export const generateSchemas = ({
           classNames: 'col-md-12 col-md-offset-0',
           semanticScholarPublishingServers: {
             'ui:widget': props => {
-              // eslint-disable-next-line react/destructuring-assignment
               const options = props.options.enumOptions
 
               const defaultValue = options.filter(item =>

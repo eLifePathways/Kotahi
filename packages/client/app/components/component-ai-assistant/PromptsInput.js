@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/refs */
+
 /* eslint-disable react/prop-types */
-import React, { useEffect, useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { rotate360 } from '@coko/client'
@@ -105,24 +107,31 @@ const PromptsInput = ({ enabled, className, loading, onSend, ...rest }) => {
       ArrowDown: () => {
         const userHistory = selectedCtx.history.filter(v => v.role === 'user')
         if (userHistory.length < 1) return
-        history.current.prompts.index > 0
-          ? (history.current.prompts.index -= 1)
-          : (history.current.prompts.index = userHistory.length - 1)
 
-        history.current.prompts.active &&
+        if (history.current.prompts.index > 0) {
+          history.current.prompts.index -= 1
+        } else {
+          history.current.prompts.index = userHistory.length - 1
+        }
+
+        if (history.current.prompts.active) {
           setUserPrompt(userHistory[history.current.prompts.index].content)
+        }
+
         history.current.prompts.active = true
       },
       ArrowUp: () => {},
       z: () => {
-        e.ctrlKey && onHistory.apply('undo')
+        if (e.ctrlKey) onHistory.apply('undo')
       },
       y: () => {
-        e.ctrlKey && onHistory.apply('redo')
+        if (e.ctrlKey) onHistory.apply('redo')
       },
-      default: () =>
-        history.current.prompts.active &&
-        (history.current.prompts.active = false),
+      default: () => {
+        if (history.current.prompts.active) {
+          history.current.prompts.active = false
+        }
+      },
     })
   }
 

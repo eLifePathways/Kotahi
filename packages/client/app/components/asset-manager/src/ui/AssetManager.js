@@ -1,4 +1,7 @@
-import React, { Component } from 'react'
+/* eslint-disable react/prop-types */
+/* eslint-disable promise/catch-or-return, promise/always-return */
+
+import { Component } from 'react'
 import styled from 'styled-components'
 import { indexOf, forEach, find } from 'lodash'
 
@@ -100,7 +103,7 @@ class AssetManager extends Component {
   toggleOrder(key) {
     const { refetch, manuscriptId } = this.props
     const { name, updated } = this.state
-    // eslint-disable-next-line
+
     this.setState({ [key]: !this.state[key] })
     refetch(manuscriptId, [
       { key: 'name', order: name ? 'asc' : 'desc' },

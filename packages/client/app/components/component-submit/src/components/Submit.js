@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
 import React, { useCallback, useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { set, debounce } from 'lodash'
@@ -47,7 +50,7 @@ const Submit = ({
   channelId,
   chatProps,
   hideChat,
-  parent,
+  // parent,
   match,
   channels,
   updateManuscript,
@@ -314,7 +317,6 @@ const formPropTypes = PropTypes.shape({
 Submit.propTypes = {
   versions: PropTypes.arrayOf(
     PropTypes.shape({
-      // eslint-disable-next-line react/forbid-prop-types
       manuscript: PropTypes.objectOf(PropTypes.any),
       label: PropTypes.string,
     }),

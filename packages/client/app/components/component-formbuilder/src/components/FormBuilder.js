@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import styled, { withTheme } from 'styled-components'
@@ -60,7 +62,7 @@ const UnpaddedIcon = styled(Icon)`
   vertical-align: text-top;
 `
 
-const SmallIcon = withTheme(({ children, theme }) => (
+const SmallIcon = withTheme(({ children }) => (
   <UnpaddedIcon color="transparent" size={2.5}>
     {children}
   </UnpaddedIcon>
@@ -175,7 +177,7 @@ const FormBuilder = ({
   form,
   category,
   setSelectedFieldId,
-  addField,
+  // addField,
   deleteField,
   dragField,
   moveFieldUp,
@@ -197,7 +199,7 @@ const FormBuilder = ({
     <Page style={{ display: 'flex', flexDirection: 'column', minHeight: '0' }}>
       <DragDropContext onDragEnd={dragField}>
         <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
+          {provided => (
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}

@@ -1,7 +1,5 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-shadow */
 
-import React from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { Chart } from 'react-google-charts'
@@ -140,11 +138,10 @@ const ReviewStatusDonut = ({ manuscript }) => {
   Object.keys(statusCounts).forEach(status => {
     const count = statusCounts[status]
     const { text } = statusOptions[status]
-    statusTooltips[
-      status
-    ] = `<div style="min-width: 10em; padding: 5px 15px; font-size: ${th(
-      'fontSizeBase',
-    )}; color: ${th('colorText')};">${text}: ${count}</div>`
+    statusTooltips[status] =
+      `<div style="min-width: 10em; padding: 5px 15px; font-size: ${th(
+        'fontSizeBase',
+      )}; color: ${th('colorText')};">${text}: ${count}</div>`
   })
 
   const statusColors = Object.keys(statusCounts).map(

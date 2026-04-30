@@ -1,4 +1,7 @@
-import React from 'react'
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-return-assign */
+
 import styled from 'styled-components'
 import { th } from '@coko/client'
 

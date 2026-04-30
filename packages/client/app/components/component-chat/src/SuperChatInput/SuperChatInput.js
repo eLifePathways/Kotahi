@@ -1,7 +1,11 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 
-// @flow
+/* eslint-disable promise/always-return */
+
+/* eslint-disable jsx-a11y/no-autofocus */
+
+/* eslint-disable react/prop-types */
+
 import * as React from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -53,11 +57,11 @@ const SuperChatInput = props => {
     localStorage.setItem(cacheKey, text)
   }, [text])
 
-  const onEnterPress = source => {
+  const onEnterPress = () => {
     submit()
   }
 
-  const sendMessage = ({ file, body }) =>
+  const sendMessage = ({ body }) =>
     // user is creating a new directMessageThread, break the chain
     // and initiate a new group creation with the message being sent
     // in views/directMessages/containers/newThread.js
@@ -111,7 +115,7 @@ const SuperChatInput = props => {
           setMediaPreview(null)
           setAttachedMediaFile(null)
         })
-        .catch(_ => {
+        .catch(() => {
           setIsSendingMediaMessage(false)
           // props.dispatch(addToastWithTimeout('error', err.message))
         })

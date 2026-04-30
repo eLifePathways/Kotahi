@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useMutation, useQuery, gql } from '@apollo/client'
 import {
   DELETE_TASK_NOTIFICATION,
@@ -84,7 +84,7 @@ const query = gql`
   }
 `
 
-const TasksTemplatePage = ({ match, ...props }) => {
+const TasksTemplatePage = () => {
   const config = useContext(ConfigContext)
 
   const [updateTask] = useMutation(UPDATE_TASK, {

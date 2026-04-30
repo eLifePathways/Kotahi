@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled, { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { color } from '../../../../theme'

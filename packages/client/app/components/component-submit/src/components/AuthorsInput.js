@@ -1,8 +1,8 @@
-/* stylelint-disable string-quotes */
-/* stylelint-disable no-descending-specificity */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import Creatable from 'react-select/async-creatable'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import PropTypes from 'prop-types'

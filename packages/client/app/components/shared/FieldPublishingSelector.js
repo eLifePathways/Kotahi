@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
 
 const FieldPublishingSelector = ({ value, onChange }) => {
   const [checked, setChecked] = useState(value) // useState se we can update the checkbox immediately rather than wait for mutation result
   return (
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     <label>
       Publish{' '}
       <input

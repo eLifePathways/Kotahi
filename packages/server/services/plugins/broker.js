@@ -70,7 +70,7 @@ const getBroker = (groupId, workerName) => {
       doi
         ? Manuscript.query()
             .where({ groupId })
-            // eslint-disable-next-line func-names
+
             .where(function () {
               this.whereRaw("submission->>'$doi' = ?", [doi]).orWhereRaw(
                 "submission->>'doi' = ?",
@@ -83,7 +83,7 @@ const getBroker = (groupId, workerName) => {
       uri
         ? Manuscript.query()
             .where({ groupId })
-            // eslint-disable-next-line func-names
+
             .where(function () {
               this.whereRaw("submission->>'$sourceUri' = ?", [uri]).orWhereRaw(
                 "submission->>'link' = ?",

@@ -1,122 +1,57 @@
-/* eslint-disable no-console */
-import React from 'react'
-import { get } from 'lodash'
-import { adopt } from 'react-adopt'
+/* eslint-disable react/prop-types */
+
 import { AssetManager } from './ui'
 import {
-  getEntityFilesQuery,
-  getSpecificFilesQuery,
-  uploadFilesMutation,
-  deleteFilesMutation,
-  updateFileMutation,
-  filesUploadedSubscription,
-  filesDeletedSubscription,
-  fileUpdatedSubscription,
+  useGetEntityFiles,
+  useUploadFiles,
+  useDeleteFiles,
+  useUpdateFile,
+  useFilesUploadedSubscription,
+  useFilesDeletedSubscription,
+  useFileUpdatedSubscription,
 } from './queries'
-
-const mapper = {
-  getEntityFilesQuery,
-  getSpecificFilesQuery,
-  filesUploadedSubscription,
-  filesDeletedSubscription,
-  fileUpdatedSubscription,
-  uploadFilesMutation,
-  deleteFilesMutation,
-  updateFileMutation,
-}
-
-const mapProps = args => ({
-  files: get(args.getEntityFilesQuery, 'data.getEntityFiles'),
-  uploadFiles: (manuscriptId, files) => {
-    const {
-      uploadFilesMutation: { uploadFiles },
-    } = args
-
-    return uploadFiles({
-      variables: {
-        files,
-        fileType: 'manuscriptImage',
-        entityId: manuscriptId,
-      },
-    })
-  },
-  deleteFiles: ids => {
-    const {
-      deleteFilesMutation: { deleteFiles },
-    } = args
-
-    return deleteFiles({
-      variables: {
-        ids,
-      },
-    })
-  },
-  refetch: (manuscriptId, sortingParams) => {
-    const {
-      getEntityFilesQuery: { refetch },
-    } = args
-
-    refetch({
-      input: {
-        entityId: manuscriptId,
-        sortingParams,
-        includeInUse: true,
-      },
-    })
-  },
-  updateFile: (fileId, data) => {
-    const {
-      updateFileMutation: { updateFile },
-    } = args
-
-    return updateFile({
-      variables: {
-        input: {
-          id: fileId,
-          ...data,
-        },
-      },
-    })
-  },
-  refetching:
-    args.getEntityFilesQuery.networkStatus === 4 ||
-    args.getEntityFilesQuery.networkStatus === 2, // possible apollo bug
-  loading: args.getEntityFilesQuery.networkStatus === 1,
-})
-
-const Composed = adopt(mapper, mapProps)
 
 const Connected = props => {
   const { data, isOpen, hideModal } = props
   const { manuscriptId, withImport, handleImport } = data
 
+  const {
+    data: filesData,
+    networkStatus,
+    refetch,
+  } = useGetEntityFiles(manuscriptId)
+
+  const [uploadFiles] = useUploadFiles()
+  const [deleteFiles] = useDeleteFiles()
+  const [updateFile] = useUpdateFile()
+
+  useFilesUploadedSubscription(refetch)
+  useFilesDeletedSubscription(refetch)
+  useFileUpdatedSubscription(refetch)
+
   return (
-    <Composed entityId={manuscriptId}>
-      {({
-        deleteFiles,
-        files,
-        loading,
-        uploadFiles,
-        updateFile,
-        refetching,
-        refetch,
-      }) => (
-        <AssetManager
-          deleteFiles={deleteFiles}
-          files={files}
-          handleImport={handleImport}
-          hideModal={hideModal}
-          isOpen={isOpen}
-          loading={loading}
-          manuscriptId={manuscriptId}
-          refetch={refetch}
-          refetching={refetching}
-          updateFile={updateFile}
-          uploadFiles={uploadFiles}
-          withImport={withImport}
-        />
-      )}
-    </Composed>
+    <AssetManager
+      deleteFiles={ids => deleteFiles({ variables: { ids } })}
+      files={filesData?.getEntityFiles}
+      handleImport={handleImport}
+      hideModal={hideModal}
+      isOpen={isOpen}
+      loading={networkStatus === 1}
+      manuscriptId={manuscriptId}
+      refetch={(id, sortingParams) =>
+        refetch({ input: { entityId: id, sortingParams, includeInUse: true } })
+      }
+      refetching={networkStatus === 4 || networkStatus === 2}
+      updateFile={(fileId, fileData) =>
+        updateFile({ variables: { input: { id: fileId, ...fileData } } })
+      }
+      uploadFiles={(id, files) =>
+        uploadFiles({
+          variables: { files, fileType: 'manuscriptImage', entityId: id },
+        })
+      }
+      withImport={withImport}
+    />
   )
 }
 

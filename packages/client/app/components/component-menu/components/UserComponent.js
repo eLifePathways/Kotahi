@@ -1,4 +1,7 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+
 import PropTypes from 'prop-types'
 import { UserAvatar } from '../../component-avatar/src'
 import {

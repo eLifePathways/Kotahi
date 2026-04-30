@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import fnv from 'fnv-plus'
 import { useTranslation } from 'react-i18next'
 
@@ -26,7 +27,7 @@ const SiteStatus = ({ cmsLayout, flaxSiteUrlForGroup, triggerAutoSave }) => {
   return (
     <>
       <LayoutMainHeading>{t('cmsPage.layout.Status')}</LayoutMainHeading>
-      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+      {}
       <label>
         <input
           checked={cmsLayout.isPrivate}

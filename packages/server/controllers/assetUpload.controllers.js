@@ -16,10 +16,10 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
       const insertedFile = await createFile(
         fs.createReadStream(`${f.path}`),
         f.originalname,
-        null,
-        null,
-        tags,
-        groupTemplateId,
+        {
+          tags,
+          objectId: groupTemplateId,
+        },
       )
 
       if (fileType === 'javascript' || fileType === 'css') {
@@ -27,7 +27,6 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
 
         if (file.storedObjects) {
           const storedObjects = file.storedObjects.map(storedObject => {
-            // eslint-disable-next-line no-param-reassign
             storedObject.mimetype = `text/${fileType}`
             return storedObject
           })
@@ -40,9 +39,8 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
     }),
   )
 
-  const templateFiles = await ArticleTemplate.relatedQuery('files').for(
-    groupTemplateId,
-  )
+  const templateFiles =
+    await ArticleTemplate.relatedQuery('files').for(groupTemplateId)
 
   const filesWithUrl = await getFilesWithUrl(templateFiles)
   return filesWithUrl
@@ -65,7 +63,7 @@ const deleteAsset = async id => {
     const filesWithUrl = await getFilesWithUrl(templateFiles)
     return filesWithUrl
   } catch (e) {
-    throw new Error('The was a problem deleting the file')
+    throw new Error(`The was a problem deleting the file: ${e.message}`)
   }
 }
 

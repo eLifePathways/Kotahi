@@ -1,6 +1,5 @@
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/prop-types */
 
-import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { th, override, validationColor } from '@coko/client'

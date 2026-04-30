@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { indexOf } from 'lodash'
@@ -131,7 +132,7 @@ const FilesTable = ({
                 <TableCell width={2}>
                   <input
                     checked={foundInList !== -1}
-                    onChange={e => {
+                    onChange={() => {
                       checkboxHandler(id)
                     }}
                     type="checkbox"
@@ -139,7 +140,7 @@ const FilesTable = ({
                 </TableCell>
               )}
               <RowRest
-                onClick={e => {
+                onClick={() => {
                   selectHandler(id)
                 }}
                 width={checkboxColumn ? 98 : 100}
@@ -208,7 +209,7 @@ const FilesTable = ({
                 files.length > 0 &&
                 files.length === checkboxSelected.length
               }
-              onChange={e => {
+              onChange={() => {
                 checkboxHandler(undefined, true)
               }}
               type="checkbox"
@@ -224,7 +225,7 @@ const FilesTable = ({
                 {sortable && (
                   <IconButton
                     icon={sortingState[label] ? ascIcon : descIcon}
-                    onClick={e => {
+                    onClick={() => {
                       sortingHandler(label)
                     }}
                   />

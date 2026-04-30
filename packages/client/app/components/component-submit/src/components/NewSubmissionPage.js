@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { ApolloConsumer } from '@apollo/client'
 import { useTranslation } from 'react-i18next'

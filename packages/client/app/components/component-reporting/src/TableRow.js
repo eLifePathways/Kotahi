@@ -1,4 +1,3 @@
-import React from 'react'
 import styled, { css } from 'styled-components'
 import PropTypes from 'prop-types'
 import { color } from '../../../theme'
@@ -59,7 +58,6 @@ const TableRow = ({ cells, isHeadingRow }) => {
           data-testid="cell"
           flexGrow={cell.flexGrow ?? 0}
           isHeading={isHeadingRow || cell.isHeading}
-          // eslint-disable-next-line react/no-array-index-key
           key={index}
           width={cell.width}
         >

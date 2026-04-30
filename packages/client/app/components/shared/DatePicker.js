@@ -1,4 +1,6 @@
-import React from 'react'
+/* eslint-disable react-hooks/purity */
+/* eslint-disable react/prop-types */
+
 import styled from 'styled-components'
 import UnstyledDatePicker from 'react-date-picker'
 import { grid, th } from '@coko/client'

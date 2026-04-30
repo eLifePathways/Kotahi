@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Wax } from 'wax-prosemirror-core'
 import { debounce } from 'lodash'
@@ -39,8 +45,8 @@ const SimpleWaxEditor = ({
         key={`readonly-${readonly}`} // Force remount to overcome Wax bugs on changing between editable and readonly
         layout={SimpleWaxEditorLayout(readonly)}
         onBlur={val => {
-          onChange && onChange(val)
-          onBlur && onBlur(val)
+          if (onChange) onChange(val)
+          if (onBlur) onBlur(val)
         }}
         onChange={debounceChange}
         placeholder={placeholder}

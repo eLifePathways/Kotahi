@@ -1,6 +1,7 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -152,7 +153,7 @@ const Profile = ({
   currentUser,
   kotahiVersion,
   logoutUser,
-  match,
+  // match,
   replaceAvatarImage,
   updateUserEmail,
   updateUsername,

@@ -1,6 +1,7 @@
-/* eslint react/prop-types: 0 */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+
 import { Mark } from 'prosemirror-model'
-import React, { useContext, useState, useMemo, useCallback } from 'react'
+import { useContext, useState, useMemo, useCallback } from 'react'
 // eslint-disable-next-line
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { each, uniqBy, sortBy } from 'lodash'
@@ -117,14 +118,13 @@ const RightArea = ({ area }) => {
       }
 
       // store where the box ends to be aware of overlaps in the next box
-      // eslint-disable-next-line no-param-reassign
+
       markNode.endHeight = top + boxHeight + 4
       result[pos] = top
       allCommentsTop.push({ [id]: result[pos] })
 
       // if active, move as many boxes above as needed to bring it to the annotation's height
       if (isActive) {
-        // eslint-disable-next-line no-param-reassign
         markNode.endHeight = annotationTop + boxHeight + 3
         result[pos] = annotationTop
         allCommentsTop[pos][id] = result[pos]
@@ -224,7 +224,6 @@ const updateMarks = views => {
             mark.type.name === 'deletion' ||
             mark.type.name === 'format_change'
           ) {
-            // eslint-disable-next-line no-param-reassign
             mark.pos = node.pos
             finalMarks.push(mark)
           }

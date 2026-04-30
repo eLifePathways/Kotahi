@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useContext } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+/* eslint-disable new-cap */
+/* eslint-disable jsx-a11y/no-autofocus */
+
+import { useRef, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Wax } from 'wax-prosemirror-core'
 import { ThemeProvider } from 'styled-components'
@@ -125,7 +131,7 @@ const ProductionWaxEditor = ({
   getComments,
   setComments,
   placeholder,
-  fileUpload,
+  // fileUpload,
   useComments,
   user,
   manuscriptId,
@@ -133,7 +139,7 @@ const ProductionWaxEditor = ({
   isAuthorProofingVersion,
   getDataFromDatacite = false,
   fallbackOnCrossrefAfterDatacite = false,
-  yjsProvider,
+  // yjsProvider,
   wsProvider,
   ydoc,
   name,
@@ -162,7 +168,7 @@ const ProductionWaxEditor = ({
 
   const updateAnystyle = async text => {
     const { content } = text
-    // eslint-disable-next-line no-console
+
     // console.log('Coming in for Anystyle: ', content)
     return client
       .query({
@@ -173,7 +179,6 @@ const ProductionWaxEditor = ({
         fetchPolicy: 'network-only',
       })
       .then(result => {
-        // eslint-disable-next-line no-console
         // console.log('Result:', result)
 
         if (
@@ -196,7 +201,6 @@ const ProductionWaxEditor = ({
   }
 
   const updateCrossRef = async (text, useDatacite = false) => {
-    // eslint-disable-next-line no-console
     // console.log('Coming in for CrossRef: ', text)
     // console.log('use DataCite: ', useDatacite)
     return text
@@ -251,7 +255,6 @@ const ProductionWaxEditor = ({
   }
 
   const updateCiteProc = async csl => {
-    // eslint-disable-next-line no-console
     // console.log('Coming in for citeproc: ', csl)
     return client
       .query({
@@ -262,7 +265,6 @@ const ProductionWaxEditor = ({
         fetchPolicy: 'network-only',
       })
       .then(result => {
-        // eslint-disable-next-line no-console
         // console.log('Citeproc result:', result)
 
         if (
@@ -282,7 +284,6 @@ const ProductionWaxEditor = ({
   }
 
   const updateCallout = async (references, callouts) => {
-    // eslint-disable-next-line no-console
     // console.log(
     //   'Coming in for citeproc input references: ',
     //   JSON.stringify(references),
@@ -303,7 +304,6 @@ const ProductionWaxEditor = ({
         fetchPolicy: 'network-only',
       })
       .then(result => {
-        // eslint-disable-next-line no-console
         // console.log('Citeproc result:', result)
 
         if (
@@ -333,8 +333,8 @@ const ProductionWaxEditor = ({
   const productionLayout = isAuthorProofingVersion
     ? AuthorProofingWaxEditorLayout(readonly)
     : useComments // TODO: Check if we actually ever use useComments in production mode?
-    ? ProductionWaxEditorLayout(readonly)
-    : ProductionWaxEditorNoCommentsLayout(readonly)
+      ? ProductionWaxEditorLayout(readonly)
+      : ProductionWaxEditorNoCommentsLayout(readonly)
 
   let config = isAuthorProofingVersion
     ? authorProofingWaxEditorConfig(

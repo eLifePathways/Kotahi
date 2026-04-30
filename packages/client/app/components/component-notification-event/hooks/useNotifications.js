@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useEffect } from 'react'
 import {

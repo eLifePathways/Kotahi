@@ -1,5 +1,7 @@
-/* eslint react/prop-types: 0 */
-import React, { useContext, useMemo, useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types, react/display-name */
+
+import { useContext, useMemo, useState, useEffect } from 'react'
 import { TextSelection } from 'prosemirror-state'
 import { last, maxBy } from 'lodash'
 import styled from 'styled-components'
@@ -30,7 +32,6 @@ const ConnectedCommentStyled = styled.div`
   )}/* stylelint-enable order/properties-alphabetical-order */
 `
 
-/* eslint-disable-next-line react/function-component-definition */
 export default ({ comment, top, commentId, recalculateTops }) => {
   const context = useContext(WaxContext)
   const { app } = useContext(ApplicationContext)
@@ -210,6 +211,5 @@ export default ({ comment, top, commentId, recalculateTops }) => {
     [isActive, top, comment.attrs.conversation.length],
   )
 
-  /* eslint-disable-next-line react/jsx-no-useless-fragment */
   return <>{MemorizedComponent}</>
 }

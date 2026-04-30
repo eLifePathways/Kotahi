@@ -1,4 +1,7 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
+/* eslint-disable jsx-a11y/no-autofocus */
+
 import PropTypes from 'prop-types'
 import { Wax } from 'wax-prosemirror-core'
 import chatWaxEditorConfig from './ChatWaxEditorConfig'
@@ -9,15 +12,15 @@ const ChatWaxEditor = ({
   validationStatus,
   readonly,
   autoFocus,
-  onBlur,
-  onChange,
+  // onBlur,
+  // onChange,
   placeholder,
   spellCheck,
   onEnterPress,
   editorRef,
   autoCompleteReducer,
   editorType,
-  ...rest
+  // ...rest
 }) => {
   return (
     <div className={validationStatus}>

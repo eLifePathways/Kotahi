@@ -1,4 +1,7 @@
-import React from 'react'
+/* eslint-disable react-hooks/static-components */
+/* eslint-disable react/prop-types */
+/* eslint-disable new-cap */
+
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import User from './User'
@@ -38,9 +41,7 @@ const UsersTable = ({
   totalCount,
   users,
 }) => {
-  /* eslint-disable-next-line react/no-unstable-nested-components */
   const SortHeader = ({ thisSortName, children }) => {
-    /* eslint-disable-next-line react/no-unstable-nested-components */
     const UpDown = () => {
       if (thisSortName !== sortName) return null
       return sortDirection === 'ASC' ? <SortDown /> : <SortUp />
@@ -78,7 +79,7 @@ const UsersTable = ({
                 {t('usersTable.Last Online')}
               </SortHeader>
               <SortHeader>{t('usersTable.Roles')}</SortHeader>
-              {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+              {}
               <th />
             </tr>
           </Header>

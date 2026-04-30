@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'

@@ -1,5 +1,3 @@
-/* stylelint-disable string-quotes */
-
 import styled from 'styled-components'
 
 const Columns = styled.div`

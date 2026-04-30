@@ -1,4 +1,6 @@
-import React, { useContext, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import { useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { CssAssistantContext } from './hooks/CssAssistantContext'
 import {
@@ -27,7 +29,12 @@ const AbsoluteContainer = styled.span`
   display: flex;
   pointer-events: none;
   position: absolute;
-  transition: top 0.3s, left 0.3s, width 0.3s, height 0.3s, opacity 0.3s;
+  transition:
+    top 0.3s,
+    left 0.3s,
+    width 0.3s,
+    height 0.3s,
+    opacity 0.3s;
   z-index: 999;
 `
 
@@ -48,7 +55,9 @@ const RelativeContainer = styled.div`
     background: ${color.brand1.shade25};
     border: 1px solid currentColor;
     border-radius: 50%;
-    box-shadow: 0 0 5px #0002, inset 0 0 8px #fff4;
+    box-shadow:
+      0 0 5px #0002,
+      inset 0 0 8px #fff4;
     color: #eee;
     cursor: pointer;
     outline: none;
@@ -95,28 +104,34 @@ const SelectionBox = ({
   useEffect(() => {
     updateSelectionBoxPosition(yOffset, xOffset)
 
-    selectionBoxRef?.current &&
+    if (selectionBoxRef?.current) {
       selectionBoxRef.current.parentNode.addEventListener(
         'scroll',
         updateSelectionBoxPosition,
       )
-    selectionBoxRef?.current &&
+    }
+
+    if (selectionBoxRef?.current) {
       selectionBoxRef.current.parentNode.addEventListener(
         'resize',
         updateSelectionBoxPosition,
       )
+    }
 
     return () => {
-      selectionBoxRef?.current &&
+      if (selectionBoxRef?.current) {
         selectionBoxRef.current.parentNode.removeEventListener(
           'scroll',
           updateSelectionBoxPosition,
         )
-      selectionBoxRef?.current &&
+      }
+
+      if (selectionBoxRef?.current) {
         selectionBoxRef.current.parentNode.removeEventListener(
           'resize',
           updateSelectionBoxPosition,
         )
+      }
     }
   }, [selectedNode])
 

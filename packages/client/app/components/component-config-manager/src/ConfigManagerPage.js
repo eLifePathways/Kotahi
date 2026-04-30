@@ -1,6 +1,5 @@
-import React, { useContext, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { useContext, useState } from 'react'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { ConfigContext } from '../../config/src'
 import { UPDATE_CONFIG } from '../../../queries'
 import {
@@ -55,7 +54,7 @@ const GET_CONFIG_AND_EMAIL_TEMPLATES = gql`
   }
 `
 
-const ConfigManagerPage = ({ match, ...props }) => {
+const ConfigManagerPage = () => {
   const config = useContext(ConfigContext)
   const [update] = useMutation(UPDATE_CONFIG)
   const [createFile] = useMutation(createFileMutation)

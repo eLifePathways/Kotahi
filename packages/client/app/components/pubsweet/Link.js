@@ -1,6 +1,5 @@
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 
-import React from 'react'
 import styled from 'styled-components'
 import { Link as UnstyledLink } from 'react-router-dom'
 import { th, override } from '@coko/client'

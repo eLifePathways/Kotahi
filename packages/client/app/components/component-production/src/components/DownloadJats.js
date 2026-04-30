@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react'
 import Modal from 'react-modal'
 import { useQuery, gql } from '@apollo/client'

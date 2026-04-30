@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import DecisionReview from './DecisionReview'

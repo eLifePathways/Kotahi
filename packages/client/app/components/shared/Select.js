@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+/* eslint-disable react/prop-types, react/display-name */
+
 /* eslint-disable no-nested-ternary */
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect, { components } from 'react-select'
 import styled, { ThemeContext } from 'styled-components'
@@ -7,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { color } from '../../theme'
 
 const styles = th => ({
-  menu: (provided, state) => ({
+  menu: provided => ({
     ...provided,
     borderRadius: th.borderRadius,
     zIndex: 9999,
@@ -29,8 +32,8 @@ const styles = th => ({
         ? `0 0 0 1px ${color.brand1.base}`
         : 'inset 0px 0px 4px rgba(0, 0, 0, 0.07)'
       : state.isFocused
-      ? `0 0 0 1px ${color.brand1.base}`
-      : th.boxShadow,
+        ? `0 0 0 1px ${color.brand1.base}`
+        : th.boxShadow,
 
     borderRadius: th.borderRadius,
     '&:hover': {
@@ -69,7 +72,6 @@ const ValueWrapper = styled.div`
 
 const getValueContainer =
   dataTestid =>
-  /* eslint-disable-next-line react/function-component-definition */
   ({ children, ...props }) => {
     return (
       <components.ValueContainer {...props}>
@@ -78,10 +80,9 @@ const getValueContainer =
     )
   }
 
-// eslint-disable-next-line import/prefer-default-export
 export const Select = props => {
   const {
-    name,
+    // name,
     value,
     isMulti,
     options,
@@ -104,7 +105,7 @@ export const Select = props => {
             subOption => subOption.value === value,
           )
 
-          optionMatched && setSelectedOption(optionMatched)
+          if (optionMatched) setSelectedOption(optionMatched)
 
           return !!optionMatched
         })
@@ -138,7 +139,6 @@ export const Select = props => {
 }
 
 Select.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   value: PropTypes.any,
   isMulti: PropTypes.bool,
   options: PropTypes.arrayOf(PropTypes.any.isRequired).isRequired,

@@ -1,9 +1,5 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable consistent-return */
 
-// @flow
-import React from 'react'
 import { MentionsInput, Mention } from 'react-mentions'
 import { th } from '@coko/client'
 import { MentionsInputStyle } from './style'
@@ -90,6 +86,7 @@ const CustomMentionsInput = props => {
     },
   }
 
+  /* eslint-disable-next-line no-unused-vars */
   const { dataCy, networkDisabled, staticSuggestions, hasAttachment, ...rest } =
     props
 

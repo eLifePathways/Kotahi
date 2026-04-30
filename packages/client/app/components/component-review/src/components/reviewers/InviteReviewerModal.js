@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
+
 import { grid, th } from '@coko/client'
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { CheckboxGroup } from '../../../../pubsweet'
@@ -56,7 +58,7 @@ const InviteReviewerModal = ({
   currentUser,
   updateSharedStatusForInvitedReviewer,
   updateTeamMember,
-  updateCollaborativeTeamMember,
+  // updateCollaborativeTeamMember,
   emailTemplates,
 }) => {
   const config = useContext(ConfigContext)

@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+
 import styled, { css } from 'styled-components'
 import { th, override } from '@coko/client'
 
@@ -28,7 +29,6 @@ const Root = styled.label`
   ${override('ui.Radio')};
 `
 
-// eslint-disable-next-line import/prefer-default-export
 export const Radio = ({
   className,
   disabled,

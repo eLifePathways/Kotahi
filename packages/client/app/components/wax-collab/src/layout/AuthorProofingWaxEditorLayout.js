@@ -1,4 +1,9 @@
-import React, { useCallback, useContext, useState, useEffect } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
+/* eslint-disable react/display-name */
+
+/* eslint-disable new-cap */
+
+import { useCallback, useContext, useState, useEffect } from 'react'
 import {
   WaxContext,
   WaxView,
@@ -45,67 +50,107 @@ const CounterInfo = ComponentPlugin('bottomRightInfo')
 const LeftSideBar = ComponentPlugin('leftSideBar')
 const CitationArea = ComponentPlugin('citationArea')
 
-const AuthorProofingWaxEditorLayout =
-  readOnly =>
-  /* eslint-disable-next-line react/function-component-definition */
-  props => {
-    const {
-      pmViews: { main },
-      options,
-    } = useContext(WaxContext)
+const AuthorProofingWaxEditorLayout = readOnly => props => {
+  const {
+    pmViews: { main },
+    options,
+  } = useContext(WaxContext)
 
-    // added to bring in notes
+  // added to bring in notes
 
-    const notes = (main && getNotes(main)) ?? []
+  const notes = (main && getNotes(main)) ?? []
 
-    const areNotes = notes && !!notes.length && notes.length > 0
+  const areNotes = notes && !!notes.length && notes.length > 0
 
-    const [hasNotes, setHasNotes] = useState(areNotes)
+  const [hasNotes, setHasNotes] = useState(areNotes)
 
-    const showNotes = () => {
-      setHasNotes(areNotes)
+  const showNotes = () => {
+    setHasNotes(areNotes)
+  }
+
+  const delayedShowedNotes = useCallback(
+    setTimeout(() => showNotes(), 100),
+    [],
+  )
+
+  useEffect(() => {}, [delayedShowedNotes])
+
+  // added to bring in comments
+
+  const commentsTracksCount =
+    main && DocumentHelpers.getCommentsTracksCount(main)
+
+  const trackBlockNodesCount =
+    main && DocumentHelpers.getTrackBlockNodesCount(main)
+
+  // added to bring in full screen
+
+  let fullScreenStyles = {}
+
+  if (options.fullScreen) {
+    fullScreenStyles = {
+      backgroundColor: '#fff',
+      height: '100%',
+      left: '0',
+      margin: '0',
+      padding: '0',
+      position: 'fixed',
+      top: '0',
+      width: '100%',
+      zIndex: '99999',
     }
+  }
 
-    const delayedShowedNotes = useCallback(
-      setTimeout(() => showNotes(), 100),
-      [],
-    )
-
-    useEffect(() => {}, [delayedShowedNotes])
-
-    // added to bring in comments
-
-    const commentsTracksCount =
-      main && DocumentHelpers.getCommentsTracksCount(main)
-
-    const trackBlockNodesCount =
-      main && DocumentHelpers.getTrackBlockNodesCount(main)
-
-    // added to bring in full screen
-
-    let fullScreenStyles = {}
-
-    if (options.fullScreen) {
-      fullScreenStyles = {
-        backgroundColor: '#fff',
-        height: '100%',
-        left: '0',
-        margin: '0',
-        padding: '0',
-        position: 'fixed',
-        top: '0',
-        width: '100%',
-        zIndex: '99999',
-      }
-    }
-
-    return (
-      <div style={fullScreenStyles}>
-        <Grid production readonly={readOnly}>
-          {readOnly ? (
+  return (
+    <div style={fullScreenStyles}>
+      <Grid production readonly={readOnly}>
+        {readOnly ? (
+          <ProductionEditorDiv>
+            <SideMenu />
+            <EditorArea className="editorArea production">
+              <div>
+                <WaxSurfaceScroll className="panelWrapper">
+                  <EditorContainer>
+                    <WaxView {...props} />
+                  </EditorContainer>
+                  <CitationArea />
+                  <CommentsContainer>
+                    <CommentTrackToolsContainer>
+                      <CommentTrackTools>
+                        <span style={{ marginRight: '1em' }}>
+                          {commentsTracksCount + trackBlockNodesCount} COMMENTS
+                          AND SUGGESTIONS
+                        </span>
+                      </CommentTrackTools>
+                    </CommentTrackToolsContainer>
+                    <RightArea area="main" />
+                  </CommentsContainer>
+                </WaxSurfaceScroll>
+                {hasNotes && (
+                  <NotesAreaContainer className="productionnotes panelWrapper">
+                    <NotesContainer id="notes-container">
+                      <NotesHeading>Notes</NotesHeading>
+                      <NotesArea view={main} />
+                    </NotesContainer>
+                    <CommentsContainerNotes>
+                      <RightArea area="notes" />
+                    </CommentsContainerNotes>
+                  </NotesAreaContainer>
+                )}
+              </div>
+            </EditorArea>
+          </ProductionEditorDiv>
+        ) : (
+          <>
+            <Menu className="waxmenu">
+              <TopBar />
+            </Menu>
             <ProductionEditorDiv>
-              <SideMenu />
-              <EditorArea className="editorArea production">
+              <SideMenu>
+                <LeftSideBar />
+              </SideMenu>
+
+              <EditorArea className="editorArea authorProofing">
                 <div>
                   <WaxSurfaceScroll className="panelWrapper">
                     <EditorContainer>
@@ -138,57 +183,14 @@ const AuthorProofingWaxEditorLayout =
                 </div>
               </EditorArea>
             </ProductionEditorDiv>
-          ) : (
-            <>
-              <Menu className="waxmenu">
-                <TopBar />
-              </Menu>
-              <ProductionEditorDiv>
-                <SideMenu>
-                  <LeftSideBar />
-                </SideMenu>
-
-                <EditorArea className="editorArea authorProofing">
-                  <div>
-                    <WaxSurfaceScroll className="panelWrapper">
-                      <EditorContainer>
-                        <WaxView {...props} />
-                      </EditorContainer>
-                      <CitationArea />
-                      <CommentsContainer>
-                        <CommentTrackToolsContainer>
-                          <CommentTrackTools>
-                            <span style={{ marginRight: '1em' }}>
-                              {commentsTracksCount + trackBlockNodesCount}{' '}
-                              COMMENTS AND SUGGESTIONS
-                            </span>
-                          </CommentTrackTools>
-                        </CommentTrackToolsContainer>
-                        <RightArea area="main" />
-                      </CommentsContainer>
-                    </WaxSurfaceScroll>
-                    {hasNotes && (
-                      <NotesAreaContainer className="productionnotes panelWrapper">
-                        <NotesContainer id="notes-container">
-                          <NotesHeading>Notes</NotesHeading>
-                          <NotesArea view={main} />
-                        </NotesContainer>
-                        <CommentsContainerNotes>
-                          <RightArea area="notes" />
-                        </CommentsContainerNotes>
-                      </NotesAreaContainer>
-                    )}
-                  </div>
-                </EditorArea>
-              </ProductionEditorDiv>
-            </>
-          )}
-        </Grid>
-        <InfoContainer>
-          <CounterInfo />
-        </InfoContainer>
-      </div>
-    )
-  }
+          </>
+        )}
+      </Grid>
+      <InfoContainer>
+        <CounterInfo />
+      </InfoContainer>
+    </div>
+  )
+}
 
 export default AuthorProofingWaxEditorLayout

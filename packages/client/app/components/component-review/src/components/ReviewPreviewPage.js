@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import ReactRouterPropTypes from 'react-router-prop-types'
 import ReviewPreview from './reviewPreview/ReviewPreview'
 import { Heading, Page, Spinner } from '../../../shared'
 import { ConfigContext } from '../../../config/src'
@@ -51,7 +52,7 @@ const query = gql`
   }
 `
 
-const ReviewPreviewPage = ({ match, currentUser }) => {
+const ReviewPreviewPage = ({ match }) => {
   const config = useContext(ConfigContext)
 
   const { loading, error, data } = useQuery(query, {
@@ -100,7 +101,7 @@ const ReviewPreviewPage = ({ match, currentUser }) => {
 }
 
 ReviewPreviewPage.propTypes = {
-  match: ReactRouterPropTypes.match.isRequired,
+  // match: ReactRouterPropTypes.match.isRequired,
 }
 
 export default ReviewPreviewPage

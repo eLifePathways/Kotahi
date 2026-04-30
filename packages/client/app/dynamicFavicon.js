@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import { useEffect } from 'react'
 
 const DynamicFavicon = ({ config }) => {
@@ -18,6 +21,7 @@ const DynamicFavicon = ({ config }) => {
     }, [iconPath])
 
     return null
+    /* eslint-disable-next-line */
   } catch (error) {
     return null
   }

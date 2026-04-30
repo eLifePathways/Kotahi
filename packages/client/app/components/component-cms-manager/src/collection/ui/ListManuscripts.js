@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/refs */
+/* eslint-disable react/prop-types */
+
 /* eslint-disable no-shadow */
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { debounce } from 'lodash'
 import AsyncSelect from 'react-select/async'
 import styled from 'styled-components'
