@@ -3,15 +3,17 @@ import { css } from 'styled-components'
 // this is from wax-prosemirror-services/dist/index.css
 
 export default css`
+  /* stylelint-disable selector-class-pattern */
+
   /*!
-  Theme: GitHub
-  Description: Light theme as seen on github.com
-  Author: github.com
-  Maintainer: @Hirse
-  Updated: 2021-05-15
-  Outdated base version: https://github.com/primer/github-syntax-light
-  Current colors taken from GitHub's CSS
-*/
+    Theme: GitHub
+    Description: Light theme as seen on github.com
+    Author: github.com
+    Maintainer: @Hirse
+    Updated: 2021-05-15
+    Outdated base version: https://github.com/primer/github-syntax-light
+    Current colors taken from GitHub's CSS
+  */
 
   .hljs {
     background: #fff;

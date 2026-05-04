@@ -33,7 +33,6 @@ const Controls = styled.span`
 `
 
 const Bullet = styled.span`
-  background-color: black;
   background-color: ${props =>
     props.recommendation
       ? props.journal?.recommendations?.find(

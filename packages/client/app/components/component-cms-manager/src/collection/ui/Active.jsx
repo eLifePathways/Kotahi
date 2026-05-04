@@ -1,7 +1,5 @@
 /* eslint-disable react/prop-types */
 
-/* stylelint-disable string-quotes */
-
 import styled from 'styled-components'
 
 const Label = styled.label`
@@ -33,13 +31,10 @@ const Label = styled.label`
 const SpanSlider = styled.span`
   background-color: #ccc;
   border-radius: 24px;
-  bottom: 0;
+  inset: 0;
 
   cursor: pointer;
-  left: 0;
   position: absolute;
-  right: 0;
-  top: 0;
   transition: 0.4s;
 
   ::before {

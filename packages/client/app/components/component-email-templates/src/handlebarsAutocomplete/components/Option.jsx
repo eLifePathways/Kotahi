@@ -72,7 +72,7 @@ const FormBadge = styled.span`
   min-width: 80px;
   padding: ${grid(0.6)} ${grid(0.8)};
   text-align: center;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
 `
 // #endregion styleds ---------------------------------------------------
 

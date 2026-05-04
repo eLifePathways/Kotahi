@@ -1,12 +1,11 @@
-/* stylelint-disable selector-type-no-unknown, no-descending-specificity, string-quotes */
-/* stylelint-disable color-function-notation, alpha-value-notation */
-
 import { css } from 'styled-components'
 import { color } from '../../../../../theme'
 
 /* All styles regarding ProseMirror surface and elements */
 
 export default css`
+  /* stylelint-disable selector-class-pattern */
+
   h1 {
     font-size: 1.75em;
     font-weight: 500;
@@ -46,7 +45,7 @@ export default css`
   /* JATS */
 
   section.frontmatter {
-    background-color: rgba(255, 0, 0, 0.25);
+    background-color: rgb(255 0 0 / 25%);
     border: 1px solid red;
     margin-bottom: 8px;
     padding: 8px 16px;
@@ -64,7 +63,7 @@ export default css`
   }
 
   section.abstractSection {
-    background-color: rgba(255, 0, 0, 0.25);
+    background-color: rgb(255 0 0 / 25%);
     border: 1px solid red;
     margin-bottom: 8px;
     padding: 8px 16px;
@@ -82,7 +81,7 @@ export default css`
   }
 
   section.reflist {
-    background-color: rgba(25, 25, 112, 0.25);
+    background-color: rgb(25 25 112 / 25%);
     border: 1px solid midnightblue;
     margin-bottom: 8px;
     padding: 8px 16px;
@@ -107,7 +106,7 @@ export default css`
   }
 
   section.acknowledgementsSection {
-    background-color: rgba(255, 255, 0, 0.25);
+    background-color: rgb(255 255 0 / 25%);
     border: 1px solid red;
     margin-bottom: 8px;
     padding: 8px 16px;
@@ -125,7 +124,7 @@ export default css`
   }
 
   section.appendix {
-    background-color: rgba(0, 128, 128, 0.25);
+    background-color: rgb(0 128 128 / 25%);
     border: 1px solid teal;
     margin-bottom: 8px;
     padding: 8px 16px;
@@ -194,6 +193,7 @@ export default css`
     margin-top: 0;
   }
 
+  /* stylelint-disable-next-line selector-type-no-unknown */
   .ProseMirror fakecursor {
     /* stylelint-disable-next-line declaration-no-important */
     visibility: hidden !important;

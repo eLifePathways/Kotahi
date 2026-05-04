@@ -23,7 +23,7 @@ const ConnectedCommentStyled = styled.div`
       : `all 0.25s`}; /* was 1.3s */
   width: 200px;
 
-  @media (max-width: 600px) {
+  @media (width <= 600px) {
     margin-left: 15px;
   }
   /* stylelint-disable order/properties-alphabetical-order */

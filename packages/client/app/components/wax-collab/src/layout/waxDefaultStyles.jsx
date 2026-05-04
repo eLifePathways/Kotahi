@@ -3,6 +3,8 @@ import { css } from 'styled-components'
 // this is from wax-prosemirror-services/dist/index.css
 
 export default css`
+  /* stylelint-disable selector-class-pattern */
+
   /*!
   Theme: GitHub
   Description: Light theme as seen on github.com

@@ -38,9 +38,9 @@ export const Menu = styled.div`
   z-index: 5;
 
   > div:last-child {
-    border-left-color: ${th('colorFurniture')};
-    border-left-style: ${th('borderStyle')};
-    border-left-width: ${th('borderWidth')};
+    border: ${th('borderWidth')} ${th('borderStyle')} ${th('colorFurniture')};
+
+    /* stylelint-disable-next-line declaration-no-important */
     margin-left: 0 !important;
     margin-right: ${grid(5)};
   }

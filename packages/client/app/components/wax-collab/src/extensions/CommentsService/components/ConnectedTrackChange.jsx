@@ -19,7 +19,7 @@ const ConnectedTrackChangeStyled = styled.div`
   position: absolute;
   width: 200px;
 
-  @media (max-width: 600px) {
+  @media (width <= 600px) {
     margin-left: 15px;
   }
 `

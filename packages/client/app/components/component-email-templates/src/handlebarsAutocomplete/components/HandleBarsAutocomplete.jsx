@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/refs */
 
-/* stylelint-disable declaration-no-important */
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -15,6 +14,8 @@ import useHandlebarsAutoComplete from '../hooks/useHandlebarsAutoComplete'
 
 // #region styleds ------------------------------------------------------
 const OptionsDropdown = styled(FlexRow)`
+  /* stylelint-disable declaration-no-important */
+
   align-items: flex-start;
   background-color: #ddd;
   border: 2px solid ${color.brand1.base};

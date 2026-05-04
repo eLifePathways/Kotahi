@@ -60,19 +60,18 @@ const StyledModal = styled(ReactModalAdapter).attrs({
   modalClassName: 'Modal',
   overlayClassName: 'Overlay',
 })`
+  /* stylelint-disable selector-class-pattern */
+
   .Overlay {
-    background-color: rgba(240, 240, 240, 0.85);
-    bottom: 0;
-    left: 0;
+    background-color: rgb(240 240 240 / 85%);
     position: fixed;
-    right: 0;
-    top: 0;
+    inset: 0;
   }
 
   .Modal {
     background: ${th('colorBackground')};
     border: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
     display: flex;
     flex-direction: column;
     outline: none;

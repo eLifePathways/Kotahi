@@ -4,6 +4,7 @@ import EditorElements from './EditorElements'
 import { color } from '../../../../theme'
 
 export const NotesAreaContainer = styled.div`
+  /* stylelint-disable selector-class-pattern */
   background: ${color.backgroundA};
   bottom: ${grid(-2)};
   box-shadow: 0 ${grid(-0.3)} ${grid(0.5)} ${grid(-0.2)} gray;

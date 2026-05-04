@@ -143,11 +143,15 @@ const ContentWrapper = styled.div`
   width: 100%;
 
   /* codemirror */
+  /* stylelint-disable-next-line selector-class-pattern */
   .ͼe {
+    /* stylelint-disable-next-line declaration-no-important */
     color: #127b0c !important;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .ͼd {
+    /* stylelint-disable-next-line declaration-no-important */
     color: #7b3e0c !important;
   }
 `
@@ -204,14 +208,11 @@ const LoadingWindow = styled(FlexColCentered)`
   &::before {
     background: ${p => p?.apiToCheck && `url(${APIS[p?.apiToCheck]?.logo})`}
       no-repeat center;
-    bottom: 0;
     content: '';
-    left: 0;
     opacity: 0.5;
     position: absolute;
-    right: 0;
-    top: 0;
     z-index: -1;
+    inset: 0;
   }
 `
 

@@ -1,6 +1,5 @@
 /* stylelint-disable selector-type-no-unknown, no-descending-specificity */
 /* stylelint-disable color-function-notation, alpha-value-notation */
-/* stylelint-disable string-quotes, custom-property-pattern */
 
 import { css } from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -11,6 +10,8 @@ import { color } from '../../../../theme'
 /* Styles that are purely presentational for text should be in textStyles.css */
 
 const EditorStyles = css`
+  /* stylelint-disable selector-class-pattern */
+
   /* include textStyles here */
   ${props => props.theme.textStyles}
 
@@ -80,7 +81,6 @@ const EditorStyles = css`
   }
 
   .ProseMirror.resize-cursor {
-    cursor: ew-resize;
     cursor: col-resize;
   }
 
@@ -91,7 +91,7 @@ const EditorStyles = css`
 
   /* Give selected cells a blue overlay */
   .selectedCell::after {
-    background: rgba(200, 200, 255, 0.4);
+    background: rgb(200 200 255 / 40%);
     bottom: 0;
     content: '';
     left: 0;

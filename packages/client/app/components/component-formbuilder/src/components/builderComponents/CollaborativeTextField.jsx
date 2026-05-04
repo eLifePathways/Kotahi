@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability */
 /* eslint-disable react/prop-types */
-
 /* eslint-disable new-cap */
 
 import { useEffect, useContext, useCallback, useState } from 'react'
@@ -14,6 +13,7 @@ import { Spinner } from '../../../../shared'
 import YjsContext from '../../../../provider-yjs/YjsProvider'
 
 const TextFieldSyled = styled(TextField)`
+  /* stylelint-disable selector-class-pattern */
   position: relative;
 
   .selectedText {

@@ -122,7 +122,7 @@ export const VerticalTabs = ({ tabList }) => {
 const BlockLevelToolsWrapper = styled.div`
   height: 100%;
   overflow-y: auto;
-  padding: 8px 8px 16px 8px;
+  padding: 8px 8px 16px;
 
   > div:not(:last-child) {
     margin-bottom: 10px;
@@ -166,13 +166,13 @@ const BlockElementWrapper = styled.div`
     transition: 0.25s;
 
     &::before {
-      --circleWidth: 5px;
+      --circle-width: 5px;
       background-color: ${props => th(props.color) || 'transparent'};
       border: 1px solid ${props => th(props.color) || 'transparent'};
       border-radius: 100%;
       content: '';
       display: ${props => (props.color ? 'inline-block' : 'none')};
-      height: var(--circleWidth);
+      height: var(--circle-width);
       margin-right: ${props => (props.color ? '-4px' : 0)};
       position: relative;
       top: 1px;
