@@ -1,4 +1,5 @@
-/* eslint-disable jest/valid-expect-in-promise,jest/expect-expect */
+/* eslint-disable promise/always-return, promise/catch-or-return */
+
 /// <reference types="Cypress" />
 import {
   users,
@@ -31,10 +32,8 @@ describe.skip('users page tests', () => {
       UsersPage.getRemoveGroupManagerRoleButton()
         .its('length')
         .then(length => {
-          // eslint-disable-next-line jest/valid-expect
           expect(length).to.be.eq(7)
 
-          // eslint-disable-next-line no-plusplus
           for (let i = 0; i < 7; i++) {
             UsersPage.getRemoveGroupManagerRoleButton()
               .eq(i)

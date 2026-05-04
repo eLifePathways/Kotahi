@@ -12,7 +12,6 @@ const POPUP_NEXT_BUTTON = '[class*=EnterEmail__ButtonContainer] > button'
 const POPUP_UPDATE_EMAIL_ERROR = 'EnterEmail__UpdateEmailError'
 const EMAIL_CHANGE_ERROR_MESSAGE = 'ChangeEmail__UpdateEmailError'
 
-// eslint-disable-next-line import/prefer-default-export
 export const ProfilePage = {
   getButtonByIndex(nth) {
     return cy.get(BUTTON).eq(nth)

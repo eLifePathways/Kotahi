@@ -74,7 +74,7 @@ const translationOverrides = async groupId => {
   }
 
   try {
-    // eslint-disable-next-line import/no-unresolved, import/extensions
+    // eslint-disable-next-line import/no-unresolved, import/extensions, n/no-missing-require
     globalOverrides = require('../../config/translation/translationOverrides')
   } catch {
     globalOverrides = {}

@@ -39,7 +39,6 @@ const VERSION_TITLE = 'VersionTitle__Root-sc'
 const ARTICLE_LINK = '[name="reviewerLinks"] button'
 const DASHBOARD_TAB = '[data-test-id=tab-container]'
 
-// eslint-disable-next-line import/prefer-default-export
 export const DashboardPage = {
   getSubmittedManuscript() {
     return cy.get(SUBMITTED_MANUSCRIPTS)

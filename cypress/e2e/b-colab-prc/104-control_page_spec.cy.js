@@ -1,6 +1,4 @@
-/* eslint-disable jest/no-commented-out-tests */
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/no-nesting */
 
 import { dashboard, manuscripts } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -10,7 +8,6 @@ import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { ReviewPage } from '../../page-object/review-page'
 
-// eslint-disable-next-line jest/no-disabled-tests
 describe('control page tests', () => {
   // UPDATE 0.05.2025
   // SHARED checkbox can be clicked only on completed reviews

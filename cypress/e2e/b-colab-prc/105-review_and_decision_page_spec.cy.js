@@ -1,6 +1,4 @@
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
-/* eslint-disable jest/valid-expect */
+/* eslint-disable promise/always-return */
 
 // import { beforeEach } from 'mocha'
 import { dashboard, manuscripts } from '../../support/routes1'
@@ -70,7 +68,7 @@ Cypress.Commands.add('addReviewer', reviewerIndex => {
   cy.fixture('role_names').then(name => {
     const reviewer = name.role.reviewers[`${reviewerIndex}`]
     // login as seniorEditor
-    // eslint-disable-next-line no-undef
+
     cy.login(name.role.seniorEditor, dashboard)
     cy.url().should('include', '/dashboard')
 

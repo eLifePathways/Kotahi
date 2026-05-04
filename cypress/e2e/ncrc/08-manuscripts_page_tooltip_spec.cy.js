@@ -1,4 +1,4 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
 
 import { manuscripts } from '../../support/routes'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -15,7 +15,7 @@ describe.skip('tooltip tests', () => {
     cy.request('POST', seedFormsUrl)
 
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, manuscripts)
     })
@@ -30,7 +30,6 @@ describe.skip('tooltip tests', () => {
     ManuscriptsPage.getTooltipText().invoke('text').should('eq', '')
   })
   it('check tooltip text', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('submission_form_data').then(data => {
       SubmissionFormPage.fillInAbstract(data.abstract)
       Menu.clickManuscriptsAndAssertPageLoad()
@@ -43,7 +42,6 @@ describe.skip('tooltip tests', () => {
   })
 
   it('check length for the tooltip text, to be less than 1000', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('submission_form_data').then(data => {
       SubmissionFormPage.fillInAbstract(data.abstractWithMoreThan1000Characters)
       Menu.clickManuscriptsAndAssertPageLoad()

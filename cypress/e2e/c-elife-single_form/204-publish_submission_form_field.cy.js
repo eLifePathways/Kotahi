@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -14,7 +15,7 @@ describe('Update the submission form field', () => {
     cy.request('POST', `${restoreUrl}/commons.elife_bootstrap`)
 
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -36,9 +37,9 @@ describe('Update the submission form field', () => {
     Menu.clickManuscripts()
     ManuscriptsPage.clickSubmit()
     // Upload manuscript
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.get('button').contains('Submit a URL instead').click()
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('submission_form_data').then(data => {
       SubmissionFormPage.fillInArticleld(data.articleId)
       SubmissionFormPage.fillInDoi(data.doi)

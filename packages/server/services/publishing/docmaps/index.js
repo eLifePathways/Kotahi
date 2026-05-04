@@ -18,7 +18,7 @@ const {
 let allDocmapsScheme
 
 try {
-  // eslint-disable-next-line import/no-unresolved
+  // eslint-disable-next-line import/no-unresolved, n/no-missing-require
   allDocmapsScheme = require('../../../config/journal/docmaps_scheme.json')
   /* eslint-disable-next-line */
 } catch (err) {

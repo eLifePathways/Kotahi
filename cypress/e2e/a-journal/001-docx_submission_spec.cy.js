@@ -1,12 +1,10 @@
-/* eslint-disable jest/no-commented-out-tests */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
 import { dashboard } from '../../support/routes'
 
 describe('Create a new submission', () => {
-  // eslint-disable-next-line jest/no-disabled-tests
   before(() => {
     const restoreUrl = Cypress.config('restoreUrl')
     cy.request('POST', `${restoreUrl}/commons.bootstrap`)

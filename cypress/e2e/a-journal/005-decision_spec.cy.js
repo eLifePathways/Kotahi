@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -17,11 +18,10 @@ describe('Completing a decision', () => {
     cy.request('POST', `${restoreUrl}/commons.bootstrap`)
     cy.request('POST', `${seedUrl}/three_reviews_completed`)
 
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       /* Group Manager assigns Editor to manuscript */
       cy.login(name.role.admin, dashboard)
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       DashboardPage.clickManuscriptNavButton()
       ManuscriptsPage.selectOptionWithText('Control')
       ControlPage.getAssignSeniorEditorDropdown().click({ force: true })
@@ -40,7 +40,6 @@ describe('Completing a decision', () => {
   })
 
   it('editor decided "revise" and then the author submits a new version', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       ControlPage.clickDecisionTextInput()
       ControlPage.getDecisionTextInput().type(decisionTextContent)

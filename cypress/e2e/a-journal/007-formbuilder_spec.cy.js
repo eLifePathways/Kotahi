@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect, cypress/unsafe-to-chain-command */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/unsafe-to-chain-command */
 
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
@@ -15,7 +16,7 @@ describe('Form builder', () => {
 
   it('viewing and adding fields in Submission, Review and Decision forms', () => {
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -72,6 +73,7 @@ describe('Form builder', () => {
     cy.get('[title="Add a field..."]').click({ force: true })
     cy.get('[data-testid="fieldType"]').click()
     // cy.get('button')
+
     cy.get('[class*="react-select__option"]')
       .contains('Rich text')
       .scrollIntoView()
@@ -82,7 +84,7 @@ describe('Form builder', () => {
 
   it('cannot submit manuscript without filling in the required fields', () => {
     // login as author and attempt to submit an incomplete submission form
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.author, dashboard)
 
@@ -100,7 +102,6 @@ describe('Form builder', () => {
     })
 
     // Change the title so that we can look for it
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('submission_form_data').then(data => {
       SubmissionFormPage.fillInField('submission.$title', data.newTitle)
       SubmissionFormPage.clickSubmitResearch()

@@ -10,7 +10,6 @@ const DELETE_USER_BUTTON = 'button:nth-child(1)'
 const ADD_GROUP_MANAGER_ROLE_BUTTON = 'button:nth-child(3)'
 const REMOVE_GROUP_MANAGER_ROLE_BUTTON = 'button:nth-child(3)'
 
-// eslint-disable-next-line import/prefer-default-export
 export const UsersPage = {
   getTitle() {
     return cy.getByContainsClass(TITLE)

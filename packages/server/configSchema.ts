@@ -1,7 +1,5 @@
 import { z } from '@coko/server'
 
-console.log('booya')
-
 const MicroserviceSchema = z.strictObject({
   clientId: z.string().min(1, 'Client ID is required'),
   clientSecret: z.string().min(1, 'Client Secret is required'),

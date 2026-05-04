@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/no-nesting */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
@@ -18,7 +19,6 @@ describe('checking manuscript version', () => {
   })
 
   it('editor checks for new manuscript version', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       /* Editor  Submits a decision */
       cy.login(name.role.seniorEditor, dashboard)
@@ -53,7 +53,7 @@ describe('checking manuscript version', () => {
       /* Create new manuscript version */
       DashboardPage.clickCreateNewVersionButton()
       cy.contains('Edit submission info').should('exist')
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInAbstractColab(data.abstract)
         SubmissionFormPage.getWaxInputBox(0).fillInput(data.abstract)
