@@ -3853,7 +3853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^2.3.1, hoist-non-react-statics@npm:^2.5.0":
+"hoist-non-react-statics@npm:^2.3.1":
   version: 2.5.5
   resolution: "hoist-non-react-statics@npm:2.5.5"
   checksum: 10c0/79c204446a61ad490cc9342b2deeedea5a17f03a5fc091f367b6c08f29387c8d5578634ebfb8733043422a5e1182b372893d63f8737ac4b75da3a2ec4a316162
@@ -4345,7 +4345,6 @@ __metadata:
     prosemirror-view: "npm:1.30.2"
     rc-tooltip: "npm:5.1.1"
     react: "npm:^19.2.5"
-    react-adopt: "npm:^0.6.0"
     react-beautiful-dnd: "npm:^13.1.0"
     react-calendar: "npm:^3.9.0"
     react-contenteditable: "npm:^3.3.6"
@@ -4674,7 +4673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loose-envify@npm:^1.0.0, loose-envify@npm:^1.1.0, loose-envify@npm:^1.4.0":
+"loose-envify@npm:^1.0.0, loose-envify@npm:^1.4.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
   dependencies:
@@ -5633,19 +5632,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-adopt@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "react-adopt@npm:0.6.0"
-  dependencies:
-    hoist-non-react-statics: "npm:^2.5.0"
-    react: "npm:^16.3.2"
-    react-display-name: "npm:^0.2.4"
-  peerDependencies:
-    react: ">= 0.14.0"
-  checksum: 10c0/040745620bcc1c8a81bd434c7dfae32e7dda7b52ae7ee6d7cc7d01a9d8f1eea9223152660e561d9c2215c2b480d409e1794a0684d937086c1b2c9002ad966a0b
-  languageName: node
-  linkType: hard
-
 "react-beautiful-dnd@npm:^13.1.0":
   version: 13.1.1
   resolution: "react-beautiful-dnd@npm:13.1.1"
@@ -5709,13 +5695,6 @@ __metadata:
     react: ^16.3.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.3.0 || ^17.0.0 || ^18.0.0
   checksum: 10c0/8cb6923530315023f8987b56038c972cc019e723595df11138b9e40c2b539a2c761a22d55de672c404fa723afcf23db9e5e215820f1f1e5c7f00f68c3c84fae8
-  languageName: node
-  linkType: hard
-
-"react-display-name@npm:^0.2.4":
-  version: 0.2.5
-  resolution: "react-display-name@npm:0.2.5"
-  checksum: 10c0/9c598283f2a545c01ba7fc81409b3fcd528d91925872e4033ffc51a9f675a3006acb9ec056877cc4fc0a9516cf7a769eb9c9e51dba6be1ff8d7dbd516dac397a
   languageName: node
   linkType: hard
 
@@ -6119,17 +6098,6 @@ __metadata:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
   checksum: 10c0/e40ed6ba5b02fa526de3f80debd21ee4b852ce668f90041391a95863b9cc1a4b36647cd4169f3473eefe0e26fc5edae383511c98d4b2540c4499fa5f0f5700b5
-  languageName: node
-  linkType: hard
-
-"react@npm:^16.3.2":
-  version: 16.14.0
-  resolution: "react@npm:16.14.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-  checksum: 10c0/df8faae43e01387013900e8f8fb3c4ce9935b7edbcbaa77e12999c913eb958000a0a8750bf9a0886dae0ad768dd4a4ee983752d5bade8d840adbe0ce890a2438
   languageName: node
   linkType: hard
 
