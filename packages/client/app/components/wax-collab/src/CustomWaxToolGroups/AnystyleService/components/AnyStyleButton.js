@@ -1,5 +1,4 @@
-/* eslint react/prop-types: 0 */
-/* stylelint-disable string-quotes */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { useContext, useMemo } from 'react'
 import styled from 'styled-components'

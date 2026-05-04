@@ -1,7 +1,6 @@
-import React from 'react'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 import DesignEmbed from '../common/utils'
 import ReadonlyFormTemplate from '../../app/components/component-review/src/components/metadata/ReadonlyFormTemplate'
 

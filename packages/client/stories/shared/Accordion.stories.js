@@ -1,4 +1,3 @@
-import React from 'react'
 import Accordion from '../../app/components/shared/Accordion'
 import DesignEmbed from '../common/utils'
 

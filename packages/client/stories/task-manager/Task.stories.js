@@ -1,4 +1,3 @@
-import React from 'react'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import Task from '../../app/components/component-task-manager/src/Task'
 import DesignEmbed from '../common/utils'
@@ -25,7 +24,7 @@ export const Base = args => (
 
       <DragDropContext onDragEnd={() => {}}>
         <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
+          {provided => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <Task {...args} />
               {provided.placeholder}

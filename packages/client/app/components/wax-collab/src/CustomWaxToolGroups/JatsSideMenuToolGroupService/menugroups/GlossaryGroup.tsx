@@ -1,5 +1,5 @@
-import React from 'react'
-// eslint-disable-next-line no-unused-vars
+// @ts-nocheck
+
 import { decorate, injectable, inject } from 'inversify'
 import { ToolGroup, LeftMenuTitle } from 'wax-prosemirror-core'
 import i18next from 'i18next'

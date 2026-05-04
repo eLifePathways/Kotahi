@@ -1,3 +1,9 @@
+// @ts-nocheck
+
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { joinUp } from 'prosemirror-commands'
 import { injectable } from 'inversify'
 import { Tools } from 'wax-prosemirror-core'
@@ -8,7 +14,6 @@ export default class JoinUp extends Tools {
   icon = 'arrowUp'
   name = 'JoinUp'
 
-  /* eslint-disable-next-line class-methods-use-this */
   get run() {
     return joinUp
   }
@@ -33,12 +38,10 @@ export default class JoinUp extends Tools {
     return status
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   get enable() {
     return joinUp
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   get active() {
     return state => {
       return false

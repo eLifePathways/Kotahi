@@ -1,27 +1,28 @@
-/* eslint-disable */
+// @ts-nocheck
+
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable import/no-extraneous-dependencies */
 
 import { injectable } from 'inversify'
 import { wrapInList } from 'prosemirror-schema-list'
-import { Commands, Tools, icons } from 'wax-prosemirror-core'
+import { Commands, Tools } from 'wax-prosemirror-core'
 
 @injectable()
-export default class BulletList extends Tools {
-  title = 'Wrap in bullet list'
-  content = icons.bullet_list
-  icon = 'bulletList'
-  name = 'BulletList'
+export default class OrderedList extends Tools {
+  title = 'Wrap in ordered list'
+  icon = 'numberedList'
+  name = 'OrderedList'
 
-  /* eslint-disable-next-line class-methods-use-this */
   get run() {
     return (state, dispatch) => {
-      return wrapInList(state.config.schema.nodes.bulletlist)(state, dispatch)
+      wrapInList(state.config.schema.nodes.orderedlist)(state, dispatch)
     }
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   get enable() {
     return state => {
-      return wrapInList(state.config.schema.nodes.bulletlist)(state)
+      return wrapInList(state.config.schema.nodes.orderedlist)(state)
     }
   }
 
@@ -56,10 +57,9 @@ export default class BulletList extends Tools {
     return status
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   get active() {
     return state => {
-      return Commands.blockActive(state.config.schema.nodes.bulletlist)(state)
+      return Commands.blockActive(state.config.schema.nodes.orderedlist)(state)
     }
   }
 }

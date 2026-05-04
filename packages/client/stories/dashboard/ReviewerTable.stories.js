@@ -1,9 +1,8 @@
-import React from 'react'
 import ReviewerTable from '../../app/components/component-dashboard/src/components/sections/ReviewerTable'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { ConfigProvider } from '../../app/components/config/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 import config from '../../config/sampleConfigFormData'
 import DesignEmbed from '../common/utils'
 

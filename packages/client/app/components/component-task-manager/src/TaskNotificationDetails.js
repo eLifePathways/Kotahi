@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
@@ -15,7 +15,7 @@ import theme, { color } from '../../../theme'
 import { ConfigContext } from '../../config/src'
 import { ifReviewInviteThenAssignRecipientsAsReviewers } from './notificationUtils'
 
-import tasksJson from '../../../../config/journal/tasks.json'
+import tasksJson from '../../../../config/journal/tasks.json' with { type: 'json' }
 
 const { emailNotifications } = tasksJson
 

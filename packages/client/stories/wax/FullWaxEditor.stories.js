@@ -1,8 +1,7 @@
-import React from 'react'
 import FullWaxEditor from '../../app/components/wax-collab/src/FullWaxEditor'
 import DesignEmbed from '../common/utils'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 
 export const Base = args => (
   <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>

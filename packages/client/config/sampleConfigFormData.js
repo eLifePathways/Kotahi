@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   instanceName: 'journal',
   user: { isAdmin: false },
   report: { showInMenu: true },

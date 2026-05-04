@@ -1,4 +1,3 @@
-import React from 'react'
 import { Formik } from 'formik'
 import { CmsWidthAndHeightContainer } from '../../component-cms-manager/src/style'
 import EmailTemplateEditForm from './EmailTemplateEditForm'

@@ -1,4 +1,3 @@
-import React from 'react'
 import ReviewStatusDonut from '../../app/components/component-manuscripts-table/src/cell-components/ReviewStatusDonut'
 import {
   manuscriptWithoutTeams,

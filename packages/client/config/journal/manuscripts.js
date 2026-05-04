@@ -51,8 +51,4 @@ const reviewerColumns = columns => {
   return columns.concat(['reviewerStatusBadge', 'reviewerLinks'])
 }
 
-module.exports = {
-  authorColumns,
-  editorColumns,
-  reviewerColumns,
-}
+export { authorColumns, editorColumns, reviewerColumns }

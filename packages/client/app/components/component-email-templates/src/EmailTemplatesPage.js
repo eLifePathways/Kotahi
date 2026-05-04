@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client'
 import { CommsErrorBanner, Spinner } from '../../shared'

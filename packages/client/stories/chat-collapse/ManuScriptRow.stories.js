@@ -1,4 +1,3 @@
-import React from 'react'
 import ManuscriptsTable from '../../app/components/component-manuscripts-table/src/ManuscriptsTable'
 import ManuscriptRow from '../../app/components/component-manuscripts-table/src/ManuscriptRow'
 import DefaultField from '../../app/components/component-manuscripts-table/src/cell-components/DefaultField'

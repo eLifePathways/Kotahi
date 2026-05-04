@@ -1,7 +1,6 @@
-import React from 'react'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 import DesignEmbed from '../common/utils'
 import SubmissionForm from '../../app/components/component-submit/src/components/SubmissionForm'
 import { ConfigProvider } from '../../app/components/config/src'

@@ -1,4 +1,3 @@
-import React from 'react'
 import ConfigManagerForm from '../../app/components/component-config-manager/src/ConfigManagerForm'
 import DesignEmbed from '../common/utils'
 import config from '../../config/sampleConfigFormData'

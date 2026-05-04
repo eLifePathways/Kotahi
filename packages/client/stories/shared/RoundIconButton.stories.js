@@ -1,4 +1,3 @@
-import React from 'react'
 import RoundIconButton from '../../app/components/shared/RoundIconButton'
 import DesignEmbed from '../common/utils'
 

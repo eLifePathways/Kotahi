@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext, useState } from 'react'
 
 import { useMutation, useQuery } from '@apollo/client'
 import { useTranslation } from 'react-i18next'

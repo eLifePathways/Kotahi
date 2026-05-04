@@ -1,4 +1,4 @@
-/* eslint-disable promise/always-return */
+/* eslint-disable promise/always-return, promise/no-callback-in-promise */
 
 import { useQuery } from '@apollo/client'
 import { SEARCH_ROR } from '../../userManuscriptFormQuery'

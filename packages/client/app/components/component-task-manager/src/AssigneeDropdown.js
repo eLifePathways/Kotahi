@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect, react-hooks/use-memo */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 
 import { useState, useEffect, useCallback } from 'react'
@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Select, TextInput } from '../../shared'
 import theme from '../../../theme'
 
-import tasksJson from '../../../../config/journal/tasks.json'
+import tasksJson from '../../../../config/journal/tasks.json' with { type: 'json' }
 
 const { assigneeTypes } = tasksJson
 

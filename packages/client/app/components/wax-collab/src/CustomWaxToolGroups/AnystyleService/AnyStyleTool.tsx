@@ -1,4 +1,11 @@
-import React, { useContext } from 'react'
+// @ts-nocheck
+
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/rules-of-hooks */
+
+import { useContext } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { isEmpty } from 'lodash'
 import { injectable } from 'inversify'
@@ -13,17 +20,14 @@ class AnyStyleTool extends Tools {
   title = 'Convert with Anystyle'
   label = 'Automatic parser'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = activeView => {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return state => {
       return true

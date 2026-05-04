@@ -1,4 +1,3 @@
-import React from 'react'
 import ActionButton from '../../app/components/shared/ActionButton'
 import DesignEmbed from '../common/utils'
 

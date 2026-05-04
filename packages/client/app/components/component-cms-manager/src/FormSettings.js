@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types, react/display-name */
+
 import { set } from 'lodash'
 
 import ContentWaxEditor from './editor/ContentWaxEditor'
@@ -14,7 +15,7 @@ import { ColorPicker } from '../../shared'
 
 /* eslint-disable-next-line default-param-last */
 const createEditorComponent = (EditorComponent, shouldWrap = true, simple) => {
-  /* eslint-disable-next-line react/function-component-definition */
+  /* eslint-disable-next-line no-unused-vars */
   return ({ validationStatus, setTouched, onChange, ...rest }) => {
     const editorComponent = (
       <EditorComponent

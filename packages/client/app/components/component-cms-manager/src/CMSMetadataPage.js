@@ -1,4 +1,7 @@
-import React, { useContext } from 'react'
+/* eslint-disable react/prop-types, react/display-name */
+/* eslint-disable new-cap */
+
+import { useContext } from 'react'
 import Form from '@rjsf/core'
 import styled from 'styled-components'
 import { th } from '@coko/client'
@@ -35,7 +38,6 @@ const ActionButtonStyled = styled(ActionButton)`
 `
 
 const FieldTemplate = t =>
-  /* eslint-disable-next-line func-names */
   function (props) {
     const { classNames, description, children, label, id } = props
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import TaskList from '../../app/components/component-task-manager/src/TaskList'
 import DesignEmbed from '../common/utils'
 import { ConfigProvider } from '../../app/components/config/src'

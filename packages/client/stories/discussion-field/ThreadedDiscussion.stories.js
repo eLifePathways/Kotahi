@@ -1,9 +1,8 @@
-import React from 'react'
 import ThreadedDiscussion from '../../app/components/component-formbuilder/src/components/builderComponents/ThreadedDiscussion/ThreadedDiscussion'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { ConfigProvider } from '../../app/components/config/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 import config from '../../config/sampleConfigFormData'
 import DesignEmbed from '../common/utils'
 

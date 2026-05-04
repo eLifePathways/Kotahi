@@ -1,4 +1,3 @@
-import React from 'react'
 import DesignEmbed from './common/utils'
 import { NavItem } from '../app/components/component-menu'
 

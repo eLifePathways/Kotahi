@@ -1,5 +1,10 @@
-import React, { useMemo } from 'react'
-// eslint-disable-next-line no-unused-vars
+// @ts-nocheck
+
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
+
+import { useMemo } from 'react'
+
 import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
@@ -52,7 +57,6 @@ class JatsSideMenu extends ToolGroup {
     ]
   }
 
-  /* eslint-disable no-underscore-dangle */
   renderTools(view) {
     const { t } = useTranslation()
     if (isEmpty(view)) return null
@@ -114,7 +118,6 @@ class JatsSideMenu extends ToolGroup {
 
     return TabsComponent
   }
-  /* eslint-enable no-underscore-dangle */
 }
 
 decorate(injectable(), JatsSideMenu)

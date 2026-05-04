@@ -1,4 +1,3 @@
-import React from 'react'
 import { Table } from '../../app/components/component-reporting/src'
 import DesignEmbed from '../common/utils'
 

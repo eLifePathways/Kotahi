@@ -1,4 +1,3 @@
-import React from 'react'
 import { SparkBar } from '../../app/components/component-reporting/src'
 import DesignEmbed from '../common/utils'
 

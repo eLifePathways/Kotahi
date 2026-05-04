@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect } from 'react'
 import { Route, Switch, useLocation, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
@@ -24,7 +26,7 @@ import AssetManager from './components/asset-manager/src/AssetManagerPage'
 import AdminPage from './components/AdminPage'
 import GroupPage from './components/component-frontpage/src/GroupPage'
 import { JournalProvider } from './components/xpub-journal/src'
-import * as journal from '../config/journal'
+import journal from '../config/journal'
 import ModalProvider from './components/asset-manager/src/ui/Modal/ModalProvider'
 import { XpubProvider } from './components/xpub-with-context/src'
 import { reloadTranslationsForGroup } from './i18n'

@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { useEffect } from 'react'
 import { emailTemplateInputFields } from '../../component-cms-manager/src/FormSettings'
 import { Section } from '../../component-cms-manager/src/style'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
@@ -24,6 +27,7 @@ const EmailTemplateEditForm = ({
   const allowSave = templateHasChanged(activeTemplate.state, currentValues)
 
   const onDataChanged = (itemKey, value) => {
+    /* eslint-disable-next-line no-unused-vars */
     const { created, updated, emailContent, id, ...rest } = activeTemplate.state
 
     const data = {

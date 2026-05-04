@@ -1,8 +1,7 @@
-import React from 'react'
 import ChatCollapse from '../../app/components/shared/ChatCollapse'
 import DesignEmbed from '../common/utils'
 
-export const Base = args => (
+export const Base = () => (
   <ChatCollapse defaultWidth={300}>
     <p>hello</p>
   </ChatCollapse>

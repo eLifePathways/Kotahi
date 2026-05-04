@@ -1,4 +1,5 @@
-/* eslint-disable-next-line */
+// @ts-nocheck
+
 import { injectable, inject } from 'inversify'
 import { ToolGroup } from 'wax-prosemirror-core'
 

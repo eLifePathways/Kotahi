@@ -1,5 +1,3 @@
-/* stylelint-disable */
-
 import { injectable, inject } from 'inversify'
 import { ToolGroup } from 'wax-prosemirror-core'
 

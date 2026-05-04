@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { DateRangePicker } from '../../app/components/component-reporting/src'
 import DesignEmbed from '../common/utils'

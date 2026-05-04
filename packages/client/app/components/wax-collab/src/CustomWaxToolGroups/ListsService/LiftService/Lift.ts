@@ -1,3 +1,8 @@
+// @ts-nocheck
+
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+
 import { lift } from 'prosemirror-commands'
 import { injectable } from 'inversify'
 import { Tools } from 'wax-prosemirror-core'
@@ -8,19 +13,16 @@ export default class Lift extends Tools {
   icon = 'indentDecrease'
   name = 'Lift'
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId, activeView) => {
     const { disallowedTools } = activeView.props
     if (disallowedTools.includes('lift')) return false
     return lift(state)
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   get run() {
     return lift
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
   get enable() {
     return lift
   }

@@ -1,4 +1,8 @@
+// @ts-nocheck
+
 /* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React from 'react'
 import { injectable } from 'inversify'

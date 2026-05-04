@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect, useContext } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+
+import { useState, useCallback, useEffect, useContext } from 'react'
 import { debounce, isEmpty, pick } from 'lodash'
 import styled from 'styled-components'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'

@@ -1,4 +1,6 @@
-import React, { useContext, useState } from 'react'
+/* eslint-disable react/prop-types */
+
+import { useContext, useState } from 'react'
 import { Formik } from 'formik'
 import { useMutation, useQuery } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
@@ -109,6 +111,7 @@ const CMSLayoutPage = ({ history }) => {
     const partnerData = currentPartners.filter(partner => partner != null)
     initialData = { ...cmsLayoutData }
     initialData.partners = partnerData.map(
+      /* eslint-disable-next-line no-unused-vars */
       ({ file, ...restProps }) => restProps, // removing the file object
     )
     // to show the existing image

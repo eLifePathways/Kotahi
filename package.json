@@ -20,7 +20,7 @@
     "glob": "7"
   },
   "dependencies": {
-    "@coko/lint": "^3.0.0-alpha.29",
+    "@coko/lint": "^3.0.0-alpha.33",
     "color": "^4.2.3",
     "cypress": "^13.8.0",
     "dotenv": "^16.4.1",

@@ -1,4 +1,3 @@
-import React from 'react'
 import { convertTimestampToDateTimeString } from '../../../shared/dateUtils'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
 import {

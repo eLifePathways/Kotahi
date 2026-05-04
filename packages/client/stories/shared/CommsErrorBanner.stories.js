@@ -1,4 +1,3 @@
-import React from 'react'
 import CommsErrorBanner from '../../app/components/shared/CommsErrorBanner'
 import DesignEmbed from '../common/utils'
 

@@ -1,5 +1,7 @@
-/* stylelint-disable string-quotes */
-import React, { Fragment, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
+
+import { Fragment, useEffect } from 'react'
 import { Trash } from 'react-feather'
 import { useBool } from '../../../hooks/dataTypeHooks'
 import { isCustomTemplate, isSystemTemplate } from '../misc/utils'

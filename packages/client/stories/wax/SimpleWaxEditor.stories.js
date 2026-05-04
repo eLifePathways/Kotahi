@@ -1,4 +1,3 @@
-import React from 'react'
 import SimpleWaxEditor from '../../app/components/wax-collab/src/SimpleWaxEditor'
 import DesignEmbed from '../common/utils'
 
@@ -28,9 +27,7 @@ Base.args = {
   value: '<p>Some <strong><i>styled</i></strong> text</p>',
   autoFocus: true,
   placeholder: 'Enter text here',
-  onBlur: source => {
-    // console.log(source)
-  },
+  onBlur: () => {},
 }
 ReadOnly.args = {
   ...Base.args,

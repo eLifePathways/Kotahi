@@ -1,4 +1,3 @@
-import React from 'react'
 import styled, { css } from 'styled-components'
 import Messages from '../../app/components/component-chat/src/Messages/Messages'
 import ChatInput from '../../app/components/component-chat/src/SuperChatInput/SuperChatInput'
@@ -6,7 +5,7 @@ import DesignEmbed from '../common/utils'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
 import { ConfigProvider } from '../../app/components/config/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 import config from '../../config/sampleConfigFormData'
 
 const MessageContainer = styled.section`

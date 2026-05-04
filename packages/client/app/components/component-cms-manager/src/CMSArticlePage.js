@@ -1,5 +1,4 @@
-/* eslint-disable no-shadow */
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useQuery, useMutation, gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import Article from './article/article'

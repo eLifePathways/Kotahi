@@ -1,5 +1,9 @@
-import React, { useContext } from 'react'
-// eslint-disable-next-line no-unused-vars
+// @ts-nocheck
+
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable react-hooks/rules-of-hooks */
+
+import { useContext } from 'react'
 import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
@@ -9,25 +13,31 @@ import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 
 const DropdownStyled = styled(Dropdown)`
+  /* stylelint-disable selector-class-pattern */
+
   display: inline-flex;
   white-space: nowrap;
   cursor: not-allowed;
   opacity: ${props => (props.select ? 1 : 0.4)};
   pointer-events: ${props => (props.select ? 'default' : 'none')};
+
   .Dropdown-control {
     border: none;
     padding: 6px 52px 6px 6px;
   }
+
   .Dropdown-arrow {
     right: 25px;
     top: 16px;
   }
+
   .Dropdown-menu {
     top: calc(100% + 2px);
     width: 120%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
     .Dropdown-option {
       width: 100%;
     }
@@ -69,7 +79,6 @@ class KotahiBlockDropDown extends ToolGroup {
 
     const { dispatch, state } = view
 
-    /* eslint-disable no-underscore-dangle */
     const dropDownOptions = [
       { label: 'Title', value: 0, item: this._tools[0] },
       { label: 'Heading 2', value: 1, item: this._tools[1] },
@@ -79,14 +88,13 @@ class KotahiBlockDropDown extends ToolGroup {
       { label: 'Heading 6', value: 5, item: this._tools[5] },
       { label: 'Paragraph', value: 6, item: this._tools[6] },
     ]
-    /* eslint-enable no-underscore-dangle */
 
     const isEditable = pmViews.main.props.editable(editable => {
       return editable
     })
 
     let found = ''
-    dropDownOptions.forEach((item, i) => {
+    dropDownOptions.forEach(item => {
       if (item.item.active(state, activeViewId) === true) {
         found = item.item.label
       }
@@ -96,7 +104,6 @@ class KotahiBlockDropDown extends ToolGroup {
       <DropdownStyled
         key={uuidv4()}
         onChange={option => {
-          /* eslint-disable-next-line no-underscore-dangle */
           this._tools[option.value].run(state, dispatch)
         }}
         options={dropDownOptions}

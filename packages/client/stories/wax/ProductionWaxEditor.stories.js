@@ -1,8 +1,7 @@
-import React from 'react'
 import ProductionWaxEditor from '../../app/components/wax-collab/src/ProductionWaxEditor'
 import DesignEmbed from '../common/utils'
 import { JournalProvider } from '../../app/components/xpub-journal/src'
-import * as journal from '../../config/journal'
+import journal from '../../config/journal'
 
 export const Base = args => (
   <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
@@ -33,9 +32,7 @@ Base.args = {
   value: `<p class="paragraph">Some <strong><em>styled</em></strong> text</p><p class="paragraph">A second <span class="comment" data-id="807c5dba-f8a4-4f64-b1cd-cf9e83a2f64c" data-conversation="[{&quot;content&quot;:&quot;This is a note.&quot;,&quot;displayName&quot;:&quot;dummy editor&quot;,&quot;timestamp&quot;:1632132399423}]" data-viewid="main" data-group="main">paragraph</span>.</p>`,
   autoFocus: true,
   placeholder: 'Enter text here',
-  onBlur: source => {
-    // console.log('onBlur: ', source)
-  },
+  onBlur: () => {},
 }
 ReadOnly.args = {
   ...Base.args,

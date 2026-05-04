@@ -1,4 +1,3 @@
-import React from 'react'
 import EmailTemplateContent from './EmailTemplateContent'
 
 import EmailTemplatesHeader from './EmailTemplatesHeader'

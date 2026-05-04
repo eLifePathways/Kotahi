@@ -3,7 +3,7 @@
 // import { makeJats } from '../../server/utils/jatsUtils'
 // import DesignEmbed from '../common/utils'
 // import { JournalProvider } from '../../app/components/xpub-journal/src'
-// import * as journal from '../../config/journal'
+// import journal from '../../config/journal'
 
 // const initialHtml = `<h1>The Title <span class="deletion" data-id="" data-user="-" data-username="demo" data-date="0" data-group="" data-viewid="" style="color: indianred;">of This Paper</span></h1><h2>By Author 1, Author 2, <span class="insertion" data-id="" data-user="-" data-username="demo" data-date="0" data-group="" data-viewid="" style="color: royalblue;">Additional Author, </span>Author 3, Author 4</h2><p class="paragraph">(author affliliations etc.)</p><section class="acknowledgementsSection"><p  class="paragraph">These are acknowledgements.</p></section><p class="paragraph">Some <strong><em>styled</em></strong> text<footnote id="64da6743-5c79-4bbe-b27b-a700748d80ed">This is the note text.</footnote></p><p class="paragraph">A second <span class="comment" data-id="807c5dba-f8a4-4f64-b1cd-cf9e83a2f64c" data-conversation="[{&quot;content&quot;:&quot;This is a note.&quot;,&quot;displayName&quot;:&quot;dummy editor&quot;,&quot;timestamp&quot;:1632132399423}]" data-viewid="main" data-group="main">paragraph</span>.</p><section class="reflist"><h1>adfadf</h1><p class="reference">dfaljkdf</p><p class="reference">fasdfasdf</p><p class="reference">adfasdfasd <span class="deletion"><span class="small-caps">fffasdf</span></span></p><p class="reference">afasfd</p></section><section class="appendix"><h1>Appendix 1</h1><p class="paragraph">Appendix content . . .</p></section>`
 
