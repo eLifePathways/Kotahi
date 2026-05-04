@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
 import styled from 'styled-components'

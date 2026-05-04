@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export const URI_SEARCH_PARAM = 'search'
 export const URI_PAGENUM_PARAM = 'pagenum'
@@ -33,17 +33,18 @@ export const extractArchived = params => params.has(URI_ARCHIVED_PARAM)
  * Custom hook to return a function that can load a new page with certain URI query params
  */
 export const useQueryParams = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const applyQueryParams = queryParams => {
-    const params = new URLSearchParams(history.location.search)
+    const params = new URLSearchParams(location.search)
     Object.entries(queryParams).forEach(([fieldName, fieldValue]) => {
       if (fieldValue) params.set(fieldName, fieldValue)
       else params.delete(fieldName)
     })
 
-    history.push({
-      pathname: history.pathname,
+    navigate({
+      pathname: location.pathname,
       search: `?${params}`,
     })
   }

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Action, MediumRow } from '../../../shared'
@@ -31,7 +31,7 @@ const ReviewerItemLinks = ({
     )
   })
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const mainActionLink = getMainActionLink && getMainActionLink(manuscript)
   const { t } = useTranslation()
@@ -59,7 +59,7 @@ const ReviewerItemLinks = ({
             })
           }
 
-          history.push(mainActionLink)
+          navigate(mainActionLink)
         }}
       >
         {reviewLinkText[status]}

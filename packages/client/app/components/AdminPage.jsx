@@ -1,22 +1,21 @@
-/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/refs */
+/* eslint-disable react/prop-types, react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/refs */
 
-import { useApolloClient, useMutation, useQuery } from '@apollo/client'
+import { useApolloClient, useMutation, useQuery } from '@apollo/client/react'
 import { throttle } from 'lodash'
 import PropTypes from 'prop-types'
 import { useContext, useEffect, useRef } from 'react'
 import Modal from 'react-modal'
 import {
   matchPath,
-  Redirect,
+  Navigate,
   Route,
-  Switch,
-  useHistory,
+  Routes,
   useLocation,
 } from 'react-router-dom'
 import styled from 'styled-components'
 import i18next from 'i18next'
 import { useTranslation } from 'react-i18next'
-import { JournalContext } from './xpub-journal/src'
+import { JournalContext } from './xpub-journal'
 import { XpubContext } from './xpub-with-context/src'
 import { ConfigContext } from './config/src'
 import { getLanguages } from '../i18n'
@@ -77,30 +76,29 @@ const Root = styled.div`
 `
 
 // TODO: Redirect if token expires
-const PrivateRoute = ({ component: Component, redirectLink, ...rest }) => {
+const PrivateRoute = ({
+  component: Component,
+  redirectLink,
+  path,
+  currentUser,
+  ...rest
+}) => {
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config
 
   if (
     ['journal', 'prc'].includes(instanceName) &&
-    rest.currentUser &&
-    !rest.currentUser.email &&
-    rest.path !== `${urlFrag}/profile` // TODO configure this url via config manager
+    currentUser &&
+    !currentUser.email &&
+    path !== `${urlFrag}/profile` // TODO configure this url via config manager
   ) {
-    return <Redirect to={`${urlFrag}/profile`} />
+    return <Navigate replace to={`${urlFrag}/profile`} />
   }
 
-  return (
-    <Route
-      {...rest}
-      render={props => {
-        return localStorage.getItem('token') ? (
-          <Component {...rest} {...props} />
-        ) : (
-          <Redirect to={redirectLink} />
-        )
-      }}
-    />
+  return localStorage.getItem('token') ? (
+    <Component currentUser={currentUser} {...rest} />
+  ) : (
+    <Navigate replace to={redirectLink} />
   )
 }
 
@@ -111,7 +109,6 @@ PrivateRoute.propTypes = {
 
 const AdminPage = () => {
   Modal.setAppElement('#root')
-  const history = useHistory()
   const journal = useContext(JournalContext)
   const [conversion] = useContext(XpubContext)
   const config = useContext(ConfigContext)
@@ -163,7 +160,7 @@ const AdminPage = () => {
 
       localStorage.setItem('intendedPage', location.pathname + location.search)
       const redirectlocation = `${urlFrag}/login`
-      return <Redirect to={redirectlocation} />
+      return <Navigate replace to={redirectlocation} />
     }
   }
 
@@ -173,8 +170,7 @@ const AdminPage = () => {
 
   previousDataRef.current = data
 
-  const { pathname } = history.location
-  const showLinks = pathname.match(/^\/(submit|manuscript)/g)
+  const showLinks = location.pathname.match(/^\/(submit|manuscript)/g)
   let links = []
   const submissionFormBuilderLink = `${urlFrag}/admin/submission-form-builder`
   const reviewFormBuilderLink = `${urlFrag}/admin/review-form-builder`
@@ -200,7 +196,7 @@ const AdminPage = () => {
   const redirectLink = `${urlFrag}/login?next=${homeLink}`
 
   if (showLinks) {
-    const params = getParams(pathname, path)
+    const params = getParams(location.pathname, path)
     const baseLink = `${urlFrag}/versions/${params.version}`
     const submitLink = `${baseLink}/submit`
     const manuscriptLink = `${baseLink}/manuscript`
@@ -344,7 +340,8 @@ const AdminPage = () => {
 
   const dashboardRedirect = () =>
     invitationId ? (
-      <Redirect
+      <Navigate
+        replace
         to={`${urlFrag}/${
           inviteAction === 'decline'
             ? 'decline/'.concat(invitationId)
@@ -352,7 +349,7 @@ const AdminPage = () => {
         }`}
       />
     ) : (
-      <Redirect to={dashboardRedirectUrl} />
+      <Navigate replace to={dashboardRedirectUrl} />
     )
 
   // Throttled refetch query `currentUser` once every 2mins
@@ -379,259 +376,382 @@ const AdminPage = () => {
         profileLink={profileLink}
         user={currentUser}
       />
-      <Switch>
-        <PrivateRoute
-          component={ProfilePage}
-          currentUser={currentUser}
-          exact
+      <Routes>
+        <Route
+          element={
+            <PrivateRoute
+              component={ProfilePage}
+              currentUser={currentUser}
+              path={profileLink}
+              redirectLink={redirectLink}
+            />
+          }
           path={profileLink}
-          redirectLink={redirectLink}
         />
         {(isUser || isGroupManager || isGroupAdmin || isAdmin) && [
-          <PrivateRoute
-            component={ProfilePage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={ProfilePage}
+                currentUser={currentUser}
+                path={`${urlFrag}/profile/:id`}
+                redirectLink={redirectLink}
+              />
+            }
             key="profile"
             path={`${urlFrag}/profile/:id`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={NewSubmissionPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={NewSubmissionPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/newSubmission`}
+                redirectLink={redirectLink}
+              />
+            }
             key="new-submission"
             path={`${urlFrag}/newSubmission`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={ReviewPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={ReviewPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/versions/:version/review`}
+                redirectLink={redirectLink}
+              />
+            }
             key="review"
             path={`${urlFrag}/versions/:version/review`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={ReviewPreviewPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={ReviewPreviewPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/versions/:version/reviewPreview`}
+                redirectLink={redirectLink}
+              />
+            }
             key="review-preview"
             path={`${urlFrag}/versions/:version/reviewPreview`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={DecisionPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={DecisionPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/versions/:version/decision`}
+                redirectLink={redirectLink}
+              />
+            }
             key="decision"
             path={`${urlFrag}/versions/:version/decision`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={SubmitPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={SubmitPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/versions/:version/${
+                  ['preprint1', 'preprint2'].includes(config.instanceName)
+                    ? 'evaluation'
+                    : 'submit'
+                }`}
+                redirectLink={redirectLink}
+              />
+            }
             key="submit"
             path={`${urlFrag}/versions/:version/${
               ['preprint1', 'preprint2'].includes(config.instanceName)
                 ? 'evaluation'
                 : 'submit'
             }`} // TODO: Remove instance based custom submit page and refactor it use config manager flag in future
-            redirectLink={redirectLink}
           />,
-          <Route exact key="dashboard" path={`${urlFrag}/dashboard/:path?`}>
-            <DashboardLayout urlFrag={urlFrag}>
-              <Switch>
-                <PrivateRoute
-                  component={dashboardRedirect}
-                  currentUser={currentUser}
-                  exact
-                  path={homeLink}
-                  redirectLink={redirectLink}
-                />
-                {config?.dashboard?.showSections?.includes('submission') && (
-                  <PrivateRoute
-                    component={DashboardSubmissionsPage}
-                    currentUser={currentUser}
-                    exact
-                    key="submission"
-                    path={dashboardSubmissionsLink}
-                    redirectLink={redirectLink}
+          <Route
+            element={
+              <DashboardLayout urlFrag={urlFrag}>
+                <Routes>
+                  <Route
+                    element={
+                      <PrivateRoute
+                        component={dashboardRedirect}
+                        currentUser={currentUser}
+                        path={homeLink}
+                        redirectLink={redirectLink}
+                      />
+                    }
+                    path={homeLink}
                   />
-                )}
-                {config?.dashboard?.showSections?.includes('review') && (
-                  <PrivateRoute
-                    component={DashboardReviewsPage}
-                    currentUser={currentUser}
-                    exact
-                    path={dashboardReviewsLink}
-                    redirectLink={redirectLink}
-                  />
-                )}
-                {config?.dashboard?.showSections?.includes('editor') && (
-                  <PrivateRoute
-                    component={DashboardEditsPage}
-                    currentUser={currentUser}
-                    exact
-                    path={dashboardEditsLink}
-                    redirectLink={redirectLink}
-                  />
-                )}
-              </Switch>
-            </DashboardLayout>
-          </Route>,
-          <PrivateRoute
-            component={ProductionPage}
-            currentUser={currentUser}
+                  {config?.dashboard?.showSections?.includes('submission') && (
+                    <Route
+                      element={
+                        <PrivateRoute
+                          component={DashboardSubmissionsPage}
+                          currentUser={currentUser}
+                          path={dashboardSubmissionsLink}
+                          redirectLink={redirectLink}
+                        />
+                      }
+                      key="submission"
+                      path={dashboardSubmissionsLink}
+                    />
+                  )}
+                  {config?.dashboard?.showSections?.includes('review') && (
+                    <Route
+                      element={
+                        <PrivateRoute
+                          component={DashboardReviewsPage}
+                          currentUser={currentUser}
+                          path={dashboardReviewsLink}
+                          redirectLink={redirectLink}
+                        />
+                      }
+                      key="review"
+                      path={dashboardReviewsLink}
+                    />
+                  )}
+                  {config?.dashboard?.showSections?.includes('editor') && (
+                    <Route
+                      element={
+                        <PrivateRoute
+                          component={DashboardEditsPage}
+                          currentUser={currentUser}
+                          path={dashboardEditsLink}
+                          redirectLink={redirectLink}
+                        />
+                      }
+                      key="editor"
+                      path={dashboardEditsLink}
+                    />
+                  )}
+                </Routes>
+              </DashboardLayout>
+            }
+            key="dashboard"
+            path={`${urlFrag}/dashboard/*`}
+          />,
+          <Route
+            element={
+              <PrivateRoute
+                component={ProductionPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/versions/:version/production`}
+                redirectLink={redirectLink}
+              />
+            }
             key="production"
             path={`${urlFrag}/versions/:version/production`}
-            redirectLink={redirectLink}
           />,
         ]}
         {(isGroupAdmin || isAdmin) && [
           // We use array instead of <></> because of https://stackoverflow.com/a/68637108/6505513
-          <PrivateRoute
-            component={FormBuilderPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={FormBuilderPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/admin/form-builder`}
+                redirectLink={redirectLink}
+              />
+            }
             key="form-builder"
             path={`${urlFrag}/admin/form-builder`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            category="submission"
-            component={FormBuilderPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                category="submission"
+                component={FormBuilderPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/admin/submission-form-builder`}
+                redirectLink={redirectLink}
+              />
+            }
             key="submission-form-builder"
             path={`${urlFrag}/admin/submission-form-builder`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            category="review"
-            component={FormBuilderPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                category="review"
+                component={FormBuilderPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/admin/review-form-builder`}
+                redirectLink={redirectLink}
+              />
+            }
             key="review-form-builder"
             path={`${urlFrag}/admin/review-form-builder`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            category="decision"
-            component={FormBuilderPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                category="decision"
+                component={FormBuilderPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/admin/decision-form-builder`}
+                redirectLink={redirectLink}
+              />
+            }
             key="decision-form-builder"
             path={`${urlFrag}/admin/decision-form-builder`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={UsersPage}
-            currentUser={currentUser}
+          <Route
+            element={
+              <PrivateRoute
+                component={UsersPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/admin/users`}
+                redirectLink={redirectLink}
+              />
+            }
             key="users"
             path={`${urlFrag}/admin/users`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={TasksTemplatePage}
+          <Route
+            element={
+              <PrivateRoute
+                component={TasksTemplatePage}
+                path={`${urlFrag}/admin/tasks`}
+                redirectLink={redirectLink}
+              />
+            }
             key="tasks"
             path={`${urlFrag}/admin/tasks`}
-            redirectLink={redirectLink}
           />,
-
-          <PrivateRoute
-            component={CMSPagesPage}
-            currentUser={currentUser}
+          <Route
+            element={
+              <PrivateRoute
+                component={CMSPagesPage}
+                currentUser={currentUser}
+                path={`${CMSPagesPageLink}/:pageId?`}
+                redirectLink={redirectLink}
+              />
+            }
             key="CMSPagesPage"
             path={`${CMSPagesPageLink}/:pageId?`}
-            redirectLink={redirectLink}
           />,
-
-          <PrivateRoute
-            component={CMSLayoutPage}
-            currentUser={currentUser}
-            key="CMSPagesPage"
-            path={`${CMSLayoutPageLink}`}
-            redirectLink={redirectLink}
+          <Route
+            element={
+              <PrivateRoute
+                component={CMSLayoutPage}
+                currentUser={currentUser}
+                path={CMSLayoutPageLink}
+                redirectLink={redirectLink}
+              />
+            }
+            key="CMSLayoutPage"
+            path={CMSLayoutPageLink}
           />,
-
-          <PrivateRoute
-            component={CMSArticlePage}
-            currentUser={currentUser}
-            key="CMSPagesPage"
-            path={`${CMSArticlePageLink}`}
-            redirectLink={redirectLink}
+          <Route
+            element={
+              <PrivateRoute
+                component={CMSArticlePage}
+                currentUser={currentUser}
+                path={CMSArticlePageLink}
+                redirectLink={redirectLink}
+              />
+            }
+            key="CMSArticlePage"
+            path={CMSArticlePageLink}
           />,
-
-          <PrivateRoute
-            component={CMSFileBrowserPage}
-            currentUser={currentUser}
-            key="CMSPagesPage"
-            path={`${CMSFileBrowserLink}`}
-            redirectLink={redirectLink}
+          <Route
+            element={
+              <PrivateRoute
+                component={CMSFileBrowserPage}
+                currentUser={currentUser}
+                path={CMSFileBrowserLink}
+                redirectLink={redirectLink}
+              />
+            }
+            key="CMSFileBrowserPage"
+            path={CMSFileBrowserLink}
           />,
-
-          <PrivateRoute
-            component={CMSMetadataPage}
-            currentUser={currentUser}
-            key="CMSPagesPage"
-            path={`${CMSMetadataPageLink}`}
-            redirectLink={redirectLink}
+          <Route
+            element={
+              <PrivateRoute
+                component={CMSMetadataPage}
+                currentUser={currentUser}
+                path={CMSMetadataPageLink}
+                redirectLink={redirectLink}
+              />
+            }
+            key="CMSMetadataPage"
+            path={CMSMetadataPageLink}
           />,
-
-          <PrivateRoute
-            component={CMSPublishingCollectionPage}
-            currentUser={currentUser}
-            key="CMSPagesPage"
-            path={`${CMSPublishingCollectionPageLink}`}
-            redirectLink={redirectLink}
+          <Route
+            element={
+              <PrivateRoute
+                component={CMSPublishingCollectionPage}
+                currentUser={currentUser}
+                path={CMSPublishingCollectionPageLink}
+                redirectLink={redirectLink}
+              />
+            }
+            key="CMSPublishingCollectionPage"
+            path={CMSPublishingCollectionPageLink}
           />,
-
-          <PrivateRoute
-            component={ConfigManagerPage}
+          <Route
+            element={
+              <PrivateRoute
+                component={ConfigManagerPage}
+                path={`${urlFrag}/admin/configuration`}
+                redirectLink={redirectLink}
+              />
+            }
             key="configuration"
             path={`${urlFrag}/admin/configuration`}
-            redirectLink={redirectLink}
           />,
         ]}
         {(isGroupManager || isGroupAdmin) && [
-          <PrivateRoute
-            component={ManuscriptPage}
-            currentUser={currentUser}
-            exact
+          <Route
+            element={
+              <PrivateRoute
+                component={ManuscriptPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/versions/:version/manuscript`}
+                redirectLink={redirectLink}
+              />
+            }
             key="manuscript"
             path={`${urlFrag}/versions/:version/manuscript`}
-            redirectLink={redirectLink}
           />,
-          <PrivateRoute
-            component={ManuscriptsPage}
-            currentUser={currentUser}
+          <Route
+            element={
+              <PrivateRoute
+                component={ManuscriptsPage}
+                currentUser={currentUser}
+                path={`${urlFrag}/admin/manuscripts`}
+                redirectLink={redirectLink}
+              />
+            }
             key="manuscripts"
             path={`${urlFrag}/admin/manuscripts`}
-            redirectLink={redirectLink}
           />,
         ]}
         {isGroupAdmin && [
-          <PrivateRoute
-            component={ReportPage}
-            currentUser={currentUser}
+          <Route
+            element={
+              <PrivateRoute
+                component={ReportPage}
+                currentUser={currentUser}
+                path={reportsLink}
+                redirectLink={redirectLink}
+              />
+            }
             key="reports"
             path={reportsLink}
-            redirectLink={redirectLink}
           />,
         ]}
 
         {isUser || isGroupManager || isGroupAdmin || isAdmin ? (
-          <Route>
-            <PageError errorCode={404} />
-          </Route>
+          <Route element={<PageError errorCode={404} />} path="*" />
         ) : (
-          <Route>
-            <PageError errorCode={403} />
-          </Route>
+          <Route element={<PageError errorCode={403} />} path="*" />
         )}
-      </Switch>
+      </Routes>
     </Root>
   )
 }

@@ -4,7 +4,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { withRouter } from 'react-router-dom'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import CodeMirror from '@uiw/react-codemirror'
@@ -191,4 +190,4 @@ const Article = ({
   )
 }
 
-export default withRouter(Article)
+export default Article

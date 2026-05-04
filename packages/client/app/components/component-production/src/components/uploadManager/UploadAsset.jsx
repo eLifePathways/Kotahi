@@ -2,7 +2,8 @@
 
 import { useCallback, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useMutation, gql } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 

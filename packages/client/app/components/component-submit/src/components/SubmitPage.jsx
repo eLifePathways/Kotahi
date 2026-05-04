@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useContext } from 'react'
 import { debounce, set } from 'lodash'
-import { gql, useQuery, useMutation, useApolloClient } from '@apollo/client'
+import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import Submit from './Submit'

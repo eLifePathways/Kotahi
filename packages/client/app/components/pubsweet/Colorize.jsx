@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { withTheme } from 'styled-components'
-import { compose } from 'recompose'
+import { useTheme } from 'styled-components'
 
 const Colorize = Component => {
   const Colorized = ({
@@ -13,9 +12,10 @@ const Colorize = Component => {
     error,
     reverse,
     placeholder,
-    theme = {},
     ...props
   }) => {
+    const theme = useTheme()
+
     const color =
       (primary && theme.colorPrimary) ||
       (secondary && theme.colorSecondary) ||
@@ -35,4 +35,4 @@ const Colorize = Component => {
 }
 
 /** @component */
-export default compose(withTheme, Colorize)
+export default Colorize

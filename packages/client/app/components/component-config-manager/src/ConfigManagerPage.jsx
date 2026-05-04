@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { ConfigContext } from '../../config/src'
 import { UPDATE_CONFIG } from '../../../queries'
 import {

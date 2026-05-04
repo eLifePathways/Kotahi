@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { grid, rotate360 } from '@coko/client'
 import { Check, AlertCircle } from 'react-feather'
 import PropTypes from 'prop-types'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import theme, { color } from '../../theme'
 
 const ActionLink = styled.button`
@@ -64,12 +64,12 @@ export const LinkAction = ({
   to,
   'data-testid': dataTestId,
 }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   return (
     <Action
       data-testid={dataTestId}
       isDisabled={isDisabled}
-      onClick={() => history.push(to)}
+      onClick={() => navigate(to)}
     >
       {children}
     </Action>

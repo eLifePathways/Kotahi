@@ -4,7 +4,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { Button } from '../../../../pubsweet'
-import { JournalContext } from '../../../../xpub-journal/src'
+import { JournalContext } from '../../../../xpub-journal'
 
 const Root = styled.div``
 

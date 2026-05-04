@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
 import 'rc-tooltip/assets/bootstrap_white.css'
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { getFieldValueAndDisplayValue } from '../../../shared/manuscriptUtils'
 import {
   Cell,
@@ -20,7 +20,7 @@ const ManuscriptRow = ({
   mainActionLink,
   archived,
 }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const rowCells = columnDefinitions.map(column => {
     const values = getFieldValueAndDisplayValue(column, manuscript)
@@ -49,7 +49,7 @@ const ManuscriptRow = ({
 
   // Whole Row is clickable
   if (mainActionLink) {
-    const onRowClick = () => history.push(mainActionLink)
+    const onRowClick = () => navigate(mainActionLink)
 
     return (
       <>

@@ -4,13 +4,8 @@
 
 import { useEffect, useState, useContext } from 'react'
 import PropTypes from 'prop-types'
-import {
-  gql,
-  useApolloClient,
-  useMutation,
-  useQuery,
-  useSubscription,
-} from '@apollo/client'
+import { useApolloClient, useMutation, useQuery, useSubscription } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import { set, debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'

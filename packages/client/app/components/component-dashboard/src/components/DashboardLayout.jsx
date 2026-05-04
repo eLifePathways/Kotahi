@@ -2,7 +2,7 @@
 
 import { useContext } from 'react'
 import { th, grid } from '@coko/client'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
@@ -41,11 +41,11 @@ const DashboardLayout = ({
   children,
 }) => {
   const config = useContext(ConfigContext)
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const applyQueryParams = useQueryParams()
 
-  const uriQueryParams = new URLSearchParams(history.location.search)
+  const uriQueryParams = new URLSearchParams(location.search)
   const currentSearchQuery = uriQueryParams.get(URI_SEARCH_PARAM)
   const dashboardPages = []
 
@@ -85,7 +85,7 @@ const DashboardLayout = ({
               currentSearchQuery={currentSearchQuery}
             />
             <Button
-              onClick={() => history.push(`${urlFrag}/newSubmission`)}
+              onClick={() => navigate(`${urlFrag}/newSubmission`)}
               primary
             >
               {t('dashboardPage.New submission')}

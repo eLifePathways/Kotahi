@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { th, override } from '@coko/client'
-import { withState, withHandlers, compose } from 'recompose'
 
 import Icon from './Icon'
 
@@ -62,44 +62,38 @@ const HeaderComponent = ({ icon, expanded, label, toggle, ...props }) => (
 )
 
 const Accordion = ({
-  toggle,
-  expanded,
   children,
   icon = 'chevron_up',
-  header: Header = HeaderComponent, // eslint-disable-line no-shadow
+  header: HeaderProp = HeaderComponent,
+  startExpanded = false,
+  onToggle = null,
   ...props
-}) => (
-  <Root>
-    <Header expanded={expanded} icon={icon} toggle={toggle} {...props} />
-    {expanded && children}
-  </Root>
-)
+}) => {
+  const [expanded, setExpanded] = useState(startExpanded)
+
+  const toggle = () => {
+    setExpanded(prev => {
+      const next = !prev
+      if (typeof onToggle === 'function') onToggle(next)
+      return next
+    })
+  }
+
+  return (
+    <Root>
+      <HeaderProp expanded={expanded} icon={icon} toggle={toggle} {...props} />
+      {expanded && children}
+    </Root>
+  )
+}
 
 Accordion.propTypes = {
   /** Header icon, from the [Feather](https://feathericons.com/) icon set. */
   icon: PropTypes.string,
   /** Initial state of the accordion. */
   startExpanded: PropTypes.bool,
-  /** Function called when toggling the accordion. The new state is passed as a paremeter. */
+  /** Function called when toggling the accordion. The new state is passed as a parameter. */
   onToggle: PropTypes.func,
 }
 
-Accordion.defaultProps = {
-  onToggle: null,
-  startExpanded: false,
-}
-
-export default compose(
-  withState('expanded', 'setExpanded', ({ startExpanded }) => startExpanded),
-  withHandlers({
-    toggle:
-      ({ expanded, setExpanded, onToggle }) =>
-      () => {
-        setExpanded(!expanded)
-
-        if (typeof onToggle === 'function') {
-          onToggle(!expanded)
-        }
-      },
-  }),
-)(Accordion)
+export default Accordion

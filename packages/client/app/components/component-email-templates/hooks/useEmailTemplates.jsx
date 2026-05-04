@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client/react'
 import { GET_EMAIL_TEMPLATES } from '../../../queries'
 import {
   CREATE_TEMPLATE,

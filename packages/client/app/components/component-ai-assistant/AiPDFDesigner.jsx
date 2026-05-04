@@ -16,7 +16,8 @@ import {
   X,
 } from 'react-feather'
 import { takeRight } from 'lodash'
-import { gql, useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import Editor from './components/Editor'
 import PromptsInput from './PromptsInput'
 import {

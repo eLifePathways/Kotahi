@@ -1,4 +1,5 @@
-import { useApolloClient, gql } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 
 const GET_SPECIFIC_FILES = gql`
   query GetSpecificFilesQuery($ids: [ID!]!) {

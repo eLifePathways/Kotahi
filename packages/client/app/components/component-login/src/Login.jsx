@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useContext } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Trans, useTranslation } from 'react-i18next'
 
@@ -132,12 +132,12 @@ const Login = () => {
       localStorage.removeItem('intendedPage')
     }
 
-    return <Redirect to={redirectLink} />
+    return <Navigate replace to={redirectLink} />
   }
 
   const nextpage = `${serverUrl}/auth/orcid?group_id=${config?.groupId}`
   return redirectLink ? (
-    <Redirect to={redirectLink} />
+    <Navigate replace to={redirectLink} />
   ) : (
     <Container>
       <Centered>

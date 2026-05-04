@@ -1,7 +1,8 @@
 /* eslint-disable promise/always-return, promise/no-callback-in-promise */
 
 import { useContext } from 'react'
-import { useMutation, useQuery, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { omit } from 'lodash'
 import { ConfigContext } from '../../config/src'
 import {

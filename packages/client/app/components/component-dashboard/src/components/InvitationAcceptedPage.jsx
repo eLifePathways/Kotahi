@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
 
 import { useEffect, useContext, useState } from 'react'
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import {
   ASSIGN_USER_AS_AUTHOR,
@@ -165,7 +165,7 @@ const InvitationAcceptedPage = () => {
   }
 
   if (redirectLink) {
-    return <Redirect to={redirectLink} />
+    return <Navigate replace to={redirectLink} />
   }
 
   if (errorMessage) {

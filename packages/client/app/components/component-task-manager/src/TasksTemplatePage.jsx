@@ -1,5 +1,6 @@
 import { useContext } from 'react'
-import { useMutation, useQuery, gql } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import {
   DELETE_TASK_NOTIFICATION,
   UPDATE_TASK,

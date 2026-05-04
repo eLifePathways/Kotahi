@@ -1,4 +1,5 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 
 const GET_ENTITY_FILES = gql`
   query GetEntityFilesQuery($input: EntityFilesInput) {

@@ -2,7 +2,8 @@
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import { useContext, useEffect, useState } from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import PropTypes from 'prop-types'
 import { Select } from '../../../../shared'
 import {

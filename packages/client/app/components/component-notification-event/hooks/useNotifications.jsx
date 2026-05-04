@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client/react'
 import { useEffect } from 'react'
 import {
   CREATE_NOTIFICATION,

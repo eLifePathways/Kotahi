@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useContext } from 'react'
 import { debounce, isEmpty, pick } from 'lodash'
 import styled from 'styled-components'
-import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import CodeMirror from '@uiw/react-codemirror'
 import { html } from '@codemirror/lang-html'

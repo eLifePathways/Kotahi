@@ -1,6 +1,6 @@
 import { Fragment, useContext } from 'react'
 import PropTypes from 'prop-types'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { CommsErrorBanner, Spinner } from '../../shared'
 import EmailTemplates from './EmailTemplates'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'

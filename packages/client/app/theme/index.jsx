@@ -35,9 +35,9 @@ const cokoTheme = {
   /** @deprecated in favor of color.backgroundB */
   colorSecondaryBackground: color.backgroundB,
   /** @deprecated in favor of color.brand1.base */
-  colorPrimary: color.brand1.base,
+  colorPrimary: color.brand1.base(),
   /** @deprecated in favor of color.brand2.base */
-  colorSecondary: color.brand2.base,
+  colorSecondary: color.brand2.base(),
   /** @deprecated in favor of color.gray90 */
   colorFurniture: color.gray90,
   /** @deprecated in favor of color.gray60 */

@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import ReadonlyFormTemplate from '../metadata/ReadonlyFormTemplate'
@@ -38,7 +38,7 @@ const ReviewPreview = ({
   submissionForm,
   threadedDiscussionProps,
 }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { t } = useTranslation()
   return (
     <Page>
@@ -55,7 +55,7 @@ const ReviewPreview = ({
           showEditorOnlyFields={false}
           threadedDiscussionProps={threadedDiscussionProps}
         />
-        <IconLink onClick={() => history.goBack()}>
+        <IconLink onClick={() => navigate(-1)}>
           <Icon color={color.brand1.base()} inline size={2}>
             arrow-left
           </Icon>

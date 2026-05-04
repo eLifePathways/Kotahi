@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
 import { ConfigContext } from '../../../config/src'
 import { UPDATE_REVIEWER_STATUS_MUTATION } from '../../../../queries/team'

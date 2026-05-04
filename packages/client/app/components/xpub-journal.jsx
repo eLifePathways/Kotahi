@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import { createContext } from 'react'
 
-const JournalContext = React.createContext()
+const JournalContext = createContext()
 
 const JournalProvider = ({ journal, children }) => (
   <JournalContext.Provider value={journal}>{children}</JournalContext.Provider>

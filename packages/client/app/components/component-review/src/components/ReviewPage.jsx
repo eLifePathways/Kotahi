@@ -2,8 +2,9 @@
 
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { useMutation, useQuery, useSubscription, gql } from '@apollo/client'
-import { Redirect } from 'react-router-dom'
+import { useMutation, useQuery, useSubscription } from '@apollo/client/react'
+import { gql } from '@apollo/client'
+import { Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import ReviewLayout from './review/ReviewLayout'
@@ -363,7 +364,12 @@ const ReviewPage = ({ currentUser, history, match }) => {
   const { manuscript, threadedDiscussions } = data
   // We shouldn't arrive at this page with a subsequent/child manuscript ID. If we do, redirect to the parent/original ID
   if (manuscript.parentId)
-    return <Redirect to={`${urlFrag}/versions/${manuscript.parentId}/review`} />
+    return (
+      <Navigate
+        replace
+        to={`${urlFrag}/versions/${manuscript.parentId}/review`}
+      />
+    )
 
   if (!data.versionsOfManuscriptCurrentUserIsReviewerOf.length)
     return <AccessErrorPage message={t('reviewPage.unauthorized')} />

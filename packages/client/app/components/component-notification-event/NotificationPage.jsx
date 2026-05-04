@@ -3,7 +3,7 @@
 
 /* stylelint-disable declaration-no-important */
 import { Fragment, useEffect, useContext } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client/react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import useNotifications from './hooks/useNotifications'

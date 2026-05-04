@@ -13,7 +13,7 @@ import {
   useSubscription,
   useApolloClient,
   useLazyQuery,
-} from '@apollo/client'
+} from '@apollo/client/react'
 import fnv from 'fnv-plus'
 import { saveAs } from 'file-saver'
 import { ConfigContext } from '../../config/src'

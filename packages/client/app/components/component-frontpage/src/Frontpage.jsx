@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import styled from 'styled-components'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Accordion } from '../../pubsweet'

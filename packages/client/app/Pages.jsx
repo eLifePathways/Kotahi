@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect } from 'react'
-import { Route, Switch, useLocation, Redirect } from 'react-router-dom'
+import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 
 import { grid } from '@coko/client'
 
@@ -25,7 +25,7 @@ import InvitationAcceptedPage from './components/component-dashboard/src/compone
 import AssetManager from './components/asset-manager/src/AssetManagerPage'
 import AdminPage from './components/AdminPage'
 import GroupPage from './components/component-frontpage/src/GroupPage'
-import { JournalProvider } from './components/xpub-journal/src'
+import { JournalProvider } from './components/xpub-journal'
 import journal from '../config/journal'
 import ModalProvider from './components/asset-manager/src/ui/Modal/ModalProvider'
 import { XpubProvider } from './components/xpub-with-context/src'
@@ -134,71 +134,66 @@ const Pages = () => {
             <GlobalStyle />
             <ConfigProvider config={config}>
               <YjsProvider>
-                <Switch>
+                <Routes>
                   {hasMultipleGroups ? (
-                    <Route component={GroupPage} exact path="/" />
+                    <Route element={<GroupPage />} path="/" />
                   ) : (
                     <Route
-                      exact
+                      element={
+                        <Navigate replace to={`/${onlyGroupName}/login`} />
+                      }
                       path="/"
-                      render={() => <Redirect to={`/${onlyGroupName}/login`} />}
                     />
                   )}
 
                   <Route
-                    exact
-                    path="/login"
-                    render={() => (
-                      <Redirect
+                    element={
+                      <Navigate
+                        replace
                         to={hasMultipleGroups ? '/' : `/${onlyGroupName}/login`}
                       />
-                    )}
+                    }
+                    path="/login"
                   />
 
                   <Route
-                    exact
-                    path={urlFrag}
-                    render={() => (
-                      <Redirect
+                    element={
+                      <Navigate
+                        replace
                         to={
                           window.localStorage.getItem('token')
                             ? `${urlFrag}/dashboard`
                             : `${urlFrag}/login`
                         }
                       />
-                    )}
+                    }
+                    path={urlFrag}
                   />
 
-                  {/* <Route component={Frontpage} exact path={`${urlFrag}`} /> */}
-                  {/* <Route component={GroupPage} exact path="/" /> */}
+                  {/* <Route element={<Frontpage />} path={`${urlFrag}`} /> */}
+                  {/* <Route element={<GroupPage />} path="/" /> */}
 
-                  <Route component={Login} exact path={`${urlFrag}/login`} />
+                  <Route element={<Login />} path={`${urlFrag}/login`} />
 
                   <Route
-                    component={ArticleArtifactPage}
-                    exact
+                    element={<ArticleArtifactPage />}
                     path={`${urlFrag}/versions/:version/artifacts/:artifactId`}
                   />
                   <Route
-                    component={DeclineArticleOwnershipPage}
-                    exact
+                    element={<DeclineArticleOwnershipPage />}
                     path={`${urlFrag}/decline/:invitationId`}
                   />
                   <Route
-                    component={AcceptArticleOwnershipPage}
-                    exact
+                    element={<AcceptArticleOwnershipPage />}
                     path={`${urlFrag}/acceptarticle/:invitationId`}
                   />
                   <Route
-                    component={InvitationAcceptedPage}
-                    exact
+                    element={<InvitationAcceptedPage />}
                     path={`${urlFrag}/invitation/accepted`}
                   />
                   {/* AdminPage has nested routes within */}
-                  <Route path={`${urlFrag}`}>
-                    <AdminPage />
-                  </Route>
-                </Switch>
+                  <Route element={<AdminPage />} path={`${urlFrag}/*`} />
+                </Routes>
               </YjsProvider>
             </ConfigProvider>
           </DynamicThemeProvider>

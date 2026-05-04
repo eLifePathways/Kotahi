@@ -1,8 +1,8 @@
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
 import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
+import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@apollo/client/react'
 import { th, grid } from '@coko/client'
 import styled from 'styled-components'
 import { Spinner, CommsErrorBanner, Select } from '../../shared'
@@ -21,7 +21,7 @@ const Container = styled.div`
 const Content = styled.div`
   background: ${th('colorBackground')};
   border-radius: ${th('borderRadius')};
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 8px 0 rgb(0 0 0 / 25%);
   margin-bottom: 1rem;
   max-width: 40em;
   min-width: 20em;
@@ -44,7 +44,7 @@ export const capitalizeFirstLetter = string => {
 }
 
 const GroupPage = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const [selectedOption, setSelectedOption] = useState('')
   const { loading, error, data } = useQuery(GET_GROUPS)
 
@@ -61,12 +61,12 @@ const GroupPage = () => {
     )
 
   if (data?.groups.length === 1) {
-    history.push(`/${data?.groups[0]?.name}`)
+    navigate(`/${data?.groups[0]?.name}`)
   }
 
   const redirectToLogin = value => {
     setSelectedOption(value)
-    history.push(value)
+    navigate(value)
   }
 
   const groups = data?.groups.map(group => {

@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 
-import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import FullWaxEditor from '../../../wax-collab/src/FullWaxEditor'
 
@@ -60,4 +59,4 @@ const Manuscript = ({ file, content, currentUser, manuscript }) => {
   )
 }
 
-export default withRouter(Manuscript)
+export default Manuscript

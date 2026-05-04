@@ -10,7 +10,7 @@ import { Wax } from 'wax-prosemirror-core'
 import { ThemeProvider } from 'styled-components'
 import { gql } from '@apollo/client'
 import waxTheme from './layout/waxTheme'
-import { JournalContext } from '../../xpub-journal/src'
+import { JournalContext } from '../../xpub-journal'
 
 import yjsConfig from './config/yjsConfig'
 

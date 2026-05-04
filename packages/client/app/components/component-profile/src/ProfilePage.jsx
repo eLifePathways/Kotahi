@@ -3,8 +3,9 @@
 /* eslint-disable promise/always-return */
 
 import { useContext, useState } from 'react'
-import { Redirect } from 'react-router-dom'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import { Navigate } from 'react-router-dom'
+import { gql } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client/react'
 
 import { serverUrl } from '@coko/client'
 
@@ -142,7 +143,7 @@ const ProfilePage = ({ currentUser, match }) => {
   if (error) return <CommsErrorBanner error={error} />
 
   if (didLogout) {
-    return <Redirect to={`${urlFrag}/login`} />
+    return <Navigate replace to={`${urlFrag}/login`} />
   }
 
   const localStorage = window.localStorage || undefined

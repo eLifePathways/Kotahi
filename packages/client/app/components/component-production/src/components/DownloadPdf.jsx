@@ -2,7 +2,8 @@
 
 import React from 'react'
 import Modal from 'react-modal'
-import { useQuery, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { Spinner } from '../../../shared'
 
 const getPdfQuery = gql`

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useState } from 'react'
-import Moment from 'react-moment'
+import { DateParser } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../../../../pubsweet'
 import Tooltip from '../../../../../component-reporting/src/Tooltip'
@@ -106,12 +106,12 @@ const ThreadedComment = ({
         </CommentMetaWrapper>
         <ActionWrapper>
           <div>
-            <Moment format="YYYY-MM-DD">{createdAt}</Moment>
+            <DateParser dateFormat="YYYY-MM-DD" timestamp={createdAt} />
             <Tooltip
               content={
                 <>
                   {t('formBuilder.submittedAt')} &nbsp;
-                  <Moment format="YYYY-MM-DD HH:mm:ss">{createdAt}</Moment>
+                  <DateParser dateFormat="YYYY-MM-DD HH:mm:ss" timestamp={createdAt} />
                   <br />
                   {formData &&
                     JSON.parse(formData).controlPanel
@@ -121,18 +121,14 @@ const ThreadedComment = ({
                       <div>
                         {`${updatedBy.username} ${t('formBuilder.updatedAt')}`}{' '}
                         &nbsp;
-                        <Moment format="YYYY-MM-DD HH:mm:ss">
-                          {updatedAt}
-                        </Moment>
+                        <DateParser dateFormat="YYYY-MM-DD HH:mm:ss" timestamp={updatedAt} />
                         <br />
                       </div>
                     )}
                   {publishedAt && (
                     <div>
                       {t('formBuilder.publishedAt')} &nbsp;
-                      <Moment format="YYYY-MM-DD HH:mm:ss">
-                        {publishedAt}
-                      </Moment>
+                      <DateParser dateFormat="YYYY-MM-DD HH:mm:ss" timestamp={publishedAt} />
                       <br />
                     </div>
                   )}

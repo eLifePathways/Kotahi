@@ -33,6 +33,10 @@ services:
     depends_on:
       - db
       - fileHosting
+      - createbucket
+      - pagedjs
+      - xsweet
+      - anystyle
     command: ['yarn', 'coko-server', 'start-dev']
     ports:
       - ${SERVER_PORT:-3000}:3000

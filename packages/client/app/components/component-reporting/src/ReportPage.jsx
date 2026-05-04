@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/purity */
 
 import { useContext, useState } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import i18next from 'i18next'
 import Report from './Report'
 import { getStartOfDay, getEndOfDay } from '../../../shared/dateUtils'

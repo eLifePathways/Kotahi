@@ -1,4 +1,5 @@
-import { useSubscription, gql } from '@apollo/client'
+import { useSubscription } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 
 const FILES_UPLOADED_SUBSCRIPTION = gql`
   subscription FilesUploaded {

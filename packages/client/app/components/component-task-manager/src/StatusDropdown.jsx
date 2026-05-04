@@ -4,7 +4,7 @@
 
 import styled from 'styled-components'
 import Dropdown from 'react-dropdown'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import {
   Pause as PauseIcon,
   Check as CheckIcon,

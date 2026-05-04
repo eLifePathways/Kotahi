@@ -2,7 +2,8 @@
 /* eslint-disable react/prop-types */
 
 import { useState, useEffect, useContext } from 'react'
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client/react'
 import { cloneDeep, omitBy } from 'lodash'
 import { ConfigContext } from '../../../config/src'
 import FormBuilderLayout from './FormBuilderLayout'

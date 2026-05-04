@@ -2,8 +2,7 @@
 
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import Moment from 'react-moment'
-import { grid, th } from '@coko/client'
+import { grid, th, DateParser } from '@coko/client'
 import { Collapse, Spinner, Tag } from '../../../../shared'
 
 const Container = styled.div`
@@ -78,7 +77,7 @@ const CoarLabel = ({ message }) => {
         {t(`decisionPage.coarTab.${type}`)}
         {activityType && `: ${t(`decisionPage.coarTab.${activityType}`)}`}
       </Tag>
-      <Moment format="DD MMM YYYY, HH:mm:ss">{created}</Moment>
+      <DateParser dateFormat="DD MMM YYYY, HH:mm:ss" timestamp={created} />
     </div>
   )
 }

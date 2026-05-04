@@ -2,7 +2,8 @@
 
 import { useState, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import { last } from 'lodash'
 import styled from 'styled-components'
 import { grid, th, uuid } from '@coko/client'

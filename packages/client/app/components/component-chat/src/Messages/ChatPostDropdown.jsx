@@ -5,7 +5,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import EditMessageModal from './EditMessageModal'
 import { ConfirmationModal } from '../../../component-modal/src/ConfirmationModal'

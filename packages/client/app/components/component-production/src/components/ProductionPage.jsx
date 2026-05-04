@@ -2,7 +2,8 @@
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import React, { useContext } from 'react'
-import { useQuery, useMutation, gql, useApolloClient } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 
 import Production from './Production'
 import { ConfigContext } from '../../../config/src'
@@ -485,9 +486,7 @@ const ProductionPage = ({ currentUser, match }) => {
           currentUser={currentUser}
           currentUserRole={currentUserRole}
           displayShortIdAsIdentifier={controlPanel?.displayManuscriptShortId}
-          file={manuscript.files.find(file =>
-            file.tags.includes('manuscript'),
-          )}
+          file={manuscript.files.find(file => file.tags.includes('manuscript'))}
           form={form}
           isAuthorProofingVersion={isAuthorProofingMode}
           isReadOnlyVersion={isReadOnlyMode}

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { grid, th } from '@coko/client/dist/toolkit'
+import { grid, th } from '@coko/client'
 import { keys } from 'lodash'
 import { color } from '../../../../../theme'
 import { FlexRow } from '../../../../component-cms-manager/src/style'

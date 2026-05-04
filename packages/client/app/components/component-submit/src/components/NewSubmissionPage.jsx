@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { ApolloConsumer } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Container, Content, UploadContainer, Heading } from '../style'
 import UploadManuscript from './UploadManuscript'
@@ -26,6 +26,7 @@ const acceptFiles =
     : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 const Dashboard = ({ currentUser, history }) => {
+  const client = useApolloClient()
   const { t } = useTranslation()
 
   const {
@@ -57,19 +58,15 @@ const Dashboard = ({ currentUser, history }) => {
       </Heading>
       <Content>
         <UploadContainer>
-          <ApolloConsumer>
-            {client => (
-              <UploadManuscript
-                acceptFiles={acceptFiles}
-                client={client}
-                currentUser={currentUser}
-                description={submissionPage?.submissionPagedescription}
-                history={history}
-                showSubmitUrl={showSubmitUrl}
-                showUploadManuscript={showUploadManuscript}
-              />
-            )}
-          </ApolloConsumer>
+          <UploadManuscript
+            acceptFiles={acceptFiles}
+            client={client}
+            currentUser={currentUser}
+            description={submissionPage?.submissionPagedescription}
+            history={history}
+            showSubmitUrl={showSubmitUrl}
+            showUploadManuscript={showUploadManuscript}
+          />
         </UploadContainer>
       </Content>
     </Container>

@@ -1,6 +1,6 @@
 /* eslint-disable promise/always-return, promise/no-callback-in-promise */
 
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { SEARCH_ROR } from '../../userManuscriptFormQuery'
 import { VALIDATE_ORCID } from '../../../../../shared/commsUtils'
 

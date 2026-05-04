@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable new-cap */
 
-import Moment from 'react-moment'
+import { DateParser } from '@coko/client'
 import { get } from 'lodash'
 import FormCollaborateWax from '../../../../component-formbuilder/src/components/FormCollaborativeWax'
 import CollaborativeTextFieldBuilder from '../../../../component-formbuilder/src/components/builderComponents/CollaborativeTextField'
@@ -249,7 +249,7 @@ const ReadonlyFieldData = ({
   if (fieldDefinition?.component === 'DatePicker' && data) {
     return (
       <p>
-        <Moment format="DD-MM-YYYY">{data}</Moment>
+        <DateParser dateFormat="DD-MM-YYYY" timestamp={data} />
       </p>
     )
   }

@@ -2,7 +2,7 @@
 
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { Action } from '../../../shared'
@@ -16,7 +16,7 @@ const Container = styled.div`
 
 const AuthorProofingLink = props => {
   const { manuscript, urlFrag, currentUser } = props
-  const history = useHistory()
+  const navigate = useNavigate()
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
 
@@ -64,7 +64,7 @@ const AuthorProofingLink = props => {
 
   const handleClickAction = e => {
     e.stopPropagation()
-    history.push(`${urlFrag}/versions/${manuscript.id}/submit`)
+    navigate(`${urlFrag}/versions/${manuscript.id}/submit`)
   }
   // #endregion action
 
@@ -89,7 +89,7 @@ const AuthorProofingLink = props => {
   if (show) {
     const handleClickAuthorProofingAction = e => {
       e.stopPropagation()
-      history.push(`${urlFrag}/versions/${manuscript.id}/production`)
+      navigate(`${urlFrag}/versions/${manuscript.id}/production`)
     }
 
     let authorProofingLinkText = null

@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import { useContext } from 'react'
-import { Redirect } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
+import { Navigate } from 'react-router-dom'
+import { useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Container } from '../../../shared'
 import { GET_INVITATION_STATUS } from '../../../../queries/invitation'
@@ -41,14 +41,15 @@ const AcceptArticleOwnershipPage = ({ match }) => {
         ACCEPTING ownership of article using invitation: {invitationId}
         <br />
         <br />I will autoredirect in a few moments...
-        <Redirect to={`${config?.urlFrag}/login`} />
+        <Navigate replace to={`${config?.urlFrag}/login`} />
       </Container>
     )
   }
 
   if (status === 'ACCEPTED') {
     return (
-      <Redirect
+      <Navigate
+        replace
         to={`${urlFrag}/versions/${manuscriptId}/${
           invitedPersonType === 'AUTHOR' ? 'submit' : 'review'
         }`}

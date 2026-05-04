@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import { useState, useContext } from 'react'
-import { Redirect } from 'react-router-dom'
-import { useMutation, useQuery } from '@apollo/client'
+import { Navigate } from 'react-router-dom'
+import { useMutation, useQuery } from '@apollo/client/react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Field, Formik } from 'formik'
@@ -199,7 +199,7 @@ const DeclineArticleOwnershipPage = ({ match }) => {
     if (!loggedInUserId) {
       localStorage.setItem('inviteAction', 'decline')
       localStorage.setItem('invitationId', invitationId)
-      return <Redirect to={`${config?.urlFrag}/login`} />
+      return <Navigate replace to={`${config?.urlFrag}/login`} />
     }
 
     setErrorMessage('invalidUser')

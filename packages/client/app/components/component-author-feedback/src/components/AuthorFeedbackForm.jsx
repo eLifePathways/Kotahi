@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Formik } from 'formik'
-import { useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import styled from 'styled-components'
 import _ from 'lodash'
 

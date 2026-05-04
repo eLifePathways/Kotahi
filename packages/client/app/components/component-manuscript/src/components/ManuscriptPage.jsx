@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
+import { gql } from '@apollo/client'
 import Manuscript from './Manuscript'
 import { Spinner, CommsErrorBanner } from '../../../shared'
 

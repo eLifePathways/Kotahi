@@ -2,7 +2,7 @@
 
 import { useContext, useState } from 'react'
 
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Spinner, CommsErrorBanner } from '../../shared'
 
