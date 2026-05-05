@@ -4,6 +4,7 @@
 /* eslint-disable no-shadow */
 
 import { useState, useContext, useRef, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useTranslation } from 'react-i18next'
@@ -42,7 +43,8 @@ import useChat from '../../../hooks/useChat'
 import { updateManuscriptMutation } from '../../component-review/src/components/DecisionPage'
 import mutations from '../../component-dashboard/src/graphql/mutations'
 
-const ManuscriptsPage = ({ currentUser, history }) => {
+const ManuscriptsPage = ({ currentUser }) => {
+  const location = useLocation()
   const { t } = useTranslation()
   const [doUpdateManuscript] = useMutation(updateManuscriptMutation)
   const config = useContext(ConfigContext)
@@ -58,7 +60,7 @@ const ManuscriptsPage = ({ currentUser, history }) => {
   const [isImporting, setIsImporting] = useState(false)
   const applyQueryParams = useQueryParams()
 
-  const uriQueryParams = new URLSearchParams(history.location.search)
+  const uriQueryParams = new URLSearchParams(location.search)
   const page = uriQueryParams.get(URI_PAGENUM_PARAM) || 1
   const sortName = extractSortData(uriQueryParams).name
   const sortDirection = extractSortData(uriQueryParams).direction
@@ -301,7 +303,6 @@ const ManuscriptsPage = ({ currentUser, history }) => {
       getManuscriptsData={getManuscriptsData}
       groupManagerDiscussionChannel={groupManagerDiscussionChannel}
       hideManuscriptsChat={hideDiscussionFromGroupAdminsManagers}
-      history={history}
       importManuscripts={importManuscriptsAndRefetch}
       isImporting={isImporting}
       page={page}

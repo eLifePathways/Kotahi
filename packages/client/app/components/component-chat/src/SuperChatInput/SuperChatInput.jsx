@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
-
 /* eslint-disable promise/always-return */
-
 /* eslint-disable jsx-a11y/no-autofocus */
-
 /* eslint-disable react/prop-types */
 
 import * as React from 'react'
@@ -35,10 +32,18 @@ export const cleanSuggestionUserObject = user => {
   }
 }
 
-const SuperChatInput = props => {
-  const { sendChannelMessages, searchUsers, mentionsList } = props
-
-  const cacheKey = `last-content-${props.channelId}`
+const SuperChatInput = ({
+  sendChannelMessages,
+  searchUsers,
+  mentionsList,
+  channelId,
+  threadId,
+  networkOnline = true,
+  websocketConnection = 'connected',
+  quotedMessage,
+  participants,
+}) => {
+  const cacheKey = `last-content-${channelId}`
   const [text, changeText] = React.useState('')
 
   const { scrollToBottom } = useAppScroller()
@@ -49,7 +54,7 @@ const SuperChatInput = props => {
   React.useEffect(() => {
     changeText(localStorage.getItem(cacheKey) || '')
     // NOTE(@mxstbr): We ONLY want to run this if we switch between threads, never else!
-  }, [props.threadId])
+  }, [threadId])
 
   // Cache the latest text everytime it changes
   // $FlowFixMe
@@ -73,12 +78,12 @@ const SuperChatInput = props => {
     //   })
     // }
 
-    sendChannelMessages({ content: body, channelId: props.channelId })
+    sendChannelMessages({ content: body, channelId: channelId })
 
   const submit = async e => {
     if (e) e.preventDefault()
 
-    if (!props.networkOnline) {
+    if (!networkOnline) {
       console.error('No internet')
       // return props.dispatch(
       //   addToastWithTimeout(
@@ -89,8 +94,8 @@ const SuperChatInput = props => {
     }
 
     if (
-      props.websocketConnection !== 'connected' &&
-      props.websocketConnection !== 'reconnected'
+      websocketConnection !== 'connected' &&
+      websocketConnection !== 'reconnected'
     ) {
       console.error('No internet, reconnecting.')
       // return props.dispatch(
@@ -151,9 +156,9 @@ const SuperChatInput = props => {
   }
 
   const networkDisabled =
-    !props.networkOnline ||
-    (props.websocketConnection !== 'connected' &&
-      props.websocketConnection !== 'reconnected')
+    !networkOnline ||
+    (websocketConnection !== 'connected' &&
+      websocketConnection !== 'reconnected')
 
   const { t } = useTranslation()
 
@@ -170,7 +175,7 @@ const SuperChatInput = props => {
           )} */}
         <Form onSubmit={submit}>
           <InputWrapper
-            hasAttachment={!!props.quotedMessage || !!mediaPreview}
+            hasAttachment={!!quotedMessage || !!mediaPreview}
             networkDisabled={networkDisabled}
           >
             {mediaPreview && (
@@ -181,12 +186,9 @@ const SuperChatInput = props => {
                 </RemovePreviewButton>
               </PreviewWrapper>
             )}
-            {props.quotedMessage && (
+            {quotedMessage && (
               <PreviewWrapper data-cy="staged-quoted-message">
-                <QuotedMessage
-                  id={props.quotedMessage}
-                  threadId={props.threadId}
-                />
+                <QuotedMessage id={quotedMessage} threadId={threadId} />
                 <RemovePreviewButton
                   data-cy="remove-staged-quoted-message"
                   onClick={removeQuotedMessage}
@@ -201,14 +203,14 @@ const SuperChatInput = props => {
               field={{
                 name: 'comment',
               }}
-              hasAttachment={!!props.quotedMessage || !!mediaPreview}
-              id={`comment-editor-${props.channelId}`}
+              hasAttachment={!!quotedMessage || !!mediaPreview}
+              id={`comment-editor-${channelId}`}
               mentionsList={mentionsList}
               networkDisabled={networkDisabled}
               onEnterPress={onEnterPress}
               placeholder={t('chat.Your message here...')}
               searchUsersCallBack={searchUsers} // props.participants is currently undefined
-              staticSuggestions={props.participants}
+              staticSuggestions={participants}
             />
           </InputWrapper>
         </Form>
@@ -216,24 +218,5 @@ const SuperChatInput = props => {
     </ChatInputContainer>
   )
 }
-
-SuperChatInput.defaultProps = {
-  networkOnline: true,
-  websocketConnection: 'connected',
-}
-
-// const map = (state, ownProps) => ({
-//   websocketConnection: state.connectionStatus.websocketConnection,
-//   networkOnline: state.connectionStatus.networkOnline,
-//   quotedMessage: state.message.quotedMessage[ownProps.threadId] || null,
-// })
-
-// export default compose(
-//   withCurrentUser,
-//   sendMessage,
-//   sendDirectMessage,
-//   // $FlowIssue
-//   connect(map)
-// )(ChatInput)
 
 export default SuperChatInput

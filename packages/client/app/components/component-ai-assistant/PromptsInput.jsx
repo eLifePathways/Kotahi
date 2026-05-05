@@ -80,7 +80,13 @@ const SendButton = styled.button`
   }
 `
 
-const PromptsInput = ({ enabled, className, loading, onSend, ...rest }) => {
+const PromptsInput = ({
+  enabled = true,
+  className = '',
+  loading,
+  onSend,
+  ...rest
+}) => {
   // #region HOOKS ---------------------------------------------------------------------
   const {
     selectedCtx,
@@ -165,11 +171,6 @@ const PromptsInput = ({ enabled, className, loading, onSend, ...rest }) => {
 PromptsInput.propTypes = {
   enabled: PropTypes.bool,
   className: PropTypes.string,
-}
-
-PromptsInput.defaultProps = {
-  enabled: true,
-  className: '',
 }
 
 export default PromptsInput

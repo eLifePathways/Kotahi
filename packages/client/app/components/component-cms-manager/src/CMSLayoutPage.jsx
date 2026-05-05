@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useContext, useState } from 'react'
 import { Formik } from 'formik'
 import { useMutation, useQuery } from '@apollo/client/react'
@@ -18,7 +16,7 @@ import {
   deleteFileMutation,
 } from './queries'
 
-const CMSLayoutPage = ({ history }) => {
+const CMSLayoutPage = () => {
   const { loading, data, error } = useQuery(getCMSLayout)
   const [updateCMSLayout] = useMutation(updateCMSLayoutMutation)
   const [updateCMSPageInfo] = useMutation(updateCMSPageDataMutation)
@@ -128,11 +126,8 @@ const CMSLayoutPage = ({ history }) => {
 
   return (
     <Container>
-      <PageHeader
-        history={history}
-        leftSideOnly
-        mainHeading={t('cmsPage.layout.Layout')}
-      />
+      <PageHeader leftSideOnly mainHeading={t('cmsPage.layout.Layout')} />
+
       <Formik
         initialValues={setInitialData(cmsLayout)}
         onSubmit={async values => publish(values)}

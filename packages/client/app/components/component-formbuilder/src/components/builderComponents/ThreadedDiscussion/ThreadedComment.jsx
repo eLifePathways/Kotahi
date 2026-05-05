@@ -111,7 +111,10 @@ const ThreadedComment = ({
               content={
                 <>
                   {t('formBuilder.submittedAt')} &nbsp;
-                  <DateParser dateFormat="YYYY-MM-DD HH:mm:ss" timestamp={createdAt} />
+                  <DateParser
+                    dateFormat="YYYY-MM-DD HH:mm:ss"
+                    timestamp={createdAt}
+                  />
                   <br />
                   {formData &&
                     JSON.parse(formData).controlPanel
@@ -121,14 +124,20 @@ const ThreadedComment = ({
                       <div>
                         {`${updatedBy.username} ${t('formBuilder.updatedAt')}`}{' '}
                         &nbsp;
-                        <DateParser dateFormat="YYYY-MM-DD HH:mm:ss" timestamp={updatedAt} />
+                        <DateParser
+                          dateFormat="YYYY-MM-DD HH:mm:ss"
+                          timestamp={updatedAt}
+                        />
                         <br />
                       </div>
                     )}
                   {publishedAt && (
                     <div>
                       {t('formBuilder.publishedAt')} &nbsp;
-                      <DateParser dateFormat="YYYY-MM-DD HH:mm:ss" timestamp={publishedAt} />
+                      <DateParser
+                        dateFormat="YYYY-MM-DD HH:mm:ss"
+                        timestamp={publishedAt}
+                      />
                       <br />
                     </div>
                   )}

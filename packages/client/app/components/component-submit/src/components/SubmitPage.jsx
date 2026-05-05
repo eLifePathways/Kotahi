@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useState, useEffect, useContext } from 'react'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { debounce, set } from 'lodash'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 import { gql } from '@apollo/client'
@@ -100,7 +101,11 @@ const useValidateORCID = () => {
   return { validationOrcid }
 }
 
-const SubmitPage = ({ currentUser, match, history }) => {
+const SubmitPage = ({ currentUser }) => {
+  const navigate = useNavigate()
+  const params = useParams()
+  const location = useLocation()
+
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config
@@ -122,7 +127,7 @@ const SubmitPage = ({ currentUser, match, history }) => {
     query,
     {
       variables: {
-        id: match.params.version,
+        id: params.version,
         groupId: config.groupId,
         submitPurpose,
         decisionPurpose,
@@ -280,9 +285,9 @@ const SubmitPage = ({ currentUser, match, history }) => {
     if (result?.steps?.some(step => !step.succeeded)) return result
 
     if (['journal', 'prc'].includes(config.instanceName)) {
-      history.push(`${urlFrag}/dashboard`)
+      navigate(`${urlFrag}/dashboard`)
     } else if (['preprint1', 'preprint2'].includes(config.instanceName)) {
-      history.push(`${urlFrag}/admin/manuscripts`)
+      navigate(`${urlFrag}/admin/manuscripts`)
     }
 
     return null
@@ -292,7 +297,9 @@ const SubmitPage = ({ currentUser, match, history }) => {
     await updateManuscript(versionId, manuscriptChangedFields)
 
     const delta = {
-      status: match.url.includes('/evaluation') ? 'evaluated' : 'submitted',
+      status: location.pathname.includes('/evaluation')
+        ? 'evaluated'
+        : 'submitted',
     }
 
     await submit({
@@ -303,11 +310,11 @@ const SubmitPage = ({ currentUser, match, history }) => {
     })
 
     if (['journal', 'prc'].includes(config.instanceName)) {
-      history.push(`${urlFrag}/dashboard`)
+      navigate(`${urlFrag}/dashboard`)
     }
 
     if (['preprint1', 'preprint2'].includes(config.instanceName)) {
-      history.push(`${urlFrag}/admin/manuscripts`)
+      navigate(`${urlFrag}/admin/manuscripts`)
     }
   }
 
@@ -341,7 +348,6 @@ const SubmitPage = ({ currentUser, match, history }) => {
       hideChat={hideChat}
       manuscript={manuscript}
       manuscriptLatestVersionId={manuscriptLatestVersionId}
-      match={match}
       onChange={handleChange}
       onSubmit={onSubmit}
       parent={manuscript}

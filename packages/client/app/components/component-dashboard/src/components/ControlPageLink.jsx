@@ -19,9 +19,4 @@ ControlPageLink.propTypes = {
   id: PropTypes.string,
 }
 
-ControlPageLink.defaultProps = {
-  version: undefined,
-  page: undefined,
-  id: undefined,
-}
 export default ControlPageLink

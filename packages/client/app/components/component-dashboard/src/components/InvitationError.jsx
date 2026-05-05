@@ -41,9 +41,4 @@ InvitationError.propTypes = {
   link: PropTypes.element,
 }
 
-InvitationError.defaultProps = {
-  errorMessage: null,
-  link: null,
-}
-
 export default InvitationError

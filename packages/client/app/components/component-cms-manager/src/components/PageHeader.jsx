@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 
+import { useLocation } from 'react-router-dom'
+
 import { Button } from '../../../pubsweet'
 import SearchControl from '../../../component-manuscripts/src/SearchControl'
 
@@ -14,15 +16,15 @@ import {
 } from '../../../../shared/urlParamUtils'
 
 const PageHeader = ({
-  history,
   leftSideOnly,
   onNewItemButtonClick,
   mainHeading,
   newItemButtonText,
   hideSearch,
 }) => {
+  const location = useLocation()
   const applyQueryParams = useQueryParams()
-  const uriQueryParams = new URLSearchParams(history?.location?.search)
+  const uriQueryParams = new URLSearchParams(location.search)
   const currentSearchQuery = uriQueryParams.get(URI_SEARCH_PARAM)
 
   const renderLeftSide = () => {

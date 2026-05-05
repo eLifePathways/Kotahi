@@ -36,7 +36,7 @@ const More = styled.span`
 `
 
 const CommentItemList = props => {
-  const { active, className, data } = props
+  const { active = false, className, data = [] } = props
   if (!data || data.length === 0) return null
 
   const [items, setItems] = useState(data)
@@ -88,11 +88,6 @@ CommentItemList.propTypes = {
       timestamp: PropTypes.number.isRequired,
     }),
   ),
-}
-
-CommentItemList.defaultProps = {
-  active: false,
-  data: [],
 }
 
 export default CommentItemList

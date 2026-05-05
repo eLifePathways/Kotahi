@@ -87,7 +87,7 @@ const FormBuilderLayout = ({
   deleteField,
   deleteForm,
   dragField,
-  forms,
+  forms = [],
   moveFieldDown,
   moveFieldUp,
   selectedFieldId,
@@ -343,12 +343,6 @@ FormBuilderLayout.propTypes = {
   updateField: PropTypes.func.isRequired,
   setSelectedFieldId: PropTypes.func.isRequired,
   setSelectedFormId: PropTypes.func.isRequired,
-}
-
-FormBuilderLayout.defaultProps = {
-  forms: [],
-  selectedFormId: null,
-  selectedFieldId: null,
 }
 
 export default FormBuilderLayout

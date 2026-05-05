@@ -76,11 +76,11 @@ const IconContainer = styled.div`
 `
 
 const SecondaryActionButton = ({
-  disabled,
-  onClick,
+  disabled = false,
+  onClick = () => null,
   children,
   title,
-  type,
+  type = 'button',
   status,
   // secondaryButton,
   // color: col,
@@ -153,14 +153,6 @@ SecondaryActionButton.propTypes = {
   title: PropTypes.string,
   type: PropTypes.string,
   children: PropTypes.node.isRequired,
-}
-
-SecondaryActionButton.defaultProps = {
-  disabled: false,
-  onClick: () => null,
-  status: null,
-  title: null,
-  type: 'button',
 }
 
 export default SecondaryActionButton

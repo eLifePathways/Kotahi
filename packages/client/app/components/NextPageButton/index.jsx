@@ -6,13 +6,13 @@ import { HasNextPage, NextPageButton } from './style'
 
 const NextPageButtonWrapper = props => {
   const {
-    isFetchingMore,
+    isFetchingMore = false,
     fetchMore,
     href,
     children,
-    automatic,
-    topOffset,
-    bottomOffset,
+    automatic = true,
+    topOffset = -250,
+    bottomOffset = -250,
   } = props
 
   const sentinelRef = useRef(null)
@@ -63,15 +63,6 @@ NextPageButtonWrapper.propTypes = {
   automatic: PropTypes.bool,
   topOffset: PropTypes.number,
   bottomOffset: PropTypes.number,
-}
-
-NextPageButtonWrapper.defaultProps = {
-  isFetchingMore: false,
-  href: undefined,
-  children: undefined,
-  automatic: true,
-  topOffset: -250,
-  bottomOffset: -250,
 }
 
 export default NextPageButtonWrapper

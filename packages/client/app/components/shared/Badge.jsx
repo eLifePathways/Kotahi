@@ -83,8 +83,9 @@ const statusesToOverride = ['evaluated']
  */
 export const StatusBadge = ({
   status,
-  published: publishedDate,
-  colorMap,
+  published: publishedDate = '',
+  colorMap = statusColorsMap,
+  clickable = false,
   ...rest
 }) => {
   const safeStatusKey = keys(colorMap).includes(status) ? status : 'default'
@@ -96,7 +97,7 @@ export const StatusBadge = ({
   const showPublishedStatus = publishedAndMore || forceToPublished
 
   return (
-    <BadgesWrapper {...rest}>
+    <BadgesWrapper clickable={clickable} {...rest}>
       {showPublishedStatus && (
         <Status
           $bg={publishedBg}
@@ -130,10 +131,4 @@ StatusBadge.propTypes = {
   colorMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
   published: PropTypes.string,
   status: PropTypes.string.isRequired,
-}
-
-StatusBadge.defaultProps = {
-  clickable: false,
-  colorMap: statusColorsMap,
-  published: '',
 }

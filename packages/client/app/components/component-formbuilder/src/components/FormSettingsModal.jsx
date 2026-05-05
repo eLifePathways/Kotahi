@@ -59,7 +59,7 @@ const prepareForSubmit = (form, values) => {
 const FormSettingsModal = ({
   form,
   isActive,
-  isOpen,
+  isOpen = false,
   makeFormActive,
   onClose,
   onSubmit,
@@ -215,10 +215,6 @@ FormSettingsModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
-}
-
-FormSettingsModal.defaultProps = {
-  isOpen: false,
 }
 
 export default FormSettingsModal

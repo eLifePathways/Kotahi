@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { gql } from '@apollo/client'
 import Manuscript from './Manuscript'
@@ -35,10 +36,11 @@ const query = gql`
   }
 `
 
-const ManuscriptPage = ({ currentUser, match }) => {
+const ManuscriptPage = ({ currentUser }) => {
+  const params = useParams()
   const { data, loading, error } = useQuery(query, {
     variables: {
-      id: match.params.version,
+      id: params.version,
     },
   })
 

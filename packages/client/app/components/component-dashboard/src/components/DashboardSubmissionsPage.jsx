@@ -3,6 +3,7 @@
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ConfigContext } from '../../../config/src'
 import {
   extractFilters,
@@ -15,13 +16,14 @@ import queries from '../graphql/queries'
 import SubmissionsTable from './sections/SubmissionsTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
-const DashboardSubmissionsPage = ({ currentUser, history }) => {
+const DashboardSubmissionsPage = ({ currentUser }) => {
+  const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['author']
 
   const applyQueryParams = useQueryParams()
 
-  const uriQueryParams = new URLSearchParams(history.location.search)
+  const uriQueryParams = new URLSearchParams(location.search)
   const page = uriQueryParams.get(URI_PAGENUM_PARAM) || 1
   const sortName = extractSortData(uriQueryParams).name
   const sortDirection = extractSortData(uriQueryParams).direction

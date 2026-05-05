@@ -12,14 +12,14 @@ import SimpleWaxEditorLayout from '../../../wax-collab/src/layout/SimpleWaxEdito
 import simpleWaxEditorConfig from '../../../wax-collab/src/config/SimpleWaxEditorConfig'
 
 const FormWaxEditor = ({
-  value,
+  value = '',
   validationStatus,
-  readonly,
-  autoFocus,
+  readonly = false,
+  autoFocus = false,
   // onBlur,
-  onChange,
-  placeholder,
-  spellCheck,
+  onChange = () => {},
+  placeholder = '',
+  spellCheck = false,
   'data-testid': dataTestid,
   wsProvider,
   ydoc,
@@ -67,16 +67,6 @@ FormWaxEditor.propTypes = {
   placeholder: PropTypes.string,
   /** Should enable browser's native spellcheck? */
   spellCheck: PropTypes.bool,
-}
-
-FormWaxEditor.defaultProps = {
-  value: '',
-  validationStatus: undefined,
-  readonly: false,
-  autoFocus: false,
-  onChange: () => {},
-  placeholder: '',
-  spellCheck: false,
 }
 
 export default FormWaxEditor

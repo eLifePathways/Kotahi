@@ -2,6 +2,7 @@
 
 /* eslint-disable no-shadow */
 import { useContext, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Trans, useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'
@@ -98,7 +99,7 @@ const DropdownContainer = styled.div`
   }
 `
 
-const Manuscripts = ({ history, ...props }) => {
+const Manuscripts = props => {
   const {
     applyQueryParams,
     validateDoi,
@@ -131,6 +132,7 @@ const Manuscripts = ({ history, ...props }) => {
     chatExpand,
   } = props
 
+  const navigate = useNavigate()
   const { t } = useTranslation()
 
   const config = useContext(ConfigContext)
@@ -323,7 +325,7 @@ const Manuscripts = ({ history, ...props }) => {
     <ControlsContainer>
       {config?.manuscript?.newSubmission && !archived && (
         <ActionButton
-          onClick={() => history.push(`${urlFrag}/newSubmission`)}
+          onClick={() => navigate(`${urlFrag}/newSubmission`)}
           primary
         >
           {t('dashboardPage.New submission')}

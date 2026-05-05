@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { capitalize } from 'lodash'
 import { grid, theme } from '@coko/client'
 
-const Tag = ({ children, color, fontSize }) => {
+const Tag = ({ children, color, fontSize = 'baseSmall' }) => {
   const colorLabel = color ? `color${capitalize(color)}` : undefined
   const fontSizeLabel = `fontSize${capitalize(fontSize)}`
 
@@ -35,11 +35,6 @@ Tag.propTypes = {
     'Heading5',
     'Heading6',
   ]),
-}
-
-Tag.defaultProps = {
-  color: undefined,
-  fontSize: 'baseSmall',
 }
 
 export default Tag

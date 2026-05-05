@@ -48,10 +48,4 @@ const Button = props => {
   )
 }
 
-Button.defaultProps = {
-  title: null,
-  label: null,
-  icon: null,
-}
-
 export default Button

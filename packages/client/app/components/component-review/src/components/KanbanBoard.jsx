@@ -78,12 +78,12 @@ const KanbanBoard = ({
   currentUser,
   deleteFile,
   invitations,
-  isAuthorBoard,
+  isAuthorBoard = false,
   version,
   versionNumber,
-  removeAuthor,
+  removeAuthor = () => {},
   removeInvitation,
-  removeReviewer,
+  removeReviewer = () => {},
   reviews,
   reviewForm,
   isCurrentVersion,
@@ -318,12 +318,6 @@ KanbanBoard.propTypes = {
   removeReviewer: PropTypes.func,
   title: PropTypes.string.isRequired,
   versionNumber: PropTypes.number.isRequired,
-}
-
-KanbanBoard.defaultProps = {
-  isAuthorBoard: false,
-  removeAuthor: () => {},
-  removeReviewer: () => {},
 }
 
 export default KanbanBoard

@@ -13,14 +13,14 @@ import simpleWaxEditorConfig from './config/SimpleWaxEditorConfig'
 import SimpleWaxEditorLayout from './layout/SimpleWaxEditorLayout'
 
 const SimpleWaxEditor = ({
-  value,
+  value = '',
   validationStatus,
-  readonly,
-  autoFocus,
-  onBlur,
-  onChange,
-  placeholder,
-  spellCheck,
+  readonly = false,
+  autoFocus = false,
+  onBlur = () => {},
+  onChange = () => {},
+  placeholder = '',
+  spellCheck = false,
   wsProvider,
   ydoc,
   name,
@@ -71,17 +71,6 @@ SimpleWaxEditor.propTypes = {
   placeholder: PropTypes.string,
   /** Should enable browser's native spellcheck? */
   spellCheck: PropTypes.bool,
-}
-
-SimpleWaxEditor.defaultProps = {
-  value: '',
-  validationStatus: undefined,
-  readonly: false,
-  autoFocus: false,
-  onBlur: () => {},
-  onChange: () => {},
-  placeholder: '',
-  spellCheck: false,
 }
 
 export default SimpleWaxEditor

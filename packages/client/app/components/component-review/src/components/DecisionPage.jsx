@@ -3,8 +3,14 @@
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import { useEffect, useState, useContext } from 'react'
+import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { useApolloClient, useMutation, useQuery, useSubscription } from '@apollo/client/react'
+import {
+  useApolloClient,
+  useMutation,
+  useQuery,
+  useSubscription,
+} from '@apollo/client/react'
 import { gql } from '@apollo/client'
 import { set, debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -132,8 +138,9 @@ const useChatGpt = gql`
 
 let debouncers = {}
 
-const DecisionPage = ({ currentUser, match }) => {
-  const manuscriptId = match.params.version
+const DecisionPage = ({ currentUser }) => {
+  const params = useParams()
+  const manuscriptId = params.version
 
   const { t } = useTranslation()
   // start of code from submit page to handle possible form changes

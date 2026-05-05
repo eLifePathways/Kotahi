@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
-import { required } from 'xpub-validators'
 import { camelCase } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { required } from '../../xpub-validators/src'
 import { ValidatedFieldFormik } from '../../pubsweet'
 import { handlebars } from './handlebarsAutocomplete/constants'
 

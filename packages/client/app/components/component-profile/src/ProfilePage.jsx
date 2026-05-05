@@ -3,7 +3,7 @@
 /* eslint-disable promise/always-return */
 
 import { useContext, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { gql } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
 
@@ -94,8 +94,8 @@ const UPDATE_GLOBAL_CHAT_NOTIFICATION_OPTION = gql`
   }
 `
 
-const ProfilePage = ({ currentUser, match }) => {
-  const { id } = match.params
+const ProfilePage = ({ currentUser }) => {
+  const { id } = useParams()
 
   const { urlFrag } = useContext(ConfigContext)
   const [didLogout, setDidLogout] = useState(false)
@@ -163,7 +163,6 @@ const ProfilePage = ({ currentUser, match }) => {
       currentUser={currentUser}
       kotahiVersion={kotahiVersion}
       logoutUser={logoutUser}
-      match={match}
       notificationUserOption={
         globalChatNotificationUserOption?.notificationOption?.option ||
         'inherit'

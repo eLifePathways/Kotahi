@@ -191,7 +191,6 @@ ReviewHeading.propTypes = {
 
   users: PropTypes.array.isRequired,
 }
-ReviewHeading.defaultProps = { recommendation: null }
 
 Bullet.propTypes = {
   journal: PropTypes.object,

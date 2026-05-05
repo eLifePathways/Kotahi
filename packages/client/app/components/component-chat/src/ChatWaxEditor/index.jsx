@@ -8,14 +8,14 @@ import chatWaxEditorConfig from './ChatWaxEditorConfig'
 import chatWaxEditorLayout from './ChatWaxEditorLayout'
 
 const ChatWaxEditor = ({
-  value,
+  value = '',
   validationStatus,
-  readonly,
-  autoFocus,
-  // onBlur,
-  // onChange,
-  placeholder,
-  spellCheck,
+  readonly = false,
+  autoFocus = false,
+  // onBlur = () => {},
+  // onChange = () => {},
+  placeholder = '',
+  spellCheck = false,
   onEnterPress,
   editorRef,
   autoCompleteReducer,
@@ -53,17 +53,6 @@ ChatWaxEditor.propTypes = {
   placeholder: PropTypes.string,
   /** Should enable browser's native spellcheck? */
   spellCheck: PropTypes.bool,
-}
-
-ChatWaxEditor.defaultProps = {
-  value: '',
-  validationStatus: undefined,
-  readonly: false,
-  autoFocus: false,
-  onBlur: () => {},
-  onChange: () => {},
-  placeholder: '',
-  spellCheck: false,
 }
 
 export default ChatWaxEditor

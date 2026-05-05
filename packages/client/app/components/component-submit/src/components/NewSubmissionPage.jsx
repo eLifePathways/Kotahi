@@ -25,7 +25,7 @@ const acceptFiles =
     ? acceptUploadFiles.join()
     : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
-const Dashboard = ({ currentUser, history }) => {
+const Dashboard = ({ currentUser }) => {
   const client = useApolloClient()
   const { t } = useTranslation()
 
@@ -63,7 +63,6 @@ const Dashboard = ({ currentUser, history }) => {
             client={client}
             currentUser={currentUser}
             description={submissionPage?.submissionPagedescription}
-            history={history}
             showSubmitUrl={showSubmitUrl}
             showUploadManuscript={showUploadManuscript}
           />

@@ -137,8 +137,4 @@ DoisInput.propTypes = {
   ]),
 }
 
-DoisInput.defaultProps = {
-  value: null,
-}
-
 export default DoisInput

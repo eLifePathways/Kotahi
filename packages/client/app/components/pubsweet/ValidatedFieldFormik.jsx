@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types, react/display-name */
+/* eslint-disable react/prop-types */
 
 import { FastField } from 'formik'
 import { get } from 'lodash'

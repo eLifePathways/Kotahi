@@ -386,8 +386,9 @@ const AdminPage = () => {
               redirectLink={redirectLink}
             />
           }
-          path={profileLink}
+          path="profile"
         />
+
         {(isUser || isGroupManager || isGroupAdmin || isAdmin) && [
           <Route
             element={
@@ -399,7 +400,7 @@ const AdminPage = () => {
               />
             }
             key="profile"
-            path={`${urlFrag}/profile/:id`}
+            path="profile/:id"
           />,
           <Route
             element={
@@ -411,7 +412,7 @@ const AdminPage = () => {
               />
             }
             key="new-submission"
-            path={`${urlFrag}/newSubmission`}
+            path="newSubmission"
           />,
           <Route
             element={
@@ -423,7 +424,7 @@ const AdminPage = () => {
               />
             }
             key="review"
-            path={`${urlFrag}/versions/:version/review`}
+            path="versions/:version/review"
           />,
           <Route
             element={
@@ -435,7 +436,7 @@ const AdminPage = () => {
               />
             }
             key="review-preview"
-            path={`${urlFrag}/versions/:version/reviewPreview`}
+            path="versions/:version/reviewPreview"
           />,
           <Route
             element={
@@ -447,7 +448,7 @@ const AdminPage = () => {
               />
             }
             key="decision"
-            path={`${urlFrag}/versions/:version/decision`}
+            path="versions/:version/decision"
           />,
           <Route
             element={
@@ -463,7 +464,7 @@ const AdminPage = () => {
               />
             }
             key="submit"
-            path={`${urlFrag}/versions/:version/${
+            path={`versions/:version/${
               ['preprint1', 'preprint2'].includes(config.instanceName)
                 ? 'evaluation'
                 : 'submit'
@@ -482,7 +483,7 @@ const AdminPage = () => {
                         redirectLink={redirectLink}
                       />
                     }
-                    path={homeLink}
+                    path=""
                   />
                   {config?.dashboard?.showSections?.includes('submission') && (
                     <Route
@@ -495,7 +496,7 @@ const AdminPage = () => {
                         />
                       }
                       key="submission"
-                      path={dashboardSubmissionsLink}
+                      path="submissions"
                     />
                   )}
                   {config?.dashboard?.showSections?.includes('review') && (
@@ -509,7 +510,7 @@ const AdminPage = () => {
                         />
                       }
                       key="review"
-                      path={dashboardReviewsLink}
+                      path="reviews"
                     />
                   )}
                   {config?.dashboard?.showSections?.includes('editor') && (
@@ -523,14 +524,14 @@ const AdminPage = () => {
                         />
                       }
                       key="editor"
-                      path={dashboardEditsLink}
+                      path="edits"
                     />
                   )}
                 </Routes>
               </DashboardLayout>
             }
             key="dashboard"
-            path={`${urlFrag}/dashboard/*`}
+            path={`dashboard/*`}
           />,
           <Route
             element={
@@ -542,7 +543,7 @@ const AdminPage = () => {
               />
             }
             key="production"
-            path={`${urlFrag}/versions/:version/production`}
+            path="versions/:version/production"
           />,
         ]}
         {(isGroupAdmin || isAdmin) && [
@@ -557,7 +558,7 @@ const AdminPage = () => {
               />
             }
             key="form-builder"
-            path={`${urlFrag}/admin/form-builder`}
+            path={`/admin/form-builder`}
           />,
           <Route
             element={
@@ -570,7 +571,7 @@ const AdminPage = () => {
               />
             }
             key="submission-form-builder"
-            path={`${urlFrag}/admin/submission-form-builder`}
+            path={`admin/submission-form-builder`}
           />,
           <Route
             element={
@@ -583,7 +584,7 @@ const AdminPage = () => {
               />
             }
             key="review-form-builder"
-            path={`${urlFrag}/admin/review-form-builder`}
+            path={`admin/review-form-builder`}
           />,
           <Route
             element={
@@ -596,7 +597,7 @@ const AdminPage = () => {
               />
             }
             key="decision-form-builder"
-            path={`${urlFrag}/admin/decision-form-builder`}
+            path={`admin/decision-form-builder`}
           />,
           <Route
             element={
@@ -608,7 +609,7 @@ const AdminPage = () => {
               />
             }
             key="users"
-            path={`${urlFrag}/admin/users`}
+            path={`admin/users`}
           />,
           <Route
             element={
@@ -619,7 +620,7 @@ const AdminPage = () => {
               />
             }
             key="tasks"
-            path={`${urlFrag}/admin/tasks`}
+            path={`admin/tasks`}
           />,
           <Route
             element={
@@ -631,7 +632,7 @@ const AdminPage = () => {
               />
             }
             key="CMSPagesPage"
-            path={`${CMSPagesPageLink}/:pageId?`}
+            path={`admin/cms/pages/:pageId?`}
           />,
           <Route
             element={
@@ -643,7 +644,7 @@ const AdminPage = () => {
               />
             }
             key="CMSLayoutPage"
-            path={CMSLayoutPageLink}
+            path="admin/cms/layout"
           />,
           <Route
             element={
@@ -655,7 +656,7 @@ const AdminPage = () => {
               />
             }
             key="CMSArticlePage"
-            path={CMSArticlePageLink}
+            path="admin/cms/article"
           />,
           <Route
             element={
@@ -667,7 +668,7 @@ const AdminPage = () => {
               />
             }
             key="CMSFileBrowserPage"
-            path={CMSFileBrowserLink}
+            path="admin/cms/filebrowser"
           />,
           <Route
             element={
@@ -679,7 +680,7 @@ const AdminPage = () => {
               />
             }
             key="CMSMetadataPage"
-            path={CMSMetadataPageLink}
+            path="admin/cms/metadata"
           />,
           <Route
             element={
@@ -691,7 +692,7 @@ const AdminPage = () => {
               />
             }
             key="CMSPublishingCollectionPage"
-            path={CMSPublishingCollectionPageLink}
+            path="admin/cms/collections"
           />,
           <Route
             element={
@@ -702,7 +703,7 @@ const AdminPage = () => {
               />
             }
             key="configuration"
-            path={`${urlFrag}/admin/configuration`}
+            path={`admin/configuration`}
           />,
         ]}
         {(isGroupManager || isGroupAdmin) && [
@@ -716,7 +717,7 @@ const AdminPage = () => {
               />
             }
             key="manuscript"
-            path={`${urlFrag}/versions/:version/manuscript`}
+            path={`versions/:version/manuscript`}
           />,
           <Route
             element={
@@ -728,7 +729,7 @@ const AdminPage = () => {
               />
             }
             key="manuscripts"
-            path={`${urlFrag}/admin/manuscripts`}
+            path={`admin/manuscripts`}
           />,
         ]}
         {isGroupAdmin && [
@@ -742,7 +743,7 @@ const AdminPage = () => {
               />
             }
             key="reports"
-            path={reportsLink}
+            path="admin/reports"
           />,
         ]}
 

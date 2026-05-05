@@ -81,6 +81,4 @@ SVGIcon.propTypes = {
   className: PropTypes.string,
 }
 
-SVGIcon.defaultProps = { className: '' }
-
 export default SVGIcon

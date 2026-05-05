@@ -117,8 +117,4 @@ Menu.propTypes = {
   profileLink: PropTypes.string.isRequired,
 }
 
-Menu.defaultProps = {
-  user: undefined,
-}
-
 export default Menu

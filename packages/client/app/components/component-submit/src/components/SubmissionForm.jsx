@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
+
 import { SectionContent } from '../../../shared'
 import FormTemplate from './FormTemplate'
 import { articleStatuses } from '../../../../globals'
@@ -11,7 +13,6 @@ const SubmissionForm = ({
   onSubmit,
   onChange,
   republish,
-  match,
   manuscript,
   createFile,
   deleteFile,
@@ -21,12 +22,13 @@ const SubmissionForm = ({
   validateSuffix,
   validationOrcid,
 }) => {
+  const location = useLocation()
   const { t } = useTranslation()
 
   let submissionButtonText = t('manuscriptSubmit.Submit your research object')
   let submitButtonShouldRepublish = false
 
-  if (match.url.includes('/evaluation')) {
+  if (location.pathname.includes('/evaluation')) {
     if (manuscript.status === articleStatuses.published) {
       submitButtonShouldRepublish = true
       submissionButtonText = 'Republish'

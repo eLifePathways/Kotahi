@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 
+import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client/react'
 import { gql } from '@apollo/client'
 import { CommsErrorBanner, Spinner } from '../../shared'
@@ -69,10 +70,11 @@ const SET_GROUP_ROLE = gql`
   }
 `
 
-const UsersPage = ({ history, currentUser }) => {
+const UsersPage = ({ currentUser }) => {
+  const location = useLocation()
   const applyQueryParams = useQueryParams()
 
-  const params = new URLSearchParams(history.location.search)
+  const params = new URLSearchParams(location.search)
   const page = params.get(URI_PAGENUM_PARAM) || 1
   const sortName = extractSortData(params).name || 'created'
   const sortDirection = extractSortData(params).direction || 'DESC'

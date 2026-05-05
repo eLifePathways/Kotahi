@@ -1,5 +1,5 @@
 import DashboardLayout from '../../app/components/component-dashboard/src/components/DashboardLayout'
-import { JournalProvider } from '../../app/components/xpub-journal/src'
+import { JournalProvider } from '../../app/components/xpub-journal'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { ConfigProvider } from '../../app/components/config/src'
 import journal from '../../config/journal'

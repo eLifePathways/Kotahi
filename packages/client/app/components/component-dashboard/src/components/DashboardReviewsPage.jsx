@@ -3,6 +3,7 @@
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ConfigContext } from '../../../config/src'
 import { UPDATE_REVIEWER_STATUS_MUTATION } from '../../../../queries/team'
 import {
@@ -19,7 +20,8 @@ import { CommsErrorBanner, Spinner } from '../../../shared'
 import { updateMutation } from '../../../component-submit/src/components/SubmitPage'
 import { updateManuscriptMutation } from '../../../component-review/src/components/DecisionPage'
 
-const DashboardReviewsPage = ({ currentUser, history }) => {
+const DashboardReviewsPage = ({ currentUser }) => {
+  const location = useLocation()
   const config = useContext(ConfigContext)
 
   const wantedRoles = [
@@ -37,7 +39,7 @@ const DashboardReviewsPage = ({ currentUser, history }) => {
 
   const applyQueryParams = useQueryParams()
 
-  const uriQueryParams = new URLSearchParams(history.location.search)
+  const uriQueryParams = new URLSearchParams(location.search)
   const page = uriQueryParams.get(URI_PAGENUM_PARAM) || 1
   const sortName = extractSortData(uriQueryParams).name
   const sortDirection = extractSortData(uriQueryParams).direction

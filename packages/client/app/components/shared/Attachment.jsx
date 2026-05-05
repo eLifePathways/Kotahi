@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { Attachment as PubsweetAttachment } from '../pubsweet'
 
 /** A wrapper for pubsweet's Attachment, to convert to its outdated file structure. */
-const Attachment = ({ file, uploaded }) => (
+const Attachment = ({ file, uploaded = false }) => (
   <PubsweetAttachment
     file={{
       name: file.name,
@@ -20,10 +20,6 @@ Attachment.propTypes = {
     ).isRequired,
   }).isRequired,
   uploaded: PropTypes.bool,
-}
-
-Attachment.defaultProps = {
-  uploaded: false,
 }
 
 export default Attachment

@@ -143,6 +143,4 @@ CommentReply.propTypes = {
   onTextAreaBlur: PropTypes.func.isRequired,
 }
 
-CommentReply.defaultProps = {}
-
 export default CommentReply

@@ -30,8 +30,5 @@ RichTextEditor.propTypes = {
   setTouched: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 }
-RichTextEditor.defaultProps = {
-  validationStatus: undefined,
-}
 
 export default RichTextEditor

@@ -33,6 +33,4 @@ const PageError = ({ errorCode }) => {
   return <ErrorBox>{message}</ErrorBox>
 }
 
-PageError.defaultProps = { errorCode: null }
-
 export default PageError

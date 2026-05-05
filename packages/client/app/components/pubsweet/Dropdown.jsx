@@ -88,13 +88,13 @@ const Item = styled.li`
 
 const Dropdown = ({
   children,
-  direction,
+  direction = 'down',
   icon,
-  iconPosition,
-  itemsList,
-  primary,
-  size,
-  dataTestId,
+  iconPosition = 'start',
+  itemsList = [],
+  primary = false,
+  size = '',
+  dataTestId = '',
   color,
 }) => {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
@@ -200,16 +200,6 @@ Dropdown.propTypes = {
 
   /** Primary property for the dropdown, if it is false(or not set) then the dropdown will be secondary  */
   primary: PropTypes.bool,
-}
-
-Dropdown.defaultProps = {
-  direction: 'down',
-  icon: null,
-  iconPosition: 'start',
-  itemsList: [],
-  primary: false,
-  size: '',
-  dataTestId: '',
 }
 
 export default Dropdown

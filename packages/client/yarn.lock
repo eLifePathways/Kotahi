@@ -4240,6 +4240,9 @@ __metadata:
     "@codemirror/lang-html": "npm:^6.4.6"
     "@codemirror/lang-json": "npm:^6.0.1"
     "@coko/client": "npm:2.0.0-alpha.0"
+    "@dnd-kit/core": "npm:^6.3.1"
+    "@dnd-kit/sortable": "npm:^10.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.2"
     "@fontsource/roboto": "npm:^4.5.8"
     "@rjsf/core": "npm:4.2.3"
     "@types/react": "npm:^19.2.14"
@@ -4296,7 +4299,6 @@ __metadata:
     react-select: "npm:^4.2.1"
     react-toastify: "npm:^7.0.4"
     react-uid: "npm:^2.3.3"
-    react-visibility-sensor: "npm:5.1.1"
     reactjs-popup: "npm:^2.0.5"
     recharts: "npm:^2.0.9"
     regenerator-runtime: "npm:^0.13.7"
@@ -4308,7 +4310,6 @@ __metadata:
     wax-prosemirror-core: "npm:0.9.74"
     wax-prosemirror-services: "npm:0.9.74"
     wax-table-service: "npm:0.9.74"
-    xpub-validators: "npm:0.0.28"
     y-prosemirror: "npm:1.2.0"
     y-protocols: "npm:1.0.5"
     y-textarea: "npm:^1.0.0"
@@ -5986,18 +5987,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-visibility-sensor@npm:5.1.1":
-  version: 5.1.1
-  resolution: "react-visibility-sensor@npm:5.1.1"
-  dependencies:
-    prop-types: "npm:^15.7.2"
-  peerDependencies:
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: 10c0/e40ed6ba5b02fa526de3f80debd21ee4b852ce668f90041391a95863b9cc1a4b36647cd4169f3473eefe0e26fc5edae383511c98d4b2540c4499fa5f0f5700b5
-  languageName: node
-  linkType: hard
-
 "react@npm:^19.2.5":
   version: 19.2.5
   resolution: "react@npm:19.2.5"
@@ -6486,7 +6475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"striptags@npm:^3.1.0, striptags@npm:^3.1.1":
+"striptags@npm:^3.1.1":
   version: 3.2.0
   resolution: "striptags@npm:3.2.0"
   checksum: 10c0/72c8eea03c04ca8522511caf44ffd2bde4b5f36cbeb5d43140906c0a7ee19e98b3341bf96370ccb643e55972587eafac772d4a3f7f526d3045c2cf36270511e6
@@ -7347,15 +7336,6 @@ __metadata:
   version: 0.1.31
   resolution: "xmldom-sre@npm:0.1.31"
   checksum: 10c0/d4250a44949b7874661fc05cb708c84a1258871d63aae67271f6a0dec3003d301238f7b477ab7a31b828c9bdc1fc46f7469e81d04fe4a1bb6d3f527dfb602029
-  languageName: node
-  linkType: hard
-
-"xpub-validators@npm:0.0.28":
-  version: 0.0.28
-  resolution: "xpub-validators@npm:0.0.28"
-  dependencies:
-    striptags: "npm:^3.1.0"
-  checksum: 10c0/d69f32448369564e83212bc79c2f34d1938d8663b47477a19798e8163b3f3b18255cd3c41b52c68f3a8a8ae4d7dbeef35b8d1b6fa470edd54bc6976610a0bd24
   languageName: node
   linkType: hard
 

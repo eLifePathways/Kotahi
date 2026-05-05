@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styled, { css, keyframes, withTheme } from 'styled-components'
 import { th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -160,7 +161,8 @@ const UploadManuscript = ({
   ...props
 }) => {
   const config = useContext(ConfigContext)
-  const { client, history, journals, currentUser } = props
+  const navigate = useNavigate()
+  const { client, journals, currentUser } = props
 
   const { t } = useTranslation()
 
@@ -175,7 +177,7 @@ const UploadManuscript = ({
 
   const uploadManuscript = upload({
     client,
-    history,
+    navigate,
     journals,
     currentUser,
     setConversion,

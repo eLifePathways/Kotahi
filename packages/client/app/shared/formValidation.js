@@ -1,7 +1,7 @@
 /* eslint-disable default-param-last */
 /* eslint-disable import/namespace */
 
-import * as validators from 'xpub-validators'
+import * as validators from '../components/xpub-validators/src'
 import { validateAuthors } from './authorsFieldDefinitions'
 import { validateDoiField } from './doiFieldDefinition'
 

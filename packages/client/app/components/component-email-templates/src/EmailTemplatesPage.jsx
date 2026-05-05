@@ -8,7 +8,7 @@ import GET_VARIABLES from './handlebarsAutocomplete/graphql/graphql'
 import { handlebars } from './handlebarsAutocomplete/constants'
 import { ConfigContext } from '../../config/src'
 
-const EmailTemplatesPage = ({ wrapper: Wrapper }) => {
+const EmailTemplatesPage = ({ wrapper: Wrapper = Fragment }) => {
   const config = useContext(ConfigContext)
   const { groupId } = config
   useQuery(GET_VARIABLES, {
@@ -31,10 +31,6 @@ const EmailTemplatesPage = ({ wrapper: Wrapper }) => {
 
 EmailTemplatesPage.propTypes = {
   wrapper: PropTypes.elementType,
-}
-
-EmailTemplatesPage.defaultProps = {
-  wrapper: Fragment,
 }
 
 export default EmailTemplatesPage

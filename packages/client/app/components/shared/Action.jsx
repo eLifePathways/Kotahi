@@ -60,7 +60,7 @@ const IconContainer = styled.div`
 /** Equivalent of <a href="...">, styled the same as other Actions */
 export const LinkAction = ({
   children,
-  isDisabled,
+  isDisabled = false,
   to,
   'data-testid': dataTestId,
 }) => {
@@ -81,8 +81,6 @@ LinkAction.propTypes = {
   to: PropTypes.string.isRequired,
 }
 
-LinkAction.defaultProps = { isDisabled: false }
-
 /** A control appearing like a link, that invokes some action on click.
  * While waiting for the action, it displays a small spinner.
  * When that action is completed, it passes the return value to onActionCompleted,
@@ -93,7 +91,7 @@ const Action = ({
   children,
   className,
   'data-testid': dataTestId,
-  isDisabled,
+  isDisabled = false,
   onActionCompleted,
   onClick,
   title,
@@ -149,12 +147,6 @@ Action.propTypes = {
   onActionCompleted: PropTypes.func,
   /** A function to perform some action on user click. Its return value will be passed to onActionCompleted, if this is supplied. */
   onClick: PropTypes.func,
-}
-
-Action.defaultProps = {
-  isDisabled: false,
-  onActionCompleted: null,
-  onClick: null,
 }
 
 export default Action

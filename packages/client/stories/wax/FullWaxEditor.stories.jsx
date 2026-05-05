@@ -1,6 +1,6 @@
 import FullWaxEditor from '../../app/components/wax-collab/src/FullWaxEditor'
 import DesignEmbed from '../common/utils'
-import { JournalProvider } from '../../app/components/xpub-journal/src'
+import { JournalProvider } from '../../app/components/xpub-journal'
 import journal from '../../config/journal'
 
 export const Base = args => (

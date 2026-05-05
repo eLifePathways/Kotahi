@@ -8,7 +8,12 @@ const StyledCollapse = styled(AntCollapse)`
   width: 100%;
 `
 
-const Collapse = ({ accordion, expandIconPosition, items, ...otherProps }) => {
+const Collapse = ({
+  accordion = false,
+  expandIconPosition = 'start',
+  items = [],
+  ...otherProps
+}) => {
   return (
     <StyledCollapse
       {...otherProps}
@@ -29,12 +34,6 @@ Collapse.propTypes = {
       children: PropTypes.node,
     }),
   ),
-}
-
-Collapse.defaultProps = {
-  accordion: false,
-  expandIconPosition: 'start',
-  items: [],
 }
 
 export default Collapse

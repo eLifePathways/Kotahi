@@ -36,8 +36,4 @@ DeleteControl.propTypes = {
   tooltip: PropTypes.string,
 }
 
-DeleteControl.defaultProps = {
-  tooltip: undefined,
-}
-
 export default DeleteControl

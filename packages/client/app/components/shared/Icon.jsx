@@ -26,7 +26,7 @@ const IconWrapper = styled.div`
 export const Icon = ({
   className,
   children,
-  color,
+  color = '#111111',
   size = 3,
   noPadding,
   inline,
@@ -50,11 +50,6 @@ export const Icon = ({
       {icons[name]({})}
     </IconWrapper>
   )
-}
-
-Icon.defaultProps = {
-  size: 3,
-  color: '#111111',
 }
 
 Icon.propTypes = {

@@ -20,10 +20,7 @@ const CommsErrorBanner = ({ error }) => {
 
 CommsErrorBanner.propTypes = {
   /** An error for logging to the console */
-
   error: PropTypes.any,
 }
-
-CommsErrorBanner.defaultProps = { error: null }
 
 export default CommsErrorBanner

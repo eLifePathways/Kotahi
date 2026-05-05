@@ -46,8 +46,4 @@ UserComponent.propTypes = {
   profileLink: PropTypes.string.isRequired,
 }
 
-UserComponent.defaultProps = {
-  user: undefined,
-}
-
 export default UserComponent

@@ -153,7 +153,6 @@ const Profile = ({
   currentUser,
   kotahiVersion,
   logoutUser,
-  // match,
   replaceAvatarImage,
   updateUserEmail,
   updateUsername,

@@ -17,7 +17,7 @@ import PropTypes from 'prop-types'
  * @param {Function} props.fallback - The fallback component to render if the condition is false.
  * @returns {React.ReactNode} The rendered list of items or the fallback component.
  */
-const Each = ({ render, of, condition, fallback }) =>
+const Each = ({ render, of = [], condition = true, fallback }) =>
   condition ? Children.toArray(of.map((item, i) => render(item, i))) : fallback
 
 Each.propTypes = {
@@ -25,13 +25,6 @@ Each.propTypes = {
   of: PropTypes.instanceOf(Array),
   condition: PropTypes.bool,
   fallback: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-}
-
-Each.defaultProps = {
-  render: null,
-  of: [],
-  condition: true,
-  fallback: null,
 }
 
 export default Each

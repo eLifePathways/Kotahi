@@ -23,13 +23,13 @@ const ReadonlyFormTemplate = ({
   form,
   formData,
   manuscript,
-  showEditorOnlyFields,
+  showEditorOnlyFields = false,
   title,
   displayShortIdAsIdentifier,
   threadedDiscussionProps,
   allowAuthorsSubmitNewVersion,
-  copyHandleBarsCode,
-  isCollaborativeForm,
+  copyHandleBarsCode = false,
+  isCollaborativeForm = false,
 }) => {
   const { t } = useTranslation()
 
@@ -139,13 +139,6 @@ ReadonlyFormTemplate.propTypes = {
   showEditorOnlyFields: PropTypes.bool,
   copyHandleBarsCode: PropTypes.bool,
   isCollaborativeForm: PropTypes.bool,
-}
-
-ReadonlyFormTemplate.defaultProps = {
-  manuscript: null,
-  copyHandleBarsCode: false,
-  showEditorOnlyFields: false,
-  isCollaborativeForm: false,
 }
 
 export default ReadonlyFormTemplate

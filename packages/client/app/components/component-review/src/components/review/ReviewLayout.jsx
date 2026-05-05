@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
-
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { set, flatten } from 'lodash'
 import { gql } from '@apollo/client'
@@ -39,15 +39,15 @@ const ReviewLayout = ({
   createFile,
   deleteFile,
   decisionForm,
-  hideChat,
+  hideChat = false,
   threadedDiscussionProps,
   chatProps,
   updateReviewMutation,
-  history,
   updateReviewerStatus,
   versionsOfManuscriptCurrentUserIsReviewerOf,
   chatExpand,
 }) => {
+  const navigate = useNavigate()
   const config = useContext(ConfigContext) || {}
   const { createYjsProvider, wsProvider } = useContext(YjsContext)
 
@@ -198,7 +198,7 @@ const ReviewLayout = ({
         },
       })
 
-      history.push(`${urlFrag}/dashboard`)
+      navigate(`${urlFrag}/dashboard`)
     }
 
     const isLatestVersion = latestManuscript.id === versions[0].manuscript.id
@@ -464,13 +464,6 @@ ReviewLayout.propTypes = {
   versionsOfManuscriptCurrentUserIsReviewerOf: PropTypes.arrayOf(
     PropTypes.string.isRequired,
   ).isRequired,
-}
-
-ReviewLayout.defaultProps = {
-  review: undefined,
-  currentUserReview: undefined,
-  hideChat: false,
-  status: undefined,
 }
 
 export default ReviewLayout

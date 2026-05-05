@@ -2,6 +2,7 @@
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import React, { useContext } from 'react'
+import { useParams } from 'react-router-dom'
 import { gql } from '@apollo/client'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 
@@ -229,7 +230,8 @@ export const updateTemplateMutation = gql`
   }
 `
 
-const ProductionPage = ({ currentUser, match }) => {
+const ProductionPage = ({ currentUser }) => {
+  const params = useParams()
   const { groupId, controlPanel, submission } = useContext(ConfigContext)
   const client = useApolloClient()
   const {
@@ -321,7 +323,7 @@ const ProductionPage = ({ currentUser, match }) => {
 
   const { data, loading, error } = useQuery(query, {
     variables: {
-      id: match.params.version,
+      id: params.version,
       groupId,
       isCms: false,
     },

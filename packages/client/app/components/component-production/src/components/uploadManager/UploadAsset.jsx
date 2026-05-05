@@ -92,7 +92,17 @@ const WrapperUpload = styled.div`
   }
 `
 
-const UploadAsset = ({ files, groupTemplateId, tag, onCopyAsImage }) => {
+const UploadAsset = ({
+  files = [],
+  groupTemplateId,
+  tag,
+  onCopyAsImage = file => {
+    return () =>
+      navigator.clipboard.writeText(
+        `<img data-name="${file.name}" data-fileid="${file.id}" src="${file.storedObjects[0].url}" />`,
+      )
+  },
+}) => {
   const { t } = useTranslation()
   const [fileBeingDeletedId, setFileBeingDeletedId] = useState(null)
   const [filesState, setFilesState] = useState(files)
@@ -376,16 +386,6 @@ UploadAsset.propTypes = {
   groupTemplateId: PropTypes.string.isRequired,
   tag: PropTypes.oneOf(['isCms', 'isPdf']).isRequired,
   onCopyAsImage: PropTypes.func,
-}
-
-UploadAsset.defaultProps = {
-  files: [],
-  onCopyAsImage: file => {
-    return () =>
-      navigator.clipboard.writeText(
-        `<img data-name="${file.name}" data-fileid="${file.id}" src="${file.storedObjects[0].url}" />`,
-      )
-  },
 }
 
 export default UploadAsset

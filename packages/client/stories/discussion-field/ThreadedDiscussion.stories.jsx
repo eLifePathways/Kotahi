@@ -1,5 +1,5 @@
 import ThreadedDiscussion from '../../app/components/component-formbuilder/src/components/builderComponents/ThreadedDiscussion/ThreadedDiscussion'
-import { JournalProvider } from '../../app/components/xpub-journal/src'
+import { JournalProvider } from '../../app/components/xpub-journal'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { ConfigProvider } from '../../app/components/config/src'
 import journal from '../../config/journal'

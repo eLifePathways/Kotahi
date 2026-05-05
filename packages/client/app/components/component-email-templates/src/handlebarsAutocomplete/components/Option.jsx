@@ -76,7 +76,7 @@ const FormBadge = styled.span`
 `
 // #endregion styleds ---------------------------------------------------
 
-const Option = ({ option, selected, select }) => {
+const Option = ({ option, selected = false, select }) => {
   const { label, value, form, type } = option
   const [open, close] = getBrackets(BRACKETS_TYPES[type])
   const safeLabel = label.trim() || splitAndCapitalize(value)
@@ -110,10 +110,6 @@ Option.propTypes = {
   }).isRequired,
   selected: PropTypes.bool,
   select: PropTypes.func.isRequired,
-}
-
-Option.defaultProps = {
-  selected: false,
 }
 
 export default Option

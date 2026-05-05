@@ -18,7 +18,7 @@ const MenuItem = ({ alert, icon, menu, name, open }) => (
 
 const NavItem = props => {
   const {
-    className,
+    className = '',
     link,
     onClick,
     alert,
@@ -65,13 +65,6 @@ NavItem.propTypes = {
   link: PropTypes.string,
   name: PropTypes.string.isRequired,
   icon: PropTypes.string,
-  expanded: PropTypes.bool,
-}
-NavItem.defaultProps = {
-  className: '',
-  icon: undefined,
-  link: undefined,
-  expanded: true,
 }
 
 export default NavItem

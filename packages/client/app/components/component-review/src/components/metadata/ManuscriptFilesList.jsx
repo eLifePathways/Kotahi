@@ -23,7 +23,7 @@ const FilesList = ({ files, tag, name }) => {
   )
 }
 
-const ManuscriptFilesList = ({ files }) => (
+const ManuscriptFilesList = ({ files = [] }) => (
   <>
     <FilesList files={files} name="supplementary" tag="supplementary" />
     <FilesList files={files} name="visual abstract" tag="visualAbstract" />
@@ -40,10 +40,6 @@ ManuscriptFilesList.propTypes = {
       tags: PropTypes.arrayOf(PropTypes.string.isRequired),
     }).isRequired,
   ),
-}
-
-ManuscriptFilesList.defaultProps = {
-  files: [],
 }
 
 export default ManuscriptFilesList

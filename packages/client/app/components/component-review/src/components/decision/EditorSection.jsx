@@ -15,7 +15,7 @@ const EditorSection = ({
   manuscript,
   saveSource,
   saveComments,
-  readonly,
+  readonly = false,
   currentUser,
   editorSection,
   queryAI,
@@ -169,10 +169,6 @@ EditorSection.propTypes = {
     }).isRequired,
   }).isRequired,
   readonly: PropTypes.bool,
-}
-
-EditorSection.defaultProps = {
-  readonly: false,
 }
 
 export default EditorSection

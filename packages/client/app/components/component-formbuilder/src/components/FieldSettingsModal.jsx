@@ -417,8 +417,6 @@ FieldSettingsModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 }
 
-FieldSettingsModal.defaultProps = {}
-
 /** Because a user can switch between field/component types in the form, and it
  * doesn't immediately delete unused properties, we need to scrub the data before
  * it is submitted. This removes all but the relevant properties for the chosen

@@ -50,7 +50,7 @@ const Cell = styled.div`
   }
 `
 
-const TableRow = ({ cells, isHeadingRow }) => {
+const TableRow = ({ cells, isHeadingRow = false }) => {
   return (
     <Row data-testid="row" isHeadingRow={isHeadingRow}>
       {cells.map((cell, index) => (
@@ -78,10 +78,6 @@ TableRow.propTypes = {
     }).isRequired,
   ).isRequired,
   isHeadingRow: PropTypes.bool,
-}
-
-TableRow.defaultProps = {
-  isHeadingRow: false,
 }
 
 export default TableRow

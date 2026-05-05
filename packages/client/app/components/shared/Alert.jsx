@@ -2,7 +2,7 @@ import { Alert as AntAlert } from 'antd'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 
-const Alert = ({ description, message, showIcon, type }) => {
+const Alert = ({ description, message, showIcon = false, type = 'info' }) => {
   const { t } = useTranslation()
 
   return (
@@ -20,13 +20,6 @@ Alert.propTypes = {
   message: PropTypes.node,
   showIcon: PropTypes.bool,
   type: PropTypes.oneOf(['success', 'info', 'warning', 'error']),
-}
-
-Alert.defaultProps = {
-  description: null,
-  message: null,
-  showIcon: false,
-  type: 'info',
 }
 
 export default Alert

@@ -28,9 +28,9 @@ const renderImage = file => {
 const ContentWaxEditor = ({
   value,
   // placeholder,
-  // fileUpload,
-  readonly,
-  user,
+  fileUpload = file => renderImage(file),
+  readonly = false,
+  user = {},
   onAssetManager,
   autocompleteConfig,
   ...rest
@@ -55,7 +55,7 @@ const ContentWaxEditor = ({
     <CmsWidthAndHeightContainer>
       <Wax
         config={config}
-        fileUpload={file => renderImage(file)}
+        fileUpload={fileUpload}
         layout={ContentEditorLayout(readonly)}
         ref={editorRef}
         user={waxUser}
@@ -64,12 +64,6 @@ const ContentWaxEditor = ({
       />
     </CmsWidthAndHeightContainer>
   )
-}
-
-ContentWaxEditor.defaultProps = {
-  readonly: false,
-  fileUpload: () => {},
-  user: {},
 }
 
 export default ContentWaxEditor

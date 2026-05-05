@@ -111,14 +111,14 @@ const localizeFields = (fields, t) =>
  * @returns `AuthorsInput` component
  */
 const AuthorsInput = ({
-  fullWidth, // should the component be the full width of the parent
+  fullWidth = false, // should the component be the full width of the parent
   onChange,
-  requireEmail, // is the email address required
+  requireEmail = false, // is the email address required
   value,
   overrideButtonLabel,
   rorMenuPlacement, // ROR affiliation dropdown position
-  showMiddleName, // should the middle name field be used
-  showOrcidId, // should the ORCID field be used
+  showMiddleName = false, // should the middle name field be used
+  showOrcidId = false, // should the ORCID field be used
   isRoRMulti = false, // should be multi-select
 }) => {
   const [validatePerField, setValidatePerField] = useState([])
@@ -301,17 +301,6 @@ AuthorsInput.propTypes = {
       }).isRequired,
     ),
   ]),
-}
-
-AuthorsInput.defaultProps = {
-  fullWidth: false,
-  overrideButtonLabel: undefined,
-  requireEmail: false,
-  rorMenuPlacement: null,
-  showMiddleName: false,
-  isRoRMulti: false,
-  showOrcidId: false,
-  value: null,
 }
 
 export default AuthorsInput

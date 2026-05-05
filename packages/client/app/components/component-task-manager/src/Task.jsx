@@ -228,7 +228,7 @@ const Task = ({
   index,
   updateTask,
   assigneeGroupedOptions,
-  // onCancel,
+  // onCancel = () => {},
   onDelete,
   isReadOnly,
   editAsTemplate,
@@ -542,10 +542,6 @@ Task.propTypes = {
   onCancel: PropTypes.func,
   onDelete: PropTypes.func.isRequired,
   updateTask: PropTypes.func.isRequired,
-}
-
-Task.defaultProps = {
-  onCancel: () => {},
 }
 
 export default Task

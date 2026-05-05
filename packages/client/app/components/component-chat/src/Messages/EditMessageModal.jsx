@@ -62,8 +62,4 @@ const EditMessageModal = ({ close, onConfirm, message }) => {
   )
 }
 
-EditMessageModal.defaultProps = {
-  readonly: false,
-}
-
 export default EditMessageModal

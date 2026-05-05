@@ -84,7 +84,7 @@ export const Select = props => {
   const {
     // name,
     value,
-    isMulti,
+    isMulti = false,
     options,
     customStyles,
     hasGroupedOptions = false,
@@ -142,9 +142,4 @@ Select.propTypes = {
   value: PropTypes.any,
   isMulti: PropTypes.bool,
   options: PropTypes.arrayOf(PropTypes.any.isRequired).isRequired,
-}
-
-Select.defaultProps = {
-  value: undefined,
-  isMulti: false,
 }

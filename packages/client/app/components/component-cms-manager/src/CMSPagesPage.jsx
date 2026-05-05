@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
-
 import { useContext, useState } from 'react'
-
+import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Spinner, CommsErrorBanner } from '../../shared'
@@ -24,7 +22,9 @@ import {
   deleteCMSPageMutation,
 } from './queries'
 
-const CMSPagesPage = ({ match, history }) => {
+const CMSPagesPage = () => {
+  const navigate = useNavigate()
+  const params = useParams()
   const { t } = useTranslation()
   const [isNewPage, setIsNewPage] = useState(false)
   const config = useContext(ConfigContext)
@@ -46,15 +46,15 @@ const CMSPagesPage = ({ match, history }) => {
 
   let currentCMSPageId = null
 
-  if (match.params.pageId) {
-    currentCMSPageId = match.params.pageId
+  if (params.pageId) {
+    currentCMSPageId = params.pageId
   }
 
   const showPage = async currentCMSPage => {
     setIsNewPage(false)
     await refetchCMSPages()
     const link = `${urlFrag}/admin/cms/pages/${currentCMSPage.id}`
-    history.push(link)
+    navigate(link)
   }
 
   const addNewPage = () => {
@@ -63,7 +63,7 @@ const CMSPagesPage = ({ match, history }) => {
     }
 
     const newPageLink = `${urlFrag}/admin/cms/pages/`
-    history.push(newPageLink)
+    navigate(newPageLink)
 
     setIsNewPage(true)
   }
@@ -98,7 +98,6 @@ const CMSPagesPage = ({ match, history }) => {
       </EditPageLeft>
       <EditPageRight>
         <PageHeader
-          history={history}
           leftSideOnly
           mainHeading={
             isNewPage ? t('cmsPage.pages.New Page') : t('cmsPage.pages.Pages')

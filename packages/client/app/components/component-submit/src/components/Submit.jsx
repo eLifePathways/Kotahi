@@ -43,15 +43,14 @@ const Submit = ({
   reviewForm,
   submissionForm,
   createNewVersion,
-  currentUser,
+  currentUser = { groupRoles: [] },
   onChange,
   republish,
   onSubmit,
   channelId,
   chatProps,
-  hideChat,
+  hideChat = false,
   // parent,
-  match,
   channels,
   updateManuscript,
   createFile,
@@ -150,8 +149,6 @@ const Submit = ({
         onSubmit,
         onChange,
         republish,
-
-        match,
         manuscript: version,
         createFile,
         deleteFile,
@@ -344,11 +341,6 @@ Submit.propTypes = {
     url: PropTypes.string.isRequired,
   }).isRequired,
   updateManuscript: PropTypes.func.isRequired,
-}
-Submit.defaultProps = {
-  currentUser: { groupRoles: [] },
-  hideChat: false,
-  parent: undefined,
 }
 
 export default Submit

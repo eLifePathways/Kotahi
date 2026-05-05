@@ -1,4 +1,4 @@
-import { JournalProvider } from '../../app/components/xpub-journal/src'
+import { JournalProvider } from '../../app/components/xpub-journal'
 import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import DesignEmbed from '../common/utils'
 import journal from '../../config/journal'

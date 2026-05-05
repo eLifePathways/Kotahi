@@ -66,7 +66,9 @@ const UnsubmittedBanner = () => {
 const Review = ({
   review,
   reviewForm,
-  user,
+  user = {
+    groupRoles: [],
+  },
   showEditorOnlyFields,
   showUserInfo = true,
   threadedDiscussionProps,
@@ -173,10 +175,4 @@ Review.propTypes = {
   }),
 }
 
-Review.defaultProps = {
-  review: null,
-  user: {
-    groupRoles: [],
-  },
-}
 export default Review

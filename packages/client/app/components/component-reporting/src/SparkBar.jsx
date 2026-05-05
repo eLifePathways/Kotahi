@@ -32,7 +32,13 @@ const Bar = styled.div`
   width: ${props => props.barWidthPercent};
 `
 
-const SparkBar = ({ label, value, rangeMax, onClick, color }) => {
+const SparkBar = ({
+  label,
+  value,
+  rangeMax,
+  onClick,
+  color = 'cornflowerblue',
+}) => {
   const barWidthPercent =
     rangeMax > 0 ? `${Math.round((value / rangeMax) * 100)}%` : '0'
 
@@ -58,12 +64,6 @@ SparkBar.propTypes = {
   onClick: PropTypes.func,
   /** bar color */
   color: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-}
-
-SparkBar.defaultProps = {
-  label: undefined,
-  onClick: undefined,
-  color: 'cornflowerblue',
 }
 
 export default SparkBar

@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { FieldArray } from 'formik'
 import { cloneDeep, set, get } from 'lodash'
 import { TextField, Button, ValidatedFieldFormik } from '../../../pubsweet'
-// import { minSize } from 'xpub-validators'
+// import { minSize } from '../../../xpub-validators/src'
 
 // const minSize1 = minSize(1)
 

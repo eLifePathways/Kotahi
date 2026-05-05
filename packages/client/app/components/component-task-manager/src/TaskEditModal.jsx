@@ -145,7 +145,7 @@ const TaskEditModal = ({
   sendNotifyEmail,
   isOpen,
   onSave,
-  onCancel,
+  onCancel = () => {},
   emailTemplates,
   addReviewer,
 }) => {
@@ -452,9 +452,6 @@ TaskEditModal.propTypes = {
   /** Callback for when a new task is abandoned before receiving a title (e.g. escape was pressed) */
   onCancel: PropTypes.func,
   updateTask: PropTypes.func.isRequired,
-}
-TaskEditModal.defaultProps = {
-  onCancel: () => {},
 }
 
 export default TaskEditModal

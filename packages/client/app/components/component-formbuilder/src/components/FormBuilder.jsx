@@ -251,8 +251,4 @@ FormBuilder.propTypes = {
   moveFieldDown: PropTypes.func.isRequired,
 }
 
-FormBuilder.defaultProps = {
-  selectedFieldId: null,
-}
-
 export default FormBuilder

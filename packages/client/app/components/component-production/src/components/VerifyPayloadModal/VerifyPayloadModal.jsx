@@ -363,8 +363,4 @@ VerifyPayloadModal.propTypes = {
   renderTrigger: PropTypes.func,
 }
 
-VerifyPayloadModal.defaultProps = {
-  renderTrigger: defaultTrigger,
-}
-
 export default VerifyPayloadModal

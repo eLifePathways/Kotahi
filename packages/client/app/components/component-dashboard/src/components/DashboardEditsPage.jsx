@@ -3,6 +3,7 @@
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ConfigContext } from '../../../config/src'
 import {
   extractFilters,
@@ -18,13 +19,14 @@ import { CommsErrorBanner, Spinner } from '../../../shared'
 import { updateMutation } from '../../../component-submit/src/components/SubmitPage'
 import { updateManuscriptMutation } from '../../../component-review/src/components/DecisionPage'
 
-const DashboardEditsPage = ({ currentUser, history }) => {
+const DashboardEditsPage = ({ currentUser }) => {
+  const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['seniorEditor', 'handlingEditor', 'editor']
 
   const applyQueryParams = useQueryParams()
 
-  const uriQueryParams = new URLSearchParams(history.location.search)
+  const uriQueryParams = new URLSearchParams(location.search)
   const page = uriQueryParams.get(URI_PAGENUM_PARAM) || 1
   const sortName = extractSortData(uriQueryParams).name
   const sortDirection = extractSortData(uriQueryParams).direction

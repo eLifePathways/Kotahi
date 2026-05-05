@@ -251,7 +251,6 @@ const DecisionVersion = ({
                 manuscriptId={version.id}
                 manuscriptShortId={version.shortId}
                 manuscriptStatus={version.status}
-                match={{ url: 'decision' }}
                 onChange={(value, path) => {
                   onChange(value, path, versionId)
                 }}

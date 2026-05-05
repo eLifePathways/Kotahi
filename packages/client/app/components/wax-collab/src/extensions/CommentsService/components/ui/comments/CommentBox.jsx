@@ -77,12 +77,12 @@ const StyledReply = styled(CommentReply)`
 
 const CommentBox = props => {
   const {
-    active,
+    active = false,
     className,
     commentId,
-    commentData,
+    commentData = [],
     isReadOnly,
-    isReadOnlyCommentReply,
+    isReadOnlyCommentReply = false,
     onClickBox,
     onClickPost,
     onClickResolve,
@@ -154,12 +154,6 @@ CommentBox.propTypes = {
   onClickResolve: PropTypes.func.isRequired,
   /** Function to run when text area loses focus */
   onTextAreaBlur: PropTypes.func.isRequired,
-}
-
-CommentBox.defaultProps = {
-  active: false,
-  commentData: [],
-  isReadOnlyCommentReply: false,
 }
 
 export default CommentBox

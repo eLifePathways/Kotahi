@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import TableRow from './TableRow'
 
-const Table = ({ columnSchemas, rows }) => {
+const Table = ({ columnSchemas = [], rows }) => {
   const hasHeadings = columnSchemas.some(col => !!col.heading)
   return (
     <div>
@@ -51,9 +51,6 @@ Table.propTypes = {
       ]),
     ).isRequired,
   ).isRequired,
-}
-Table.defaultProps = {
-  columnSchemas: [],
 }
 
 export default Table

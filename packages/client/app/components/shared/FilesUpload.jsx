@@ -56,7 +56,7 @@ const DropzoneAndList = ({
   persistentFileLabel,
   fileType,
   fieldName,
-  acceptMultiple,
+  acceptMultiple = true,
   mimeTypesToAccept,
   renderFileList,
   confirmBeforeDelete,
@@ -158,15 +158,10 @@ DropzoneAndList.propTypes = {
   ]),
 }
 
-DropzoneAndList.defaultProps = {
-  acceptMultiple: true,
-  mimeTypesToAccept: undefined,
-}
-
 const FilesUpload = ({
   fileType,
   fieldName,
-  persistentFileLabel,
+  persistentFileLabel = false,
   manuscriptId,
   reviewId,
   initializeReview,
@@ -276,15 +271,6 @@ FilesUpload.propTypes = {
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string.isRequired),
   ]),
-}
-
-FilesUpload.defaultProps = {
-  reviewId: null,
-  initializeReview: undefined,
-  acceptMultiple: true,
-  onChange: null,
-  mimeTypesToAccept: undefined,
-  persistentFileLabel: false,
 }
 
 export { FilesUpload }

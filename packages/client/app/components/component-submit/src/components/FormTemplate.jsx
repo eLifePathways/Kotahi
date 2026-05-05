@@ -196,12 +196,14 @@ let lastChangedField = null
 
 const FormTemplate = ({
   form,
-  formikOptions,
+  formikOptions = {
+    enableReinitialize: false,
+  },
   initialValues,
   manuscriptId,
-  manuscriptShortId,
+  manuscriptShortId = 1,
   // manuscriptStatus,
-  submissionButtonText,
+  submissionButtonText = '',
   onChange,
   republish,
   onSubmit,
@@ -214,9 +216,9 @@ const FormTemplate = ({
   createFile,
   deleteFile,
   isSubmission,
-  isCollaborative,
+  isCollaborative = false,
   reviewId,
-  shouldStoreFilesInForm,
+  shouldStoreFilesInForm = false,
   initializeReview,
   tagForFiles,
   noPadding,
@@ -748,21 +750,6 @@ FormTemplate.propTypes = {
   /** If supplied, any uploaded files will be tagged with this rather than 'supplementary' or 'visualAbstract' */
   tagForFiles: PropTypes.string,
   initializeReview: PropTypes.func,
-}
-FormTemplate.defaultProps = {
-  isCollaborative: false,
-  onSubmit: undefined,
-  initialValues: null,
-  republish: null,
-  submissionButtonText: '',
-  manuscriptStatus: null,
-  manuscriptShortId: 1,
-  shouldStoreFilesInForm: false,
-  tagForFiles: null,
-  initializeReview: null,
-  formikOptions: {
-    enableReinitialize: false,
-  },
 }
 
 export default FormTemplate

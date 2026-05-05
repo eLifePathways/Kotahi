@@ -38,7 +38,7 @@ const Content = styled.div`
 `
 
 const CommentItem = props => {
-  const { className, content, displayName, timestamp, active } = props
+  const { className, content, displayName, timestamp, active = false } = props
   return (
     <Wrapper active={active} className={className}>
       <Head active={active}>
@@ -64,10 +64,6 @@ CommentItem.propTypes = {
   displayName: PropTypes.string.isRequired,
   /** When the comment was made */
   timestamp: PropTypes.number.isRequired,
-}
-
-CommentItem.defaultProps = {
-  active: false,
 }
 
 export default CommentItem

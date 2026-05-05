@@ -90,12 +90,12 @@ const IconContainer = styled.div`
 
 /** A styled button with optional status icon/spinner and optional color. Supported statuses are 'pending', 'success', 'failure'. */
 const ActionButton = ({
-  primary,
-  disabled,
-  onClick,
+  primary = false,
+  disabled = false,
+  onClick = () => null,
   status,
   color: col,
-  isCompact,
+  isCompact = false,
   children,
   className,
   dataTestid,
@@ -183,15 +183,6 @@ ActionButton.propTypes = {
   /** Tries to make the button smaller (subject to content size). */
   isCompact: PropTypes.bool,
   children: PropTypes.node.isRequired,
-}
-
-ActionButton.defaultProps = {
-  primary: false,
-  disabled: false,
-  onClick: () => null,
-  status: null,
-  color: null,
-  isCompact: false,
 }
 
 export default ActionButton

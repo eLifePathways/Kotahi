@@ -14,12 +14,12 @@ const Name = styled.span`
 `
 
 const Reviewer = ({
-  isHiddenReviewerName,
-  isControlPage,
+  isHiddenReviewerName = false,
+  isControlPage = false,
   user,
-  currentUserIsEditor,
+  currentUserIsEditor = false,
   currentUser,
-  canBePublishedPublicly,
+  canBePublishedPublicly = false,
 }) => {
   const config = useContext(ConfigContext)
   const { t } = useTranslation()
@@ -68,12 +68,6 @@ Reviewer.propTypes = {
 
   currentUser: PropTypes.object.isRequired,
   canBePublishedPublicly: PropTypes.bool,
-}
-Reviewer.defaultProps = {
-  isHiddenReviewerName: false,
-  isControlPage: false,
-  currentUserIsEditor: false,
-  canBePublishedPublicly: false,
 }
 
 export default Reviewer

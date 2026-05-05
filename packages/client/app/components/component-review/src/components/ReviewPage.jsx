@@ -1,10 +1,8 @@
-/* eslint-disable react/prop-types */
-
 import { useContext } from 'react'
+import { useParams, Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useMutation, useQuery, useSubscription } from '@apollo/client/react'
 import { gql } from '@apollo/client'
-import { Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import ReviewLayout from './review/ReviewLayout'
@@ -235,7 +233,8 @@ const updateReviewMutationQuery = gql`
   }
 `
 
-const ReviewPage = ({ currentUser, history, match }) => {
+const ReviewPage = ({ currentUser }) => {
+  const params = useParams()
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
 
@@ -262,7 +261,7 @@ const ReviewPage = ({ currentUser, history, match }) => {
 
   const { loading, error, data } = useQuery(query, {
     variables: {
-      id: match.params.version,
+      id: params.version,
       groupId: config.groupId,
     },
     partialRefetch: true,
@@ -291,7 +290,7 @@ const ReviewPage = ({ currentUser, history, match }) => {
       } = await client.query({
         query,
         variables: {
-          id: match.params.version,
+          id: params.version,
           groupId: config.groupId,
         },
         fetchPolicy: 'network-only',
@@ -426,7 +425,6 @@ const ReviewPage = ({ currentUser, history, match }) => {
       decisionForm={decisionForm}
       deleteFile={deleteFile}
       hideChat={hideReviewerChat}
-      history={history}
       reviewForm={reviewForm}
       submissionForm={submissionForm}
       threadedDiscussionProps={threadedDiscussionProps}

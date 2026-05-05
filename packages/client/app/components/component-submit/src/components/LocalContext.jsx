@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useState, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
@@ -111,7 +109,11 @@ const useLocalContext = gql`
   }
 `
 
-const LocalContext = ({ onChange, readonly, value }) => {
+const LocalContext = ({
+  onChange = () => {},
+  readonly = false,
+  value = {},
+}) => {
   const config = useContext(ConfigContext)
   const [isSearching, setIsSearching] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(true)
@@ -309,12 +311,6 @@ LocalContext.propTypes = {
       }),
     ),
   }),
-}
-
-LocalContext.defaultProps = {
-  onChange: () => {},
-  readonly: false,
-  value: {},
 }
 
 export default LocalContext
