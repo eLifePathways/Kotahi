@@ -22,6 +22,7 @@ import { FormActionButton } from '../style'
 import { color } from '../../../../theme'
 
 const FolderTreeContainer = styled.div`
+  /* stylelint-disable selector-class-pattern */
   .displayName {
     text-wrap: nowrap;
   }
@@ -99,7 +100,7 @@ const FolderTreeContainer = styled.div`
       }
 
       .editableNameToolbar {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgb(255 255 255 / 80%);
         display: flex;
         position: absolute;
         right: 0;

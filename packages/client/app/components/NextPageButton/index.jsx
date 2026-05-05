@@ -1,4 +1,4 @@
-import VisibilitySensor from 'react-visibility-sensor'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Spinner } from '../shared'
@@ -15,10 +15,23 @@ const NextPageButtonWrapper = props => {
     bottomOffset,
   } = props
 
-  const onChange = isVisible => {
-    if (isFetchingMore || !isVisible) return undefined
-    return fetchMore()
-  }
+  const sentinelRef = useRef(null)
+
+  useEffect(() => {
+    if (automatic === false || isFetchingMore) return undefined
+
+    const rootMargin = `${topOffset ?? -250}px 0px ${bottomOffset ?? -250}px 0px`
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) fetchMore()
+      },
+      { rootMargin },
+    )
+
+    const el = sentinelRef.current
+    if (el) observer.observe(el)
+    return () => observer.disconnect()
+  }, [automatic, isFetchingMore, fetchMore, topOffset, bottomOffset])
 
   return (
     <HasNextPage
@@ -26,30 +39,17 @@ const NextPageButtonWrapper = props => {
       data-cy="load-previous-messages"
       onClick={evt => {
         evt.preventDefault()
-        onChange(true)
+        fetchMore()
       }}
       to={href}
     >
-      <VisibilitySensor
-        active={automatic !== false && !isFetchingMore}
-        delayedCall
-        intervalDelay={150}
-        offset={{
-          top: topOffset,
-          bottom: bottomOffset,
-        }}
-        onChange={onChange}
-        partialVisibility
-        scrollCheck
-      >
-        <NextPageButton>
-          {isFetchingMore ? (
-            <Spinner color="brand.default" size={16} />
-          ) : (
-            children || 'Load more'
-          )}
-        </NextPageButton>
-      </VisibilitySensor>
+      <NextPageButton ref={sentinelRef}>
+        {isFetchingMore ? (
+          <Spinner color="brand.default" size={16} />
+        ) : (
+          children || 'Load more'
+        )}
+      </NextPageButton>
     </HasNextPage>
   )
 }

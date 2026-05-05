@@ -145,7 +145,7 @@ const Login = () => {
           <img
             alt={config?.groupIdentity?.brandName}
             src={
-              config?.logo?.storedObjects[0].url ||
+              config?.logo?.storedObjects[0]?.url ||
               config?.groupIdentity?.logoPath
             }
           />

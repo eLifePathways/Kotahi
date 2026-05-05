@@ -25,7 +25,6 @@ const localBorderTwoSize = '1px'
 export default {
   Root: css`
     &:hover span {
-      color: blue;
       color: ${color.brand1.base};
 
       &::before {

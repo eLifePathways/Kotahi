@@ -62,7 +62,7 @@ const BoardStatusHeader = styled.div`
 `
 
 const VersionNumber = styled.div`
-  color: rgba(0, 0, 0, 0.5);
+  color: rgb(0 0 0 / 50%);
 `
 
 // TODO standardise all statuses to camelCase and 'invited' instead

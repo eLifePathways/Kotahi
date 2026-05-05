@@ -19,7 +19,7 @@ const StartButton = styled.button`
   align-items: center;
   background: ${color.brand1.base};
   border-radius: 6px;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
   color: white;
   display: flex;
   font-family: ${theme.fontHeading};
@@ -36,7 +36,7 @@ const StartButton = styled.button`
 
 const BaseDropdown = styled(Dropdown)`
   border-radius: 4px;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
   font-family: ${theme.fontHeading};
   font-size: 14.5px;
   font-style: normal;
@@ -46,6 +46,7 @@ const BaseDropdown = styled(Dropdown)`
   line-height: 17px;
   width: 111px;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-control {
     align-items: center;
     background-color: white;
@@ -57,10 +58,12 @@ const BaseDropdown = styled(Dropdown)`
     text-align: center;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-arrow-wrapper {
     display: flex;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-menu {
     border: 2px solid #ccc;
     border-radius: 2px;
@@ -82,10 +85,12 @@ const DropdownLabel = styled.div`
 const InProgressDropdown = styled(BaseDropdown)`
   border: 2px solid ${color.gray40};
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-placeholder {
     color: ${color.gray40};
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-arrow-wrapper > svg {
     stroke: ${color.gray40};
   }
@@ -94,10 +99,12 @@ const InProgressDropdown = styled(BaseDropdown)`
 const PausedDropdown = styled(BaseDropdown)`
   border: 2px solid #d29435;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-placeholder {
     color: #d29435;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-arrow-wrapper > svg {
     stroke: #d29435;
   }
@@ -106,10 +113,12 @@ const PausedDropdown = styled(BaseDropdown)`
 const DoneDropdown = styled(BaseDropdown)`
   border: 2px solid ${color.brand1.base};
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-placeholder {
     color: ${color.brand1.base};
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-arrow-wrapper > svg {
     stroke: ${color.brand1.base};
   }

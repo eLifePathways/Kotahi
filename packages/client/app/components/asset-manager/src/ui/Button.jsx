@@ -1,13 +1,11 @@
 /* eslint-disable react/prop-types */
 
-/* stylelint-disable string-quotes */
-
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { color } from '../../../../theme'
 
-/* stylelint-disable declaration-no-important */
 const Button = styled.button`
+  /* stylelint-disable declaration-no-important */
   align-items: center;
   background: none;
   border: none;

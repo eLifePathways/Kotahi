@@ -6,6 +6,7 @@ import UnstyledDatePicker from 'react-date-picker'
 import { grid, th } from '@coko/client'
 
 const StyledDatePicker = styled(UnstyledDatePicker)`
+  /* stylelint-disable-next-line selector-class-pattern */
   & > div.react-date-picker__wrapper {
     border-color: ${th('colorBorder')};
     border-radius: ${th('borderRadius')};

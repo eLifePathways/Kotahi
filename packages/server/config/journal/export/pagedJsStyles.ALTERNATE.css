@@ -4,7 +4,6 @@
   --font-content: 'Reforma2018';
   --font-title: 'Reforma2018';
   --color-body: 'black';
-  --color-main: #4ce241;
   --color-main: #0db800;
   --color-main-dark: #187e49;
   --color-main-light: #ccfce6;
@@ -79,37 +78,44 @@ p {
   text-decoration-color: var(--color-body);
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #researchLevel {
   text-transform: uppercase;
   text-align: right;
   border-bottom: 1px solid var(--color-main);
 }
 
+/* stylelint-disable-next-line selector-id-pattern */
 #topicList {
   list-style-type: none;
   display: flex;
-  margin-left: 2ch;
   color: white;
   padding: 0;
   margin-left: 0;
   margin-bottom: 0;
 }
+/* stylelint-disable-next-line selector-id-pattern */
 #topicList li {
   margin-right: 2ch;
   color: var(--color-main-dark);
-  /*experimental */
+  /* experimental */
 }
+/* stylelint-disable-next-line selector-id-pattern */
 #topicList li::before {
   content: ' #';
 }
+
 h1.title {
-  margin-top: 0;
+  margin-top: 0.3em;
   font-size: 1.8em;
   line-height: 1.3;
+  /* stylelint-disable-next-line */
+  string-set: articletitle content(text);
 }
 
 .authors,
 .affiliations,
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAuthors {
   font-size: 1em;
   margin-top: 0;
@@ -132,12 +138,14 @@ h1.title {
 }
 
 .affiliations sup,
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAffiliations sup {
   font-size: 1.2em;
   vertical-align: bottom;
 }
 
 .affiliations,
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAffiliations {
   margin-top: 0;
   font-size: 0.9em;
@@ -154,6 +162,7 @@ h6 {
   font-weight: 700;
   break-after: avoid;
 }
+
 h2 {
   font-size: 1.4em;
   margin-top: 2em;
@@ -182,21 +191,23 @@ h6 {
   font-size: 1em;
   text-decoration: underline;
 }
+
+/* stylelint-disable-next-line selector-type-no-unknown */
 footnote {
   display: none;
-}
-footnote {
   float: footnote;
   margin-left: 40mm;
   margin-top: 1em;
   font-size: 12px;
 }
 
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
 ::footnote-call {
   color: var(--color-main-dark);
   font-weight: 500;
 }
 
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
 ::footnote-marker {
   content: counter(footnote) '. ';
   color: var(--color-main-dark);
@@ -208,6 +219,7 @@ table {
   border-collapse: collapse;
   font-size: 0.8em;
 }
+
 table :is(td, tr) {
   padding: 0;
   margin: 0;
@@ -227,14 +239,13 @@ table tr {
   border-bottom: 1px solid var(--color-main);
 }
 
-/*figure*/
+/* figure */
 
 main {
   counter-reset: figure;
 }
 
 figure {
-  display: block;
   position: relative;
   counter-increment: figure;
   width: 100%;
@@ -246,9 +257,12 @@ figure {
 }
 
 figure[data-split-to] {
+  /* stylelint-disable-next-line declaration-no-important */
   border-bottom: 1px solid transparent !important;
 }
+
 figure[data-split-from] {
+  /* stylelint-disable-next-line declaration-no-important */
   border-top: 1px solid transparent !important;
 }
 
@@ -259,6 +273,7 @@ img {
   object-fit: contain;
   object-position: top left;
 }
+
 figure::before {
   border-bottom: 2px solid var(--color-main);
   content: 'figure ' counter(figure);
@@ -274,20 +289,24 @@ figure::before {
   padding-right: 3ch;
   color: var(--color-main);
 }
+
 figcaption {
   font-style: italic;
   font-size: 0.9em;
   margin-top: 1em;
 }
+
 figcaption em {
   font-style: normal;
 }
+
 @page {
   size: letter;
   margin: 18mm 14mm 16mm 22mm;
 
-  /* stylelint-disable-line */
+  /* stylelint-disable-next-line at-rule-no-unknown */
   @footnote {
+    /* stylelint-disable-next-line at-rule-descriptor-no-unknown */
     float: bottom;
     border-top: 1px dashed var(--color-main);
   }
@@ -307,6 +326,7 @@ figcaption em {
 }
 
 /* // first page // */
+/* stylelint-disable-next-line selector-class-pattern */
 .pagedjs_first_page .logo {
   width: 30mm;
   top: 20mm;
@@ -322,19 +342,12 @@ figcaption em {
 header {
   margin-left: 40mm;
 }
-h1.title {
-  margin-top: 0.3em;
-  /* stylelint-disable-line */
-  string-set: articletitle content(text);
-}
 
 @page {
   border-left: 2px solid var(--color-main);
 
   @top-right-corner {
     content: counter(page);
-    border-right: 1px solid var(--color-main);
-    padding-right: 3ch;
     font-weight: 800;
     color: var(--color-main-dark);
     border-right: 30px solid var(--color-main);
@@ -345,20 +358,25 @@ h1.title {
     content: string(articletitle);
     font-style: italic;
     text-decoration: underline;
+    /* stylelint-disable-next-line at-rule-descriptor-no-unknown */
     text-underline-offset: 3px;
+    /* stylelint-disable-next-line at-rule-descriptor-no-unknown */
     text-decoration-color: var(--color-main-dark);
   }
 }
 
 @page :first {
   margin-top: 10mm;
+
   @top-left {
     content: none;
   }
+
   @top-right-corner {
     content: none;
     border-right: 1px solid transparent;
   }
+
   @bottom-right-corner {
     content: counter(page);
     font-weight: 800;
@@ -372,31 +390,37 @@ h1.title {
   margin-left: 40mm;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .marginData {
   margin-left: 40mm;
   font-size: 0.8em;
   /* padding-left: 7mm; */
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .marginData h4 {
   text-decoration: none;
   border-bottom: none;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .emailList {
   font-style: italic;
   color: var(--color-main-dark);
   font-size: 0.8em;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .emailList h4 span {
   font-weight: normal;
   display: inline-block;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .emailList + section {
   font-weight: 400;
 }
+
 section.competing h4,
 section.funding h4 {
   font-weight: 400;
@@ -414,6 +438,7 @@ section.funding p {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+
 .date h4 {
   font-weight: 400;
   text-transform: uppercase;
@@ -434,6 +459,7 @@ section.reflist p {
 			margin-right: 8px;
 		} */
 
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAuthors {
   font-weight: 700;
   color: var(color-main-dark);
@@ -441,11 +467,13 @@ section.reflist p {
   text-align: left;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .formmatedAuthors small {
   color: black;
   font-weight: 400;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAffiliations {
   list-style-type: none;
   margin: 0;
@@ -453,18 +481,22 @@ section.reflist p {
   text-align: left;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAffiliations li {
   display: inline-block;
   margin: 0;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .formattedAffiliations li small {
   color: black;
   font-weight: 400;
 }
 
 p.doi,
+/* stylelint-disable-next-line selector-class-pattern */
 p.journalTitle,
+/* stylelint-disable-next-line selector-class-pattern */
 p.journalSlug {
   display: none;
 }

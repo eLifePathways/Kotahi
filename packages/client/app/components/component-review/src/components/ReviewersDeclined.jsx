@@ -11,11 +11,10 @@ import { UserAction } from '../../../component-manuscripts-table/src/style'
 import DeclinedReviewer from './DeclinedReviewer'
 
 const DropdownTitleContainer = styled.div`
-  align-content: center;
   cursor: pointer;
   display: flex;
   font-size: 18px;
-  justify-content: space-between;
+  place-content: center space-between;
 `
 
 const DeclinedReviewerContainer = styled.div`
@@ -24,10 +23,7 @@ const DeclinedReviewerContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 1em;
-  margin-left: 1em;
-  margin-right: 1em;
-  margin-top: 1em;
+  margin: 1em;
 `
 
 const AddBorder = styled.div`

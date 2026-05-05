@@ -14,8 +14,7 @@ export const FullCommentsContainer = styled.div`
   min-width: 250px;
   ${props => props.readOnlyComments && 'pointer-events: none;'}
   ${props => props.readOnlyComments && 'user-select: none;'}
-  /* z-index: 999; */
-
+  
   & > div {
     left: 0; /* 30px; */
     ${props => props.readOnlyComments && 'pointer-events: none;'}

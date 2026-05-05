@@ -85,6 +85,7 @@ export const EditSection = styled(Col)`
 `
 
 export const TextInput = styled(StyledInput)`
+  /* stylelint-disable-next-line declaration-no-important */
   border-color: ${p => p.$color} !important;
   padding: ${grid(1.25)};
 `

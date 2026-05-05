@@ -10,6 +10,8 @@ import PinButton from './PinButton'
 // #region Menu
 
 export const MainNavWrapper = styled.div`
+  /* stylelint-disable declaration-no-important */
+
   align-items: center;
   background: linear-gradient(
     134deg,
@@ -71,7 +73,10 @@ export const SectionNavLayoutSettings = styled.div`
   height: ${p => (p.$pinned ? '0' : '22px')};
   margin-bottom: ${p => (p.$pinned ? '0' : '-14px')};
   position: relative;
-  transition: margin ease 0.5s, height ease 0.5s, background-color ease 0.2s;
+  transition:
+    margin ease 0.5s,
+    height ease 0.5s,
+    background-color ease 0.2s;
   width: 100%;
 
   &:hover {
@@ -121,7 +126,8 @@ export const StyledLink = styled(Link)`
   padding: 0 ${grid(1)};
   position: relative;
   text-decoration: none !important;
-  transition: max-width var(--transition-time),
+  transition:
+    max-width var(--transition-time),
     background-color var(--transition-link-colors),
     color var(--transition-link-colors);
   user-select: none;
@@ -166,7 +172,9 @@ export const LinkLabel = styled.span`
   opacity: 0;
   overflow: hidden;
   padding-top: 2px;
-  transition: margin var(--transition-time), opacity 0.2s;
+  transition:
+    margin var(--transition-time),
+    opacity 0.2s;
   white-space: nowrap;
   width: 100%;
 `

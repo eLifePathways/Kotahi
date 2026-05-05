@@ -12,6 +12,7 @@ export const Section = styled.div`
     props.flexGrow &&
     css`
       flex-grow: 1;
+
       & > div {
         height: 100%;
       }
@@ -117,7 +118,7 @@ export const FullWidthAndHeightContainer = styled.div`
   height: 100%;
   width: 100%;
 
-  @media screen and (min-width: 1440px) {
+  @media screen and (width >= 1440px) {
     .full-wax-editor-grid {
       min-height: 250px; /* Double the height when screen width is above 1440 pixels */
     }
@@ -138,7 +139,7 @@ export const CmsWidthAndHeightContainer = styled.div`
   position: relative;
   width: 100%;
 
-  @media screen and (min-width: 1440px) {
+  @media screen and (width >= 1440px) {
     .full-wax-editor-grid {
       height: 100%;
       min-height: 250px; /* Double the height when screen width is above 1440 pixels */
@@ -158,7 +159,7 @@ export const SimpleWaxEditorContainer = styled.div`
   .wax-surface-scroll {
     min-height: 250px;
 
-    @media screen and (min-width: 1440px) {
+    @media screen and (width >= 1440px) {
       min-height: 250px; /* Double the height when screen width is above 1440 pixels */
     }
   }
@@ -211,7 +212,6 @@ export const WarningBlock = styled(InfoBlock)`
 `
 
 export const LayoutHeaderListContainer = styled.div`
-  padding: grid;
   width: 30%;
 `
 
@@ -223,7 +223,7 @@ export const LayoutHeaderListItem = styled.div`
   justify-content: space-between;
   margin-bottom: ${grid(2)};
   padding: ${grid(1 / 2)};
-  user-select: 'none';
+  user-select: none;
 `
 
 export const LayoutMainHeading = styled(Heading)`

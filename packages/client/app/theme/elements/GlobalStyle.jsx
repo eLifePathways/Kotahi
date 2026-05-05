@@ -42,7 +42,7 @@ export default createGlobalStyle`
     outline: 0;
     padding: 0;
     text-decoration: none;
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
   }
 
   a {

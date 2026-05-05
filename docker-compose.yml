@@ -12,6 +12,7 @@ services:
       - NODE_ENV=development
       - SERVER_URL=http://localhost:3000
       - CLIENT_PORT=${CLIENT_PORT:-4000}
+      - CLIENT_ENTRY_FILE_PATH=/start.js
       - CLIENT_STATIC_FOLDER_PATH=../public
       - CLIENT_FAST_REFRESH=1
       - CLIENT_PAGE_TITLE=Kotahi - Open Journals

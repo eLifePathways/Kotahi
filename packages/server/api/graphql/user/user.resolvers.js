@@ -120,7 +120,6 @@ module.exports = {
       }
 
       if (!ctx?.loaders) return null
-
       return ctx.loaders.User.defaultIdentitiesLoader.load(user.id)
     },
 

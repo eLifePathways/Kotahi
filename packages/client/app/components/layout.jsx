@@ -32,6 +32,8 @@ export const ViewGrid = styled.main.attrs({
   id: 'main',
   className: 'view-grid',
 })`
+  /* stylelint-disable media-query-no-invalid */
+
   display: grid;
   grid-area: main;
   height: 100%;
@@ -81,17 +83,16 @@ export const SingleColumnGrid = styled.div`
 */
 export const PrimarySecondaryColumnGrid = styled.div`
   display: grid;
-  grid-gap: ${COL_GAP}px;
-  grid-template-areas: 'primary secondary';
-  grid-template-columns:
-    minmax(${MIN_PRIMARY_COLUMN_WIDTH}px, ${MAX_PRIMARY_COLUMN_WIDTH}px)
+  gap: ${COL_GAP}px;
+  grid-template:
+    'primary secondary' 100%
+    / minmax(${MIN_PRIMARY_COLUMN_WIDTH}px, ${MAX_PRIMARY_COLUMN_WIDTH}px)
     minmax(${MIN_SECONDARY_COLUMN_WIDTH}px, ${MAX_SECONDARY_COLUMN_WIDTH}px);
-  grid-template-rows: 100%;
   justify-self: center;
   max-width: ${MAX_WIDTH}px;
 
   @media (max-width: ${MEDIA_BREAK}px) {
-    grid-gap: 0;
+    gap: 0;
     grid-template-columns: 1fr;
     grid-template-rows: min-content 1fr;
     min-width: 100%;
@@ -109,18 +110,17 @@ export const PrimarySecondaryColumnGrid = styled.div`
 */
 export const SecondaryPrimaryColumnGrid = styled.div`
   display: grid;
-  grid-gap: ${COL_GAP}px;
-  grid-template-areas: 'secondary primary';
-  grid-template-columns:
-    minmax(${MIN_SECONDARY_COLUMN_WIDTH}px, ${MAX_SECONDARY_COLUMN_WIDTH}px)
+  gap: ${COL_GAP}px;
+  grid-template:
+    'secondary primary' 100%
+    / minmax(${MIN_SECONDARY_COLUMN_WIDTH}px, ${MAX_SECONDARY_COLUMN_WIDTH}px)
     minmax(${MIN_PRIMARY_COLUMN_WIDTH}px, ${MAX_PRIMARY_COLUMN_WIDTH}px);
-  grid-template-rows: 100%;
   justify-self: center;
   margin: 0 24px;
   max-width: ${MAX_WIDTH}px;
 
   @media (max-width: ${MEDIA_BREAK}px) {
-    grid-gap: 0;
+    gap: 0;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     max-width: 100%;
@@ -138,14 +138,13 @@ export const SecondaryPrimaryColumnGrid = styled.div`
 └─────────────┘
 */
 export const CenteredGrid = styled.div`
-  align-self: center;
   display: grid;
   /* grid-template-columns: ${MAX_WIDTH}px; */
   grid-template-columns: minmax(
     ${MIN_PRIMARY_COLUMN_WIDTH}px,
     ${MAX_PRIMARY_COLUMN_WIDTH}px
   );
-  justify-self: center;
+  place-self: center center;
   max-width: ${MAX_PRIMARY_COLUMN_WIDTH}px;
 
   @media (max-width: ${MEDIA_BREAK}px) {

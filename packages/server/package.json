@@ -20,7 +20,7 @@
     "test": "NODE_ENV=test yarn jest"
   },
   "dependencies": {
-    "@coko/server": "^5.0.0-alpha.9",
+    "@coko/server": "^5.0.0-alpha.12",
     "@dqbd/tiktoken": "^1.0.14",
     "archiver": "^5.3.0",
     "atob": "^2.1.2",

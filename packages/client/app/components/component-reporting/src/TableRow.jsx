@@ -19,7 +19,7 @@ const Row = styled.div`
         `
       : css`
           &:hover {
-            box-shadow inset 0 0 4px ${color.brand1.base};
+            box-shadow: inset 0 0 4px ${color.brand1.base};
           }
         `}
 

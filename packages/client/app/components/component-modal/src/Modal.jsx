@@ -177,7 +177,7 @@ const Modal = ({
 
   const styles = {
     overlay: {
-      backgroundColor: 'rgba(0,0,0,0.4)',
+      backgroundColor: 'rgb(0 0 0 / 40%)',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',

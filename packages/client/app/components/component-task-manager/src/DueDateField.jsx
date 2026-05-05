@@ -16,7 +16,7 @@ const BaseDueDateCell = styled.div`
   background: ${color.gray99} !important;
   border: 1px solid ${color.gray80};
   border-radius: ${theme.borderRadius};
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.07);
+  box-shadow: inset 0 0 4px rgb(0 0 0 / 7%);
   display: flex;
   justify-content: flex-start;
   line-height: 1em;

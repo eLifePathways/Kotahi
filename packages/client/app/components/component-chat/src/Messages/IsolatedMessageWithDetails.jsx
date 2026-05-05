@@ -16,7 +16,7 @@ import ChatWaxEditorLayout from '../ChatWaxEditor/ChatWaxEditorLayout'
 const MessageGroupContainer = styled.div`
   padding: 4px 30px;
 
-  @media (min-width: 1200px) {
+  @media (width >= 1200px) {
     width: 675px;
   }
 `

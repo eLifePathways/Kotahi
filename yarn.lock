@@ -559,9 +559,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coko/lint@npm:^3.0.0-alpha.36":
-  version: 3.0.0-alpha.36
-  resolution: "@coko/lint@npm:3.0.0-alpha.36"
+"@coko/lint@npm:^3.0.0-alpha.37":
+  version: 3.0.0-alpha.37
+  resolution: "@coko/lint@npm:3.0.0-alpha.37"
   dependencies:
     "@eslint/js": "npm:^9.39.2"
     "@vitest/eslint-plugin": "npm:^1.6.6"
@@ -592,7 +592,7 @@ __metadata:
     typescript-eslint: "npm:^8.53.0"
   bin:
     coko-lint: ./src/cli.mjs
-  checksum: 10c0/816decab5c0a743e9f5e0d0d4f44fcd6de24fbe46631c985e4e9c759ec6d773b0e5337cbfb961c8fd812c91312ca0f7bffdad701c66610ab25ab4ada25608b4b
+  checksum: 10c0/e0b295a75539e99dabde1d2f654e0cb09f28fe461efd7d36fb4592111c45ad4465f137818126d507178595427bd781c5e6205cd7373d5b52938b5c261ef96487
   languageName: node
   linkType: hard
 
@@ -7033,7 +7033,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "kotahi@workspace:."
   dependencies:
-    "@coko/lint": "npm:^3.0.0-alpha.36"
+    "@coko/lint": "npm:^3.0.0-alpha.37"
     color: "npm:^4.2.3"
     cypress: "npm:^13.8.0"
     dotenv: "npm:^16.4.1"

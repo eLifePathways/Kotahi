@@ -47,6 +47,7 @@ const ReviewItemsContainer = styled.div`
   gap: 1em;
   margin-top: 1.5em;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .ProseMirror {
     background: none;
   }

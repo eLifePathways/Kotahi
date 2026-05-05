@@ -1,6 +1,3 @@
-/* stylelint-disable selector-type-no-unknown, no-descending-specificity */
-/* stylelint-disable color-function-notation, alpha-value-notation */
-
 import { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import lightenBy from '../../../../shared/lightenBy'
@@ -44,6 +41,7 @@ const EditorStyles = css`
     }
   }
 
+  /* stylelint-disable selector-type-no-unknown */
   .ProseMirror footnote {
     align-items: center;
     background: ${lightenBy(color.brand1.base(), 0.7)};
@@ -92,14 +90,11 @@ const EditorStyles = css`
   /* Give selected cells a blue overlay */
   .selectedCell::after {
     background: rgb(200 200 255 / 40%);
-    bottom: 0;
     content: '';
-    left: 0;
     pointer-events: none;
     position: absolute;
-    right: 0;
-    top: 0;
     z-index: 2;
+    inset: 0;
   }
 
   /* placeholder */
@@ -219,7 +214,7 @@ const EditorStyles = css`
     .ProseMirror {
       background: #eee;
       box-shadow: none;
-      color: rgb(132, 33, 162);
+      color: rgb(132 33 162);
       min-height: 100%;
       padding: 0;
     }
@@ -315,7 +310,7 @@ const EditorStyles = css`
   }
 
   .math-node .math-src {
-    color: rgb(132, 33, 162);
+    color: rgb(132 33 162);
     display: none;
     tab-size: 4;
   }
@@ -337,7 +332,7 @@ const EditorStyles = css`
 
   .katex-html *::selection {
     /* stylelint-disable-next-line declaration-no-important */
-    background-color: none !important;
+    background-color: transparent !important;
   }
 
   .math-inline.math-select .math-render {
@@ -475,14 +470,14 @@ const EditorStyles = css`
     }
 
     & p:not(.ref) {
-      --citationColorValues: ${th('colorCitation')};
-      --citationTextColor: black;
-      --citationOffset: 2px;
+      --citation-color-values: ${th('colorCitation')};
+      --citation-text-color: black;
+      --citation-offset: 2px;
       border-radius: 2px;
-      outline: var(--citationColorValues) 1px solid;
-      outline-offset: var(--citationOffset);
+      outline: var(--citation-color-values) 1px solid;
+      outline-offset: var(--citation-offset);
       position: relative;
-      transition: 0.25;
+      transition: 0.25s;
 
       & .mixed-citation {
         outline: none;
@@ -614,119 +609,119 @@ const EditorStyles = css`
   .fundingsource,
   .fundingstatement,
   .awardid {
-    --fundingColorValues: ${th('colorFunding')};
-    --fundingOffset: 2px;
+    --funding-color-values: ${th('colorFunding')};
+    --funding-offset: 2px;
     border-radius: 2px;
     outline: ${th('colorFunding')} 1px solid;
-    outline-offset: var(--fundingOffset);
-    transition: 0.25;
+    outline-offset: var(--funding-offset);
+    transition: 0.25s;
   }
 
   .fundingsource {
-    --fundingColorValues: ${th('colorFundingSource')};
+    --funding-color-values: ${th('colorFundingSource')};
 
     &:hover {
-      outline-color: var(--fundingColorValues);
+      outline-color: var(--funding-color-values);
     }
   }
 
   .fundingstatement {
-    --fundingColorValues: ${th('colorFundingStatement')};
+    --funding-color-values: ${th('colorFundingStatement')};
 
     &:hover {
-      outline-color: var(--fundingColorValues);
+      outline-color: var(--funding-color-values);
     }
   }
 
   .awardid {
-    --fundingColorValues: ${th('colorAwardId')};
+    --funding-color-values: ${th('colorAwardId')};
 
     &:hover {
-      outline-color: var(--fundingColorValues);
+      outline-color: var(--funding-color-values);
     }
   }
 
   .show-fundingsource .fundingsource {
-    outline: var(--fundingColorValues) 2px solid;
+    outline: var(--funding-color-values) 2px solid;
   }
 
   .show-fundingstatement .fundingstatement {
-    outline: var(--fundingColorValues) 2px solid;
+    outline: var(--funding-color-values) 2px solid;
   }
 
   .show-awardid .awardid {
-    outline: var(--fundingColorValues) 2px solid;
+    outline: var(--funding-color-values) 2px solid;
   }
 
   /* CITATIONS */
 
   span.mixed-citation {
-    --citationColorValues: ${th('colorCitation')};
-    --citationTextColor: black;
-    --citationOffset: 2px;
+    --citation-color-values: ${th('colorCitation')};
+    --citation-text-color: black;
+    --citation-offset: 2px;
     border-radius: 2px;
     display: block;
-    outline: var(--citationColorValues) 1px solid;
-    outline-offset: var(--citationOffset);
+    outline: var(--citation-color-values) 1px solid;
+    outline-offset: var(--citation-offset);
     position: relative;
-    transition: 0.25;
+    transition: 0.25s;
   }
 
   span.citation-label {
-    --citationColorValues: ${th('colorCitationLabel')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorCitationLabel')};
+    --citation-text-color: white;
   }
 
   span.article-title {
-    --citationColorValues: ${th('colorArticleTitle')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorArticleTitle')};
+    --citation-text-color: white;
   }
 
   span.journal-title {
-    --citationColorValues: ${th('colorJournalTitle')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorJournalTitle')};
+    --citation-text-color: white;
     font-style: italic;
   }
 
   span.author-group {
-    --citationColorValues: ${th('colorAuthorGroup')};
-    --citationOffset: 4px;
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorAuthorGroup')};
+    --citation-offset: 4px;
+    --citation-text-color: white;
   }
 
   span.author-name {
-    --citationColorValues: ${th('colorAuthorName')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorAuthorName')};
+    --citation-text-color: white;
   }
 
   a.doi {
-    --citationColorValues: ${th('colorDoi')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorDoi')};
+    --citation-text-color: white;
   }
 
   span.volume {
-    --citationColorValues: ${th('colorVolume')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorVolume')};
+    --citation-text-color: white;
   }
 
   span.issue {
-    --citationColorValues: ${th('colorIssue')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorIssue')};
+    --citation-text-color: white;
   }
 
   span.first-page {
-    --citationColorValues: ${th('colorFirstPage')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorFirstPage')};
+    --citation-text-color: white;
   }
 
   span.last-page {
-    --citationColorValues: ${th('colorLastPage')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorLastPage')};
+    --citation-text-color: white;
   }
 
   span.year {
-    --citationColorValues: ${th('colorYear')};
-    --citationTextColor: white;
+    --citation-color-values: ${th('colorYear')};
+    --citation-text-color: white;
   }
 
   span.article-title,
@@ -740,16 +735,16 @@ const EditorStyles = css`
   span.first-page,
   span.last-page,
   a.doi {
-    --citationColorValues: transparent;
-    --citationTextColor: black;
-    --citationOffset: 2px;
+    --citation-color-values: transparent;
+    --citation-text-color: black;
+    --citation-offset: 2px;
     border-radius: 2px;
     outline: ${th('colorCitation')} 1px solid;
-    outline-offset: var(--citationOffset);
+    outline-offset: var(--citation-offset);
     position: relative;
 
     &::before {
-      background-color: var(--citationColorValues);
+      background-color: var(--citation-color-values);
       border-radius: 100%;
       content: '';
       display: none;
@@ -761,16 +756,16 @@ const EditorStyles = css`
     }
 
     &:hover {
-      outline-color: var(--citationColorValues);
+      outline-color: var(--citation-color-values);
     }
   }
 
   .hide-citation-spans span,
   .hide-citation-spans a {
     /* stylelint-disable-next-line declaration-no-important */
-    --citationColorValues: transparent !important;
+    --citation-color-values: transparent !important;
     /* stylelint-disable-next-line declaration-no-important */
-    --citationTextColor: transparent !important;
+    --citation-text-color: transparent !important;
   }
 
   .show-article-title .article-title {
@@ -820,26 +815,26 @@ const EditorStyles = css`
   /* keywords */
 
   .keyword-list {
-    --keywordColorValues: transparent;
-    --keywordOffset: 2px;
+    --keyword-color-values: transparent;
+    --keyword-offset: 2px;
     border-radius: 2px;
     outline: ${th('colorKeyword')} 1px solid;
-    outline-offset: var(--fundingOffset);
-    transition: 0.25;
+    outline-offset: var(--funding-offset);
+    transition: 0.25s;
   }
 
   span.keyword {
-    --keywordColorValues: transparent;
-    --keywordTextColor: black;
-    --keywordOffset: 2px;
+    --keyword-color-values: transparent;
+    --keyword-text-color: black;
+    --keyword-offset: 2px;
     border-radius: 2px;
     font-weight: bold;
     outline: ${th('colorKeyword')} 1px solid;
-    outline-offset: var(--keywordOffset);
+    outline-offset: var(--keyword-offset);
     position: relative;
 
     &::before {
-      background-color: var(--keywordColorValues);
+      background-color: var(--keyword-color-values);
       border-radius: 100%;
       content: '';
       display: none;

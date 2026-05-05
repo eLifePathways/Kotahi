@@ -29,7 +29,7 @@ export const Status = styled.span`
   padding-block: ${grid(1.2)};
   padding-left: ${p => p.$pLeft || grid(1.2)};
   padding-right: ${p => p.$pRight || grid(1.2)};
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
   text-shadow: ${p => (p.$textShadow ? '0 0 2px #0005' : '')};
   text-transform: uppercase;
 `

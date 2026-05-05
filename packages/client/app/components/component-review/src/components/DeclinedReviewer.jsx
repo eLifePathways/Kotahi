@@ -17,12 +17,8 @@ const DeclinedReviewerContainer = styled.div`
   display: flex;
   font-size: 14px;
   justify-content: space-between;
-  margin-bottom: 1.5em;
-  margin-left: 1em;
-  margin-right: 1em;
-  margin-top: 1.5em;
-  overflow-x: hidden;
-  overflow-y: auto;
+  margin: 1.5em 1em;
+  overflow: hidden auto;
 `
 
 const UserName = styled.div`

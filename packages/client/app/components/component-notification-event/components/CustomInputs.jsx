@@ -36,7 +36,7 @@ const styles = th => ({
     boxShadow: !state.selectProps.standalone
       ? state.isFocused
         ? `0 0 0 1px ${color.brand1.base}`
-        : 'inset 0px 0px 4px rgba(0, 0, 0, 0.07)'
+        : 'inset 0px 0px 4px rgb(0 0 0 / 7%)'
       : state.isFocused
         ? `0 0 0 1px ${color.brand1.base}`
         : th.boxShadow,

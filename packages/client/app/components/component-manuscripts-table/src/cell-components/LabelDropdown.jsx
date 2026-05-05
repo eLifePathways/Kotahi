@@ -29,7 +29,7 @@ const DropdownMenu = styled.div`
   background-color: ${color.backgroundA};
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
   left: 0;
   margin-top: 2px;
   max-height: 250px;

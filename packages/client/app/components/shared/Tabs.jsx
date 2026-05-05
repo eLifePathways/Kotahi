@@ -9,6 +9,7 @@ import { ConfigContext } from '../config/src'
 import { color } from '../../theme'
 
 const Tab = styled.div`
+  /* stylelint-disable custom-property-no-missing-var-function */
   --bg-active: ${color.backgroundA};
   --bg-inactive: linear-gradient(
     180deg,
@@ -22,7 +23,7 @@ const Tab = styled.div`
   border-radius: ${th('borderRadius')} ${th('borderRadius')} 0 0;
   box-shadow: ${({ active }) =>
     active
-      ? '-4px 0 7px -4px rgba(0, 0, 0, 0.1), 4px 0 7px -4px rgba(0, 0, 0, 0.1), 0 -4px 7px -4px rgba(0, 0, 0, 0.1)'
+      ? '-4px 0 7px -4px rgb(0 0 0 / 10%), 4px 0 7px -4px rgb(0 0 0 / 10%), 0 -4px 7px -4px rgb(0 0 0 / 10%)'
       : 'none'};
   color: ${color.text};
   cursor: pointer;

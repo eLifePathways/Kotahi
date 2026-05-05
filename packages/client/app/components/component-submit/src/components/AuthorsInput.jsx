@@ -50,7 +50,7 @@ const AuthorContainer = styled.div`
 
 const Author = styled.div`
   display: grid;
-  grid-gap: ${grid(2)} ${grid(4)};
+  gap: ${grid(2)} ${grid(4)};
   grid-template-columns: repeat(2, 1fr);
   padding: ${grid(1)};
   width: 100%;
@@ -62,11 +62,13 @@ const StyledSelect = styled(Creatable)`
   font-size: ${th('fontSizeBaseSmall')};
   line-height: 31px; /* hack, need to fix across components */
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .react-select__control {
     background-color: ${th('color.gray99')};
     border-radius: ${th('borderRadius')};
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .react-select__control--is-focused {
     border-color: ${th('colorPrimary')};
     box-shadow: 0 0 0 0 ${th('colorPrimary')};

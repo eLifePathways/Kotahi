@@ -19,7 +19,7 @@ const LabelContainer = styled.div`
   background: ${color.backgroundA};
   border: 1.5px solid ${color.gray70};
   border-radius: 10px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 1px rgb(0 0 0 / 25%);
   display: flex;
   justify-content: center;
   padding-right: ${props => (props.showResetIcon ? '15px' : '0')};

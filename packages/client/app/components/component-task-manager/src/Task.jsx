@@ -46,7 +46,7 @@ const TaskRowContainer = styled.div`
   padding: 10px 8px 15px;
 
   & + div {
-    border-top: 2px solid rgba(191, 191, 191, 0.5);
+    border-top: 2px solid rgb(191 191 191 / 50%);
   }
 `
 
@@ -123,7 +123,7 @@ const ModalContainer = styled(LooseColumn)`
 const ActionDialog = styled.div`
   background: ${color.backgroundA};
   border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 8px rgb(0 0 0 / 25%);
   left: -80px;
   position: absolute;
   top: 15px;

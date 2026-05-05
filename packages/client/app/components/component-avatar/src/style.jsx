@@ -13,6 +13,8 @@ import { MEDIA_BREAK } from '../../layout'
 // import { zIndex } from '../../globals'
 
 export const Container = styled.div`
+  /* stylelint-disable media-query-no-invalid */
+
   background-color: ${color.backgroundA};
   border: none;
   border-radius: ${props =>

@@ -1,7 +1,7 @@
 /* stylelint-disable string-quotes, declaration-block-no-redundant-longhand-properties */
 
 import styled, { css } from 'styled-components'
-import { th, grid } from '@coko/client'
+import { th } from '@coko/client'
 import waxDefaultStyles from './layout/waxDefaultStyles'
 import EditorElements from './layout/EditorElements'
 import { color } from '../../../../theme'
@@ -9,9 +9,10 @@ import { color } from '../../../../theme'
 // this grid goes around the menu and the editor area beneath it.
 export const Grid = styled.div`
   display: grid;
-  grid-template-areas: 'menu' 'editor';
-  grid-template-columns: 100%;
-  grid-template-rows: ${props => (props.readonly ? 0 : 'minmax(40px,auto)')} 1fr;
+  grid-template:
+    'menu' ${props => (props.readonly ? '0' : 'minmax(40px, auto)')}
+    'editor' 1fr
+    / 100%;
   ${props => props.production && 'min-height: calc(100vh - 108px);'}
   position: relative;
   /* :focus-within {
@@ -60,7 +61,6 @@ export const ReadOnlyEditorWithCommentsEditor = styled.div`
 
   & .insertion {
     ${props => props.hideTrackChanges && 'color: initial !important;'}
-
     & .selected-insertion {
       ${props =>
         props.hideTrackChanges && 'background-color: initial !important;'}
@@ -73,6 +73,7 @@ export const FullWaxEditorGrid = styled.div`
   grid-area: editor;
   grid-template-columns: [editorCol] auto [commentsCol] ${props =>
       props.useComments ? 'auto' : 0};
+  /* stylelint-disable-next-line value-keyword-case */
   grid-template-rows: [editorRow] auto [notesRow] auto [infoRow] 40px;
   ${waxDefaultStyles}
   position: relative;
@@ -102,6 +103,7 @@ export const EditorDiv = styled.div`
   /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${EditorElements}
 
+  /* stylelint-disable-next-line selector-class-pattern */
   & .ProseMirror .comment {
     ${props => props.hideComments && 'border-bottom-color: transparent;'}
   }
@@ -111,10 +113,10 @@ export const EditorContainer = styled.div`
   height: 100%;
   width: 100%;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .ProseMirror {
     box-shadow: 0 0 8px #ecedf1;
     min-height: 98%;
-    padding: ${grid(10)};
     padding: 10px;
   }
 `
@@ -124,10 +126,10 @@ export const FullEditorContainer = styled.div`
   min-width: 800px;
   width: 100%;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .ProseMirror {
     box-shadow: 0 0 8px #ecedf1;
     min-height: 98%;
-    padding: ${grid(10)};
     padding: 10px;
   }
 `
@@ -140,6 +142,7 @@ export const ReadOnlyEditorDiv = styled.div`
   padding: 16px;
   position: relative;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   & .ProseMirror .comment {
     border-bottom-color: transparent;
   }
@@ -201,6 +204,7 @@ export const SimpleMenu = styled.div`
     top: initial;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .Dropdown-menu {
     bottom: 38px;
     top: initial;

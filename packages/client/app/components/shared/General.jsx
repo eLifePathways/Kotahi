@@ -15,7 +15,7 @@ export const Content = styled.div`
 `
 
 export const ScrollableContent = styled(Content)`
-  @media (max-width: 1400px) {
+  @media (width <= 1400px) {
     margin-top: ${grid(2)};
     overflow-x: scroll;
   }
@@ -24,7 +24,6 @@ export const ScrollableContent = styled(Content)`
 export const SectionContent = styled(Section)`
   background-color: ${color.backgroundA};
   border-radius: ${th('borderRadius')};
-  border-top-left-radius: ${th('borderRadius')};
   box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
   margin-bottom: ${grid(2)};
   margin-top: ${grid(2)};
@@ -97,7 +96,7 @@ export const ClickableSectionRow = styled(SectionRow)`
 `
 export const SectionRowGrid = styled(SectionRow)`
   display: grid;
-  grid-gap: ${grid(2)};
+  gap: ${grid(2)};
   grid-template-columns: ${props =>
     props.expandedWidthDetails ? '1fr 3fr' : 'repeat(4, minmax(0, 1fr))'};
 `
@@ -129,17 +128,16 @@ export { Page, Heading }
 export const HeadingWithAction = styled.div`
   align-items: center;
   display: grid;
-  grid-gap: ${grid(2)};
+  gap: ${grid(2)};
   grid-template-columns: 1fr auto;
 `
 
 export const Columns = styled.div`
-  align-content: stretch;
   display: flex;
   flex: 1 1 100%;
   flex-direction: row;
   height: 100vh;
-  justify-content: center;
+  place-content: stretch center;
   overflow: hidden;
 
   & > * {
@@ -168,7 +166,6 @@ export const Chat = styled.div`
 
 export const VersionLabelWrapper = styled.div`
   display: flex;
-  flex-wrap: no-wrap;
   width: 100%;
 `
 

@@ -10,8 +10,7 @@ import query from './artifactQuery'
 const Page = styled.div`
   background: ${color.gray60};
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: hidden scroll;
   width: 100%;
 `
 

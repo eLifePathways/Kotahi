@@ -10,10 +10,12 @@ import { color } from '../../../../theme'
 
 // this grid goes around the menu and the editor area beneath it.
 export const Grid = styled.div`
+  /* stylelint-disable selector-class-pattern */
   display: grid;
-  grid-template-areas: 'menu' 'editor';
-  grid-template-columns: 100%;
-  grid-template-rows: ${props => (props.readonly ? 0 : 'minmax(40px,auto)')} 1fr;
+  grid-template:
+    'menu' ${props => (props.readonly ? '0' : 'minmax(40px, auto)')}
+    'editor' 1fr
+    / 100%;
   ${props => props.production && 'min-height: calc(100vh - 142px);'}
   position: relative;
   /* :focus-within {
@@ -77,7 +79,6 @@ export const ReadOnlyEditorWithCommentsEditor = styled.div`
 
   & .insertion {
     ${props => props.hideTrackChanges && 'color: initial !important;'}
-
     & .selected-insertion {
       ${props =>
         props.hideTrackChanges && 'background-color: initial !important;'}
@@ -90,6 +91,7 @@ export const FullWaxEditorGrid = styled.div`
   grid-area: editor;
   grid-template-columns: [editorCol] auto [commentsCol] ${props =>
       props.useComments ? 'auto' : 0};
+  /* stylelint-disable-next-line value-keyword-case */
   grid-template-rows: [editorRow] auto [notesRow] auto [infoRow] 40px;
   ${waxDefaultStyles}
   position: relative;
@@ -130,7 +132,7 @@ export const EditorContainer = styled.div`
   .ProseMirror {
     border-right: 1px solid #ecedf1;
     min-height: 100%;
-    padding: 45px 25px 25px 25px;
+    padding: 45px 25px 25px;
   }
 `
 
@@ -142,7 +144,6 @@ export const FullEditorContainer = styled.div`
   .ProseMirror {
     box-shadow: 0 0 8px #ecedf1;
     min-height: 98%;
-    padding: ${grid(10)};
     padding: 10px;
   }
 `
@@ -211,7 +212,7 @@ export const SimpleEditorDiv = styled.div`
   background-color: ${color.gray99};
   border: 1px solid ${color.gray80};
   border-radius: ${th('borderRadius')};
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.07);
+  box-shadow: inset 0 0 4px rgb(0 0 0 / 7%);
   grid-area: editor;
   overflow: auto;
   padding: 16px;

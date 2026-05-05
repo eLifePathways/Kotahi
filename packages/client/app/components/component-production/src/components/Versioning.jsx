@@ -37,7 +37,7 @@ THINK ABOUT:
 */
 
 const TopSection = styled(Section)`
-  border-bottom: 1px solid rgba(0 0 0 / 50%);
+  border-bottom: 1px solid rgb(0 0 0 / 50%);
 
   & h3 {
     display: flex;
@@ -51,7 +51,7 @@ const TopSection = styled(Section)`
 
 const TabContainer = styled.div`
   --left-width: 300px;
-  box-shadow: 0 2px 6px 0 rgba(0 0 0 / 10%);
+  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
   display: flex;
   min-height: calc(100% - 58px);
 `
@@ -65,7 +65,7 @@ const LeftBlock = styled.div`
 `
 
 const RightBlock = styled.div`
-  border-left: 1px solid rgba(0 0 0 / 50%);
+  border-left: 1px solid rgb(0 0 0 / 50%);
   width: 100%;
 
   & > section {
@@ -82,16 +82,16 @@ const RightBlock = styled.div`
   }
 
   & span.deletion {
-    // color: black;
-    // text-decoration: none;
-    // background-color: rgba(0, 255, 0, 0.25);
+    /* color: black; */
+    /* text-decoration: none; */
+    /* background-color: rgb(0 255 0 / 25%); */
     ${props => props.hideChanges && `display: none;`}
   }
 
   & span.insertion {
-    // color: black;
-    // text-decoration: none;
-    // background-color: rgba(255, 0, 0, 0.25);
+    /* color: black; */
+    /* text-decoration: none; */
+    /* background-color: rgb(255 0 0 / 25%); */
     ${props => props.hideChanges && `color: initial !important;`}
   }
 
@@ -103,6 +103,7 @@ const RightBlock = styled.div`
     display: none;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   & .panelWrapper {
     padding-left: 0;
   }

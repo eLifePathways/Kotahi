@@ -86,14 +86,11 @@ const Intro = styled.div`
 
 const ModalWrapper = styled.div`
   align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  bottom: 0;
+  background: rgb(255 255 255 / 95%);
   display: flex;
+  inset: 0;
   justify-content: center;
-  left: 0;
   position: fixed;
-  right: 0;
-  top: 0;
   z-index: 10000;
 `
 

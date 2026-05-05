@@ -26,8 +26,7 @@ export const InlineTime = styled.span`
 `
 
 export const MessagesGroup = styled.div`
-  background: rgb(255, 255, 255);
-  -webkit-box-pack: end;
+  background: rgb(255 255 255);
   flex: 1 0 auto;
   flex-direction: column;
   flex-shrink: 1;
@@ -83,6 +82,7 @@ export const Message = styled.div`
   &:hover {
     background-color: #f8f8f9;
 
+    /* stylelint-disable-next-line selector-class-pattern */
     .ProseMirror {
       background: none;
     }
@@ -117,8 +117,7 @@ export const InnerMessageContainer = styled.div`
 
 export const Byline = styled.span`
   align-items: center;
-  -webkit-box-align: center;
-  color: rgb(36, 41, 46);
+  color: rgb(36 41 46);
   display: flex;
   flex-wrap: wrap;
   font-size: 14px;
@@ -135,7 +134,7 @@ export const Bubble = styled.div`
   align-self: flex-start;
   border-radius: 16px;
   clear: both;
-  color: rgb(36, 41, 46);
+  color: rgb(36 41 46);
   display: flex;
   flex: 1 1 auto;
   font-size: 16px;
@@ -146,7 +145,6 @@ export const Bubble = styled.div`
   vertical-align: middle;
   white-space: pre-line;
   width: 100%;
-  word-break: break-word;
 
   /* Classic tags used in Markdown renders (MessageRenderer) */
   pre {

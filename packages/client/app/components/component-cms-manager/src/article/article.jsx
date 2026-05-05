@@ -42,7 +42,6 @@ const StyledManuscript = styled(Manuscript)`
 const ScrollableTabContent = styled.section`
   background-color: ${color.backgroundA};
   border-radius: ${th('borderRadius')};
-  border-top-left-radius: ${th('borderRadius')};
   box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
   height: calc(100vh - 108px);
   overflow: auto;

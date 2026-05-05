@@ -109,11 +109,11 @@ const cokoTheme = {
 
   /* Shadow (for tooltip) */
   boxShadow: {
-    inset: 'inset 0px 0px 4px rgba(0, 0, 0, 0.07)',
+    inset: 'inset 0px 0px 4px rgb(0 0 0 / 7%)',
     shades: {
-      100: '0 2px 6px 0 rgba(0, 0, 0, 0.05)',
-      200: '0 2px 6px 0 rgba(0, 0, 0, 0.1)',
-      300: '0 2px 6px 0 rgba(0, 0, 0, 0.2)',
+      100: '0 2px 6px 0 rgb(0 0 0 / 5%)',
+      200: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+      300: '0 2px 6px 0 rgb(0 0 0 / 20%)',
     },
   },
 

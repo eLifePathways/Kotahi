@@ -25,6 +25,7 @@ import {
 export const SelectInput = styled(Select)`
   width: 100%;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .react-select__control {
     background: #fff;
     border: 1px solid ${p => p.$color || '#ddd'};
@@ -33,6 +34,7 @@ export const SelectInput = styled(Select)`
 export const CreatableInput = styled(CreatableSelect)`
   width: 100%;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .react-select__control {
     background: #fff;
     border: ${p => p.$border || `1px solid ${p.$color || '#ddd'}`};

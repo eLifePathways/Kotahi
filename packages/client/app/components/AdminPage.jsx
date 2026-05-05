@@ -148,7 +148,7 @@ const AdminPage = () => {
 
   let notice = ''
 
-  if (error || !data.currentUser) {
+  if (error || !data?.currentUser) {
     if (error?.networkError) {
       notice = 'You are offline.'
     } else {
@@ -165,7 +165,7 @@ const AdminPage = () => {
   }
 
   const currentUser = data?.currentUser
-  journal.textStyles = data?.builtCss.css
+  journal.textStyles = data?.builtCss?.css
   const hasAlert = data?.userHasTaskAlerts
 
   previousDataRef.current = data

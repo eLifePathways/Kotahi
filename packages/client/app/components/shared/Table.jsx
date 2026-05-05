@@ -39,10 +39,7 @@ export const Row = styled.tr`
 
 export const Cell = styled.td`
   ${({ minWidth }) => minWidth && `min-width: ${minWidth}`};
-  padding-bottom: ${grid(2)};
-  padding-left: ${grid(3)};
-  padding-right: ${grid(3)};
-  padding-top: calc(${grid(2)} - 1px);
+  padding: calc(${grid(2)} - 1px) ${grid(3)} ${grid(2)} ${grid(3)};
 
   button {
     font-size: ${th('fontSizeBaseSmall')};

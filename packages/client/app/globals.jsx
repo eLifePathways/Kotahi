@@ -7,10 +7,10 @@ export const hexa = (hex, alpha) => {
   const b = parseInt(hex.slice(5, 7), 16)
 
   if (alpha >= 0) {
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+    return `rgb(${r} ${g} ${b} / ${alpha * 100}%)`
   }
 
-  return `rgb(${r}, ${g}, ${b})`
+  return `rgb(${r} ${g} ${b})`
 }
 
 export const zIndex = new (function () {

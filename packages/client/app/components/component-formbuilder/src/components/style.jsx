@@ -55,7 +55,7 @@ const CommentMetaWrapper = styled.div`
   align-items: center;
   display: flex;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -102,7 +102,7 @@ const SimpleWaxEditorWrapper = styled.div`
         `
       : css`
           height: 100%;
-          overflow: none;
+          overflow: hidden;
         `};
 
   .wax-surface-scroll {
@@ -126,8 +126,8 @@ const CollapseOverlay = styled.div`
       ? css`
           background: linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0) -100%,
-            #ffffff 100.32%
+            rgb(255 255 255 / 0%) -100%,
+            #fff 100.32%
           );
         `
       : css`
@@ -153,6 +153,7 @@ const CommentWrapper = styled.div`
     ${props =>
       props.commentBelongsToDifferentManuscriptVersion
         ? css`
+            /* stylelint-disable-next-line declaration-no-important */
             stroke: ${color.gray60} !important;
           `
         : ``}

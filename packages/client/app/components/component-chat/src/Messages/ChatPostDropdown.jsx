@@ -17,7 +17,7 @@ import { LooseColumn } from '../../../shared'
 
 const DropdownContainer = styled.div`
   background-color: ${color.backgroundA};
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
   position: absolute;
   right: 0;
   top: -4px;

@@ -33,13 +33,15 @@ export const hexa = (hex, alpha) => {
   const b = parseInt(hex.slice(5, 7), 16)
 
   if (alpha >= 0) {
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+    return `rgb(${r} ${g} ${b} / ${alpha * 100}%)`
   }
 
-  return `rgb(${r}, ${g}, ${b})`
+  return `rgb(${r} ${g} ${b})`
 }
 
 export const SvgWrapper = styled.div`
+  /* stylelint-disable media-query-no-invalid */
+
   color: inherit;
   display: inline-block;
   flex: 0 0 ${props => (props.size ? `${props.size}px` : '32px')};
@@ -54,7 +56,8 @@ export const SvgWrapper = styled.div`
     props.count &&
     css`
       background-color: transparent;
-      &:after {
+
+      &::after {
         content: ${props.count ? `'${props.count}'` : `''`};
         position: absolute;
         left: calc(100% - 12px);
@@ -169,7 +172,6 @@ export const InputWrapper = styled.div`
   flex-direction: column;
   margin-right: 8px;
   min-height: 40px;
-  transition: padding 0.2s ease-in-out;
   transition: border 0.3s ease-out;
 
   &:hover,

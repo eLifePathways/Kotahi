@@ -17,7 +17,7 @@ const stripTags = html => {
 const InputBlock = styled(ContentEditable)`
   border-radius: ${th('borderRadius')};
   padding: 0 2px;
-  word-break: break-word;
+  overflow-wrap: break-word;
 
   &:focus,
   &:hover {

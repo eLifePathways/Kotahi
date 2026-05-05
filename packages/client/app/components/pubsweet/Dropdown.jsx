@@ -76,7 +76,7 @@ const Item = styled.li`
   font-size: ${th('fontSizeBase')};
   padding: ${th('gridUnit')};
   white-space: normal;
-  word-break: break-word;
+  overflow-wrap: break-word;
 
   &:hover {
     background-color: ${th('colorBackgroundHue')};

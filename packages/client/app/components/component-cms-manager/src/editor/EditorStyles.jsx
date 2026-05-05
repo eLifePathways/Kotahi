@@ -9,9 +9,10 @@ import { color } from '../../../../theme'
 // this grid goes around the menu and the editor area beneath it.
 export const Grid = styled.div`
   display: grid;
-  grid-template-areas: 'menu' 'editor';
-  grid-template-columns: 100%;
-  grid-template-rows: ${props => (props.readonly ? 0 : 'minmax(40px,auto)')} 1fr;
+  grid-template:
+    'menu' ${props => (props.readonly ? '0' : 'minmax(40px, auto)')}
+    'editor' 1fr
+    / 100%;
   height: 100%;
   ${props => props.production && 'min-height: calc(100vh - 108px);'}
   position: relative;
@@ -42,6 +43,7 @@ export const FullWaxEditorGrid = styled.div`
   grid-area: editor;
   grid-template-columns: [editorCol] auto [commentsCol] ${props =>
       props.useComments ? 'auto' : 0};
+  /* stylelint-disable-next-line value-keyword-case */
   grid-template-rows: [editorRow] auto [notesRow] auto [infoRow] 40px;
   height: 18rem;
   ${waxDefaultStyles}
@@ -69,9 +71,9 @@ export const EditorDiv = styled.div`
     ${props => !props.hideComments && 'max-width: 800px'};
   }
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${EditorElements}
 
+  /* stylelint-disable-next-line selector-class-pattern */
   & .ProseMirror {
     height: inherit;
   }

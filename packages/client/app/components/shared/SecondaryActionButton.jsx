@@ -33,14 +33,14 @@ const DisabledButton = styled(BaseButton)`
 
 const Button = styled(BaseButton)`
   background-color: white;
-  box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 5px 1px rgb(0 0 0 / 20%);
   color: ${color.brand1.base};
 
   &:hover,
   &:active,
   &:focus {
-    background-color: rgba(58, 174, 42, 0.03);
-    box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.3);
+    background-color: rgb(58 174 42 / 3%);
+    box-shadow: 0 3px 5px 1px rgb(0 0 0 / 30%);
   }
 `
 

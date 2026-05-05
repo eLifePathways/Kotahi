@@ -95,12 +95,15 @@ const Footer = styled.div`
 
 const EmailsTabWrapper = styled(StyledSectionContent)`
   height: inherit;
+  /* stylelint-disable-next-line declaration-no-important */
   margin-bottom: 0 !important;
+  /* stylelint-disable-next-line declaration-no-important */
   margin-top: 0 !important;
   max-height: 100%;
   overflow-y: visible;
   padding: 0;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .ProseMirror {
     padding: ${grid(1)} ${grid(2)};
 
@@ -112,7 +115,7 @@ const EmailsTabWrapper = styled(StyledSectionContent)`
         inset 0 0 4px 0 #0002;
       margin: 0;
       padding: 2px 4px;
-      text-rendering: geometricPrecision;
+      text-rendering: geometricprecision;
     }
 
     span.handlebars.submission-form {

@@ -13,7 +13,7 @@ import Chat from './Chat'
 import { getActiveTab } from '../../../shared/manuscriptUtils'
 
 const MessageContainer = styled.section`
-  background: rgb(255, 255, 255);
+  background: rgb(255 255 255);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -41,7 +41,6 @@ const MessageContainer = styled.section`
             'write';
         `}
 
-  padding-top: -12px;
   position: relative;
   width: 100%;
 `

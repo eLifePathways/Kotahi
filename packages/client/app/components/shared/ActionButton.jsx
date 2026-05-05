@@ -36,7 +36,7 @@ const Button = styled(BaseButton)`
   background-color: ${props =>
     props.bgColor || (props.primary ? color.brand1.base : color.gray90)};
   /* stylelint-disable-next-line color-function-notation, alpha-value-notation */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
   color: ${props =>
     props.fgColor || (props.primary ? color.text : color.textReverse)};
 
@@ -44,13 +44,13 @@ const Button = styled(BaseButton)`
     props.onClick
       ? `
   &:hover {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3),
-      inset 0 0 1000px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 30%),
+      inset 0 0 1000px rgb(255 255 255 / 15%);
   }
 
   &:active {
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2),
-      inset 0 0 1000px rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 4px rgb(0 0 0 / 20%),
+      inset 0 0 1000px rgb(255 255 255 / 15%);
   }
   `
       : ''}

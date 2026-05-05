@@ -7,6 +7,8 @@ import { th, grid } from '@coko/client'
 import { color } from '../../theme'
 
 const Calendar = styled(UnstyledCalendar)`
+  /* stylelint-disable selector-class-pattern */
+
   border: none;
 
   & .react-calendar__navigation {

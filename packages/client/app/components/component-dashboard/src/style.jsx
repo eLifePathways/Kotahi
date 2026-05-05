@@ -25,7 +25,6 @@ const Header = styled.div`
 `
 
 const Body = styled.div`
-  align-items: space-between;
   display: flex;
   justify-content: space-between;
   margin-bottom: calc(${th('gridUnit')} * 4);
@@ -48,7 +47,6 @@ export { Item, Header, Body, Divider }
 const Links = styled.div`
   align-items: flex-end;
   display: flex;
-  justify-content: bottom;
 `
 
 const LinkContainer = styled.div`

@@ -53,7 +53,7 @@ const RelativeContainer = styled.div`
 
   > button {
     background: ${color.brand1.shade25};
-    border: 1px solid currentColor;
+    border: 1px solid currentcolor;
     border-radius: 50%;
     box-shadow:
       0 0 5px #0002,
@@ -73,7 +73,7 @@ const RelativeContainer = styled.div`
   > small {
     /* background: #00495cb9; */
     background: ${color.brand1.shade25};
-    border: 1px solid currentColor;
+    border: 1px solid currentcolor;
     border-radius: 5px;
     color: #eee;
     line-height: 1;

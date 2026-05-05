@@ -9,7 +9,7 @@ import ActionButton from '../../shared/ActionButton'
 
 const styles = {
   overlay: {
-    backgroundColor: 'rgba(0,0,0,0.8)',
+    backgroundColor: 'rgb(0 0 0 / 80%)',
     overflow: 'scroll',
   },
 

@@ -25,20 +25,22 @@ const Suggestions = styled.div`
 `
 
 const List = styled.ul`
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  font-size: 14;
+  border: 1px solid rgb(0 0 0 / 15%);
+  font-size: 14px;
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .mentions__suggestions__item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgb(0 0 0 / 15%);
     color: ${color.text};
     cursor: pointer;
     padding: 5px 15px;
   }
 
+  /* stylelint-disable-next-line selector-class-pattern */
   .mentions__suggestions__item--focused {
     background-color: ${color.gray97};
   }

@@ -13,16 +13,16 @@ import { fields, validateDoiField } from '../../../../shared/doiFieldDefinition'
 import theme from '../../../../theme'
 
 const Doi = styled.div`
-  align-items: top;
+  align-items: flex-start;
   display: grid;
-  grid-gap: 36px;
+  gap: 36px;
   grid-template-columns: 1fr 1fr;
   margin-bottom: ${theme.spacing.f};
   margin-top: ${theme.spacing.e};
   position: relative;
   width: 600px;
 
-  @media only screen and (max-width: 700px) {
+  @media only screen and (width <= 700px) {
     width: 400px;
   }
 

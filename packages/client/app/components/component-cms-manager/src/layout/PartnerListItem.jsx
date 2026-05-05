@@ -82,6 +82,7 @@ const URLInput = styled(TextInput)`
   ${props =>
     !props.isValid &&
     css`
+      /* stylelint-disable-next-line declaration-no-important */
       border: 2px solid red !important;
     `}
 

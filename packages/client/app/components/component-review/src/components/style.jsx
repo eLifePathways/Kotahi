@@ -51,9 +51,12 @@ export const FormStatus = styled.div`
 `
 
 export const ErrorWrap = styled.div`
+  /* stylelint-disable selector-class-pattern */
+
   .ProseMirror {
     margin-bottom: ${grid(4)};
   }
+
   ${({ error }) =>
     error &&
     css`
