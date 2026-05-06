@@ -1,4 +1,4 @@
-const { logger } = require('@coko/server')
+// const { logger } = require('@coko/server')
 
 const Team = require('../team.model')
 
@@ -15,7 +15,7 @@ exports.up = async knex => {
 
     const teams = await Team.query()
 
-    logger.info(`Total Teams: ${teams.length}`)
+    // logger.info(`Total Teams: ${teams.length}`)
 
     const updatedTeams = []
 
@@ -30,9 +30,10 @@ exports.up = async knex => {
       }
     })
 
-    await Promise.all(updatedTeams).then(
-      logger.info(`Total Objects: ${updatedTeams.length}`),
-    )
+    await Promise.all(updatedTeams)
+    // .then(
+    //   logger.info(`Total Objects: ${updatedTeams.length}`),
+    // )
 
     return knex.schema.table('teams', table => {
       table.dropColumn('manuscriptId')

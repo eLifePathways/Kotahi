@@ -20,6 +20,7 @@ class BulletListService extends Service {
       { toWaxSchema: true },
     )
 
+    /* eslint-disable-next-line new-cap */
     CreateShortCut({
       'Shift-Ctrl-8': (state, dispatch) => {
         this.container.get('BulletList').run(state, dispatch)

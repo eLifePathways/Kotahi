@@ -24,7 +24,6 @@ const commentMark = {
     },
   ],
   toDOM(hook, next) {
-    // eslint-disable-next-line no-param-reassign
     hook.value = [
       'span',
       {

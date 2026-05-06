@@ -41,7 +41,7 @@ module.exports = {
       )
     },
 
-    async searchUsers(_, { teamId, query }, ctx) {
+    async searchUsers(_, { teamId, query }) {
       return searchUsers(teamId, query)
     },
 
@@ -120,7 +120,6 @@ module.exports = {
       }
 
       if (!ctx?.loaders) return null
-
       return ctx.loaders.User.defaultIdentitiesLoader.load(user.id)
     },
 

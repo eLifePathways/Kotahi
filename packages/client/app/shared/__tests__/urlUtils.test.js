@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { getUriQueryParams } from '../urlUtils'
 
 describe('getUriQueryParams', () => {

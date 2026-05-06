@@ -22,10 +22,13 @@ exports.up = async db => {
   await useTransaction(async trx => {
     await Promise.all(
       data.rows.map(async row => {
-        const dupes = await TeamMember.find({
-          teamId: row.team_id,
-          userId: row.user_id,
-        })
+        const dupes = await TeamMember.find(
+          {
+            teamId: row.team_id,
+            userId: row.user_id,
+          },
+          { trx },
+        )
 
         if (dupes.totalCount <= 1)
           throw new Error(
@@ -36,7 +39,7 @@ exports.up = async db => {
 
         await Promise.all(
           dupes.result.map(async member => {
-            await TeamMember.deleteById(member.id)
+            await TeamMember.deleteById(member.id, { trx })
           }),
         )
       }),

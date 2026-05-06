@@ -1,5 +1,5 @@
-/* eslint-disable jest/expect-expect */
-/* eslint-disable jest/valid-expect-in-promise,jest/valid-expect */
+/* eslint-disable promise/always-return, promise/catch-or-return, promise/no-nesting */
+
 import {
   manuscripts,
   manuscriptStatus,
@@ -78,7 +78,6 @@ describe.skip('refresh button tests', () => {
 
     it('at least one topic should exist per imported article', () => {
       ManuscriptsPage.getTableRowsCount().then(length => {
-        // eslint-disable-next-line no-plusplus
         for (let i = 0; i < length; i++) {
           ManuscriptsPage.getStatus(i).should('be.eq', 'Unsubmitted')
           ManuscriptsPage.getArticleTopicByRow(i)

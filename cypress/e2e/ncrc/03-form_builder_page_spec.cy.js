@@ -1,5 +1,3 @@
-/* eslint-disable jest/no-commented-out-tests */
-
 // /* eslint-disable jest/expect-expect,no-plusplus,jest/valid-expect-in-promise */
 // // import { manuscripts, submissionForm } from '../../support/routes3'
 // import { FormsPage } from '../../page-object/forms-page'

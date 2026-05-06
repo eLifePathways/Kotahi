@@ -1,7 +1,7 @@
 const findReferenceNodeOptions = state => {
   const referenceOptions = []
 
-  state.doc.nodesBetween(0, state.doc.content.size, (node, from) => {
+  state.doc.nodesBetween(0, state.doc.content.size, node => {
     if (node.type.name === 'reference' && node.attrs.valid === true) {
       // console.log('structure', node.attrs.structure)
       const { refId, structure, originalText } = node.attrs
@@ -32,7 +32,7 @@ const findReferenceNodes = state => {
     items: [],
   }
 
-  state.doc.nodesBetween(0, state.doc.content.size, (node, from) => {
+  state.doc.nodesBetween(0, state.doc.content.size, node => {
     if (node.type.name === 'reference' && node.attrs.valid === true) {
       // console.log(node.attrs.structure)
       const item = {
@@ -50,7 +50,7 @@ const findReferenceNodes = state => {
 const findCalloutNodes = state => {
   const callouts = []
 
-  state.doc.nodesBetween(0, state.doc.content.size, (node, from) => {
+  state.doc.nodesBetween(0, state.doc.content.size, node => {
     if (
       node.type.name === 'callout' &&
       node.attrs.citationItems &&

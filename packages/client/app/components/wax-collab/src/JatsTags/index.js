@@ -72,7 +72,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'reflist',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -97,7 +97,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'appendix',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -122,7 +122,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'frontmatter',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -149,7 +149,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'awardid',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -180,7 +180,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'fundingsource',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -211,7 +211,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'fundingstatement',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -241,7 +241,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'abstractSection',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -267,7 +267,7 @@ class JatsTagsService extends Service {
                 class:
                   hook?.dom?.getAttribute('class') || 'acknowledgementsSection',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -296,7 +296,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'keyword-list',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],
@@ -325,7 +325,7 @@ class JatsTagsService extends Service {
               Object.assign(hook, {
                 class: hook?.dom?.getAttribute('class') || 'glossary',
               })
-              typeof next !== 'undefined' && next()
+              if (typeof next !== 'undefined') next()
             },
           },
         ],

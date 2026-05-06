@@ -1,4 +1,4 @@
-const indexOf = require('lodash/indexOf')
+import indexOf from 'lodash/indexOf'
 
 const CSS = 'text/css'
 const OTF = 'font/otf'
@@ -51,7 +51,7 @@ const isSupportedAsset = (mimetype, scope = undefined) => {
   return indexOf(all, mimetype) !== -1
 }
 
-module.exports = {
+export default {
   CSS,
   OTF,
   TTF,

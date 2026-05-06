@@ -1,8 +1,25 @@
-// validation.js
-
 const path = require('path')
 const fs = require('fs-extra').promises
-const validateSchema = require('xsd-validator').default
+const { logger } = require('@coko/server')
+
+async function validateSchema(xml, xsdSchema) {
+  const { XmlDocument, XsdValidator } = await import('libxml2-wasm')
+
+  const xmlDoc = XmlDocument.fromString(xml.toString())
+  const xsdDoc = XmlDocument.fromString(xsdSchema.toString())
+  const validator = XsdValidator.fromDoc(xsdDoc)
+
+  try {
+    validator.validate(xmlDoc)
+    return true
+  } catch (e) {
+    return e.details ?? [{ message: e.message, line: 0, col: 0 }]
+  } finally {
+    validator.dispose()
+    xsdDoc.dispose()
+    xmlDoc.dispose()
+  }
+}
 
 // NOTE: to get this to work locally on an Apple Silicon Mac, I need to go into the server,
 // find `/node_modules/libxmljs`, delete the `build` directory, and then run `npm rebuild libxmljs`.
@@ -18,10 +35,10 @@ const validateJats = async jats => {
   )
 
   const schema = (await fs.readFile(jatsXsdPath)).toString()
-  const result = validateSchema(jats, schema) // this returns true is valid, or an array of errors if not.
+  const result = await validateSchema(jats, schema) // this returns true is valid, or an array of errors if not.
 
   if (result.length) {
-    console.error(
+    logger.error(
       `${result.length} JATS validation error${result.length > 1 ? 's' : ''}:`,
     )
     return result.map(x => ({ ...x, message: x.message })) // message added explicitly because it's not enumerable in Error

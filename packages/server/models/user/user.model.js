@@ -1,13 +1,13 @@
 const bcrypt = require('bcrypt')
 const pick = require('lodash/pick')
-const config = require('config')
+const { env } = require('@coko/server')
 const { raw } = require('objection')
 
 const { BaseModel, modelJsonSchemaTypes } = require('@coko/server')
 
 const { idNullable } = modelJsonSchemaTypes
 
-const BCRYPT_COST = config.util.getEnv('NODE_ENV') === 'test' ? 1 : 12
+const BCRYPT_COST = env('NODE_ENV') === 'test' ? 1 : 12
 
 class User extends BaseModel {
   constructor(properties) {
@@ -26,10 +26,8 @@ class User extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const Identity = require('../identity/identity.model')
     const Review = require('../review/review.model')
-    /* eslint-enable global-require */
 
     return {
       identities: {

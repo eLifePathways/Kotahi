@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, promise/catch-or-return, promise/always-return */
 const pick = require('lodash/pick')
 const syncProtocol = require('y-protocols/dist/sync.cjs')
 const awarenessProtocol = require('y-protocols/dist/awareness.cjs')
@@ -48,9 +48,12 @@ const send = (doc, conn, m) => {
     conn.send(
       m,
       /** @param {any} err */ err => {
-        err != null && closeConn(doc, conn)
+        if (err != null) {
+          closeConn(doc, conn)
+        }
       },
     )
+    /* eslint-disable-next-line */
   } catch (e) {
     closeConn(doc, conn)
   }
@@ -133,7 +136,6 @@ persistence = {
                 form,
               )
 
-              // eslint-disable-next-line no-restricted-syntax, guard-for-in
               for (const key in collaborativeFields) {
                 collaborativeFields[key] = `${objectId}-${key}`
               }

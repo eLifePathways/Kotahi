@@ -1,13 +1,11 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const Config = require('../../config/config.model')
 const EmailTemplate = require('../emailTemplate.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)
-
-    logger.info(`Existing Configs count: ${configs.length}`)
 
     if (configs.length > 0) {
       configs.forEach(async config => {
@@ -31,10 +29,6 @@ exports.up = async knex => {
 
         await Config.query().updateAndFetchById(config.id, newConfig)
       })
-
-      logger.info(
-        `Updated authorProofingInvitation and authorProofingSubmitted template default values for all existing configs.`,
-      )
     }
   })
 }

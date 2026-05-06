@@ -41,7 +41,6 @@ const orderedListNode = {
       attrs['data-viewid'] = hook.node.attrs.viewid
     }
 
-    /* eslint-disable-next-line no-param-reassign */
     hook.value = ['ol', attrs, 0]
     next()
   },

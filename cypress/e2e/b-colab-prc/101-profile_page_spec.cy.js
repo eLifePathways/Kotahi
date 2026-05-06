@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect,jest/valid-expect-in-promise */
+/* eslint-disable promise/always-return */
+
 import {
   dashboard,
   profile,

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   author: 'Author',
   handlingEditor: 'Handling Editor',
   editor: 'Editor',

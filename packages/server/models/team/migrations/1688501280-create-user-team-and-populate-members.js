@@ -1,16 +1,14 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const Team = require('../team.model')
 const User = require('../../user/user.model')
 const TeamMember = require('../../teamMember/teamMember.model')
 const Group = require('../../group/group.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const groups = await Group.query(trx)
-
-      logger.info(`Existing groups count: ${groups.length}`)
 
       // Existing instances migrating to multi-tenancy groups
       if (groups.length >= 1) {
@@ -30,13 +28,7 @@ exports.up = async knex => {
             objectType: 'Group',
           })
 
-          logger.info(`Added ${userTeam.name} team for "${groups[0].name}".`)
-
           const users = await User.query(trx)
-
-          logger.info(`Existing users count: ${users.length}`)
-
-          let insertedRecords = 0
 
           await Promise.all(
             users.map(async user => {
@@ -44,13 +36,8 @@ exports.up = async knex => {
                 userId: user.id,
                 teamId: userTeam.id,
               })
-              insertedRecords += 1
             }),
-          ).then(res => {
-            logger.info(
-              `${insertedRecords}/${users.length} have been added to default user team role`,
-            )
-          })
+          )
         }
       }
     })

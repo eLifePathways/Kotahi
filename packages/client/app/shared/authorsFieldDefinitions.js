@@ -1,4 +1,4 @@
-import { required } from 'xpub-validators'
+import { required } from '../components/xpub-validators/src'
 
 const isMalformedEmail = val =>
   val !== '' &&

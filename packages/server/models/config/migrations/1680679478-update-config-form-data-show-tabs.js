@@ -1,13 +1,13 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const Config = require('../config.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const configs = await Config.query(trx)
 
-      logger.info(`Existing Configs count: ${configs.length}`)
+      // logger.info(`Existing Configs count: ${configs.length}`)
 
       if (configs.length > 0) {
         configs.forEach(async config => {

@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import Color from 'color'
 import { Menu } from '../../page-object/page-component/menu'
 import { LoginPage } from '../../page-object/login-page'
@@ -11,7 +12,6 @@ describe('Login page tests', () => {
   })
 
   it('page should display prc branding settings', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('branding_settings').then(settings => {
       const primaryAsRgb = Color(settings.prc.primaryColor).string()
 
@@ -45,7 +45,6 @@ describe('Login page tests', () => {
     })
 
     it('branding settings should be visible after login', () => {
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('branding_settings').then(settings => {
         Menu.getBackground()
           .should('have.css', 'background')

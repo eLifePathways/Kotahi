@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import { Service } from 'wax-prosemirror-core'
 import CommentBubbleComponent from './components/ui/comments/CommentBubbleComponent'
 import RightArea from './components/RightArea'

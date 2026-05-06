@@ -1,5 +1,7 @@
 const htmlparser2 = require('htmlparser2')
 const cheerio = require('cheerio')
+const { logger } = require('@coko/server')
+
 const htmlToJats = require('./htmlToJats')
 
 /*
@@ -240,7 +242,7 @@ const findCslCitations = (html, refCount, refList) => {
         thisJatsReference += `</element-citation></ref>`
       }
     } catch {
-      console.error('Could not parse reference structure: ', structure)
+      logger.error('Could not parse reference structure: ', structure)
       // console.error('Using text: ', textContent)
       const textContent = $(citation).text()
       thisJatsReference += `<mixed-citation>${textContent}</mixed-citation></ref>`
@@ -307,7 +309,7 @@ const findCalloutSpans = (html, styleName) => {
           </xref>`,
       )
     } else {
-      console.error('No citation items found for callout: ', $(el).html())
+      logger.error('No citation items found for callout: ', $(el).html())
       $(el).replaceWith($(el).html())
     }
   })

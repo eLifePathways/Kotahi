@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved, camelcase, consistent-return, no-underscore-dangle, no-await-in-loop, no-restricted-syntax, no-nested-ternary, no-console, no-shadow */
+/* eslint-disable consistent-return, no-await-in-loop, no-nested-ternary, no-console, no-shadow */
 const axios = require('axios')
 const xml2json = require('xml-js')
 const FormData = require('form-data')
@@ -129,7 +129,7 @@ const getData = async (groupId, ctx) => {
 
   for (const topicIdPromise of topicsPromises) {
     const topicIdResponse = await topicIdPromise
-    // eslint-disable-next-line no-continue
+
     if (!topicIdResponse) continue
 
     const filteredTopicIdResponse = topicIdResponse.ids
@@ -215,7 +215,9 @@ const getData = async (groupId, ctx) => {
           .post(url, formData, { responseType: 'text' })
           .then(response => response.data)
       } catch (fetchError) {
-        logger.error(`[PUBMED-IMPORT]: failed to fetch from url: ${url}`)
+        logger.error(
+          `[PUBMED-IMPORT]: failed to fetch from ${url}: ${fetchError.message}`,
+        )
       }
 
       const { PubmedArticleSet } = await JSON.parse(

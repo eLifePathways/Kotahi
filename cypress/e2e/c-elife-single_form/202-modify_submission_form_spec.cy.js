@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -32,7 +33,6 @@ describe('validating required field and doi values in submission form', () => {
 
   context('check the Submission form based on form builder', () => {
     it('check if the form contain all the fields', () => {
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('form_option').then(data => {
         const formElements = [
           data.preprint1.articleId,
@@ -65,9 +65,8 @@ describe('validating required field and doi values in submission form', () => {
     // check if it is displayed the required message
     it('check required message', () => {
       SubmissionFormPage.clickElifeSubmitResearch()
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('form_option').then(data => {
-        // eslint-disable-next-line no-plusplus
         for (let i = 0; i < 4; i++) {
           SubmissionFormPage.getFormOptionList(i)
             .get('[class*="MessageWrapper"]')
@@ -79,7 +78,6 @@ describe('validating required field and doi values in submission form', () => {
 
   context('DOI validations', () => {
     it('check doi link is available in submission form', () => {
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInArticleld(data.articleId)
         SubmissionFormPage.fillInDoi(data.doi)

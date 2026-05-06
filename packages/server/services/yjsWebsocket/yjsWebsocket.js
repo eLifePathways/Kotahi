@@ -1,10 +1,8 @@
-/* eslint-disable no-param-reassign */
-const { logger, verifyJWT } = require('@coko/server')
+const { config, logger, verifyJWT } = require('@coko/server')
 const { omit } = require('lodash')
 const map = require('lib0/map')
 // const Y = require('yjs')
 const { WebSocketServer } = require('ws')
-const config = require('config')
 
 const WSSharedDoc = require('./wsSharedDoc')
 const utils = require('./utils')
@@ -17,7 +15,6 @@ const messageListener = (conn, doc, message) => {
     const decoder = utils.decoding.createDecoder(message)
     const messageType = utils.decoding.readVarUint(decoder)
 
-    // eslint-disable-next-line default-case
     switch (messageType) {
       case utils.messageSync:
         utils.encoding.writeVarUint(encoder, utils.messageSync)
@@ -38,7 +35,7 @@ const messageListener = (conn, doc, message) => {
         break
     }
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     doc.emit('error', [error])
   }
 }
@@ -50,7 +47,6 @@ module.exports = () => {
       clientTracking: true,
     })
 
-    // eslint-disable-next-line consistent-return
     WSServer.on('connection', async (injectedWS, request) => {
       injectedWS.binaryType = 'arraybuffer'
 
@@ -77,7 +73,7 @@ module.exports = () => {
           })
         })
       } catch (e) {
-        logger.error('failed to Connect')
+        logger.error(`failed to Connect ${e.message}`)
         userId = null
       }
 
@@ -109,6 +105,7 @@ module.exports = () => {
 
           try {
             injectedWS.ping()
+            /* eslint-disable-next-line  */
           } catch (error) {
             utils.closeConn(doc, injectedWS)
             clearInterval(pingInterval)

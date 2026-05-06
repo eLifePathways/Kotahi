@@ -3,7 +3,7 @@ const { chunk, orderBy, uniqBy, flatten } = require('lodash')
 const { ref, raw } = require('objection')
 const axios = require('axios')
 
-const { File } = require('@coko/server')
+const { File, logger } = require('@coko/server')
 
 const {
   CoarNotification,
@@ -336,7 +336,6 @@ const createManuscript = async (userId, input) => {
     authorFeedback: {},
   }
 
-  /* eslint-disable-next-line prefer-destructuring */
   emptyManuscript.submission.$editDate = new Date().toISOString().split('T')[0]
 
   const manuscript = await Manuscript.query().upsertGraphAndFetch(
@@ -461,7 +460,7 @@ const doisToRegister = async id => {
         DOIs.push(manuscriptDOI)
       }
     } catch (error) {
-      console.error('Error while getting manuscript DOI:', error)
+      logger.error('Error while getting manuscript DOI:', error)
     }
   } else {
     const notEmptyReviews = Object.entries(manuscript.submission)
@@ -486,10 +485,7 @@ const doisToRegister = async id => {
 
           return reviewDOI
         } catch (error) {
-          console.error(
-            `Error while getting review ${reviewNumber} DOI:`,
-            error,
-          )
+          logger.error(`Error while getting review ${reviewNumber} DOI:`, error)
           return null
         }
       }),
@@ -512,7 +508,7 @@ const doisToRegister = async id => {
           DOIs.push(summaryDOI)
         }
       } catch (error) {
-        console.error('Error while getting summary DOI:', error)
+        logger.error('Error while getting summary DOI:', error)
       }
     }
   }
@@ -637,7 +633,6 @@ const getManuscriptsData = async selectedManuscripts => {
 
   const exportData = []
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const manuscript of foundManuscripts) {
     // eslint-disable-next-line no-await-in-loop
     const manuscriptVersions = await manuscript.getManuscriptVersions()
@@ -715,7 +710,6 @@ const getRelatedReviews = async (
 
   reviews = await ReviewModel.orderReviewPerUsername(reviews)
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const review of reviews) {
     // eslint-disable-next-line no-await-in-loop
     await convertFilesToFullObjects(
@@ -829,7 +823,7 @@ const makeDecision = async (id, decisionKey, userId) => {
       hasVerdict ? '-with-verdict' : ''
     }`
 
-    decisionHasChanged &&
+    if (decisionHasChanged) {
       seekEvent(eventName, {
         manuscript,
         decision: decisionKey,
@@ -837,6 +831,7 @@ const makeDecision = async (id, decisionKey, userId) => {
         context: { recipient: recipientEmail, messageContent },
         groupId: manuscript.groupId,
       })
+    }
   }
 
   if (decisionHasChanged && ['rejected', 'revise'].includes(decision)) {
@@ -932,7 +927,6 @@ const manuscriptsUserHasCurrentRoleIn = async (
   // Get those top-level manuscripts with all versions, all with teams and members
   const allManuscriptsWithInfo = []
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const someIds of chunk(firstVersionIds, 20)) {
     // eslint-disable-next-line no-await-in-loop
     const someManuscriptsWithInfo = await Manuscript.query()
@@ -986,7 +980,6 @@ const manuscriptsUserHasCurrentRoleIn = async (
     )
 
     if (rolesFound.size) {
-      // eslint-disable-next-line no-param-reassign
       latestVersion.hasOverdueTasksForUser = manuscriptHasOverdueTasksForUser(
         latestVersion,
         userId,
@@ -1222,7 +1215,6 @@ const publishedManuscriptReviews = async (manuscript, userId) => {
     manuscript.threadedDiscussions ||
     (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const review of reviews) {
     const jsonData = JSON.parse(review.jsonData)
 
@@ -1331,8 +1323,8 @@ const publishManuscript = async (id, groupId) => {
         await publishToCrossref(manuscript)
         succeeded = true
       } catch (e) {
-        console.error('error publishing to crossref')
-        console.error(e)
+        logger.error('error publishing to crossref')
+        logger.error(e)
         errorMessage = e.message
       }
     }
@@ -1362,8 +1354,8 @@ const publishManuscript = async (id, groupId) => {
 
         succeeded = true
       } catch (e) {
-        console.error('error publishing to datacite')
-        console.error(e)
+        logger.error('error publishing to datacite')
+        logger.error(e)
         errorMessage = e.message
       }
     }
@@ -1385,8 +1377,8 @@ const publishManuscript = async (id, groupId) => {
         await publishToDOAJ(manuscript)
         succeeded = true
       } catch (e) {
-        console.error('error publishing to DOAJ')
-        console.error(e)
+        logger.error('error publishing to DOAJ')
+        logger.error(e)
         errorMessage = e.message
       }
     }
@@ -1411,8 +1403,8 @@ const publishManuscript = async (id, groupId) => {
       }
       succeeded = true
     } catch (e) {
-      console.error('error while publishing to google spreadsheet')
-      console.error(e)
+      logger.error('error while publishing to google spreadsheet')
+      logger.error(e)
       errorMessage = e.message
     }
 
@@ -1428,7 +1420,7 @@ const publishManuscript = async (id, groupId) => {
       await publishToHypothesis(manuscript)
       succeeded = true
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       let message = 'Publishing to hypothes.is failed!\n'
       if (err.response) {
         message += `${err.response.status} ${err.response.statusText}\n`
@@ -1445,7 +1437,7 @@ const publishManuscript = async (id, groupId) => {
       await tryPublishingWebhook(manuscript.id)
       steps.push({ stepLabel: 'Publishing webhook', succeeded: true })
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       steps.push({
         stepLabel: 'Publishing webhook',
         succeeded: false,
@@ -1458,7 +1450,7 @@ const publishManuscript = async (id, groupId) => {
     if (await tryPublishDocMaps(manuscript))
       steps.push({ stepLabel: 'DOCMAPS', succeeded: true })
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     steps.push({
       stepLabel: 'DOCMAPS',
       succeeded: false,
@@ -1470,7 +1462,7 @@ const publishManuscript = async (id, groupId) => {
     if (await publishOnCMS(manuscript.groupId, manuscript.id))
       steps.push({ stepLabel: 'Publishing CMS', succeeded: true })
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     steps.push({
       stepLabel: 'Publishing CMS',
       succeeded: false,
@@ -1486,7 +1478,7 @@ const publishManuscript = async (id, groupId) => {
           succeeded: true,
         })
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       steps.push({
         stepLabel: 'COAR Notify review complete announcement failed',
         succeeded: false,
@@ -1518,7 +1510,7 @@ const publishManuscript = async (id, groupId) => {
           succeeded: true,
         })
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       steps.push({
         stepLabel: 'COAR Notify endorsement announcement failed',
         succeeded: false,
@@ -1541,7 +1533,7 @@ const publishManuscript = async (id, groupId) => {
         })
       }
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       steps.push({
         stepLabel: 'COAR Notify relationship announcement failed',
         succeeded: false,
@@ -1557,7 +1549,7 @@ const publishManuscript = async (id, groupId) => {
         succeeded: true,
       })
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     steps.push({
       stepLabel: 'COAR Notify review announcement to Sciety failed',
       succeeded: false,
@@ -1648,7 +1640,7 @@ const updateAda = async (id, adaState) => {
 
       updatedManuscript = await Manuscript.query().patchAndFetchById(id, update)
     } catch (err) {
-      console.error(err)
+      logger.error(err)
 
       const errorData = err.response?.data || {}
 
@@ -2048,13 +2040,14 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
     userId: editor.user.id,
   })
 
-  updated.status === 'completed' &&
+  if (updated.status === 'completed') {
     seekEvent('author-proofing-submit-feedback', {
       manuscript,
       author,
       context: { recipient: 'Editor', messageContent },
       groupId: manuscript.groupId,
     })
+  }
 
   return updated
 }
@@ -2100,9 +2093,8 @@ const submitManuscript = async (id, input, userId) => {
 }
 
 const supplementaryFiles = async manuscript => {
-  const supplementaryFilesWithTitles = await getPublishableSubmissionFiles(
-    manuscript,
-  )
+  const supplementaryFilesWithTitles =
+    await getPublishableSubmissionFiles(manuscript)
 
   return JSON.stringify(supplementaryFilesWithTitles)
 }
@@ -2128,7 +2120,7 @@ const tryPublishingWebhook = async manuscriptId => {
       // .then(res => {})
       .catch(error => {
         const message = `Failed to call publishing webhook at ${publishingWebhookUrl} for article ${manuscriptId}`
-        console.error(error)
+        logger.error(error)
         throw new Error(message)
       })
   }
@@ -2137,7 +2129,6 @@ const tryPublishingWebhook = async manuscriptId => {
 const updateManuscript = async (id, input) => {
   const msDelta = JSON.parse(input) // Convert the JSON input to JavaScript object
   if (msDelta.submission?.$doi?.startsWith('https://doi.org/'))
-    /* eslint-disable-next-line prefer-destructuring */
     msDelta.submission.$doi =
       msDelta.submission.$doi.split('https://doi.org/')[1]
 
@@ -2178,7 +2169,6 @@ const updateManuscript = async (id, input) => {
   // The latter will help with queries against other submission fields.
   if (msDelta.submission?.$doi) updatedMs.doi = msDelta.submission.$doi
 
-  /* eslint-disable-next-line prefer-destructuring */
   updatedMs.submission.$editDate = new Date().toISOString().split('T')[0]
 
   // If the status is `submitted` or 'embargoReleased' and `submission.$embargoDate` is present we update the staus to `underEmbargo`

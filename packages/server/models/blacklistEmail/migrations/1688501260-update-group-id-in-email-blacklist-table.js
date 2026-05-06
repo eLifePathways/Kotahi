@@ -1,16 +1,13 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const BlacklistEmail = require('../blacklistEmail.model')
 const Group = require('../../group/group.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const blacklistEmails = await BlacklistEmail.query(trx)
       const groups = await Group.query(trx)
-
-      logger.info(`Existing BlacklistEmails count: ${blacklistEmails.length}`)
-      logger.info(`Existing Groups count: ${groups.length}`)
 
       // Existing instances migrating to multi-tenancy groups
       if (
@@ -22,8 +19,6 @@ exports.up = async knex => {
         await BlacklistEmail.query(trx)
           .patch({ groupId: groups[0].id })
           .where('groupId', null)
-
-        logger.info('groupId patched successfully in blacklist email table')
       }
     })
   } catch (error) {

@@ -4,7 +4,7 @@ const crypto = require('crypto')
 const htmlparser2 = require('htmlparser2')
 const cheerio = require('cheerio')
 const { promisify } = require('util')
-const { createFile, fileStorage, File } = require('@coko/server')
+const { createFile, fileStorage, File, logger } = require('@coko/server')
 const makeZip = require('../../utils/ziputils')
 const makeSvgsFromLatex = require('./makeSvgsFromLatex')
 const { getFileWithUrl } = require('../../utils/fileStorageUtils')
@@ -101,7 +101,7 @@ const makeZipFile = async (manuscriptId, jats) => {
   ) // || x.tags.includes('visualAbstract')),
 
   if (supplementaryFiles && supplementaryFiles.length) {
-    console.error('Supplementary files found!')
+    logger.error('Supplementary files found!')
 
     let supplementaryJats = ''
 
@@ -161,7 +161,7 @@ const makeZipFile = async (manuscriptId, jats) => {
         imageObjects.map(async imageObject => {
           const targetPath = `${imageDirName}/${imageObject.key}`
           await fileStorage.download(imageObject.key, targetPath)
-          console.error(`Attached image ${imageObject.key}`)
+          logger.error(`Attached image ${imageObject.key}`)
         }),
       )
     }
@@ -171,7 +171,7 @@ const makeZipFile = async (manuscriptId, jats) => {
       await Promise.all(
         svgList.filter(Boolean).map(async svg => {
           await fsPromised.appendFile(`${imageDirName}/${svg.name}`, svg.svg)
-          console.error(`Attached formula ${svg.name}`)
+          logger.error(`Attached formula ${svg.name}`)
         }),
       )
     }
@@ -197,7 +197,7 @@ const makeZipFile = async (manuscriptId, jats) => {
       suppObjects.map(async suppObject => {
         const targetPath = `${suppDirName}/${suppObject.name}`
         await fileStorage.download(suppObject.key, targetPath)
-        console.error(`Attached supplementary file ${suppObject.name}.`)
+        logger.error(`Attached supplementary file ${suppObject.name}.`)
       }),
     )
   }
@@ -207,10 +207,10 @@ const makeZipFile = async (manuscriptId, jats) => {
   const createdFile = await createFile(
     fs.createReadStream(`${zipPath}`),
     `${manuscriptId}.zip`,
-    null,
-    null,
-    ['zippedJats'],
-    manuscriptId,
+    {
+      tags: ['zippedJats'],
+      objectId: manuscriptId,
+    },
   )
 
   const downloadReadyZipFile = await getFileWithUrl(createdFile)

@@ -1,0 +1,215 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types, react/display-name */
+
+import { useContext, useMemo, useState, useEffect } from 'react'
+import { TextSelection } from 'prosemirror-state'
+import { last, maxBy } from 'lodash'
+import styled from 'styled-components'
+import {
+  WaxContext,
+  ApplicationContext,
+  DocumentHelpers,
+} from 'wax-prosemirror-core'
+import { v4 as uuidv4 } from 'uuid'
+import { override } from '@coko/client'
+import CommentBox from './ui/comments/CommentBox'
+
+const ConnectedCommentStyled = styled.div`
+  margin-left: ${props => (props.active ? `${-20}px` : `${50}px`)};
+  position: absolute;
+  transition: ${props =>
+    props.active && props.length
+      ? `none!important`
+      : `all 0.25s`}; /* was 1.3s */
+  width: 200px;
+
+  @media (width <= 600px) {
+    margin-left: 15px;
+  }
+  /* stylelint-disable order/properties-alphabetical-order */
+  ${override(
+    'Wax.CommentOuterBox',
+  )}/* stylelint-enable order/properties-alphabetical-order */
+`
+
+export default ({ comment, top, commentId, recalculateTops }) => {
+  const context = useContext(WaxContext)
+  const { app } = useContext(ApplicationContext)
+
+  const {
+    pmViews,
+    pmViews: {
+      main: {
+        props: { user },
+      },
+    },
+    activeView,
+  } = context
+
+  const [isActive, setIsActive] = useState(false)
+  const [clickPost, setClickPost] = useState(false)
+
+  const { state, dispatch } = activeView
+  const viewId = comment.attrs.viewid
+  let allCommentsWithSameId = []
+
+  if (pmViews[viewId]) {
+    allCommentsWithSameId = DocumentHelpers.findAllMarksWithSameId(
+      pmViews[viewId].state,
+      comment,
+    )
+  }
+
+  const commentMark = state.schema.marks.comment
+
+  const styles = {
+    top: `${top}px`,
+  }
+
+  const commentConfig = app.config.get('config.CommentsService')
+  const isReadOnly = commentConfig ? commentConfig.readOnly : false
+
+  const isReadOnlyCommentReply = commentConfig
+    ? commentConfig.replyToReadOnlyComments
+    : false
+
+  const commentPlugin = app.PmPlugins.get('commentPlugin')
+  const activeComment = commentPlugin.getState(activeView.state).comment
+
+  useEffect(() => {
+    setIsActive(false)
+    recalculateTops()
+
+    if (activeComment && commentId === activeComment.attrs.id) {
+      setIsActive(true)
+      recalculateTops()
+    }
+  }, [activeComment])
+
+  const onClickPost = content => {
+    // const { tr } = state
+    setClickPost(true)
+
+    const obj = {
+      content,
+      displayName: user.username,
+      timestamp: Math.floor(Date.now()),
+    }
+
+    comment.attrs.conversation.push(obj)
+    const id = uuidv4()
+    allCommentsWithSameId.forEach(singleComment => {
+      activeView.dispatch(
+        activeView.state.tr.removeMark(
+          singleComment.pos,
+          singleComment.pos + singleComment.node.nodeSize,
+          commentMark,
+        ),
+      )
+
+      activeView.dispatch(
+        activeView.state.tr
+          .addMark(
+            singleComment.pos,
+            singleComment.pos + singleComment.node.nodeSize,
+            commentMark.create({
+              id,
+              group: comment.attrs.group,
+              viewid: comment.attrs.viewid,
+              conversation: comment.attrs.conversation,
+            }),
+          )
+          .setMeta('forceUpdate', true),
+      )
+    })
+    activeView.focus()
+    recalculateTops()
+  }
+
+  const onClickBox = () => {
+    if (isActive) {
+      pmViews[viewId].focus()
+      return false
+    }
+
+    if (viewId !== 'main') context.updateView({}, viewId)
+
+    const maxPos = maxBy(allCommentsWithSameId, 'pos')
+    maxPos.pos += last(allCommentsWithSameId).node.nodeSize
+
+    pmViews[viewId].dispatch(
+      pmViews[viewId].state.tr.setSelection(
+        new TextSelection(pmViews[viewId].state.tr.doc.resolve(maxPos.pos)),
+      ),
+    )
+
+    pmViews[viewId].focus()
+    return true
+  }
+
+  const onClickResolve = () => {
+    let maxPos = comment.pos
+    let minPos = comment.pos
+
+    allCommentsWithSameId.forEach(singleComment => {
+      const markPosition = DocumentHelpers.findMarkPosition(
+        state,
+        singleComment.pos,
+        'comment',
+      )
+
+      if (markPosition.from < minPos) minPos = markPosition.from
+      if (markPosition.to > maxPos) maxPos = markPosition.to
+    })
+    // if (allCommentsWithSameId.length > 1);
+    // maxPos += last(allCommentsWithSameId).node.nodeSize;
+    recalculateTops()
+    dispatch(state.tr.removeMark(minPos, maxPos, commentMark))
+    activeView.focus()
+  }
+
+  const onTextAreaBlur = (content, isNewComment) => {
+    // TODO Save into local storage
+    // if (content !== '') {
+    //   onClickPost(content);
+    // }
+    setTimeout(() => {
+      if (
+        comment.attrs.conversation.length === 0 &&
+        isNewComment &&
+        !clickPost
+      ) {
+        onClickResolve()
+        activeView.focus()
+      }
+    }, 400)
+  }
+
+  const MemorizedComponent = useMemo(
+    () => (
+      <ConnectedCommentStyled
+        active={isActive}
+        data-box={commentId}
+        length={comment.attrs.conversation.length === 0}
+        style={styles}
+      >
+        <CommentBox
+          active={isActive}
+          commentData={comment.attrs.conversation}
+          commentId={commentId}
+          isReadOnly={isReadOnly}
+          isReadOnlyCommentReply={isReadOnlyCommentReply}
+          key={commentId}
+          onClickBox={onClickBox}
+          onClickPost={onClickPost}
+          onClickResolve={onClickResolve}
+          onTextAreaBlur={onTextAreaBlur}
+          recalculateTops={recalculateTops}
+        />
+      </ConnectedCommentStyled>
+    ),
+    [isActive, top, comment.attrs.conversation.length],
+  )
+
+  return <>{MemorizedComponent}</>
+}

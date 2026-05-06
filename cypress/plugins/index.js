@@ -1,4 +1,4 @@
-module.exports = async (on, config) => {
+export default async (on, config) => {
   on('task', {})
 
   // important: return the changed config

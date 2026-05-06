@@ -18,8 +18,9 @@ const {
 let allDocmapsScheme
 
 try {
-  // eslint-disable-next-line global-require, import/no-unresolved
+  // eslint-disable-next-line import/no-unresolved, n/no-missing-require
   allDocmapsScheme = require('../../../config/journal/docmaps_scheme.json')
+  /* eslint-disable-next-line */
 } catch (err) {
   allDocmapsScheme = null
 }
@@ -52,7 +53,6 @@ const expandTemplatesOnSingleItemRecursive = (
   return item
 }
 
-/* eslint-disable no-param-reassign */
 const expandTemplatesAndRemoveDirectivesRecursive = (
   scheme,
   expandTemplateFunc,
@@ -66,7 +66,6 @@ const expandTemplatesAndRemoveDirectivesRecursive = (
       maxDepth,
     )
   })
-/* eslint-enable no-param-reassign */
 
 const tryPublishDocMaps = async manuscript => {
   if (!allDocmapsScheme) return false

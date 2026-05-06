@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-no-important */
+
 .rc-tooltip-arrow {
   border-bottom-color: black !important;
   border-top-color: black !important;

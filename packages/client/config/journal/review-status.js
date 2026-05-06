@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     color: '#fff2cd',
     label: 'Invited',

@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import { gql } from '@apollo/client'
 import * as cheerio from 'cheerio'
 
@@ -477,7 +479,7 @@ const createManuscriptPromise = (
 
   if (file) {
     source = typeof response === 'string' ? response : undefined
-    /* eslint-disable-next-line no-param-reassign */
+
     delete data.uploadFile.storedObjects[0].url
     files = [
       {
@@ -523,7 +525,7 @@ const createManuscriptPromise = (
 const redirectPromise = (
   setConversionState,
   journals,
-  history,
+  navigate,
   data,
   config,
 ) => {
@@ -539,7 +541,7 @@ const redirectPromise = (
 
   // redirect after a short delay
   window.setTimeout(() => {
-    history.push(route)
+    navigate(route)
   }, 2000)
 }
 
@@ -551,7 +553,7 @@ const skipXSweet = file =>
 
 export default ({
     client,
-    history,
+    navigate,
     journals,
     currentUser,
     setConversion,
@@ -635,7 +637,7 @@ export default ({
       return redirectPromise(
         setConversion,
         journals,
-        history,
+        navigate,
         manuscriptData.data,
         config,
       )

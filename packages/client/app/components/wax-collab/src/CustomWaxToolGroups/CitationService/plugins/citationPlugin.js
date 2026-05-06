@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -43,6 +42,7 @@ export default (key, config) =>
     },
     props: {
       config,
+      /* eslint-disable-next-line no-unused-vars */
       decorations: function decorations(state) {
         // return this.getState(state)
       },

@@ -2,18 +2,16 @@ const { useTransaction } = require('@coko/server')
 
 const Team = require('../team.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const authorTeams = await Team.query(trx)
         .where('role', 'author')
         .withGraphFetched('[manuscript, members]')
 
-      // eslint-disable-next-line no-restricted-syntax
       for (const authorTeam of authorTeams) {
         const submitterId = authorTeam.manuscript?.submitterId
 
-        // eslint-disable-next-line no-restricted-syntax
         for (const member of authorTeam.members) {
           // Check if the member's userId is not equal to the submitterId
           if (member.userId !== submitterId) {

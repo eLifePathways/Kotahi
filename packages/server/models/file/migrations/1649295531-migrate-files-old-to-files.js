@@ -9,7 +9,7 @@ const {
 
 const File = require('../file.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const filesOld = await File.query(trx)
@@ -22,14 +22,10 @@ exports.up = async knex => {
         filesOld.map(async file => {
           const filePath = path.join(__dirname, `..${file.url}`)
           const fileStream = fs.createReadStream(filePath)
-          await createFile(
-            fileStream,
-            file.filename,
-            null,
-            null,
-            [file.fileType],
-            file.reviewCommentId || file.manuscriptId,
-          )
+          await createFile(fileStream, file.filename, {
+            tags: [file.fileType],
+            objectId: file.reviewCommentId || file.manuscriptId,
+          })
           // migratedFiles += 1
         }),
       )

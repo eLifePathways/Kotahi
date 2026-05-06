@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { Menu } from '../../page-object/page-component/menu'
 import { LoginPage } from '../../page-object/login-page'
 import { manuscripts, login } from '../../support/routes2'
@@ -6,14 +7,13 @@ import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 
 describe('Login page tests', () => {
   before(() => {
-    cy.fixture('branding_settings').then(settings => {
+    cy.fixture('branding_settings').then(() => {
       const restoreUrl = Cypress.config('restoreUrl')
       cy.request('POST', `${restoreUrl}/commons.elife_bootstrap`)
     })
   })
 
   it('page should display eLife branding settings', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('branding_settings').then(settings => {
       cy.visit(login)
 
@@ -48,7 +48,6 @@ describe('Login page tests', () => {
 
       beforeEach(() => {
         // login as admin
-        // eslint-disable-next-line jest/valid-expect-in-promise
         cy.fixture('role_names').then(name => {
           cy.login(name.role.admin, manuscripts)
         })

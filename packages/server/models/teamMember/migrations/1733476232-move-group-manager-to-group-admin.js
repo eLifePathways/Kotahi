@@ -4,7 +4,7 @@ const Group = require('../../group/group.model')
 const Team = require('../../team/team.model')
 const TeamMember = require('../teamMember.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const groups = await Group.query(trx)
 
@@ -82,7 +82,7 @@ exports.up = async knex => {
   })
 }
 
-exports.down = async knex => {
+exports.down = async () => {
   return useTransaction(async trx => {
     const groups = await Group.query(trx)
 

@@ -1,4 +1,4 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/no-nesting */
 
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -64,7 +64,6 @@ describe('Manuscripts page tests', () => {
       ManuscriptsPage.clickEvaluationAndVerifyUrl()
       SubmissionFormPage.getWordCountInfo().its('length').should('eq', 4)
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 4; i++) {
         SubmissionFormPage.getWordCountInfo()
           .eq(i)

@@ -21,7 +21,6 @@ class PublishedArtifact extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const Manuscript = require('../manuscript/manuscript.model')
 
     return {

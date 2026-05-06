@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { htmlToJats } = require('../jatsUtils')
 
 describe('htmlToJats', () => {

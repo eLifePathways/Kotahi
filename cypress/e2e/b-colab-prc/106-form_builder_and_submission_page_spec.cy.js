@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect, cypress/unsafe-to-chain-command */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard } from '../../support/routes1'
@@ -13,7 +15,7 @@ describe('Form builder and Submission pages', () => {
 
   it('viewing and adding fields in Submission, Review and Decision forms', () => {
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -100,7 +102,6 @@ describe('Form builder and Submission pages', () => {
     it('word count button should be visible & display info', () => {
       SubmissionFormPage.getWordCountInfo().its('length').should('eq', 5)
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 5; i++) {
         SubmissionFormPage.getWordCountInfo()
           .eq(i)
@@ -129,7 +130,7 @@ describe('Form builder and Submission pages', () => {
 
     it('author uploads manuscript after filling in all the required fields', () => {
       // Change the title so that we can look for it
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInTitle(data.newTitle)
         SubmissionFormPage.fillInDoi(data.doi)

@@ -1,4 +1,5 @@
 const { raw } = require('objection')
+const { logger } = require('@coko/server')
 
 const Manuscript = require('../../models/manuscript/manuscript.model')
 
@@ -33,12 +34,12 @@ class DoiExistenceChecker {
         // TODO If the number of manuscripts is very large we may need to be more sophisticated:
         // e.g., we could use a bloom filter to detect possible matches and then hit the database to confirm.
       } catch (err) {
-        console.error(
+        logger.error(
           `Failed to populate set of ${
             this.archiveStatus ? 'archived ' : ''
           }DOIs for group ${this.groupId}:`,
         )
-        console.error(err)
+        logger.error(err)
         this.doiSet = null
       }
     }

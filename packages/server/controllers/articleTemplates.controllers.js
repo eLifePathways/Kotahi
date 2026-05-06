@@ -75,7 +75,6 @@ const updateTemplate = async (id, input) => {
       })
     }
 
-    // eslint-disable-next-line no-param-reassign
     input.article = ''
   }
 

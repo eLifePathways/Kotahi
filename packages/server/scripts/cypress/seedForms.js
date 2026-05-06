@@ -1,10 +1,8 @@
 const seedForms = require('../seedForms')
 
 const seedFormsCypress = async () => {
-  /* eslint-disable global-require */
   const Group = require('../../models/group/group.model')
   const Config = require('../../models/config/config.model')
-  /* eslint-enable global-require */
 
   // eslint-disable-next-line no-console
   console.log('Seeding forms...')

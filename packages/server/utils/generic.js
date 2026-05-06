@@ -3,6 +3,7 @@ const isValidURL = string => {
     /* eslint-disable-next-line no-new */
     new URL(string)
     return true
+    /* eslint-disable-next-line */
   } catch (error) {
     return false
   }

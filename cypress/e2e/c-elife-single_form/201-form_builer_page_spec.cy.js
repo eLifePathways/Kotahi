@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect, cypress/unsafe-to-chain-command */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 import { FormsPage } from '../../page-object/forms-page'
 // import { Menu } from '../../page-object/page-component/menu'
 import { submissionForm } from '../../support/routes2'
@@ -11,7 +13,6 @@ describe('Form builder', () => {
 
   beforeEach(() => {
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, submissionForm)
     })
@@ -39,7 +40,6 @@ describe('Form builder', () => {
           data.preprint1.summaryDate,
         ]
 
-        // eslint-disable-next-line no-plusplus
         for (let i = 0; i < 16; i++) {
           FormsPage.getFormBuilderElementName(i).should(
             'contain',
@@ -73,7 +73,6 @@ describe('Form builder', () => {
         'Text',
       ]
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 16; i++) {
         FormsPage.clickFormOption(i)
         cy.getByDataTestId('fieldType').should('contain', typeField[i])

@@ -318,7 +318,7 @@ const makeFrontMatter = html => {
     if (frontMatter.indexOf('<h1>') > -1) {
       // if there's an H1 in the front matter, send it back as the title.
       // note that we are only taking the first one
-      // eslint-disable-next-line prefer-destructuring
+
       title = frontMatter.split('<h1>')[1].split('</h1>')[0]
     }
 
@@ -327,7 +327,7 @@ const makeFrontMatter = html => {
     if (frontMatter.indexOf('<section class="abstractSection">') > -1) {
       // we are only taking the first one.
       // if there is more than one abstract, subsequent ones will be ignored
-      // eslint-disable-next-line prefer-destructuring
+
       abstract = frontMatter
         .split('<section class="abstractSection">')[1]
         .split('</section>')[0]

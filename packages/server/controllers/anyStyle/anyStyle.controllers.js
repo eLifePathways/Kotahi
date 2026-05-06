@@ -1,3 +1,5 @@
+/* eslint-disable promise/always-return */
+
 const fs = require('fs-extra')
 const fsPromised = require('fs').promises
 const crypto = require('crypto')
@@ -5,7 +7,7 @@ const { promisify } = require('util')
 const FormData = require('form-data')
 const axios = require('axios')
 const striptags = require('striptags')
-const config = require('config')
+const { config } = require('@coko/server')
 
 const { logger } = require('@coko/server')
 
@@ -14,7 +16,7 @@ const { formatCitation } = require('../../utils/reference')
 
 const randomBytes = promisify(crypto.randomBytes)
 
-const { clientId, clientSecret, port, protocol, host } = config.anystyle
+const { clientId, clientSecret, port, protocol, host } = config.get('anystyle')
 
 const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
 
@@ -130,7 +132,7 @@ const parseCitations = async (references, startNumber = 0) => {
   const form = new FormData()
   // clean any HTML out of what's coming in to Anystyle so it isn't confused
   form.append('txt', fs.createReadStream(`${txtPath}`))
-  // eslint-disable-next-line
+
   // console.log('Text path: ', txtPath)
   return new Promise((resolve, reject) => {
     axios({
@@ -148,7 +150,7 @@ const parseCitations = async (references, startNumber = 0) => {
         // 2 pass citations to HTML wrapper
         // res.data is Anystyle XML as a string
         // TODO: take an initial index for the reference IDs so we don't make duplicate IDs
-        // eslint-disable-next-line
+
         // console.log('Result from Anystyle:', res.data)
 
         const htmledResult =
@@ -207,7 +209,7 @@ const parseCitationsCSL = async (references, startNumber = 0, groupId) => {
   const form = new FormData()
   // clean any HTML out of what's coming in to Anystyle so it isn't confused
   form.append('txt', fs.createReadStream(`${txtPath}`))
-  // eslint-disable-next-line
+
   // console.log('Text path: ', txtPath)
   return new Promise((resolve, reject) => {
     axios({
@@ -232,14 +234,13 @@ const parseCitationsCSL = async (references, startNumber = 0, groupId) => {
           res.data.map(async citation => {
             // reshaping Anystyle CSL to match what we expect
             if (citation.issued) {
-              // eslint-disable-next-line
               citation.issued = { raw: citation.issued }
             }
 
             const formattedCitation = await formatCitation(citation, groupId)
-            // eslint-disable-next-line
+
             citation.formattedCitation = formattedCitation.result
-            // eslint-disable-next-line
+
             citation.citeHtml = formattedCitation.citeHtml
             return citation
           }),

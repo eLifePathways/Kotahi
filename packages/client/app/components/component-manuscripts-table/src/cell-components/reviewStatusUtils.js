@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 const findReviewerTeamMember = (version, userId) =>
   ((version.teams ?? []).find(t => t.role === 'reviewer')?.members ?? []).find(
     m => m.user.id === userId,
@@ -26,7 +24,6 @@ export const findReviewerStatus = (manuscript, userId) => {
   if (!member) {
     memberIsCurrent = false
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const version of manuscript.manuscriptVersions) {
       member = findReviewerTeamMember(version, userId)
       if (member) break

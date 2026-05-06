@@ -1,4 +1,3 @@
-/* eslint-disable padding-line-between-statements */
 /// <reference types="Cypress" />
 /**
  * Page object representing the Control page,
@@ -69,7 +68,6 @@ const DECISION_FILE_INPUT = 'input[type=file]'
 
 const CHECK_SVG = 'check-svg'
 
-// eslint-disable-next-line import/prefer-default-export
 export const ControlPage = {
   getInviteReviewerDropdown() {
     return cy.getByContainsAriaLabel(INVITE_REVIEWER_DROPDOWN)
@@ -82,7 +80,7 @@ export const ControlPage = {
     this.selectReviewerNamed(name)
     this.clickInviteReviewerSubmit()
     this.clickReviewerSubmitModalButton()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+
     // cy.wait(1000)
   },
   getInviteReviewerOptionList() {
@@ -189,7 +187,7 @@ export const ControlPage = {
   },
   clickHideReviewToAuthor() {
     this.getHideReviewToAuthorCheckbox().click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+
     // cy.wait(2000)
     // cy.getHideReviewToAuthorCheckbox('should', 'not.be.checked')
   },
@@ -198,7 +196,7 @@ export const ControlPage = {
   },
   clickHideReviewerNameToAuthor() {
     this.getHideReviewerNameCheckbox().click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+
     // cy.wait(2000)
   },
   getReviewerSubmitModalButton() {

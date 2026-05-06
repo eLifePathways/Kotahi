@@ -84,21 +84,17 @@ const sanitizeWaxImages = async (content, manuscriptId) => {
           extension = getExtensionFromMimetype(mimetype)
         } catch (e) {
           throw new WaxImageSanitizerError(
-            `Failed to download image from ${src}`,
+            `Failed to download image from ${src}: ${e.message}`,
           )
         }
 
         const raw = await crypto.randomBytes(16)
         const filename = `${raw.toString('hex')}.${extension}`
 
-        const createdFile = await createFile(
-          fileStream,
-          filename,
-          null,
-          null,
-          ['manuscriptImage'],
-          manuscriptId,
-        )
+        const createdFile = await createFile(fileStream, filename, {
+          tags: ['manuscriptImage'],
+          objectId: manuscriptId,
+        })
 
         element.attr('data-fileid', createdFile.id)
       }
@@ -108,14 +104,10 @@ const sanitizeWaxImages = async (content, manuscriptId) => {
         const extension = base64Match[0].split('/')[1]
         const filename = `${raw.toString('hex')}.${extension}`
 
-        const createdFile = await createFile(
-          src,
-          filename,
-          null,
-          null,
-          ['manuscriptImage'],
-          manuscriptId,
-        )
+        const createdFile = await createFile(src, filename, {
+          tags: ['manuscriptImage'],
+          objectId: manuscriptId,
+        })
 
         element.attr('data-fileid', createdFile.id)
       }

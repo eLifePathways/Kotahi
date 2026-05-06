@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard } from '../../support/routes'
@@ -12,7 +13,7 @@ describe('Login test', () => {
     cy.request('POST', `${seedUrl}/new_user`)
 
     // login as admin and validate admin is logged in
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
       // enter email

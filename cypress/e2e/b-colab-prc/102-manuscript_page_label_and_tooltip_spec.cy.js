@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { dashboard } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -11,7 +12,6 @@ describe('Checking manuscripts page: label selection and tooltip', () => {
     const restoreUrl = Cypress.config('restoreUrl')
     cy.request('POST', `${restoreUrl}/commons.colab_bootstrap`)
 
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -69,7 +69,6 @@ describe('Checking manuscripts page: label selection and tooltip', () => {
 
     it('check tooltip text', () => {
       cy.contains('Continue Submission').click()
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInAbstractColab(data.abstract)
         Menu.clickManuscriptsAndAssertPageLoad()
@@ -85,7 +84,6 @@ describe('Checking manuscripts page: label selection and tooltip', () => {
 
     it('check length for the tooltip text, to be less than 1000', () => {
       cy.contains('Continue Submission').click()
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInAbstractColab(
           data.abstractWithMoreThan1000Characters,

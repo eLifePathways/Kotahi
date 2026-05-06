@@ -1,6 +1,12 @@
 const { Readable } = require('stream')
 
-const { createFile, fileStorage, request, File } = require('@coko/server')
+const {
+  createFile,
+  fileStorage,
+  request,
+  File,
+  logger,
+} = require('@coko/server')
 
 const {
   ArticleTemplate,
@@ -37,14 +43,10 @@ const addResourceToFolder = async (id, type) => {
   let fileId = null
 
   if (!type) {
-    const insertedFile = await createFile(
-      Readable.from(' '),
-      name,
-      null,
-      null,
-      ['cmsTemplateFile'],
-      insertedResource.id,
-    )
+    const insertedFile = await createFile(Readable.from(' '), name, {
+      tags: ['cmsTemplateFile'],
+      objectId: insertedResource.id,
+    })
 
     fileId = insertedFile.id
 
@@ -218,7 +220,7 @@ const deleteResource = async id => {
         await File.query().deleteById(id)
       }
     } catch (e) {
-      throw new Error('The was a problem deleting the file')
+      throw new Error(`The was a problem deleting the file: ${e.message}`)
     }
   } else {
     const hasChildren = await CmsFileTemplate.query().where({
@@ -366,6 +368,7 @@ const layoutFavicon = async layout => {
     file.storedObjects = await setFileUrls(file.storedObjects)
     return file
   } catch (error) {
+    logger.error(error)
     return null
   }
 }
@@ -476,6 +479,7 @@ const storedPartnerFile = async storedPartner => {
     file.storedObjects = updatedStoredObjects
     return file
   } catch (err) {
+    logger.error(err)
     return null
   }
 }

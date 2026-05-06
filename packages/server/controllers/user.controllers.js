@@ -351,7 +351,6 @@ const paginatedUsers = async (userId, groupId, sort, offset, limit) => {
 
   const users = await query
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const someUsers of chunk(users, 10)) {
     // eslint-disable-next-line no-await-in-loop
     await Promise.all(
@@ -375,6 +374,7 @@ const profilePicture = async user => {
 
   try {
     small = file.getStoredObjectBasedOnType('small')
+    /* eslint-disable-next-line */
   } catch (e) {
     return null
   }
@@ -528,6 +528,7 @@ const sendEmailWithPreparedData = async (
       manuscript,
     }
 
+    /* eslint-disable-next-line prefer-const */
     let { cc, body, subject, ccEditors } = template.emailContent ?? {}
 
     // TODO: replace this as we dont have cc or ccEditors in the template anymore
@@ -548,7 +549,7 @@ const sendEmailWithPreparedData = async (
 
     return { success: result }
   } catch (e) {
-    console.error(e)
+    logger.error(e)
     return { success: false }
   }
 }
@@ -798,6 +799,7 @@ const updateEmail = async (id, email) => {
       )
 
       return { success: true, user: updatedUser }
+      /* eslint-disable-next-line */
     } catch (e) {
       return { success: false, error: 'smthWentWrong', user: null }
     }
@@ -826,9 +828,8 @@ const updateRecentTab = async (userId, tab) => {
 
 const updateUser = async (id, input) => {
   if (input.password) {
-    // eslint-disable-next-line no-param-reassign
     input.passwordHash = await User.hashPassword(input.password)
-    // eslint-disable-next-line no-param-reassign
+
     delete input.password
   }
 

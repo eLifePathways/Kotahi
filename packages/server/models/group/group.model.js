@@ -11,13 +11,12 @@ class Group extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const Config = require('../config/config.model')
-    /* eslint-disable-next-line global-require */
+
     const Manuscript = require('../manuscript/manuscript.model')
-    /* eslint-disable-next-line global-require */
+
     const Form = require('../form/form.model')
-    /* eslint-disable-next-line global-require */
+
     const Channel = require('../channel/channel.model')
 
     return {

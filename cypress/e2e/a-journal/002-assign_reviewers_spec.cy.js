@@ -1,10 +1,12 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
 
-import { seniorEditor } from '../../fixtures/role_names'
+import roles from '../../fixtures/role_names'
 import { ControlPage } from '../../page-object/control-page'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard } from '../../support/routes'
+
+const { seniorEditor } = roles
 
 describe('Editor assigning reviewers', () => {
   before(() => {
@@ -22,7 +24,6 @@ describe('Editor assigning reviewers', () => {
     cy.reload()
     cy.awaitDisappearSpinner()
 
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       // login as seniorEditor
       cy.login(name.role.seniorEditor, dashboard)
@@ -33,7 +34,7 @@ describe('Editor assigning reviewers', () => {
 
       // Invite all the reviewers
       cy.reload()
-      name.role.reviewers.forEach((reviewer, index) => {
+      name.role.reviewers.forEach(reviewer => {
         ControlPage.clickInviteReviewerDropdown()
         ControlPage.inviteReviewer(reviewer)
         // Ensure modal closes before continuing

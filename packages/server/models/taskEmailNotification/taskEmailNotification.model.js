@@ -15,11 +15,9 @@ class TaskEmailNotification extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const User = require('../user/user.model')
     const Task = require('../task/task.model')
     const EmailTemplate = require('../emailTemplate/emailTemplate.model')
-    /* eslint-enable global-require */
 
     return {
       recipientUser: {

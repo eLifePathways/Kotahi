@@ -1,5 +1,6 @@
 const { default: axios } = require('axios')
 const rateLimit = require('axios-rate-limit')
+const { logger } = require('@coko/server')
 
 const { createFormattedReference } = require('./reference')
 
@@ -45,7 +46,7 @@ const getUrlByDoiFromDataCite = async doi => {
       return null
     }
 
-    console.error(
+    logger.error(
       `Failed to retrieve URL for DOI ${doi} from DataCite: ${response.statusText}`,
     )
     return null
@@ -54,7 +55,7 @@ const getUrlByDoiFromDataCite = async doi => {
       // eslint-disable-next-line no-console
       console.log(`Unknown DOI ${doi}. DataCite cannot return URL for this.`)
     else
-      console.error(
+      logger.error(
         `Failed to retrieve URL from DataCite for DOI ${doi}: ${error}`,
       )
     return null
@@ -84,7 +85,7 @@ const getCrossRefCitationFromDoi = async (doi, contactEmail) => {
       return response.data.message?.resource?.primary?.URL
     }
 
-    console.error(
+    logger.error(
       `Could not retrieve citation from CrossRef for DOI ${doi}: ${response.statusText}`,
     )
     return null
@@ -95,7 +96,7 @@ const getCrossRefCitationFromDoi = async (doi, contactEmail) => {
     // if (error.response?.status === 429) {
     // }
 
-    console.error(
+    logger.error(
       `Failed to retrieve URL from CrossRef for DOI ${doi}: ${error}`,
     )
     return null
@@ -124,7 +125,7 @@ const getUrlByDoi = async (doi, contactEmail) => {
     if (response.status === 200)
       return response.data.message?.resource?.primary?.URL
 
-    console.error(
+    logger.error(
       `Could not retrieve URL for DOI ${doi}: ${response.statusText}`,
     )
     return null
@@ -145,7 +146,7 @@ const getUrlByDoi = async (doi, contactEmail) => {
       return getUrlByDoiFromDataCite(doi) // Get from alternative service that's generally slower, but shouldn't give 429 error
     }
 
-    console.error(
+    logger.error(
       `Failed to retrieve URL from CrossRef for DOI ${doi}: ${error}`,
     )
     return null
@@ -169,7 +170,7 @@ const getFormattedReferencesFromCrossRef = async (
   if (crossrefRetrievalEmail) {
     params.mailto = crossrefRetrievalEmail
   } else {
-    console.error(
+    logger.error(
       'No Crossref retrieval email. If this isn’t set in the config, we may run into problems with rate limiting.',
     )
   }
@@ -188,28 +189,25 @@ const getFormattedReferencesFromCrossRef = async (
     updateRateLimit(response)
 
     if (response.status === 200)
-      return response.data.message.items.reduce(
-        (accumulator, current, index) => {
-          accumulator.push(createFormattedReference(current, groupId, false))
-          return accumulator
-        },
-        [],
-      )
+      return response.data.message.items.reduce((accumulator, current) => {
+        accumulator.push(createFormattedReference(current, groupId, false))
+        return accumulator
+      }, [])
 
-    console.error('Crossref failure!', response)
+    logger.error('Crossref failure!', response)
     return []
   } catch (error) {
     if (error.response?.status === 404) {
-      console.error('Crossref 404 error!')
+      logger.error('Crossref 404 error!')
     }
 
     if (error.response?.status === 429) {
       // TODO Consider implementing a backoff
       // return getUrlByDoiFromDataCite(doi) // Get from alternative service that's generally slower, but shouldn't give 429 error
-      console.error('Crossref rate limit error!!!')
+      logger.error('Crossref rate limit error!!!')
     }
 
-    console.error('Crossref failure!', error.message)
+    logger.error('Crossref failure!', error.message)
     return []
   }
 }
@@ -230,7 +228,7 @@ const getFormattedReferencesFromCrossRefDOI = async (
   if (crossrefRetrievalEmail) {
     params.mailto = crossrefRetrievalEmail
   } else {
-    console.error(
+    logger.error(
       'No Crossref retrieval email. If this isn’t set in the config, we may run into problems with rate limiting.',
     )
   }
@@ -249,28 +247,25 @@ const getFormattedReferencesFromCrossRefDOI = async (
     updateRateLimit(response)
 
     if (response.status === 200)
-      return response.data.message.items.reduce(
-        (accumulator, current, index) => {
-          accumulator.push(createFormattedReference(current, groupId, false))
-          return accumulator
-        },
-        [],
-      )
+      return response.data.message.items.reduce((accumulator, current) => {
+        accumulator.push(createFormattedReference(current, groupId, false))
+        return accumulator
+      }, [])
 
-    console.error('Crossref failure!', response)
+    logger.error('Crossref failure!', response)
     return []
   } catch (error) {
     if (error.response?.status === 404) {
-      console.error('Crossref 404 error!')
+      logger.error('Crossref 404 error!')
     }
 
     if (error.response?.status === 429) {
       // TODO Consider implementing a backoff
       // return getUrlByDoiFromDataCite(doi) // Get from alternative service that's generally slower, but shouldn't give 429 error
-      console.error('Crossref rate limit error!!!')
+      logger.error('Crossref rate limit error!!!')
     }
 
-    console.error('Crossref failure!', error.message)
+    logger.error('Crossref failure!', error.message)
     return []
   }
 }

@@ -3,7 +3,7 @@
 // supplying either 'false', or, for a few specific fields, 'always'.
 // If there is a pre-existing value, it is left unmodified.
 
-/* eslint-disable no-param-reassign, no-restricted-syntax, no-await-in-loop */
+/* eslint-disable no-await-in-loop */
 const { useTransaction } = require('@coko/server')
 
 const Form = require('../form.model')
@@ -15,7 +15,7 @@ const fieldsToAlwaysPublishByDefault = [
   'submission.$doi',
 ]
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const forms = await Form.query(trx)
 

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 import { v4 as uuid } from 'uuid'
 
 export const stripHtml = htmlString => {
@@ -45,4 +44,5 @@ export const getCurrentUserReview = (manuscript, currentUser) => {
   )
 }
 
-export const updateReviewFormTitle = (reviewForm, isCollaborative) => {}
+// export const updateReviewFormTitle = (reviewForm, isCollaborative) => {}
+export const updateReviewFormTitle = () => {}
