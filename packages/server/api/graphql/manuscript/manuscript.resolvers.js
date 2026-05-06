@@ -28,7 +28,7 @@ const {
   manuscriptsPublishedSinceDate,
   publishedManuscript,
   unreviewedPreprints,
-  //   doisToRegister,
+  doisToRegister,
   validateDOI,
   validateSuffix,
   getManuscriptsData,
@@ -278,9 +278,9 @@ const resolvers = {
       return unreviewedPreprints(token, groupName)
     },
 
-    // async doisToRegister(_, { id }) {
-    //   return doisToRegister(id)
-    // },
+    async doisToRegister(_, { id }) {
+      return doisToRegister(id)
+    },
 
     async validateDOI(_, { doiOrUrl }) {
       return validateDOI(doiOrUrl)
