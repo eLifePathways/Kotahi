@@ -1,6 +1,8 @@
-/* eslint-disable react/prop-types, new-cap */
+/* eslint-disable react/prop-types, new-cap, react-hooks/static-components */
 
-import _ from 'lodash'
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
+import get from 'lodash/get'
 import * as icons from 'react-feather'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
@@ -24,19 +26,21 @@ const Container = styled.span`
 
 const Icon = ({ children, color, size = 3, theme, ...props }) => {
   // convert `arrow_left` to `ArrowLeft`
-  const name = _.upperFirst(_.camelCase(children))
+  const name = upperFirst(camelCase(children))
 
   // select the icon, checking for override in theme, otherwise defaulting
   // to the react feather icon set
-  const icon = _.get(theme.icons, name, icons[name])
+  const icon = get(theme.icons, name, icons[name])
 
   if (!icon) {
     console.warn("Icon '%s' not found", name)
   }
 
+  const IconComponent = icon
+
   return (
     <Container color={color} role="img" size={size} {...props}>
-      {icon ? icon({}) : ''}
+      {IconComponent ? <IconComponent /> : ''}
     </Container>
   )
 }

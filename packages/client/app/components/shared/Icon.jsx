@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import PropTypes from 'prop-types'
-import _ from 'lodash'
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
 import * as icons from 'react-feather'
 import styled from 'styled-components'
 import { th } from '@coko/client'
@@ -33,7 +34,8 @@ export const Icon = ({
   top,
   onClick,
 }) => {
-  const name = _.upperFirst(_.camelCase(children))
+  const name = upperFirst(camelCase(children))
+  const IconComponent = icons[name]
 
   return (
     <IconWrapper
@@ -46,7 +48,7 @@ export const Icon = ({
       size={size}
       top={top}
     >
-      {icons[name]({})}
+      {IconComponent ? <IconComponent /> : null}
     </IconWrapper>
   )
 }

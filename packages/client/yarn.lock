@@ -4252,7 +4252,7 @@ __metadata:
     react-date-picker: "npm:^8.2.0"
     react-dropdown: "npm:^1.11.0"
     react-dropzone: "npm:10.2.2"
-    react-feather: "npm:^1.1.6"
+    react-feather: "npm:^2.0.10"
     react-folder-tree: "npm:^5.1.1"
     react-google-charts: "npm:^4.0.0"
     react-hot-loader: "npm:^4.13.0"
@@ -5593,13 +5593,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-feather@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "react-feather@npm:1.1.6"
+"react-feather@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "react-feather@npm:2.0.10"
+  dependencies:
+    prop-types: "npm:^15.7.2"
   peerDependencies:
-    prop-types: ">= 15"
-    react: ">= 15"
-  checksum: 10c0/d3b70de1866b7a89f5d94e1ec3b0b63fe8b8c664de066e6050430760ee73f2816cbacbf9b7c27cddf80c52042c77f656af734a3f9b7534ebc0c756aaf599d0bc
+    react: ">=16.8.6"
+  checksum: 10c0/bcc312ab39a710d8fa6fb611fde2affb38cf183fa5215d46c78577d88950ecb9181b59e4b57d7683f543d25725a39deb0c2ad9a9f29cab1a44bf4cbca46e6b8e
   languageName: node
   linkType: hard
 

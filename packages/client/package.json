@@ -72,7 +72,7 @@
     "react-date-picker": "^8.2.0",
     "react-dropdown": "^1.11.0",
     "react-dropzone": "10.2.2",
-    "react-feather": "^1.1.6",
+    "react-feather": "^2.0.10",
     "react-folder-tree": "^5.1.1",
     "react-google-charts": "^4.0.0",
     "react-hot-loader": "^4.13.0",
