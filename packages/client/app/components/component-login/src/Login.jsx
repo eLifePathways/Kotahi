@@ -155,7 +155,7 @@ const Login = () => {
               i18nKey="loginPage.kotahiUses"
             />
           </RegisterInfoString>
-          <LoginButton as="a" href={nextpage} primary>
+          <LoginButton $primary as="a" href={nextpage}>
             {t('loginPage.Login with ORCID')}
           </LoginButton>
           <RegisterLinkButton as="a" href={nextpage}>

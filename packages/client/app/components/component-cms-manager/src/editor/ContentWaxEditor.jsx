@@ -2,7 +2,7 @@
 
 /* eslint-disable new-cap */
 
-import { useRef } from 'react'
+import { useRef, useMemo } from 'react'
 
 import { Wax } from 'wax-prosemirror-core'
 
@@ -47,16 +47,22 @@ const ContentWaxEditor = ({
   const { simple } = rest
   const editorRef = useRef(null)
 
-  const config = simple
-    ? SimpleWaxEditorConfig({ autocompleteConfig })
-    : ContentEditorConfig(onAssetManager)
+  const config = useMemo(
+    () =>
+      simple
+        ? SimpleWaxEditorConfig({ autocompleteConfig })
+        : ContentEditorConfig(onAssetManager),
+    [simple, autocompleteConfig, onAssetManager],
+  )
+
+  const layout = useMemo(() => ContentEditorLayout(readonly), [readonly])
 
   return (
     <CmsWidthAndHeightContainer>
       <Wax
         config={config}
         fileUpload={fileUpload}
-        layout={ContentEditorLayout(readonly)}
+        layout={layout}
         ref={editorRef}
         user={waxUser}
         value={value}

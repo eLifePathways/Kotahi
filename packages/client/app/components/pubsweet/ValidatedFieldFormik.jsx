@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types, new-cap */
 
 import { FastField } from 'formik'
 import { get } from 'lodash'
@@ -24,9 +24,8 @@ const ErrorMessage = styled(Message)`
   color: ${th('colorError')};
 `
 
-const FieldParseComponent = ({ FieldComponent, field, ...props }) => (
-  <FieldComponent {...field} {...props} />
-)
+const FieldParseComponent = ({ FieldComponent, field, ...props }) =>
+  FieldComponent({ ...field, ...props })
 
 const ValidatedFieldFormik = ({ component: Component, ...rest }) => (
   <FastField

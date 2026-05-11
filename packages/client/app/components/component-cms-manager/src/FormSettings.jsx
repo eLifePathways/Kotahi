@@ -78,7 +78,7 @@ export const inputFields = [
     flexGrow: true,
     type: 'rich-editor',
     isRequired: true,
-    otherProps: {},
+    otherProps: { shouldUpdate: () => false },
   },
 ]
 
@@ -125,6 +125,6 @@ export const emailTemplateInputFields = [
     flexGrow: true,
     type: 'SimpleWaxEditor',
     isRequired: true,
-    otherProps: {},
+    otherProps: { shouldUpdate: () => false },
   },
 ]
