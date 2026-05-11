@@ -142,7 +142,7 @@ const Tabs = ({
               key={key}
               onClick={() => setActiveKeyAndCallOnChange(key)}
             >
-              <Tab active={activeKey === key}>
+              <Tab $active={activeKey === key}>
                 <div>{label || key}</div>
               </Tab>
             </TabContainer>

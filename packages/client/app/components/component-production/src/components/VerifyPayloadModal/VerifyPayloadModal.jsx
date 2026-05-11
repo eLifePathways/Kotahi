@@ -49,7 +49,7 @@ const APIS = {
 
 const defaultTrigger = setModalOpen => {
   return (
-    <Button onClick={setModalOpen} primary>
+    <Button $primary onClick={setModalOpen}>
       Check Payload
     </Button>
   )

@@ -4,7 +4,7 @@
 import React, { useContext, useRef, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { set, debounce } from 'lodash'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import DecisionReviews from './decision/DecisionReviews'
@@ -156,6 +156,7 @@ const DecisionVersion = ({
   const { t } = useTranslation()
   useEffect(() => debouncedSave.flush, [])
   const location = useLocation()
+  const navigate = useNavigate()
 
   const activeTab = React.useMemo(
     () => getActiveTab(location, 'tab'),
@@ -679,9 +680,7 @@ const DecisionVersion = ({
   }
 
   let locationState =
-    location.state !== undefined && location.state.tab === 'Decision'
-      ? `decision`
-      : defaultActiveKey
+    location.state?.tab === 'Decision' ? `decision` : defaultActiveKey
 
   if (activeTab) locationState = activeTab
 
@@ -707,7 +706,10 @@ const DecisionVersion = ({
   return (
     <HiddenTabs
       defaultActiveKey={locationState}
-      onChange={refetch}
+      onChange={key => {
+        navigate(`?tab=${key}`, { replace: true })
+        refetch()
+      }}
       sections={sections}
     />
   )

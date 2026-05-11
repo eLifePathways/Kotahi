@@ -184,7 +184,8 @@ const SummaryReport = ({
 
   return (
     <Container>
-      <CardCollection style={{ width: 950, height: 680 }}>
+      {/* <CardCollection style={{ width: 950, height: 680 }}> */}
+      <CardCollection>
         <ChartCard>
           <CardHeader>{t('reportsPage.Editors workflow')}</CardHeader>
           <ConcentricStepsChart {...getEditorsConcentricBarChartData()} />

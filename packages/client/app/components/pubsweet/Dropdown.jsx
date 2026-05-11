@@ -117,6 +117,7 @@ const Dropdown = ({
   return (
     <StyledDropdown size={size}>
       <DropdownTitle
+        $primary={primary}
         color={color}
         data-test-id={dataTestId}
         onBlur={() => setMenuIsOpen(false)}

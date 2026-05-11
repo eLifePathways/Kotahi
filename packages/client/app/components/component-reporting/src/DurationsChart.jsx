@@ -15,7 +15,7 @@ import { getLanguages } from '../../../i18n'
 
 const Container = styled.div`
   height: 300px;
-  width: 750px;
+  width: 100%;
 `
 
 const generateSeries = data => {
@@ -116,8 +116,8 @@ const DurationsChart = ({
 
   return (
     <Container>
-      <ResponsiveContainer height="100%" width="100%">
-        <LineChart height={400} width={500}>
+      <ResponsiveContainer height="100%" minWidth={0} width="100%">
+        <LineChart>
           <XAxis
             allowDataOverflow={false}
             dataKey="x"
