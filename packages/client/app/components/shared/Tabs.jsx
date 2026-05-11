@@ -18,11 +18,11 @@ const Tab = styled.div`
     #d6d6d6 100%
   );
 
-  background: ${({ active }) =>
-    active ? `var(--bg-active)` : `var(--bg-inactive)`};
+  background: ${props =>
+    props.$active ? `var(--bg-active)` : `var(--bg-inactive)`};
   border-radius: ${th('borderRadius')} ${th('borderRadius')} 0 0;
-  box-shadow: ${({ active }) =>
-    active
+  box-shadow: ${props =>
+    props.$active
       ? '-4px 0 7px -4px rgb(0 0 0 / 10%), 4px 0 7px -4px rgb(0 0 0 / 10%), 0 -4px 7px -4px rgb(0 0 0 / 10%)'
       : 'none'};
   color: ${color.text};
@@ -35,7 +35,7 @@ const Tab = styled.div`
 
   & > div {
     border-bottom: 3px solid
-      ${({ active }) => (active ? color.brand1.base : 'none')};
+      ${props => (props.$active ? color.brand1.base : 'none')};
     margin-bottom: -2px;
     padding-bottom: 4px;
   }
@@ -49,10 +49,10 @@ export const TabsContainer = styled.div`
   justify-content: space-between;
 
   ${props =>
-    props.config &&
+    props.$config &&
     css`
       margin-top: ${() =>
-        ['preprint2'].includes(props.config.instanceName) ? '16px' : '0'};
+        ['preprint2'].includes(props.$config.instanceName) ? '16px' : '0'};
     `}
 
   ${props =>
@@ -132,8 +132,8 @@ const Tabs = ({
   return (
     <>
       <TabsContainer
+        $config={config}
         background={background}
-        config={config}
         gridArea={tabsContainerGridArea}
       >
         <div style={{ display: 'flex' }}>

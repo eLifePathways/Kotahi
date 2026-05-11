@@ -26,7 +26,7 @@ const ManuscriptRow = ({
     const values = getFieldValueAndDisplayValue(column, manuscript)
     const Renderer = column.component
     return (
-      <Cell key={column.name} {...column}>
+      <Cell $centered={column.centered} key={column.name}>
         <Renderer
           applyFilter={
             column.filterOptions && (val => setFilter(column.name, val))

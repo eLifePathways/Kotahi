@@ -9,16 +9,16 @@ import { th } from '@coko/client'
 const IconWrapper = styled.div`
   align-items: center;
   border-radius: 6px;
-  display: ${({ inline }) => (inline ? 'inline-flex' : 'flex')};
+  display: ${props => (props.$inline ? 'inline-flex' : 'flex')};
   justify-content: center;
   opacity: 1;
-  padding: ${props => (props.noPadding || props.inline ? '0' : '8px 12px')};
+  padding: ${props => (props.$noPadding || props.$inline ? '0' : '8px 12px')};
   position: relative;
   top: ${props => props.top || 0};
 
   svg {
     height: calc(${props => props.size} * ${th('gridUnit')});
-    stroke: ${props => props.iconColor || props.theme.colorText};
+    stroke: ${props => props.$iconColor || props.theme.colorText};
     width: calc(${props => props.size} * ${th('gridUnit')});
   }
 `
@@ -32,16 +32,15 @@ export const Icon = ({
   inline,
   top,
   onClick,
-  // ...props
 }) => {
   const name = _.upperFirst(_.camelCase(children))
 
   return (
     <IconWrapper
+      $iconColor={color}
+      $inline={inline}
+      $noPadding={noPadding}
       className={className}
-      iconColor={color}
-      inline={inline}
-      noPadding={noPadding}
       onClick={onClick}
       role="img"
       size={size}

@@ -10,7 +10,7 @@ import { color } from '../../../../theme'
 export const Grid = styled.div`
   display: grid;
   grid-template:
-    'menu' ${props => (props.readonly ? '0' : 'minmax(40px, auto)')}
+    'menu' ${props => (props.$readonly ? '0' : 'minmax(40px, auto)')}
     'editor' 1fr
     / 100%;
   height: 100%;
@@ -42,7 +42,7 @@ export const Menu = styled.div`
 export const FullWaxEditorGrid = styled.div`
   grid-area: editor;
   grid-template-columns: [editorCol] auto [commentsCol] ${props =>
-      props.useComments ? 'auto' : 0};
+      props.$useComments ? 'auto' : 0};
   /* stylelint-disable-next-line value-keyword-case */
   grid-template-rows: [editorRow] auto [notesRow] auto [infoRow] 40px;
   height: 18rem;
@@ -58,7 +58,7 @@ export const EditorDiv = styled.div`
   grid-column-start: editorCol;
   grid-row-start: editorRow;
   height: 100%;
-  ${props => !props.hideComments && 'min-width: 800px'};
+  ${props => !props.$hideComments && 'min-width: 800px'};
   overflow: auto;
   padding: 5px;
   position: relative;
@@ -68,7 +68,7 @@ export const EditorDiv = styled.div`
   }
 
   & > div {
-    ${props => !props.hideComments && 'max-width: 800px'};
+    ${props => !props.$hideComments && 'max-width: 800px'};
   }
 
   ${EditorElements}

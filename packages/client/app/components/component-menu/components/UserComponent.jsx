@@ -28,7 +28,7 @@ const UserComponent = ({ user, loginLink, profileLink, t, expanded }) => {
             size={expanded ? 48 : 35}
             user={user}
           />
-          <UserInfo expanded={expanded}>
+          <UserInfo $expanded={expanded}>
             <UserName>{user.username}</UserName>
             {!user.isOnline && <span>Offline</span>}
             <RolesLabel>({FormattedGlobalAndGroupRoles(user, t)})</RolesLabel>

@@ -52,8 +52,8 @@ const AssigneeHeader = styled(HeaderLabel)`
 `
 
 const DurationHeader = styled(HeaderLabel)`
-  flex: ${props => (props.editAsTemplate ? '0 0 10em' : '0 0 18em')};
-  margin-left: ${props => (props.editAsTemplate ? '10px' : 0)};
+  flex: ${props => (props.$editAsTemplate ? '0 0 10em' : '0 0 18em')};
+  margin-left: ${props => (props.$editAsTemplate ? '10px' : 0)};
 `
 
 const TaskList = ({
@@ -254,7 +254,7 @@ const TaskList = ({
                       <AssigneeHeader>
                         {t('taskManager.list.Assignee')}
                       </AssigneeHeader>
-                      <DurationHeader editAsTemplate={editAsTemplate}>
+                      <DurationHeader $editAsTemplate={editAsTemplate}>
                         {editAsTemplate
                           ? t('taskManager.list.Duration in days')
                           : t('taskManager.list.Duration/Due Date')}

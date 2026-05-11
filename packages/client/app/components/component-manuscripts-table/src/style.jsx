@@ -1,5 +1,3 @@
-/* stylelint-disable string-quotes */
-
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
 import { AlertCircle } from 'react-feather'
@@ -112,7 +110,7 @@ export const Cell = styled.div`
       cursor: pointer;
     `}
   ${props =>
-    props.centered &&
+    props.$centered &&
     css`
       justify-content: center;
     `}

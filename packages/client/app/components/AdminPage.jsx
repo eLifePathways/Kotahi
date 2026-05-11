@@ -61,8 +61,8 @@ const Root = styled.div`
   display: flex;
   height: 100vh;
   max-height: 100vh;
-  ${({ converting }) =>
-    converting &&
+  ${props =>
+    props.$converting &&
     `
      button,
      a {
@@ -362,7 +362,7 @@ const AdminPage = () => {
 
   return (
     <Root
-      converting={conversion.converting}
+      $converting={conversion.converting}
       onClickCapture={handleEvent}
       onKeyDownCapture={handleEvent}
     >

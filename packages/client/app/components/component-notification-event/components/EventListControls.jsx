@@ -92,9 +92,9 @@ const DropdownButton = styled.button`
 const DropdownContent = styled.div`
   background-color: #fff;
   border: 1px solid #ddd;
-  border-width: ${p => (p.show ? '1px' : '0')};
+  border-width: ${p => (p.$show ? '1px' : '0')};
   box-shadow: 0 8px 16px 0 #0003;
-  max-height: ${props => (props.show ? '200px' : '0')};
+  max-height: ${props => (props.$show ? '200px' : '0')};
   min-width: 140px;
   overflow-y: auto;
   position: absolute;
@@ -150,7 +150,7 @@ const EventListControls = ({ search, filterKey, collapseAll }) => {
             <DropdownButton onClick={dropdown.toggle}>
               {t(T[filterKey.state])}
             </DropdownButton>
-            <DropdownContent show={dropdown.state}>
+            <DropdownContent $show={dropdown.state}>
               {filterKey.values.map(value => (
                 <DropdownItem
                   key={value}

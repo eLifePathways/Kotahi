@@ -14,7 +14,7 @@ import { color } from '../../../theme'
 const SearchContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 0 1 ${props => (props.isOpen ? '40em' : '')};
+  flex: 0 1 ${props => (props.$isOpen ? '40em' : '')};
   gap: ${grid(1)};
   justify-content: flex-end;
 `
@@ -59,7 +59,7 @@ const SearchControl = ({ currentSearchQuery, applySearchQuery }) => {
   }, [currentSearchQuery])
 
   return (
-    <SearchContainer isOpen={isOpen}>
+    <SearchContainer $isOpen={isOpen}>
       {isOpen && (
         <>
           <InlineTextField

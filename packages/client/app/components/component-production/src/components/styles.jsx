@@ -105,7 +105,7 @@ export const Cell = styled.div`
       cursor: pointer;
     `}
   ${props =>
-    props.centered &&
+    props.$centered &&
     css`
       justify-content: center;
     `}

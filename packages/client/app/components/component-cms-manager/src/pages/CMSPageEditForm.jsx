@@ -197,7 +197,7 @@ const CMSPageEditForm = ({
         <EditorForm key={key} onSubmit={onSubmit}>
           {localizeInputFields(inputFields).map(item => {
             return (
-              <Section flexGrow={item.flexGrow || false} key={item.name}>
+              <Section $flexGrow={item.flexGrow || false} key={item.name}>
                 <p style={{ fontSize: '10px' }}>{item.label}</p>
                 <ValidatedFieldFormik
                   component={item.component}

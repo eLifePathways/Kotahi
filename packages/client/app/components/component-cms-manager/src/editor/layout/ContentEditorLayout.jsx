@@ -43,15 +43,18 @@ const ContentEditorLayout =
 
     return (
       <WaxContainer id="wax-container" style={fullScreenStyles}>
-        <Grid readonly={readOnly} readOnlyComments>
+        <Grid $readonly={readOnly}>
           <Menu className="waxmenu">
             <TopBar />
           </Menu>
           <FullWaxEditorGrid
+            $useComments={false}
             className="full-wax-editor-grid"
-            useComments={false}
           >
-            <EditorDiv className="wax-surface-scroll panelWrapper" hideComments>
+            <EditorDiv
+              $hideComments
+              className="wax-surface-scroll panelWrapper"
+            >
               <WaxView {...props} />
               {useHandlebarsAutocomplete && <HandlebarsAutocomplete />}
             </EditorDiv>

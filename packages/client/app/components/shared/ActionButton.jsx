@@ -19,7 +19,7 @@ const BaseButton = styled.button`
   min-height: ${grid(3)};
   min-width: ${grid(5)};
   ${props =>
-    props.isCompact
+    props.$isCompact
       ? ''
       : `
           min-height: 40px;
@@ -34,11 +34,11 @@ const DisabledButton = styled(BaseButton)`
 
 const Button = styled(BaseButton)`
   background-color: ${props =>
-    props.bgColor || (props.primary ? color.brand1.base : color.gray90)};
+    props.$bgColor || (props.$primary ? color.brand1.base : color.gray90)};
   /* stylelint-disable-next-line color-function-notation, alpha-value-notation */
   box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
   color: ${props =>
-    props.fgColor || (props.primary ? color.text : color.textReverse)};
+    props.$fgColor || (props.$primary ? color.text : color.textReverse)};
 
   ${props =>
     props.onClick
@@ -105,7 +105,7 @@ const ActionButton = ({
 }) => {
   if (disabled)
     return (
-      <DisabledButton className={className} disabled isCompact={isCompact}>
+      <DisabledButton $isCompact={isCompact} className={className} disabled>
         <LabelOnlySpan>{children}</LabelOnlySpan>
       </DisabledButton>
     )
@@ -149,13 +149,13 @@ const ActionButton = ({
 
   return (
     <Button
-      bgColor={bgColor}
+      $bgColor={bgColor}
+      $fgColor={fgColor}
+      $isCompact={isCompact}
+      $primary={primary}
       className={className}
       data-testid={dataTestid}
-      fgColor={fgColor}
-      isCompact={isCompact}
       onClick={status !== 'pending' ? onClick : null}
-      primary={primary}
       title={title}
       type={type || 'button'}
     >

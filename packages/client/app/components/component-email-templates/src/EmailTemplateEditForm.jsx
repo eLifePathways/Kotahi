@@ -47,7 +47,7 @@ const EmailTemplateEditForm = ({
         {emailTemplateInputFields.map(item => {
           return (
             <Section
-              flexGrow={item.flexGrow}
+              $flexGrow={item.flexGrow}
               key={item.name}
               style={item?.containerStyle || {}}
             >

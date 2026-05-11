@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
 /* eslint-disable react/prop-types */
-
 /* eslint-disable new-cap */
 /* eslint-disable jsx-a11y/no-autofocus */
 

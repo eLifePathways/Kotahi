@@ -36,9 +36,9 @@ const NavItem = props => {
   return link ? (
     <StyledLink
       $active={location.pathname === link || location.pathname.includes(link)}
+      $depth={depth}
       className={className}
       data-testid={`menu-${name}`}
-      depth={depth}
       onClick={onClick}
       title={menuIsMinimal ? name : null}
       to={link}
@@ -47,12 +47,12 @@ const NavItem = props => {
     </StyledLink>
   ) : (
     <StyledLink
+      $depth={depth}
+      $submenu
       as="div"
       className={className}
       data-testid={`menu-${name}`}
-      depth={depth}
       onClick={onClick}
-      submenu
       title={menuIsMinimal ? name : null}
     >
       <MenuItem {...itemProps} />

@@ -37,7 +37,7 @@ export default css`
   font-weight: 500;
   line-height: calc(${th('gridUnit')} * 3);
   min-width: calc(${th('gridUnit')} * 16);
-  ${props => !props.primary && secondary};
+  ${props => !props.$primary && secondary};
 
   &:focus,
   &:hover {

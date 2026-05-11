@@ -67,7 +67,7 @@ const StatusActionCell = styled.div`
   justify-content: flex-start;
 
   ${props =>
-    props.isOverdue
+    props.$isOverdue
       ? css`
           border-right-color: ${th('colorError')};
         `
@@ -411,12 +411,7 @@ const Task = ({
         updateTaskNotification={updateTaskNotification}
       />
       <TaskRowContainer>
-        <TaskRow
-          isOverdue={isOverdue}
-          ref={setNodeRef}
-          style={dragStyle}
-          {...attributes}
-        >
+        <TaskRow ref={setNodeRef} style={dragStyle} {...attributes}>
           <TitleFieldContainer>
             <TitleCell>
               <Handle {...listeners}>
@@ -508,7 +503,7 @@ const Task = ({
                 />
               </div>
               <div>
-                <StatusActionCell isOverdue={isOverdue}>
+                <StatusActionCell $isOverdue={isOverdue}>
                   <StatusDropdown onStatusUpdate={setTask} task={task} />
                 </StatusActionCell>
               </div>

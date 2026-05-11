@@ -8,7 +8,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: ${props =>
-    props.inline ? '0' : `calc(${props.theme.gridUnit} * 3)`};
+    props.$inline ? '0' : `calc(${props.theme.gridUnit} * 3)`};
   ${override('ui.TextField')};
 `
 
@@ -51,7 +51,7 @@ const TextField = props => {
   } = props
 
   return (
-    <Root className={className} inline={inline}>
+    <Root $inline={inline} className={className}>
       {label && <Label htmlFor={uid}>{label}</Label>}
       <Input
         id={uid}

@@ -86,7 +86,7 @@ const FilterSortHeader = ({
     }
 
     return (
-      <HeadingCell onClick={changeSort} {...columnInfo}>
+      <HeadingCell $centered={columnInfo.centered} onClick={changeSort}>
         {
           '\u200B' /* zero-width space so the layout engine understands where the baseline is */
         }
@@ -129,7 +129,7 @@ const FilterSortHeader = ({
     ].concat(columnInfo.filterOptions)
 
     return (
-      <Cell {...columnInfo}>
+      <Cell $centered={columnInfo.centered}>
         <Select
           aria-label={columnInfo.title}
           customStyles={{
@@ -187,7 +187,7 @@ const FilterSortHeader = ({
     }
 
     return (
-      <Cell onClick={changeSort} {...columnInfo}>
+      <Cell $centered={columnInfo.centered} onClick={changeSort}>
         {columnInfo.title}
         {columnInfo.sortDirection === 'ASC' && <SortDown />}
         {columnInfo.sortDirection === 'DESC' && <SortUp />}
@@ -195,7 +195,7 @@ const FilterSortHeader = ({
     )
   }
 
-  return <Cell {...columnInfo}>{columnInfo.title}</Cell>
+  return <Cell $centered={columnInfo.centered}>{columnInfo.title}</Cell>
 }
 
 export default FilterSortHeader

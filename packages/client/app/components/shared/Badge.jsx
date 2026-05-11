@@ -13,7 +13,7 @@ const BadgesWrapper = styled(FlexRow)`
   align-items: center;
   border-radius: ${bRadius};
   box-shadow: 0 0 1px #0003;
-  cursor: ${p => p.clickable && 'pointer'};
+  cursor: ${p => p.$clickable && 'pointer'};
   justify-content: center;
   overflow: hidden;
 `
@@ -97,7 +97,7 @@ export const StatusBadge = ({
   const showPublishedStatus = publishedAndMore || forceToPublished
 
   return (
-    <BadgesWrapper clickable={clickable} {...rest}>
+    <BadgesWrapper $clickable={clickable} {...rest}>
       {showPublishedStatus && (
         <Status
           $bg={publishedBg}

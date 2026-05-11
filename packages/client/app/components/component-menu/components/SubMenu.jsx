@@ -27,7 +27,7 @@ const SubMenu = ({
   }
 
   return (
-    <SubMenuFirstLevelContainer depth={depth}>
+    <SubMenuFirstLevelContainer $depth={depth}>
       <NavItem
         active={location.pathname === navInfo.link}
         depth={depth}

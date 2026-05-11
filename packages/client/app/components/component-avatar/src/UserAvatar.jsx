@@ -42,7 +42,7 @@ const Avatar = props => {
       type="user"
     >
       {showOnlineStatus && user?.isOnline && (
-        <OnlineIndicator onlineBorderColor={onlineBorderColor} />
+        <OnlineIndicator $onlineBorderColor={onlineBorderColor} />
       )}
       <ConditionalWrap
         condition={!!user?.username && isClickable}
@@ -76,7 +76,7 @@ const AvatarHandler = props => {
       <ConditionalWrap
         condition={showHoverProfile}
         wrap={() => (
-          <UserHoverProfile username={user.username}>
+          <UserHoverProfile $username={user.username}>
             <Avatar size={size} {...props} />
           </UserHoverProfile>
         )}

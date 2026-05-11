@@ -14,7 +14,6 @@ const Icon = styled(UIIcon)`
   height: ${th('fontSizeBase')};
   vertical-align: top;
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${override('ui.Button.Icon')}
 `
 
@@ -27,7 +26,6 @@ const StyledDropdown = styled.div`
   margin: 0;
   position: relative;
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${override('ui.Dropdown.Wrapper')}
 `
 
@@ -44,7 +42,6 @@ const DropdownTitle = styled(UIButton)`
     color: ${props => props.color};
   }
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${override('ui.Dropdown.Title')}
 `
 
@@ -55,7 +52,7 @@ const DropdownMenu = styled.ul`
   border-width: ${th('borderWidth')};
   bottom: ${props => (props.direction === 'down' ? '-' : '100%')};
   color: ${th('colorText')};
-  display: ${props => (props.menuIsOpen ? 'block' : 'none')};
+  display: ${props => (props.$menuIsOpen ? 'block' : 'none')};
   font-family: ${th('fontInterface')};
   font-size: ${th('fontSizeBase')};
   list-style-type: none;
@@ -66,7 +63,6 @@ const DropdownMenu = styled.ul`
   width: 100%;
   z-index: 9;
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${override('ui.Dropdown.Menu')}
 `
 
@@ -82,7 +78,6 @@ const Item = styled.li`
     background-color: ${th('colorBackgroundHue')};
   }
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${override('ui.Dropdown.MenuItem')}
 `
 
@@ -126,7 +121,6 @@ const Dropdown = ({
         data-test-id={dataTestId}
         onBlur={() => setMenuIsOpen(false)}
         onClick={() => setMenuIsOpen(!menuIsOpen)}
-        primary={primary}
         size={size}
       >
         <span data-testid="iconButton">
@@ -150,7 +144,7 @@ const Dropdown = ({
         </span>
         <ChevronIcon color={colorIcon}>{getIconDirection()}</ChevronIcon>
       </DropdownTitle>
-      <DropdownMenu direction={direction} menuIsOpen={menuIsOpen}>
+      <DropdownMenu $menuIsOpen={menuIsOpen} direction={direction}>
         {itemsList.map(item => (
           <Item
             key={item.id}

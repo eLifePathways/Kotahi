@@ -29,6 +29,10 @@ export const StyledInput = styled.input`
 `
 
 export const TextInput = props => {
+  // console.log(props)
   const { readonly, value } = props
-  return readonly ? <div>{value}</div> : <StyledInput type="text" {...props} />
+
+  /* eslint-disable-next-line no-unused-vars */
+  const { setTouched, staticText, isValid, ...rest } = props
+  return readonly ? <div>{value}</div> : <StyledInput type="text" {...rest} />
 }

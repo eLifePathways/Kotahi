@@ -8,8 +8,8 @@ const Alert = ({ description, message, showIcon = false, type = 'info' }) => {
   return (
     <AntAlert
       description={description}
-      message={message ?? t(`common.statuses.${type}`)}
       showIcon={showIcon}
+      title={message ?? t(`common.statuses.${type}`)}
       type={type}
     />
   )

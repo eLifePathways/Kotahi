@@ -22,9 +22,9 @@ const LabelContainer = styled.div`
   box-shadow: 0 1px 1px rgb(0 0 0 / 25%);
   display: flex;
   justify-content: center;
-  padding-right: ${props => (props.showResetIcon ? '15px' : '0')};
+  padding-right: ${props => (props.$showResetIcon ? '15px' : '0')};
   position: relative;
-  width: ${props => (props.compact ? '50px' : '65px')};
+  width: ${props => (props.$compact ? '50px' : '65px')};
 `
 
 const ControlsContainer = styled.div`
@@ -135,7 +135,7 @@ const CounterField = ({
 
   return (
     <Container>
-      <LabelContainer compact={compact} showResetIcon={showResetIcon}>
+      <LabelContainer $compact={compact} $showResetIcon={showResetIcon}>
         <span>{displayValue}</span>
         {showResetIcon && (
           <CloseIconContainer disabled={disabled} onClick={() => resetValue()}>

@@ -85,8 +85,8 @@ const DashboardLayout = ({
               currentSearchQuery={currentSearchQuery}
             />
             <Button
+              $primary
               onClick={() => navigate(`${urlFrag}/newSubmission`)}
-              primary
             >
               {t('dashboardPage.New submission')}
             </Button>
@@ -101,12 +101,12 @@ const DashboardLayout = ({
       </HeadingWithAction>
 
       {/* TODO The following block should be replaced with a new LinkTabs component */}
-      <HiddenTabsContainer sticky={false}>
+      <HiddenTabsContainer $sticky={false}>
         <Tabs>
           {dashboardPages.map(({ href, label }) => (
             <TabContainer key={href}>
               <TabLink to={urlFrag + href}>
-                <Tab active={location.pathname.endsWith(href)}>
+                <Tab $active={location.pathname.endsWith(href)}>
                   <div>{label}</div>
                 </Tab>
               </TabLink>

@@ -30,11 +30,11 @@ export const Tab = styled.div`
     #d6d6d6 100%
   );
 
-  background: ${({ active }) =>
-    active ? `var(--bg-active)` : `var(--bg-inactive)`};
+  background: ${props =>
+    props.$active ? `var(--bg-active)` : `var(--bg-inactive)`};
   border-radius: ${th('borderRadius')} ${th('borderRadius')} 0 0;
-  box-shadow: ${({ active }) =>
-    active
+  box-shadow: ${props =>
+    props.$active
       ? '-4px 0 7px -4px rgb(0 0 0 / 10%), 4px 0 7px -4px rgb(0 0 0 / 10%), 0 -4px 7px -4px rgb(0 0 0 / 10%)'
       : 'none'};
   color: ${color.text};
@@ -49,7 +49,7 @@ export const Tab = styled.div`
 
   & > div {
     border-bottom: 3px solid
-      ${({ active }) => (active ? color.brand1.base : 'none')};
+      ${props => (props.$active ? color.brand1.base : 'none')};
     margin-bottom: -2px;
     padding-bottom: 4px;
   }
@@ -59,13 +59,13 @@ export const Tab = styled.div`
 `
 
 export const HiddenTabsContainer = styled(TabsContainer)`
-  ${props => props.sticky && `background-color: ${color.backgroundC};`}
-  ${props => props.sticky && 'position: sticky;'}
-  ${props => props.sticky && 'top: -16px;'}
-  ${props => props.sticky && 'z-index: 999;'}
+  ${props => props.$sticky && `background-color: ${color.backgroundC};`}
+  ${props => props.$sticky && 'position: sticky;'}
+  ${props => props.$sticky && 'top: -16px;'}
+  ${props => props.$sticky && 'z-index: 999;'}
 
   & ~ div .waxmenu {
-    ${props => props.sticky && 'top: 23px;'};
+    ${props => props.$sticky && 'top: 23px;'};
   }
 `
 
@@ -115,10 +115,10 @@ const HiddenTabs = ({
   return (
     <>
       <HiddenTabsContainer
+        $config={config}
+        $sticky={false}
         background={background}
-        config={config}
         gridArea={tabsContainerGridArea}
-        sticky={false}
       >
         <div style={{ display: 'flex', alignItems: 'stretch' }}>
           {sections.map(({ key, label }) => (
@@ -126,7 +126,7 @@ const HiddenTabs = ({
               key={key}
               onClick={() => setActiveKeyAndCallOnChange(key)}
             >
-              <Tab active={activeKey === key} key={key}>
+              <Tab $active={activeKey === key} key={key}>
                 <div>{label || key}</div>
               </Tab>
             </TabContainer>

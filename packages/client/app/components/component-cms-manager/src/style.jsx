@@ -9,7 +9,7 @@ import { SecondaryButton } from '../../component-modal/src/Modal'
 export const Section = styled.div`
   margin: 8px 8px 0 0;
   ${props =>
-    props.flexGrow &&
+    props.$flexGrow &&
     css`
       flex-grow: 1;
 

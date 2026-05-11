@@ -131,15 +131,14 @@ export const StyledLink = styled(Link)`
     background-color var(--transition-link-colors),
     color var(--transition-link-colors);
   user-select: none;
-
-  width: calc(100% - ${p => (p.depth || 0) * 1.6 * 10}px);
+  width: calc(100% - ${p => (p.$depth || 0) * 1.6 * 10}px);
 
   & > span {
     align-items: center;
     display: flex;
 
     line-height: 1;
-    overflow: ${p => (p.submenu ? 'hidden' : 'unset')};
+    overflow: ${p => (p.$submenu ? 'hidden' : 'unset')};
     width: 100%;
   }
 
@@ -198,7 +197,7 @@ export const AlertIndicator = styled.div`
 export const SubMenuFirstLevelContainer = styled.span`
   display: flex;
   flex-direction: column;
-  justify-items: ${p => (p.depth > 0 ? 'end' : '')};
+  justify-items: ${p => (p.$depth > 0 ? 'end' : '')};
   overflow: hidden;
   width: 100%;
 `
@@ -247,10 +246,10 @@ export const UserInfo = styled.div`
   flex-direction: column;
   font-size: ${th('fontSizeBase')} !important;
   justify-content: center;
-  opacity: ${p => (p.expanded ? '1' : '0')};
+  opacity: ${p => (p.$expanded ? '1' : '0')};
   overflow: hidden;
   transition: all var(--transition-time);
-  width: ${p => (p.expanded ? '100%' : '0')};
+  width: ${p => (p.$expanded ? '100%' : '0')};
 `
 
 export const UserName = styled.div`

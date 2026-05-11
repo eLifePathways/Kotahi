@@ -120,8 +120,8 @@ export const OnlineIndicator = styled.span`
   background: ${th('colorSuccess')};
   border: 2px solid
     ${props =>
-      props.onlineBorderColor
-        ? props.onlineBorderColor(props.theme)
+      props.$onlineBorderColor
+        ? props.$onlineBorderColor(props.theme)
         : color.textReverse};
   border-radius: 5px;
   bottom: 0;
