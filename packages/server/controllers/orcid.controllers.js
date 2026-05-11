@@ -17,8 +17,7 @@ const seekEvent = require('../services/notification.service')
 
 const ORCID_API =
   /*
-  config.get('auth-orcid').useSandboxedOrcid &&
-  config.get('auth-orcid').useSandboxedOrcid.toLowerCase() === 'true'
+  config.get('auth-orcid').useSandboxedOrcid
     ? 'https://pub.sandbox.orcid.org/v3.0'
     : */ 'https://pub.orcid.org/v3.0'
 
@@ -92,9 +91,7 @@ const createOrcidStrategy = () => {
 
   return new OrcidStrategy(
     {
-      sandbox:
-        config.get('auth-orcid').useSandboxedOrcid &&
-        config.get('auth-orcid').useSandboxedOrcid.toLowerCase() === 'true',
+      sandbox: config.get('auth-orcid').useSandboxedOrcid,
       scope: '/authenticate',
       // this works here only with webpack dev server's proxy (ie. clientUrl/auth -> serverUrl/auth)
       // or when the server and client are served from the same url
@@ -220,11 +217,9 @@ const toDate = date => {
 }
 
 const orcidRequest = (identity, endpoint) => {
-  const apiRoot =
-    config.get('auth-orcid').useSandboxedOrcid &&
-    config.get('auth-orcid').useSandboxedOrcid.toLowerCase() === 'true'
-      ? 'https://pub.sandbox.orcid.org/v3.0'
-      : 'https://pub.orcid.org/v3.0'
+  const apiRoot = config.get('auth-orcid').useSandboxedOrcid
+    ? 'https://pub.sandbox.orcid.org/v3.0'
+    : 'https://pub.orcid.org/v3.0'
 
   return request({
     method: 'get',
