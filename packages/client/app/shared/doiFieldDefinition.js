@@ -1,11 +1,11 @@
-const isValidDOI = doi => {
+export const isValidDOI = doi => {
   // Define the regular expression for a DOI
   const doiRegex =
     // eslint-disable-next-line no-useless-escape
     /^(https?:\/\/(dx\.)?doi\.org\/|doi:)?10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i
 
   // Test if the DOI matches the regex
-  return !doiRegex.test(doi)
+  return doiRegex.test(doi)
 }
 
 export const fields = [
@@ -13,7 +13,7 @@ export const fields = [
     name: 'doi',
     label: 'Doi',
     placeholder: 'Enter doi…',
-    validate: isValidDOI,
+    validate: value => !isValidDOI(value),
   },
 ]
 

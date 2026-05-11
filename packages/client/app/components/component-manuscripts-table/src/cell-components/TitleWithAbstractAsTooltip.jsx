@@ -6,6 +6,7 @@ import { InfoIcon } from '../style'
 import { stripHtml } from '../../../component-review/src/components/review/util'
 import { SemanticScholarIcon, CoarIcon } from '../../../shared/Icons'
 import { PlainOrRichText } from '../../../shared'
+import { isValidDOI } from '../../../../shared/doiFieldDefinition'
 
 const FloatingIcon = styled.div`
   float: right;
@@ -32,16 +33,19 @@ const getAbstractAsPlainText = manuscript =>
  * failing that, if submission.$doi exists, the title will be hyperlinked to a DOI link.
  * */
 const TitleWithAbstractAsTooltip = ({ manuscript }) => {
-  const title = <PlainOrRichText value={manuscript.submission.$title} />
+  const { importSourceServer, submission } = manuscript
+  const { $doi, $sourceUri, $title } = submission || {}
+
+  const title = <PlainOrRichText value={$title} />
 
   const isManuscriptFromSemanticScholar =
-    manuscript.importSourceServer === 'semantic-scholar'
+    importSourceServer === 'semantic-scholar'
 
-  const isManuscriptFromCoarNotify = manuscript.importSourceServer === 'COAR'
+  const isManuscriptFromCoarNotify = importSourceServer === 'COAR'
 
-  let url = manuscript.submission.$sourceUri
-  if (!url && manuscript.submission.$doi)
-    url = `https://doi.org/${manuscript.submission.$doi}`
+  let url = $sourceUri
+  if (!url && $doi && isValidDOI($doi))
+    url = `${$doi.includes('doi.org') ? '' : 'https://doi.org/'}${$doi}`
 
   const abstract = getAbstractAsPlainText(manuscript)
 
