@@ -217,14 +217,15 @@ const FormBuilderPage = ({ category }) => {
     })
   }
 
-  const dragField = event => {
+  const dragField = ({ active, over }) => {
+    if (!over || active.id === over.id) return
     const form = pruneEmpty(
       data.formsByCategory.find(f => f.id === selectedFormId),
     )
 
     const fields = form.structure.children
-    const fromIndex = event.source.index
-    const toIndex = event.destination.index
+    const fromIndex = fields.findIndex(f => f.id === active.id)
+    const toIndex = fields.findIndex(f => f.id === over.id)
     const draggedField = fields[fromIndex]
     const newFields = [...fields]
     newFields.splice(fromIndex, 1)
@@ -243,14 +244,6 @@ const FormBuilderPage = ({ category }) => {
           ...form,
           structure: { ...form.structure, children: newFields },
         }),
-      },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        updateForm: {
-          id: form.id,
-          __typename: 'FormStructure',
-          structure: { ...form.structure, children: newFields },
-        },
       },
     })
   }

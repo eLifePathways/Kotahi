@@ -1,7 +1,13 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { DragVerticalIcon } from '../../../shared/Icons'
 import { LayoutHeaderListContainer, LayoutHeaderListItem } from '../style'
 
@@ -27,6 +33,35 @@ const reformObject = values => {
   }))
 }
 
+const SortablePageItem = ({ item, index, toggleChange }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: item.id })
+
+  const style = { transform: CSS.Transform.toString(transform), transition }
+
+  return (
+    <LayoutHeaderListItem
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      <div>
+        <input
+          checked={item.shownInMenu || false}
+          name={item.id}
+          onChange={() => toggleChange(item, index)}
+          style={{ margin: '10px' }}
+          type="checkbox"
+          value={item.id || false}
+        />
+        {item.title}
+      </div>
+      <DragVerticalIcon />
+    </LayoutHeaderListItem>
+  )
+}
+
 const PageOrder = ({ initialItems, onPageOrderUpdated }) => {
   const [items, setItems] = React.useState(reformObject(initialItems))
 
@@ -35,18 +70,11 @@ const PageOrder = ({ initialItems, onPageOrderUpdated }) => {
     onPageOrderUpdated(updatedItems)
   }
 
-  const onDragEnd = result => {
-    if (!result.destination) {
-      return
-    }
-
-    const updatedItems = reorder(
-      items,
-      result.source.index,
-      result.destination.index,
-    )
-
-    updateItems(updatedItems)
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return
+    const oldIndex = items.findIndex(i => i.id === active.id)
+    const newIndex = items.findIndex(i => i.id === over.id)
+    updateItems(reorder(items, oldIndex, newIndex))
   }
 
   const toggleChange = (item, index) => {
@@ -55,49 +83,25 @@ const PageOrder = ({ initialItems, onPageOrderUpdated }) => {
     updateItems(updatedItems)
   }
 
-  const renderItemList = (item, index) => {
-    return (
-      <Draggable draggableId={item.id} index={index} key={item.id}>
-        {provided => (
-          <LayoutHeaderListItem
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
-            <div>
-              <input
-                checked={item.shownInMenu || false}
-                name={item.id}
-                onChange={() => toggleChange(item, index)}
-                style={{ margin: '10px' }}
-                type="checkbox"
-                value={item.id || false}
-              />
-              {item.title}
-            </div>
-            <DragVerticalIcon />
-          </LayoutHeaderListItem>
-        )}
-      </Draggable>
-    )
-  }
-
   return (
     <div>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <LayoutHeaderListContainer
-              {...provided.droppableProps}
-              isDraggingOver={snapshot.isDraggingOver}
-              ref={provided.innerRef}
-            >
-              {items.map((item, index) => renderItemList(item, index))}
-              {provided.placeholder}
-            </LayoutHeaderListContainer>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext
+          items={items.map(i => i.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <LayoutHeaderListContainer>
+            {items.map((item, index) => (
+              <SortablePageItem
+                index={index}
+                item={item}
+                key={item.id}
+                toggleChange={toggleChange}
+              />
+            ))}
+          </LayoutHeaderListContainer>
+        </SortableContext>
+      </DndContext>
     </div>
   )
 }

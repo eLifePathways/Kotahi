@@ -1,13 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/refs */
 /* eslint-disable react/prop-types */
 
-/* eslint-disable no-shadow */
 import { useEffect, useState, useRef } from 'react'
 import { debounce } from 'lodash'
 import AsyncSelect from 'react-select/async'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { ActionButton, Action } from '../../../../shared'
 
 const SelectWrapper = styled.div`
@@ -37,6 +43,32 @@ const ListItem = styled.div`
   padding: 10px;
 `
 
+const SortableManuscriptItem = ({ it, onDelete, t }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: it.value })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    backgroundColor: isDragging ? '#3aae2a' : '#fff',
+  }
+
+  return (
+    <ListItem ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <span>{it.label}</span>
+      <Action onClick={() => onDelete(it.value)}>
+        {t('cmsPage.metadata.delete')}
+      </Action>
+    </ListItem>
+  )
+}
+
 const ListManuscripts = ({
   uiSchema: {
     'ui:options': { manuscriptLoadOptions: loadOptions },
@@ -49,19 +81,11 @@ const ListManuscripts = ({
   const [toBeAdded, addedFn] = useState([])
   const { t } = useTranslation()
 
-  const onDragEnd = result => {
-    // dropped outside the list
-    if (!result.destination) {
-      return
-    }
-
-    // reorder using index of source and destination.
-    const updatedFormData = formData.slice()
-    const [removed] = updatedFormData.splice(result.source.index, 1)
-    // put the removed one into destination.
-    updatedFormData.splice(result.destination.index, 0, removed)
-
-    onChange(updatedFormData)
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return
+    const oldIndex = formData.findIndex(it => it.value === active.id)
+    const newIndex = formData.findIndex(it => it.value === over.id)
+    onChange(arrayMove(formData, oldIndex, newIndex))
   }
 
   const onDelete = debounce(id => {
@@ -108,36 +132,23 @@ const ListManuscripts = ({
           Add
         </ActionButton>
       </SelectWrapper>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="column1">
-          {provided => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-              {formData.map((it, i) => (
-                <Draggable draggableId={it.value} index={i} key={it.value}>
-                  {(provided, snap) => (
-                    <ListItem
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={{
-                        backgroundColor: snap.isDragging ? '#3aae2a' : '#fff',
-
-                        ...provided.draggableProps.style,
-                      }}
-                    >
-                      <span>{it.label}</span>
-                      <Action onClick={() => onDelete(it.value)}>
-                        {t('cmsPage.metadata.delete')}
-                      </Action>
-                    </ListItem>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext
+          items={formData.map(it => it.value)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div>
+            {formData.map(it => (
+              <SortableManuscriptItem
+                it={it}
+                key={it.value}
+                onDelete={onDelete}
+                t={t}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     </>
   )
 }

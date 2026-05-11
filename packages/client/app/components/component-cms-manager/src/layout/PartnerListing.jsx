@@ -1,8 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
 /* eslint-disable react/prop-types */
 
-import { useState, useEffect } from 'react'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { useMemo } from 'react'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 import PartnerListItem from './PartnerListItem'
@@ -15,12 +21,26 @@ const Files = styled.div`
   overflow: auto;
 `
 
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
+const SortablePartnerItem = ({ file, deleteFile, remove, onUrlAdded, url }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: file.id })
 
-  return result
+  const style = { transform: CSS.Transform.toString(transform), transition }
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <PartnerListItem
+        deleteFile={deleteFile}
+        file={file}
+        index={file.originalIndex}
+        key={file.name}
+        onUrlAdded={onUrlAdded}
+        remove={remove}
+        uploaded
+        url={url}
+      />
+    </div>
+  )
 }
 
 const PartnerFileListing = ({
@@ -30,8 +50,15 @@ const PartnerFileListing = ({
   formikProps,
   triggerAutoSave,
 }) => {
-  const [orderedPartnerFiles, setOrderedPartnerFiles] = useState(files)
-  useEffect(() => setOrderedPartnerFiles(files), files.length + 1)
+  const orderedPartnerFiles = useMemo(() => {
+    const partners = formikProps.values.partners
+    if (!partners?.length) return files
+    return [...files].sort((a, b) => {
+      const aSeq = partners.find(p => p.id === a.id)?.sequenceIndex ?? Infinity
+      const bSeq = partners.find(p => p.id === b.id)?.sequenceIndex ?? Infinity
+      return aSeq - bSeq
+    })
+  }, [files, formikProps.values.partners])
 
   const onPartnerDataChanged = partnerData => {
     formikProps.setFieldValue('partners', partnerData)
@@ -42,86 +69,52 @@ const PartnerFileListing = ({
     const partnerFiles = formikProps.values.partners
     const currentPartnerIndex = partnerFiles.findIndex(file => file.id === id)
     if (currentPartnerIndex < 0) return
-    partnerFiles[currentPartnerIndex].url = url
-    onPartnerDataChanged(partnerFiles)
+    const updated = partnerFiles.map((f, i) =>
+      i === currentPartnerIndex ? { ...f, url } : f,
+    )
+    onPartnerDataChanged(updated)
   }
 
   const getFileUrl = fileId => {
     const partnerFiles = formikProps.values.partners
-
-    const currentPartnerIndex = partnerFiles.findIndex(
-      file => file.id === fileId,
-    )
-
-    if (currentPartnerIndex < 0) return ''
-    return partnerFiles[currentPartnerIndex].url
+    return partnerFiles.find(f => f.id === fileId)?.url ?? ''
   }
 
-  const setOrderedPartners = reorderedFiles => {
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return
+    const oldIndex = orderedPartnerFiles.findIndex(f => f.id === active.id)
+    const newIndex = orderedPartnerFiles.findIndex(f => f.id === over.id)
+    const reorderedFiles = arrayMove(orderedPartnerFiles, oldIndex, newIndex)
+
     const partnerFiles = formikProps.values.partners
-    const reorderedFileIds = reorderedFiles.map(file => file.id)
-
-    const orderedPartnerData = reorderedFileIds.map((fileId, index) => {
-      const partnerFileObject = partnerFiles.find(
-        partnerFile => partnerFile.id === fileId,
-      )
-
-      partnerFileObject.sequenceIndex = index + 1
-      return partnerFileObject
-    })
+    const orderedPartnerData = reorderedFiles.map((file, index) => ({
+      ...partnerFiles.find(p => p.id === file.id),
+      sequenceIndex: index + 1,
+    }))
 
     onPartnerDataChanged(orderedPartnerData)
   }
 
-  const onDragEnd = result => {
-    const reorderedFiles = reorder(
-      orderedPartnerFiles,
-      result.source.index,
-      result.destination.index,
-    )
-
-    setOrderedPartnerFiles(reorderedFiles)
-    setOrderedPartners(reorderedFiles)
-  }
-
-  const renderFileItems = (file, index) => {
-    return (
-      <Draggable draggableId={file.id} index={index} key={file.id}>
-        {provided => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
-            <PartnerListItem
+  return (
+    <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <SortableContext
+        items={orderedPartnerFiles.map(f => f.id)}
+        strategy={horizontalListSortingStrategy}
+      >
+        <Files>
+          {orderedPartnerFiles.map(file => (
+            <SortablePartnerItem
               deleteFile={deleteFile}
               file={file}
-              index={file.originalIndex}
-              key={file.name}
+              key={file.id}
               onUrlAdded={addUrlToFile}
               remove={remove}
-              uploaded
               url={getFileUrl(file.id)}
             />
-          </div>
-        )}
-      </Draggable>
-    )
-  }
-
-  return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable direction="horizontal" droppableId="droppable">
-        {provided => (
-          <Files ref={provided.innerRef} {...provided.droppableProps}>
-            {orderedPartnerFiles.map((file, index) =>
-              renderFileItems(file, index),
-            )}
-            {provided.placeholder}
-          </Files>
-        )}
-      </Droppable>
-    </DragDropContext>
+          ))}
+        </Files>
+      </SortableContext>
+    </DndContext>
   )
 }
 

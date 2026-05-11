@@ -2,7 +2,12 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useState, useEffect } from 'react'
-import { DragDropContext, Droppable } from 'react-beautiful-dnd'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
 import { v4 as uuid } from 'uuid'
 // import moment from 'moment-timezone'
 import styled from 'styled-components'
@@ -150,11 +155,11 @@ const TaskList = ({
     setTasks(updatedTasks)
   }
 
-  const onDragEnd = item => {
-    if (!item.destination) return // dropped outside the list
-    const result = tasks.filter((x, i) => i !== item.source.index)
-    result.splice(item.destination.index, 0, tasks[item.source.index])
-    updateTasks(result)
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return
+    const oldIndex = tasks.findIndex(task => task.id === active.id)
+    const newIndex = tasks.findIndex(task => task.id === over.id)
+    updateTasks(arrayMove(tasks, oldIndex, newIndex))
   }
 
   const userOptions = users.map(u => ({
@@ -228,71 +233,71 @@ const TaskList = ({
   return (
     <TaskListContainer>
       <MediumColumn>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
-            {provided => (
-              <TightColumn {...provided.droppableProps} ref={provided.innerRef}>
-                {!tasks.length && (
-                  <AddTaskContainer>
-                    {t('taskManager.list.Add your first task...')}
-                  </AddTaskContainer>
-                )}
-                {tasks.length ? (
-                  <>
-                    <HeaderRowContainer>
-                      <HeaderRow>
-                        <TitleHeader>
-                          <TitleLabel>{t('taskManager.list.Title')}</TitleLabel>
-                        </TitleHeader>
-                        <AssigneeHeader>
-                          {t('taskManager.list.Assignee')}
-                        </AssigneeHeader>
-                        <DurationHeader editAsTemplate={editAsTemplate}>
-                          {editAsTemplate
-                            ? t('taskManager.list.Duration in days')
-                            : t('taskManager.list.Duration/Due Date')}
-                        </DurationHeader>
-                      </HeaderRow>
-                    </HeaderRowContainer>
-                    {tasks.map((task, index) => (
-                      <Task
-                        addReviewer={addReviewer}
-                        assigneeGroupedOptions={assigneeGroupedOptions}
-                        createTaskEmailNotificationLog={
-                          createTaskEmailNotificationLog
-                        }
-                        currentUser={currentUser}
-                        deleteTaskNotification={deleteTaskNotification}
-                        editAsTemplate={editAsTemplate}
-                        emailTemplates={emailTemplates}
-                        index={index}
-                        isReadOnly={isReadOnly}
-                        key={task.id}
-                        manuscript={manuscript}
-                        onCancel={() =>
-                          updateTasks(
-                            tasks.filter(taskUpdate => taskUpdate.title),
-                          )
-                        }
-                        onDelete={id =>
-                          updateTasks(
-                            tasks.filter(taskUpdate => taskUpdate.id !== id),
-                          )
-                        }
-                        recipientGroupedOptions={recipientGroupedOptions}
-                        sendNotifyEmail={sendNotifyEmail}
-                        task={task}
-                        updateTask={updateTask}
-                        updateTaskNotification={updateTaskNotification}
-                      />
-                    ))}
-                  </>
-                ) : null}
-                {provided.placeholder}
-              </TightColumn>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext
+            items={tasks.map(task => task.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <TightColumn>
+              {!tasks.length && (
+                <AddTaskContainer>
+                  {t('taskManager.list.Add your first task...')}
+                </AddTaskContainer>
+              )}
+              {tasks.length ? (
+                <>
+                  <HeaderRowContainer>
+                    <HeaderRow>
+                      <TitleHeader>
+                        <TitleLabel>{t('taskManager.list.Title')}</TitleLabel>
+                      </TitleHeader>
+                      <AssigneeHeader>
+                        {t('taskManager.list.Assignee')}
+                      </AssigneeHeader>
+                      <DurationHeader editAsTemplate={editAsTemplate}>
+                        {editAsTemplate
+                          ? t('taskManager.list.Duration in days')
+                          : t('taskManager.list.Duration/Due Date')}
+                      </DurationHeader>
+                    </HeaderRow>
+                  </HeaderRowContainer>
+                  {tasks.map((task, index) => (
+                    <Task
+                      addReviewer={addReviewer}
+                      assigneeGroupedOptions={assigneeGroupedOptions}
+                      createTaskEmailNotificationLog={
+                        createTaskEmailNotificationLog
+                      }
+                      currentUser={currentUser}
+                      deleteTaskNotification={deleteTaskNotification}
+                      editAsTemplate={editAsTemplate}
+                      emailTemplates={emailTemplates}
+                      index={index}
+                      isReadOnly={isReadOnly}
+                      key={task.id}
+                      manuscript={manuscript}
+                      onCancel={() =>
+                        updateTasks(
+                          tasks.filter(taskUpdate => taskUpdate.title),
+                        )
+                      }
+                      onDelete={id =>
+                        updateTasks(
+                          tasks.filter(taskUpdate => taskUpdate.id !== id),
+                        )
+                      }
+                      recipientGroupedOptions={recipientGroupedOptions}
+                      sendNotifyEmail={sendNotifyEmail}
+                      task={task}
+                      updateTask={updateTask}
+                      updateTaskNotification={updateTaskNotification}
+                    />
+                  ))}
+                </>
+              ) : null}
+            </TightColumn>
+          </SortableContext>
+        </DndContext>
         <AddTaskContainer>
           <RoundIconButton
             disabled={tasks.some(taskUpdate => !taskUpdate.title)}

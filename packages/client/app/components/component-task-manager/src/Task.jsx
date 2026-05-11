@@ -7,7 +7,8 @@ import { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment-timezone'
 import styled, { css } from 'styled-components'
-import { Draggable } from 'react-beautiful-dnd'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { Circle, CheckCircle, MoreVertical } from 'react-feather'
 import { th, grid } from '@coko/client'
 import { debounce } from 'lodash'
@@ -225,7 +226,6 @@ const getLocalTimeString = val => {
 
 const Task = ({
   task: propTask,
-  index,
   updateTask,
   assigneeGroupedOptions,
   // onCancel = () => {},
@@ -242,6 +242,11 @@ const Task = ({
   emailTemplates,
   addReviewer,
 }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: propTask.id })
+
+  const dragStyle = { transform: CSS.Transform.toString(transform), transition }
+
   const config = useContext(ConfigContext)
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
   const [isEditTaskMetaModal, setIsEditTaskMetaModal] = useState(false)
@@ -364,161 +369,154 @@ const Task = ({
   }, [task])
 
   return (
-    <Draggable draggableId={task.id} index={index} key={task.id}>
-      {provided => (
-        <>
-          <Modal isOpen={isConfirmingDelete}>
-            <ModalContainer>
-              {t('modals.taskDelete.permanentlyDelete')}
-              <MediumRow>
-                <ActionButton onClick={() => onDelete(task.id)} primary>
-                  {t('modals.taskDelete.Ok')}
-                </ActionButton>
-                &nbsp;
-                <ActionButton onClick={() => setIsConfirmingDelete(false)}>
-                  {t('modals.taskDelete.Cancel')}
-                </ActionButton>
-              </MediumRow>
-            </ModalContainer>
-          </Modal>
-          <TaskEditModal
-            addReviewer={addReviewer}
-            assigneeGroupedOptions={assigneeGroupedOptions}
-            createTaskEmailNotificationLog={createTaskEmailNotificationLog}
-            currentUser={currentUser}
-            daysDifferenceLabel={daysDifferenceLabel}
-            deleteTaskNotification={deleteTaskNotification}
-            displayDefaultDurationDays={displayDefaultDurationDays}
-            dueDateLocalString={dueDateLocalString}
-            editAsTemplate={editAsTemplate}
-            emailTemplates={emailTemplates}
-            isOpen={isEditTaskMetaModal}
-            isOverdue={isOverdue}
-            isReadOnly={isReadOnly}
-            manuscript={manuscript}
-            onCancel={setIsEditTaskMetaModal}
-            onSave={setIsEditTaskMetaModal}
-            recipientGroupedOptions={recipientGroupedOptions}
-            sendNotifyEmail={sendNotifyEmail}
-            status={status}
-            task={task}
-            transposedDueDate={transposedDueDate}
-            transposedEndOfToday={transposedEndOfToday}
-            updateTask={updateTask}
-            updateTaskNotification={updateTaskNotification}
-          />
-          <TaskRowContainer>
-            <TaskRow
-              isOverdue={isOverdue}
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-            >
-              <TitleFieldContainer>
-                <TitleCell>
-                  <Handle {...provided.dragHandleProps}>
-                    <DragIcon />
-                  </Handle>
-                  {editAsTemplate ? (
-                    <Handle />
+    <>
+      <Modal isOpen={isConfirmingDelete}>
+        <ModalContainer>
+          {t('modals.taskDelete.permanentlyDelete')}
+          <MediumRow>
+            <ActionButton onClick={() => onDelete(task.id)} primary>
+              {t('modals.taskDelete.Ok')}
+            </ActionButton>
+            &nbsp;
+            <ActionButton onClick={() => setIsConfirmingDelete(false)}>
+              {t('modals.taskDelete.Cancel')}
+            </ActionButton>
+          </MediumRow>
+        </ModalContainer>
+      </Modal>
+      <TaskEditModal
+        addReviewer={addReviewer}
+        assigneeGroupedOptions={assigneeGroupedOptions}
+        createTaskEmailNotificationLog={createTaskEmailNotificationLog}
+        currentUser={currentUser}
+        daysDifferenceLabel={daysDifferenceLabel}
+        deleteTaskNotification={deleteTaskNotification}
+        displayDefaultDurationDays={displayDefaultDurationDays}
+        dueDateLocalString={dueDateLocalString}
+        editAsTemplate={editAsTemplate}
+        emailTemplates={emailTemplates}
+        isOpen={isEditTaskMetaModal}
+        isOverdue={isOverdue}
+        isReadOnly={isReadOnly}
+        manuscript={manuscript}
+        onCancel={setIsEditTaskMetaModal}
+        onSave={setIsEditTaskMetaModal}
+        recipientGroupedOptions={recipientGroupedOptions}
+        sendNotifyEmail={sendNotifyEmail}
+        status={status}
+        task={task}
+        transposedDueDate={transposedDueDate}
+        transposedEndOfToday={transposedEndOfToday}
+        updateTask={updateTask}
+        updateTaskNotification={updateTaskNotification}
+      />
+      <TaskRowContainer>
+        <TaskRow
+          isOverdue={isOverdue}
+          ref={setNodeRef}
+          style={dragStyle}
+          {...attributes}
+        >
+          <TitleFieldContainer>
+            <TitleCell>
+              <Handle {...listeners}>
+                <DragIcon />
+              </Handle>
+              {editAsTemplate ? (
+                <Handle />
+              ) : (
+                <Handle
+                  onClick={() =>
+                    updateTask(task.id, {
+                      ...task,
+                      status: isDone ? 'In progress' : 'Done',
+                    })
+                  }
+                  title={
+                    isDone ? '' : t('taskManager.task.Click to mark as done')
+                  }
+                >
+                  {isDone ? (
+                    <CheckCircle color={color.brand1.base()} />
                   ) : (
-                    <Handle
-                      onClick={() =>
-                        updateTask(task.id, {
-                          ...task,
-                          status: isDone ? 'In progress' : 'Done',
-                        })
-                      }
-                      title={
-                        isDone
-                          ? ''
-                          : t('taskManager.task.Click to mark as done')
-                      }
-                    >
-                      {isDone ? (
-                        <CheckCircle color={color.brand1.base()} />
-                      ) : (
-                        <Circle color={color.gray60} />
-                      )}
-                    </Handle>
+                    <Circle color={color.gray60} />
                   )}
-                  <TextInput
-                    onChange={event => updateTaskTitle(event.target.value)}
-                    placeholder={t('taskManager.task.Give your task a name')}
-                    title={taskTitle}
-                    value={taskTitle}
-                  />
-                  <TaskAction ref={taskRef}>
-                    <MinimalButton
-                      onClick={() => {
-                        setIsActionDialog(!isActionDialog)
-                      }}
-                    >
-                      <Ellipsis height="24" width="24" />
-                    </MinimalButton>
-                    {isActionDialog && (
-                      <ActionDialog>
-                        <EditLabel onClick={() => setIsEditTaskMetaModal(true)}>
-                          {t('taskManager.task.Edit')}
-                        </EditLabel>
-                        <DeleteLabel
-                          onClick={() => setIsConfirmingDelete(true)}
-                        >
-                          {t('taskManager.task.Delete')}
-                        </DeleteLabel>
-                      </ActionDialog>
-                    )}
-                  </TaskAction>
-                </TitleCell>
-              </TitleFieldContainer>
-              <AssigneeFieldContainer>
-                <AssigneeDropdown
-                  assigneeGroupedOptions={assigneeGroupedOptions}
+                </Handle>
+              )}
+              <TextInput
+                onChange={event => updateTaskTitle(event.target.value)}
+                placeholder={t('taskManager.task.Give your task a name')}
+                title={taskTitle}
+                value={taskTitle}
+              />
+              <TaskAction ref={taskRef}>
+                <MinimalButton
+                  onClick={() => {
+                    setIsActionDialog(!isActionDialog)
+                  }}
+                >
+                  <Ellipsis height="24" width="24" />
+                </MinimalButton>
+                {isActionDialog && (
+                  <ActionDialog>
+                    <EditLabel onClick={() => setIsEditTaskMetaModal(true)}>
+                      {t('taskManager.task.Edit')}
+                    </EditLabel>
+                    <DeleteLabel onClick={() => setIsConfirmingDelete(true)}>
+                      {t('taskManager.task.Delete')}
+                    </DeleteLabel>
+                  </ActionDialog>
+                )}
+              </TaskAction>
+            </TitleCell>
+          </TitleFieldContainer>
+          <AssigneeFieldContainer>
+            <AssigneeDropdown
+              assigneeGroupedOptions={assigneeGroupedOptions}
+              task={task}
+              unregisteredFieldsAlign="column"
+              updateTask={updateTask}
+            />
+          </AssigneeFieldContainer>
+          {editAsTemplate ? (
+            <DurationDaysFieldContainer>
+              <DurationDaysCell>
+                <CounterField
+                  minValue={0}
+                  onChange={val => {
+                    updateTask(task.id, {
+                      ...task,
+                      defaultDurationDays: val,
+                    })
+                  }}
+                  showNone
+                  value={task.defaultDurationDays}
+                />
+              </DurationDaysCell>
+            </DurationDaysFieldContainer>
+          ) : (
+            <DueDateFieldContainer>
+              <div>
+                <DueDateField
+                  compact
+                  displayDefaultDurationDays={displayDefaultDurationDays}
+                  dueDateLocalString={dueDateLocalString}
                   task={task}
-                  unregisteredFieldsAlign="column"
+                  transposedDueDate={transposedDueDate}
+                  transposedEndOfToday={transposedEndOfToday}
                   updateTask={updateTask}
                 />
-              </AssigneeFieldContainer>
-              {editAsTemplate ? (
-                <DurationDaysFieldContainer>
-                  <DurationDaysCell>
-                    <CounterField
-                      minValue={0}
-                      onChange={val => {
-                        updateTask(task.id, {
-                          ...task,
-                          defaultDurationDays: val,
-                        })
-                      }}
-                      showNone
-                      value={task.defaultDurationDays}
-                    />
-                  </DurationDaysCell>
-                </DurationDaysFieldContainer>
-              ) : (
-                <DueDateFieldContainer>
-                  <div>
-                    <DueDateField
-                      compact
-                      displayDefaultDurationDays={displayDefaultDurationDays}
-                      dueDateLocalString={dueDateLocalString}
-                      task={task}
-                      transposedDueDate={transposedDueDate}
-                      transposedEndOfToday={transposedEndOfToday}
-                      updateTask={updateTask}
-                    />
-                  </div>
-                  <div>
-                    <StatusActionCell isOverdue={isOverdue}>
-                      <StatusDropdown onStatusUpdate={setTask} task={task} />
-                    </StatusActionCell>
-                  </div>
-                </DueDateFieldContainer>
-              )}
-            </TaskRow>
-          </TaskRowContainer>
-        </>
-      )}
-    </Draggable>
+              </div>
+              <div>
+                <StatusActionCell isOverdue={isOverdue}>
+                  <StatusDropdown onStatusUpdate={setTask} task={task} />
+                </StatusActionCell>
+              </div>
+            </DueDateFieldContainer>
+          )}
+        </TaskRow>
+      </TaskRowContainer>
+    </>
   )
 }
 

@@ -83,6 +83,7 @@ services:
       - PUBLISHING_WEBHOOK_TOKEN=${PUBLISHING_WEBHOOK_TOKEN:-}
       - PUBLISHING_WEBHOOK_REF=${PUBLISHING_WEBHOOK_REF:-}
       - S3_URL=${S3_URL:-http://fileHosting:9000}
+      - S3_PUBLIC_URL=${S3_PUBLIC_URL:-http://localhost:9000}
       - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID:-nonRootUser}
       - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY:-nonRootPassword}
       - S3_BUCKET=${S3_BUCKET:-uploads}

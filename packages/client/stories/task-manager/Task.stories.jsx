@@ -1,4 +1,5 @@
-import { DragDropContext, Droppable } from 'react-beautiful-dnd'
+import { DndContext } from '@dnd-kit/core'
+import { SortableContext } from '@dnd-kit/sortable'
 import Task from '../../app/components/component-task-manager/src/Task'
 import DesignEmbed from '../common/utils'
 import { ConfigProvider } from '../../app/components/config/src'
@@ -22,16 +23,13 @@ export const Base = args => (
         </>
       )}
 
-      <DragDropContext onDragEnd={() => {}}>
-        <Droppable droppableId="droppable">
-          {provided => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <Task {...args} />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <DndContext onDragEnd={() => {}}>
+        <SortableContext items={[args.task.id]}>
+          <div>
+            <Task {...args} />
+          </div>
+        </SortableContext>
+      </DndContext>
     </>
   </ConfigProvider>
 )

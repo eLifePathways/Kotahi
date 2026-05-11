@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import styled, { withTheme } from 'styled-components'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -82,18 +88,26 @@ const BuilderElement = ({
   deleteField,
   formId,
   formFeildId,
-  index,
 }) => {
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false)
   const [formFieldId, setFormFieldId] = useState()
   const { t } = useTranslation()
 
-  const getItemStyle = (isDragging, draggableStyle) => ({
-    ...draggableStyle,
-    margin: `0px 0px 8px`,
-  })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: formFeildId })
 
-  // const fieldOptions = fieldOptionsByCategory[category]
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    margin: '0px 0px 8px',
+  }
+
   const fieldTypeLabel = determineFieldAndComponent(
     element.name,
     element.component,
@@ -101,61 +115,47 @@ const BuilderElement = ({
   ).fieldOption?.label
 
   return (
-    <Draggable draggableId={formFeildId} index={index} key={formFeildId}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={getItemStyle(
-            snapshot.isDragging,
-            provided.draggableProps.style,
-          )}
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <FeildWrapper
+        className={isSelected || isDragging ? 'active' : undefined}
+        id={formFeildId}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <DragIcon />
+        <Element
+          className={isSelected || isDragging ? 'active' : undefined}
+          key={`element-${element.id}`}
+          onClick={() => setSelectedFieldId(element.id)}
         >
-          <FeildWrapper
-            className={isSelected || snapshot.isDragging ? 'active' : undefined}
-            id={formFeildId}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
+          <MainAction>
+            {element.shortDescription ?? element.title}{' '}
+            <FieldTypeLabel>({fieldTypeLabel})</FieldTypeLabel>
+          </MainAction>
+          <IconAction
+            onClick={e => {
+              setDeleteModalIsOpen(true)
+              setFormFieldId(element.id)
+              e.stopPropagation()
             }}
           >
-            <DragIcon />
-            <Element
-              className={
-                isSelected || snapshot.isDragging ? 'active' : undefined
-              }
-              key={`element-${element.id}`}
-              onClick={() => setSelectedFieldId(element.id)}
-            >
-              <MainAction>
-                {element.shortDescription ?? element.title}{' '}
-                <FieldTypeLabel>({fieldTypeLabel})</FieldTypeLabel>
-              </MainAction>
-              <IconAction
-                onClick={e => {
-                  setDeleteModalIsOpen(true)
-                  setFormFieldId(element.id)
-                  e.stopPropagation()
-                }}
-              >
-                <SmallIcon>x</SmallIcon>
-              </IconAction>
-            </Element>
+            <SmallIcon>x</SmallIcon>
+          </IconAction>
+        </Element>
 
-            <ConfirmationModal
-              closeModal={() => setDeleteModalIsOpen(false)}
-              confirmationAction={() =>
-                deleteField({ variables: { formId, elementId: formFieldId } })
-              }
-              confirmationButtonText={t('common.Delete')}
-              isOpen={deleteModalIsOpen}
-              message={t('modals.deleteField.Permanently delete this field')}
-            />
-          </FeildWrapper>
-        </div>
-      )}
-    </Draggable>
+        <ConfirmationModal
+          closeModal={() => setDeleteModalIsOpen(false)}
+          confirmationAction={() =>
+            deleteField({ variables: { formId, elementId: formFieldId } })
+          }
+          confirmationButtonText={t('common.Delete')}
+          isOpen={deleteModalIsOpen}
+          message={t('modals.deleteField.Permanently delete this field')}
+        />
+      </FeildWrapper>
+    </div>
   )
 }
 
@@ -195,36 +195,34 @@ const FormBuilder = ({
     })
   }
 
+  const fieldIds = form.structure.children?.map(el => el.id) ?? []
+
   return (
     <Page style={{ display: 'flex', flexDirection: 'column', minHeight: '0' }}>
-      <DragDropContext onDragEnd={dragField}>
-        <Droppable droppableId="droppable">
-          {provided => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={{ overflowY: 'scroll', flex: '1 1 0%', minHeight: '0' }}
-            >
-              {form.structure.children?.map((element, index) => (
-                <BuilderElement
-                  category={category}
-                  deleteField={deleteField}
-                  element={element}
-                  formFeildId={element.id}
-                  formId={form.id}
-                  index={index}
-                  isSelected={selectedFieldId === element.id}
-                  key={`element-${element.id}`}
-                  moveFieldDown={moveFieldDown}
-                  moveFieldUp={moveFieldUp}
-                  setSelectedFieldId={setSelectedFieldId}
-                />
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <DndContext collisionDetection={closestCenter} onDragEnd={dragField}>
+        <SortableContext
+          items={fieldIds}
+          strategy={verticalListSortingStrategy}
+        >
+          <div style={{ overflowY: 'scroll', flex: '1 1 0%', minHeight: '0' }}>
+            {form.structure.children?.map((element, index) => (
+              <BuilderElement
+                category={category}
+                deleteField={deleteField}
+                element={element}
+                formFeildId={element.id}
+                formId={form.id}
+                index={index}
+                isSelected={selectedFieldId === element.id}
+                key={`element-${element.id}`}
+                moveFieldDown={moveFieldDown}
+                moveFieldUp={moveFieldUp}
+                setSelectedFieldId={setSelectedFieldId}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     </Page>
   )
 }
