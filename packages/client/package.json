@@ -12,16 +12,11 @@
     "node": ">=24.0.0"
   },
   "resolutions": {
-    "formik": "2.2.6",
     "prosemirror-inputrules": "1.2.0",
     "prosemirror-model": "1.19.0",
     "prosemirror-state": "1.4.3",
     "prosemirror-transform": "1.7.1",
-    "prosemirror-view": "1.30.2",
-    "styled-components": "6",
-    "wax-prosemirror-core": "0.9.74",
-    "wax-prosemirror-services": "0.9.74",
-    "wax-table-service": "0.9.74"
+    "prosemirror-view": "1.30.2"
   },
   "dependencies": {
     "@apollo/client": "4.1.9",
@@ -85,9 +80,9 @@
     "striptags": "^3.1.1",
     "styled-components": "^6.4.1",
     "uuid": "^8.3.2",
-    "wax-prosemirror-core": "0.9.74",
-    "wax-prosemirror-services": "0.9.74",
-    "wax-table-service": "0.9.74",
+    "wax-prosemirror-core": "0.10.1",
+    "wax-prosemirror-services": "0.10.1",
+    "wax-table-service": "0.10.1",
     "y-prosemirror": "1.2.0",
     "y-protocols": "1.0.5",
     "y-textarea": "^1.0.0",
