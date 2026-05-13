@@ -216,7 +216,7 @@ const Modal = ({
             <Title>{title}</Title>
             {subtitle && <Subtitle>{subtitle}</Subtitle>}
           </MediumColumn>
-          <CloseButton alignSelf="flex-end" onClick={onClose}>
+          <CloseButton onClick={onClose}>
             <Icon>x</Icon>
           </CloseButton>
         </MainHeader>

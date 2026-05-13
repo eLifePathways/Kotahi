@@ -7,11 +7,9 @@ import {
 
 const CollectionTable = ({ columnDefinitions, collection }) => {
   const rowCells = columnDefinitions.map(column => {
-    const Renderer = column.component
-
     return (
       <Cell $centered={column.centered} key={column.name}>
-        <Renderer collection={collection} />
+        {column.component({ collection })}
       </Cell>
     )
   })
