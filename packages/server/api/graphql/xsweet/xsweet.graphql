@@ -1,5 +1,5 @@
 extend type Query {
-  docxToHtml(url: String!): docxToHtmlType
+  docxToHtml(key: String!): docxToHtmlType
 }
 
 type docxToHtmlType {

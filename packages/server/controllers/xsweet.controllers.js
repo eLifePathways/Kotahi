@@ -4,7 +4,7 @@ const axios = require('axios')
 const FormData = require('form-data')
 const crypto = require('crypto')
 const { promisify } = require('util')
-const { config } = require('@coko/server')
+const { config, fileStorage } = require('@coko/server')
 
 // To test:
 // POST http://localhost:3004/healthCheck
@@ -59,9 +59,7 @@ const serviceHandshake = async () => {
     })
 }
 
-const getXsweet = async url => {
-  // check to see if we have an access token. If not, wait for one.
-
+const getXsweet = async key => {
   if (!xsweetAccessToken) {
     xsweetAccessToken = await serviceHandshake()
   }
@@ -73,13 +71,7 @@ const getXsweet = async url => {
 
   const docxPath = `${dirName}/file.docx`
 
-  // download the file. This could maybe be done with Coko Server?
-
-  const buffer = await axios
-    .get(url, { responseType: 'arraybuffer' })
-    .then(response => response.data)
-
-  await fsPromised.appendFile(docxPath, buffer)
+  await fileStorage.download(key, docxPath)
 
   // await fsPromised.appendFile(docxPath, url)
 
@@ -121,7 +113,7 @@ const getXsweet = async url => {
 
       if (status === 401 && msg === 'expired token') {
         await serviceHandshake()
-        return getXsweet(url)
+        return getXsweet(key)
       }
 
       throw new Error(

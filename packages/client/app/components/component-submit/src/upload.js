@@ -425,8 +425,8 @@ const uploadPromise = (files, client) => {
 }
 
 const getHtmlFromDocxQuery = gql`
-  query ($url: String!) {
-    docxToHtml(url: $url) {
+  query ($key: String!) {
+    docxToHtml(key: $key) {
       html
       error
     }
@@ -434,13 +434,18 @@ const getHtmlFromDocxQuery = gql`
 `
 
 const DocxToHTMLPromise = (file, data, client) => {
-  const theUrl = data.uploadFile.storedObjects[0].url
+  const originalObject =
+    data.uploadFile.storedObjects.find(o => o.type === 'original') ||
+    data.uploadFile.storedObjects[0]
+
+  const theKey = originalObject.key
+  const theUrl = originalObject.url
 
   return client
     .query({
       query: getHtmlFromDocxQuery,
       variables: {
-        url: theUrl,
+        key: theKey,
       },
       fetchPolicy: 'network-only',
     })
