@@ -40,8 +40,17 @@ module.exports = async app => {
       hasError = true
     }
 
+    if (
+      !hasError &&
+      !(payload && typeof payload === 'object' && !!Object.keys(payload).length)
+    ) {
+      message = 'No payload provided'
+      res.status(400).send({ message })
+      hasError = true
+    }
+
     if (hasError) {
-      await sendUnprocessableCoarNotification(message, payload)
+      await sendUnprocessableCoarNotification(message, payload, null, group?.id)
       return
     }
 
@@ -52,14 +61,19 @@ module.exports = async app => {
       )
 
       if (status > 299) {
-        await sendUnprocessableCoarNotification(processMessage, payload)
+        await sendUnprocessableCoarNotification(
+          processMessage,
+          payload,
+          null,
+          group.id,
+        )
       }
 
       res.status(status).send({ message: processMessage })
     } catch (error) {
       message = 'Failed to create notification.'
       logger.error(error)
-      await sendUnprocessableCoarNotification(message, payload)
+      await sendUnprocessableCoarNotification(message, payload, null, group.id)
       res.status(500).send({ message })
     }
   })

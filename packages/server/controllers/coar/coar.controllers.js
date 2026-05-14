@@ -216,22 +216,32 @@ const sendUnprocessableCoarNotification = async (
   groupId = null,
 ) => {
   const { id: notificationId, origin, target } = originalPayload
+  const activeConfig = await Config.getCached(groupId)
+
+  const actor = {
+    id: 'https://kotahi.community',
+    type: 'Organization',
+    name: 'Kotahi',
+  }
+
+  if (activeConfig) {
+    const { rorUrl, title } = activeConfig.formData?.groupIdentity ?? {}
+
+    if (rorUrl && title) {
+      actor.id = rorUrl
+      actor.name = title
+    }
+  }
 
   const payload = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
       'https://coar-notify.net',
     ],
-    actor: {
-      id: 'https://kotahi.community',
-      type: 'Organization',
-      name: 'Kotahi',
-    },
+    actor,
     id: generateUrn(),
     inReplyTo: notificationId,
-    object: {
-      id: notificationId,
-    },
+    object: originalPayload,
     origin: {
       id: serverUrl,
       type: 'Service',
@@ -263,7 +273,7 @@ const sendUnprocessableCoarNotification = async (
 
     return response ? response.data : false
   } catch (e) {
-    logger.error(e)
+    logger.error(`Failed to send COAR UnprocessableNotification: ${e}`)
     return false
   }
 }
@@ -307,16 +317,15 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
       ? await getCrossrefDataViaDoi(doi)
       : await getDataciteViaDoi(doi)
 
-  //   const crossrefData = await getCrossrefDataViaDoi(doi)
-  const existingManuscript = await getManuscriptByDoi(doi, groupId)
-
-  if (existingManuscript) return null
-
   if (!doiMetadata) {
     throw new Error(
       `Could not find metadata for DOI ${doi}. Please verify with ${doiRa}`,
     )
   }
+
+  const existingManuscript = await getManuscriptByDoi(doi, groupId)
+
+  if (existingManuscript) return null
 
   const {
     title,
@@ -430,7 +439,10 @@ const extractDoi = payload => {
 
 const extractNotificationType = payload => {
   if (Array.isArray(payload?.type)) {
-    if (payload.type.includes('Offer')) {
+    if (
+      payload.type.includes('Offer') &&
+      payload.type.includes('coar-notify:ReviewAction')
+    ) {
       return 'Offer'
     }
 
@@ -446,21 +458,65 @@ const extractNotificationType = payload => {
   return null
 }
 
+const hasValidContext = payload => {
+  const context = payload['@context']
+
+  return (
+    context &&
+    Array.isArray(context) &&
+    context.some(c => c.includes('w3.org/ns/activitystreams'))
+  )
+}
+
+const generate400Error = message => ({ status: 400, message })
+
 const processNotification = async (group, payload) => {
   const groupId = group.id
   const doi = extractDoi(payload)
 
+  if (!hasValidContext(payload)) {
+    return generate400Error('Property `@context` is invalid')
+  }
+
+  if (!payload.id) {
+    return generate400Error('Property `id` is missing from payload')
+  }
+
+  if (!payload.object || !payload.object.id) {
+    return generate400Error(
+      `Property ${'`object`'} is missing ${
+        !payload.object ? '' : '`id` '
+      }from payload`,
+    )
+  }
+
+  if (!payload.origin) {
+    return generate400Error('Property `origin` is missing from payload')
+  }
+
+  if (!payload.target) {
+    return generate400Error('Property `target` is missing from payload')
+  }
+
   const type = extractNotificationType(payload)
 
   if (!type) {
-    return { status: 400, message: 'Invalid notification type' }
+    return generate400Error(
+      `Invalid/unsupported notification type: ${payload.type}. Only 'Request Review' and 'Undo Offer' patterns are accepted`,
+    )
   }
 
-  if (type === 'Undo' && !payload.inReplyTo) {
-    return {
-      status: 400,
-      message: 'Property `inReplyTo` is missing from payload',
-    }
+  if (
+    type === 'Undo' &&
+    (!payload.inReplyTo || payload.inReplyTo !== payload.object.id)
+  ) {
+    return generate400Error(
+      `Property ${'`inReplyTo`'} ${
+        !payload.inReplyTo
+          ? 'is missing from payload'
+          : 'does not match `object.id`'
+      }`,
+    )
   }
 
   const existingNotification =
@@ -490,17 +546,16 @@ const processNotification = async (group, payload) => {
   }
 
   if (existingNotification) {
-    return {
-      status: 400,
-      message: 'Notification already exists with the same payload.',
-    }
+    return generate400Error(
+      'Notification already exists with the same payload.',
+    )
   }
 
   // may contain the error message to be returned
   const doiRa = await getDoiRegistrationAgency(doi)
 
   if (!supportedDoiRegistrationAgencies.includes(doiRa)) {
-    return { status: 400, message: doiRa }
+    return generate400Error(doiRa)
   }
 
   let newManuscript
@@ -513,7 +568,7 @@ const processNotification = async (group, payload) => {
       doiRa,
     )
   } catch (extractError) {
-    return { status: 400, message: extractError.message }
+    return generate400Error(extractError.message)
   }
 
   const notification = await createNotification(payload, groupId)
