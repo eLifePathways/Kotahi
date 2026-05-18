@@ -142,7 +142,7 @@ services:
       - ./packages/server/startup.js:/home/node/app/startup.js
       - ./packages/server/utils:/home/node/app/utils
       - ./packages/server/profiles:/home/node/app/profiles
-      - ./packages/server/node_modules/@coko/server:/home/node/app/node_modules/@coko/server
+      # - ./packages/server/node_modules/@coko/server:/home/node/app/node_modules/@coko/server
     healthcheck:
       test:
         ['CMD-SHELL', 'curl --fail http://localhost:3000/healthcheck || exit 1']
