@@ -200,7 +200,7 @@ services:
       - POSTGRES_PASSWORD=xsweet_user_password
 
   db:
-    image: postgres:18
+    image: postgres:16-alpine
     ports:
       - ${POSTGRES_PORT:-5432}:5432
     environment:
