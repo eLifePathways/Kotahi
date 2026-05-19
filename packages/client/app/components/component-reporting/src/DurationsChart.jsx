@@ -116,7 +116,11 @@ const DurationsChart = ({
 
   return (
     <Container>
-      <ResponsiveContainer height="100%" minWidth={0} width="100%">
+      <ResponsiveContainer
+        height="100%"
+        initialDimension={{ width: 600, height: 300 }}
+        width="100%"
+      >
         <LineChart>
           <XAxis
             allowDataOverflow={false}
