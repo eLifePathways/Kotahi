@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard, manuscripts, login } from '../../support/routes3'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -12,7 +13,6 @@ describe('Login page tests', () => {
   })
 
   it('checking Kotahi branding in the login page', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('branding_settings').then(settings => {
       cy.visit(login)
 
@@ -37,7 +37,6 @@ describe('Login page tests', () => {
     beforeEach(() => {
       cy.fixture('role_names').then(name => {
         // login as admin
-        // eslint-disable-next-line jest/valid-expect-in-promise
         cy.login(name.role.admin, dashboard)
       })
       cy.awaitDisappearSpinner()
@@ -64,7 +63,6 @@ describe('Login page tests', () => {
   context('other users can only access the Dashboard page', () => {
     beforeEach(() => {
       // login as a reviewer
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('role_names').then(name => {
         cy.login(name.role.reviewers[0], dashboard)
       })

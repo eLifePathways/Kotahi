@@ -163,6 +163,7 @@ export const safeParse = (str, fallback = {}) => {
   const tryParse = s => {
     try {
       return JSON.parse(s)
+      /* eslint-disable-next-line */
     } catch (e) {
       return null
     }

@@ -1,5 +1,5 @@
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ReviewPage } from '../../page-object/review-page'
 import { dashboard } from '../../support/routes'

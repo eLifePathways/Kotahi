@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 // import { YjsService } from 'wax-prosemirror-services'
 import YjsService from './YjsService'
 

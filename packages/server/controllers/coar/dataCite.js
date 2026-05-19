@@ -20,6 +20,7 @@ const getDataByDoi = async doi => {
     const response = await axios.get(`${apiUrl}/${doi}`, {})
 
     return response.data.data.attributes
+    /* eslint-disable-next-line */
   } catch (error) {
     logger.error(`Resource not found in DataCite eefor DOI ${doi}`)
     return null

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { forEach, each } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { Plugin, PluginKey } from 'prosemirror-state'

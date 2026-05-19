@@ -1,5 +1,5 @@
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { dashboard } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -14,7 +14,7 @@ describe('manuscripts page tests - Filter, sort, bulk select, archive', () => {
     // cy.task('seedForms')
 
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })

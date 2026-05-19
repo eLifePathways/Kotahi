@@ -3,7 +3,7 @@ const Docmap = require('../../../models/docmap/docmap.model')
 module.exports = app => {
   app.get(
     '/api/docmap/group_id/:groupId/doi/:prefix/:doi',
-    async (req, res, next) => {
+    async (req, res) => {
       const { groupId, prefix, doi } = req.params
 
       const docmap = await Docmap.query()

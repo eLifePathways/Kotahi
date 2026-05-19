@@ -1,5 +1,3 @@
-/* eslint-disable padding-line-between-statements */
-
 const REPORT_OPTIONS = 'report-options'
 const DATE_INPUT = ' [data-testid="report-options"] input'
 
@@ -20,7 +18,6 @@ export const REVIEWER_COLUMNS = {
   DURATION: 4,
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export const ReportPage = {
   getReportActions() {
     return cy.getByDataTestId(REPORT_OPTIONS)

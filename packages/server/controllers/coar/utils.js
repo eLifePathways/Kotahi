@@ -1,4 +1,5 @@
 const { default: axios } = require('axios')
+const { logger } = require('@coko/server')
 
 const apiUrl = 'https://api.ror.org/v2/organizations'
 
@@ -12,8 +13,9 @@ const getRorOrganisation = async value => {
       data.names?.find(n => n.types.includes('ror_display'))?.value ?? ''
 
     return rorDisplay
+    /* eslint-disable-next-line */
   } catch (error) {
-    console.error('Failed to get organisation for ROR', id)
+    logger.error('Failed to get organisation for ROR', id)
     return ''
   }
 }

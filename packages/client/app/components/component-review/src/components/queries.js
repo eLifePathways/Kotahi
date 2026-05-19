@@ -250,7 +250,7 @@ const teamFields = `
 `
 
 export const query = gql`
-  query($id: ID!, $groupId: ID!) {
+  query Manuscript($id: ID!, $groupId: ID!) {
     manuscript(id: $id) {
       ${manuscriptFields}
       manuscriptVersions {
@@ -342,7 +342,7 @@ export const query = gql`
 `
 
 export const addReviewerMutation = gql`
-mutation($manuscriptId: ID!, $userId: ID!, $isCollaborative: Boolean!) {
+mutation AddReviewer($manuscriptId: ID!, $userId: ID!, $isCollaborative: Boolean!) {
   addReviewer(manuscriptId: $manuscriptId, userId: $userId, isCollaborative: $isCollaborative) {
     ${teamFields}
   }
@@ -350,7 +350,7 @@ mutation($manuscriptId: ID!, $userId: ID!, $isCollaborative: Boolean!) {
 `
 
 export const removeAuthorMutation = gql`
-mutation($manuscriptId: ID!, $userId: ID!) {
+mutation RemoveAuthor($manuscriptId: ID!, $userId: ID!) {
   removeAuthor(manuscriptId: $manuscriptId, userId: $userId) {
     ${teamFields}
   }
@@ -358,7 +358,7 @@ mutation($manuscriptId: ID!, $userId: ID!) {
 `
 
 export const removeReviewerMutation = gql`
-mutation($manuscriptId: ID!, $userId: ID!) {
+mutation RemoveReviewer($manuscriptId: ID!, $userId: ID!) {
   removeReviewer(manuscriptId: $manuscriptId, userId: $userId) {
     ${teamFields}
   }
@@ -366,7 +366,7 @@ mutation($manuscriptId: ID!, $userId: ID!) {
 `
 
 export const removeInvitationMutation = gql`
-  mutation ($id: ID!) {
+  mutation RemoveInvitation($id: ID!) {
     removeInvitation(id: $id) {
       id
       manuscriptId
@@ -376,7 +376,7 @@ export const removeInvitationMutation = gql`
 `
 
 export const updateReviewMutation = gql`
-  mutation($id: ID, $input: ReviewInput) {
+  mutation UpdateReview($id: ID, $input: ReviewInput) {
     updateReview(id: $id, input: $input) {
       ${reviewFields}
     }
@@ -384,7 +384,7 @@ export const updateReviewMutation = gql`
 `
 
 export const makeDecisionMutation = gql`
-  mutation($id: ID!, $decision: String) {
+  mutation MakeDecision($id: ID!, $decision: String) {
     makeDecision(id: $id, decision: $decision) {
       id
       ${manuscriptFields}
@@ -392,7 +392,7 @@ export const makeDecisionMutation = gql`
   }
 `
 export const createThreadMutation = gql`
-  mutation ($id: ID!, $decision: String) {
+  mutation CreateThread($id: ID!, $decision: String) {
     createThread(id: $id, decision: $decision) {
       id
     }
@@ -400,7 +400,7 @@ export const createThreadMutation = gql`
 `
 
 export const publishManuscriptMutation = gql`
-  mutation ($id: ID!) {
+  mutation PublishManuscript($id: ID!) {
     publishManuscript(id: $id) {
       manuscript {
         id
@@ -417,7 +417,7 @@ export const publishManuscriptMutation = gql`
 `
 
 export const sendEmail = gql`
-  mutation ($input: String!) {
+  mutation SendEmail($input: String!) {
     sendEmail(input: $input) {
       invitation {
         id
@@ -430,7 +430,7 @@ export const sendEmail = gql`
 `
 
 export const setShouldPublishFieldMutation = gql`
-  mutation($manuscriptId: ID!, $objectId: ID!, $fieldName: String!, $shouldPublish: Boolean!) {
+  mutation SetShouldPublishField($manuscriptId: ID!, $objectId: ID!, $fieldName: String!, $shouldPublish: Boolean!) {
     setShouldPublishField(
       manuscriptId: $manuscriptId
       objectId: $objectId
@@ -443,7 +443,7 @@ export const setShouldPublishFieldMutation = gql`
 `
 
 export const lockUnlockCollaborativeReviewMutation = gql`
-  mutation($id: ID!) {
+  mutation LockUnlockCollaborativeReview($id: ID!) {
     lockUnlockCollaborativeReview(id: $id) {
       ${reviewFields}
     }

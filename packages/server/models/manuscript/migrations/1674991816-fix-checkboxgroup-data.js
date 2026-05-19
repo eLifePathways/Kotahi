@@ -1,4 +1,4 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 const { isArray } = require('lodash')
 
 const Form = require('../../form/form.model')
@@ -23,7 +23,7 @@ const fixFields = (obj, fieldNames) => {
   fieldNames.forEach(name => {
     if (isArray(obj[name])) {
       const initialOptionCount = obj[name].length
-      // eslint-disable-next-line no-param-reassign
+
       obj[name] = obj[name].filter(item => item !== 'on')
       const finalOptionCount = obj[name].length
       deletionCount += initialOptionCount - finalOptionCount
@@ -40,12 +40,12 @@ const fixFieldsInAllObjects = async (
   Model,
   trx,
 ) => {
-  logger.info(`Total ${formType}s: ${objects.length}`)
+  // logger.info(`Total ${formType}s: ${objects.length}`)
 
   if (objects.length > 0) {
     const chkbxFieldNames = await getCheckboxGroupFieldNames(formType)
-    let convertedCount = 0
-    let totalDeletedOptionsCount = 0
+    // let convertedCount = 0
+    // let totalDeletedOptionsCount = 0
 
     for (let i = 0; i < objects.length; i += 1) {
       const obj = objects[i]
@@ -54,13 +54,13 @@ const fixFieldsInAllObjects = async (
       obj[formDataName] = formData
 
       if (deletedOptionsCount) {
-        logger.info(
-          `${formType} ${
-            obj.shortId || obj.id
-          }: ${deletedOptionsCount} spurious selections deleted.`,
-        )
-        totalDeletedOptionsCount += deletedOptionsCount
-        convertedCount += 1
+        // logger.info(
+        //   `${formType} ${
+        //     obj.shortId || obj.id
+        //   }: ${deletedOptionsCount} spurious selections deleted.`,
+        // )
+        // totalDeletedOptionsCount += deletedOptionsCount
+        // convertedCount += 1
       }
 
       // eslint-disable-next-line no-await-in-loop
@@ -69,16 +69,16 @@ const fixFieldsInAllObjects = async (
         .patch({ [formDataName]: formData })
     }
 
-    logger.info(
-      `Deleted a total of ${totalDeletedOptionsCount} spurious selections from ${convertedCount} ${formType}s.`,
-    )
+    // logger.info(
+    //   `Deleted a total of ${totalDeletedOptionsCount} spurious selections from ${convertedCount} ${formType}s.`,
+    // )
   }
 }
 
-exports.up = async knex => {
-  logger.info(
-    'Deleting spurious CheckboxGroup selections from manuscript submissions, reviews and decisions:',
-  )
+exports.up = async () => {
+  // logger.info(
+  //   'Deleting spurious CheckboxGroup selections from manuscript submissions, reviews and decisions:',
+  // )
 
   const manuscripts = await Manuscript.query()
   const reviewsAndDecisions = await Review.query()

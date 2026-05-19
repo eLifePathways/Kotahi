@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import { values } from 'lodash'
 
 // IDEA:This could be used to limit the selectable nodes

@@ -1,8 +1,6 @@
 const createToken = async username => {
-  // eslint-disable-next-line global-require
   const User = require('../../models/user/user.model')
 
-  // eslint-disable-next-line global-require
   const { createJWT } = require('@coko/server')
 
   const user = await User.query().where({ username }).first()

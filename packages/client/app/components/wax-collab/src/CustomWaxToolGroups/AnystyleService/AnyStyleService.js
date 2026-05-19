@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import { Service } from 'wax-prosemirror-core'
 import AnyStyleTool from './AnyStyleTool'
 import AnyStyleToolGroupService from './AnyStyleToolGroupService/AnyStyleToolGroupService'

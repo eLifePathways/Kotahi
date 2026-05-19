@@ -12,7 +12,7 @@ const seedForms = require('../../../scripts/cypress/seedForms')
 const dumpFile = name => path.join(__dirname, 'dumps', `${name}.sql`)
 
 module.exports = app => {
-  app.post('/api/e2e/restore/:name', async (req, res, next) => {
+  app.post('/api/e2e/restore/:name', async (req, res) => {
     const { name } = req.params
 
     try {
@@ -24,7 +24,7 @@ module.exports = app => {
     }
   })
 
-  app.post('/api/e2e/seed/:name', async (req, res, next) => {
+  app.post('/api/e2e/seed/:name', async (req, res) => {
     const { name } = req.params
 
     try {
@@ -41,7 +41,7 @@ module.exports = app => {
     }
   })
 
-  app.post('/api/e2e/createToken/:username', async (req, res, next) => {
+  app.post('/api/e2e/createToken/:username', async (req, res) => {
     const { username } = req.params
 
     try {
@@ -53,7 +53,7 @@ module.exports = app => {
     }
   })
 
-  app.post('/api/e2e/seedForms', async (req, res, next) => {
+  app.post('/api/e2e/seedForms', async (req, res) => {
     try {
       await seedForms()
       res.sendStatus(200)

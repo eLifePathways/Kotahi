@@ -27,7 +27,6 @@ const DECISION_RECOMMENDATION = 'style__Legend-sc-1jvxmxn-2 bTVTjY'
 const DECISION_BUTTON_SELECTED =
   '[class*=component-decision-viewer__RadioGroup] [checked]'
 
-// eslint-disable-next-line import/prefer-default-export
 export const ReviewPage = {
   getReviewMetadataCell(nth) {
     return cy.getByContainsClass(REVIEW_METADATA_CELL).eq(nth)

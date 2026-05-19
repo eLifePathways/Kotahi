@@ -10,7 +10,6 @@ const UPLOAD_MANUSCRIPT_BUTTON = 'UploadManuscript__Info'
 const SUBMIT_URL_BUTTON = 'submitUrl'
 const SUBMISSION_MESSAGE = 'body'
 
-// eslint-disable-next-line import/prefer-default-export
 export const NewSubmissionPage = {
   getUploadManuscriptButton() {
     return cy.getByContainsClass(UPLOAD_MANUSCRIPT_BUTTON)

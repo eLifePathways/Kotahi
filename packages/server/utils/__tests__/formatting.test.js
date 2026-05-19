@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { formatCitation } = require('../reference')
 const { Config } = require('../../models')
 

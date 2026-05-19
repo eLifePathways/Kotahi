@@ -1,4 +1,4 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
 
 import { manuscripts } from '../../support/routes'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -16,7 +16,7 @@ describe.skip('manuscripts page checkboxes tests', () => {
       cy.request('POST', seedFormsUrl)
 
       // login as admin
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('role_names').then(name => {
         cy.login(name.role.admin, manuscripts)
       })
@@ -36,7 +36,7 @@ describe.skip('manuscripts page checkboxes tests', () => {
     })
     beforeEach(() => {
       // login as admin
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('role_names').then(name => {
         cy.login(name.role.admin, manuscripts)
       })
@@ -86,14 +86,12 @@ describe.skip('manuscripts page checkboxes tests', () => {
       cy.request('POST', seedFormsUrl)
 
       // login as admin
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('role_names').then(name => {
         cy.login(name.role.admin, manuscripts)
       })
       cy.awaitDisappearSpinner()
       ManuscriptsPage.clickSubmit()
       NewSubmissionPage.clickSubmitUrlAndWaitPageLoad()
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInDoi(data.doi)
         SubmissionFormPage.fillInTitle(data.articleId)
@@ -112,7 +110,7 @@ describe.skip('manuscripts page checkboxes tests', () => {
         SubmissionFormPage.fillInJournal(data.journal)
         SubmissionFormPage.fillInReviewer(data.creator)
         SubmissionFormPage.fillInReviewCreator(data.creator)
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
       })

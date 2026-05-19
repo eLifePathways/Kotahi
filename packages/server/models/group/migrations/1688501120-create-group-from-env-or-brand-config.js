@@ -1,9 +1,9 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const Config = require('../../config/config.model')
 const Group = require('../group.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const configs = await Config.query(trx)
@@ -14,8 +14,8 @@ exports.up = async knex => {
           .map(g => g.trim())
           .filter(g => !!g)
 
-      logger.info(`${instanceGroups}`)
-      logger.info(`Existing Configs: ${configs.length}`)
+      // logger.info(`${instanceGroups}`)
+      // logger.info(`Existing Configs: ${configs.length}`)
 
       // Existing instances migrating to multi-tenancy groups
       if (configs.length === 1 && !configs[0].group_id) {
@@ -32,7 +32,7 @@ exports.up = async knex => {
         /* eslint no-param-reassign: "error" */
         await Group.query(trx).insertAndFetch(group)
 
-        logger.info('Created initial Group data.')
+        // logger.info('Created initial Group data.')
       }
     })
   } catch (error) {

@@ -1,4 +1,4 @@
-/* eslint-disable */ //delete after 2nd function will appear here
+//delete after 2nd function will appear here
 export const russianPluralRule = {
   numbers: [1, 2, 5],
   plurals: n => {

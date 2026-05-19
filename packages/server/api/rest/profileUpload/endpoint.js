@@ -2,7 +2,8 @@ const crypto = require('crypto')
 const multer = require('multer')
 const passport = require('passport')
 const path = require('path')
-const config = require('config')
+
+const { config } = require('@coko/server')
 
 const {
   profileUpload,
@@ -34,7 +35,7 @@ module.exports = app => {
     '/api/uploadProfile',
     authBearer,
     upload.single('file'),
-    async (req, res, next) => {
+    async (req, res) => {
       await profileUpload(req.user, req.file.path)
       res.sendStatus(200)
     },

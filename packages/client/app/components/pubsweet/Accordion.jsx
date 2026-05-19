@@ -1,0 +1,99 @@
+/* eslint-disable react/prop-types */
+
+import { useState } from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import { th, override } from '@coko/client'
+
+import Icon from './Icon'
+
+// #region styles
+const Root = styled.div`
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all ${th('transitionDuration')};
+
+  /* stylelint-disable-next-line order/properties-alphabetical-order */
+  ${override('ui.Accordion')};
+`
+
+const Header = styled.div.attrs(props => ({
+  'data-test-id': props['data-test-id'] || 'accordion-header',
+}))`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+
+  ${override('ui.Accordion.Header')};
+`
+
+const HeaderLabel = styled.span`
+  color: ${th('colorPrimary')};
+  font-family: ${th('fontHeading')};
+  font-size: ${th('fontSizeBase')};
+
+  ${override('ui.Accordion.Header.Label')};
+`
+
+const HeaderIcon = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  transform: ${({ expanded }) => `rotateZ(${expanded ? 0 : 180}deg)`};
+  transition: transform ${th('transitionDuration')};
+
+  /* stylelint-disable-next-line order/properties-alphabetical-order */
+  ${override('ui.Accordion.Header.Icon')};
+`
+// #endregion
+
+const HeaderComponent = ({ icon, expanded, label, toggle, ...props }) => (
+  <Header expanded={expanded} onClick={toggle} {...props}>
+    <HeaderIcon expanded={expanded}>
+      <Icon primary size={3}>
+        {icon}
+      </Icon>
+    </HeaderIcon>
+    <HeaderLabel>{label}</HeaderLabel>
+  </Header>
+)
+
+const Accordion = ({
+  children,
+  icon = 'chevron_up',
+  header: HeaderProp = HeaderComponent,
+  startExpanded = false,
+  onToggle = null,
+  ...props
+}) => {
+  const [expanded, setExpanded] = useState(startExpanded)
+
+  const toggle = () => {
+    setExpanded(prev => {
+      const next = !prev
+      if (typeof onToggle === 'function') onToggle(next)
+      return next
+    })
+  }
+
+  return (
+    <Root>
+      <HeaderProp expanded={expanded} icon={icon} toggle={toggle} {...props} />
+      {expanded && children}
+    </Root>
+  )
+}
+
+Accordion.propTypes = {
+  /** Header icon, from the [Feather](https://feathericons.com/) icon set. */
+  icon: PropTypes.string,
+  /** Initial state of the accordion. */
+  startExpanded: PropTypes.bool,
+  /** Function called when toggling the accordion. The new state is passed as a parameter. */
+  onToggle: PropTypes.func,
+}
+
+export default Accordion

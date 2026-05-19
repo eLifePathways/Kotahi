@@ -54,15 +54,11 @@ const createFileFn = async (file, meta) => {
     }
   }
 
-  const createdFile = await createFile(
-    fileStream,
-    filename,
-    null,
-    null,
-    [meta.fileType, ...tags],
-    meta.reviewId || meta.manuscriptId,
-    options,
-  )
+  const createdFile = await createFile(fileStream, filename, {
+    tags: [meta.fileType, ...tags],
+    objectId: meta.reviewId || meta.manuscriptId,
+    ...options,
+  })
 
   const data = await getFileWithUrl(createdFile, options)
 
@@ -70,7 +66,10 @@ const createFileFn = async (file, meta) => {
 }
 
 const deleteFile = async id => {
-  const options = {}
+  const options = {
+    removeFromFileServer: true,
+  }
+
   const file = await File.findById(id)
 
   if (
@@ -95,12 +94,12 @@ const deleteFile = async id => {
     }
   }
 
-  await deleteFiles([id], true, options)
+  await deleteFiles([id], options)
   return id
 }
 
 const deleteFilesFn = async ids => {
-  await deleteFiles(ids, true)
+  await deleteFiles(ids, { removeFromFileServer: true })
   return ids
 }
 
@@ -140,7 +139,6 @@ const getEntityFiles = async input => {
           }
         }
 
-        // eslint-disable-next-line no-param-reassign
         file.inUse = foundIn.length > 0
       })
     }
@@ -228,14 +226,11 @@ const uploadFiles = async (files, fileType, entityId) => {
       const { createReadStream, filename } = await file
       const fileStream = createReadStream()
 
-      const createdFile = await createFile(
-        fileStream,
-        filename,
-        filename,
-        null,
-        [fileType],
-        entityId,
-      )
+      const createdFile = await createFile(fileStream, filename, {
+        alt: filename,
+        tags: [fileType],
+        objectId: entityId,
+      })
 
       const data = await getFileWithUrl(createdFile)
 

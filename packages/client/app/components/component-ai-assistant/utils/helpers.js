@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import { mapEntries, onEntries } from '../../../shared/generalUtils'
 
 export const srcdoc = (scope, css, template, scrollPos) => /* html */ `

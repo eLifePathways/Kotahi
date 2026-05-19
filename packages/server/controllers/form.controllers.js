@@ -1,4 +1,4 @@
-const { NotFoundError } = require('@coko/server/src/errors')
+const { NotFoundError } = require('@coko/server')
 const { mergeWith } = require('lodash')
 
 const { Form } = require('../models')
@@ -91,7 +91,6 @@ const updateForm = async form => {
 
   const s3ComponentIds = s3Components.map(s => s.id)
 
-  // eslint-disable-next-line no-param-reassign
   form.structure.children = form.structure.children.map(c => {
     if (s3ComponentIds.includes(c.id) && !c.s3AccessId && !c.s3AccessToken) {
       const originalCredentials = s3Components.find(s => s.id === c.id)
@@ -130,7 +129,6 @@ const updateFormElement = async (element, formId) => {
   if (!form) return null
 
   if (element.name === '$verdict' && Array.isArray(element.options)) {
-    // eslint-disable-next-line no-param-reassign
     element.options = element.options.map(option => ({
       ...option,
       value: option.value.trim(),
@@ -165,10 +163,8 @@ const updateFormElement = async (element, formId) => {
       const { s3AccessId, s3AccessToken } =
         form.structure.children[indexToReplace]
 
-      /* eslint-disable no-param-reassign */
       element.s3AccessId = s3AccessId
       element.s3AccessToken = s3AccessToken
-      /* eslint-enable no-param-reassign */
     }
 
     form.structure.children[indexToReplace] =

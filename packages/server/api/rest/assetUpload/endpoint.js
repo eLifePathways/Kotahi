@@ -33,7 +33,7 @@ module.exports = app => {
     '/api/uploadAsset',
     authBearer,
     upload.array('files'),
-    async (req, res, next) => {
+    async (req, res) => {
       const { body, files } = req
       const { isCms, isPdf, groupTemplateId, fileType } = body
 
@@ -46,7 +46,7 @@ module.exports = app => {
     },
   )
 
-  app.post('/api/deleteAsset', authBearer, async (req, res, next) => {
+  app.post('/api/deleteAsset', authBearer, async (req, res) => {
     const { id } = req.body
     const responseData = await deleteAsset(id)
     return res.send(responseData)

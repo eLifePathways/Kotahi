@@ -2,8 +2,6 @@
 import { evaluate } from '../support/routes'
 // import { ControlPage } from './control-page'
 
-/* eslint-disable cypress/unsafe-to-chain-command */
-
 /**
  * Page component representing the fourth option in the left side menu,
  * where users can see the list of submitted manuscripts & select Control,

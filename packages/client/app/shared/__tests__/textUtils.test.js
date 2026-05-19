@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { convertCamelCaseToTitleCase } from '../textUtils'
 
 describe('convert camel case', () => {

@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/catch-or-return, promise/no-nesting */
+
 import { dashboard } from '../../support/routes'
 import { Menu } from '../../page-object/page-component/menu'
 import { ReportPage, REVIEWER_COLUMNS } from '../../page-object/reports-page'
@@ -11,7 +12,6 @@ describe('Report Page', () => {
     cy.request('POST', `${restoreUrl}/commons.bootstrap`)
     cy.request('POST', `${seedUrl}/three_reviews_completed`)
 
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -43,7 +43,6 @@ describe('Report Page', () => {
     // TO-DO: The features: recommendedToAccept, recommendedToRevise,
     // and recommendedToReject are not included since htey do not work in the app
 
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('report_data').then(({ reviewersData }) => {
       reviewersData.forEach(reviewer => {
         const {

@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import i18next from 'i18next'
 import {
   DefaultField,

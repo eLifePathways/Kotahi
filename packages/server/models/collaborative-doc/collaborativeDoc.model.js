@@ -12,7 +12,6 @@ class CollaborativeDoc extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const Group = require('../group/group.model')
 
     return {
@@ -77,7 +76,6 @@ class CollaborativeDoc extends BaseModel {
 
     return formFields.reduce((result, obj) => {
       Object.entries(obj).forEach(([key, value]) => {
-        // eslint-disable-next-line no-param-reassign
         result[key] = value
       })
       return result

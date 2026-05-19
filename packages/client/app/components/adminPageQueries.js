@@ -1,7 +1,7 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 const QUERY = gql`
-  query {
+  query CurrentUser {
     currentUser {
       id
       profilePicture

@@ -61,7 +61,8 @@ const reference = {
           originalText: hook?.dom?.getAttribute('data-original-text') || '',
           citationNumber: hook?.dom?.getAttribute('data-citation-number') || '',
         })
-        typeof next !== 'undefined' && next()
+
+        if (typeof next !== 'undefined') next()
       },
     },
   ],
@@ -92,12 +93,10 @@ const reference = {
     }
 
     if (!hook?.node?.attrs?.refId) {
-      // eslint-disable-next-line no-param-reassign
       hook.node.attrs.refId = uuid
       attrs.id = uuid
     }
 
-    // eslint-disable-next-line no-param-reassign
     hook.value = ['p', attrs, 0]
     next()
   },

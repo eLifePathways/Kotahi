@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 const VALIDATE_DOI = gql`
   query validateDOI($doiOrUrl: String) {
@@ -14,7 +14,7 @@ const VALIDATE_DOI = gql`
  * Else return undefined. This contacts the server for the result,
  * which in turn attempts to retrieve the DOI.
  */
-// eslint-disable-next-line import/prefer-default-export
+
 export const validateDoi = client => async value => {
   return client
     .query({
@@ -55,7 +55,7 @@ export const validateSuffix = (client, groupId) => async value => {
 }
 
 export const VALIDATE_ORCID = gql`
-  query ($input: String!) {
+  query OrcidValidate($input: String!) {
     orcidValidate(input: $input)
   }
 `

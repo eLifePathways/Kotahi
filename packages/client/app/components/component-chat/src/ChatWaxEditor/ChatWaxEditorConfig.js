@@ -17,6 +17,7 @@ import { KotahiBlockDropDownToolGroupService } from '../../../wax-collab/src/Cus
 import CharactersList from '../../../wax-collab/src/config/CharactersList'
 import MentionService from '../../../wax-collab/src/config/MentionService'
 
+/* eslint-disable-next-line no-unused-vars */
 const updateTitle = title => {
   // this gets fired when the title is changed in original version of this—not called now, but might still be needed
   // console.log(`Title changed: ${title}`)

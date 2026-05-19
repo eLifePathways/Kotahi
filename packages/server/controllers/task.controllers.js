@@ -1,8 +1,10 @@
+/* eslint-disable promise/catch-or-return, promise/always-return, promise/no-nesting */
+
 // #region import
 
 const moment = require('moment-timezone')
 
-const taskConfigs = require('../config/journal/tasks.json')
+const { config, logger } = require('@coko/server')
 
 const {
   Config,
@@ -211,7 +213,6 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
 
       delete task.id
       promises.push(
-        /* eslint-disable-next-line no-loop-func */
         new Promise((resolve, reject) => {
           Task.query(trx)
             .insertAndFetch(task)
@@ -222,7 +223,6 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
               // Start delay at 100ms per notification
               let delay = 0
 
-              // eslint-disable-next-line no-restricted-syntax
               for (const emailNotification of taskObject.emailNotifications) {
                 const taskEmailNotification = {
                   ...emailNotification,
@@ -278,12 +278,13 @@ const sendAutomatedTaskEmailNotifications = async groupId => {
 
   const startOfTomorrow = moment(startOfToday).add(1, 'days')
 
+  const taskConfigs = config.get('journal').tasks
+
   const taskEmailNotifications = await getTaskEmailNotifications({
     status: taskConfigs.status.IN_PROGRESS,
     groupId,
   })
 
-  // eslint-disable-next-line no-restricted-syntax
   await Promise.all(
     taskEmailNotifications
       .filter(n => {
@@ -303,6 +304,8 @@ const sendAutomatedTaskEmailNotifications = async groupId => {
 }
 
 const sendNotification = async n => {
+  const taskConfigs = config.get('journal').tasks
+
   const { recipientTypes } = taskConfigs.emailNotifications
   const { assigneeTypes } = taskConfigs
   let notificationRecipients = []
@@ -400,11 +403,9 @@ const sendNotification = async n => {
 
   const { manuscript } = n.task
 
-  // eslint-disable-next-line
   const editor = await manuscript.getManuscriptEditor()
   const currentUser = editor ? editor.username : ''
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const recipient of notificationRecipients) {
     let logData
 
@@ -432,10 +433,9 @@ const sendNotification = async n => {
 
         const emailTemplateOption = n.emailTemplateId.replace(/([A-Z])/g, ' $1')
 
-        // eslint-disable-next-line no-await-in-loop
-        const emailTemplate = await EmailTemplate.query().findById(
-          emailTemplateOption,
-        )
+        const emailTemplate =
+          /* eslint-disable-next-line no-await-in-loop */
+          await EmailTemplate.query().findById(emailTemplateOption)
 
         const messageBody = `${emailTemplate.emailContent.description} sent by Kotahi to ${recipient.name}`
 
@@ -454,7 +454,7 @@ const sendNotification = async n => {
         // eslint-disable-next-line no-await-in-loop
         await logTaskEmailNotificationData(logData)
       } catch (error) {
-        console.error(error)
+        logger.error(error)
       }
     }
   }
@@ -596,7 +596,7 @@ const updateTaskNotification = async taskNotification => {
 }
 
 const updateTaskStatus = async task => {
-  // eslint-disable-next-line prefer-destructuring
+  const taskConfigs = config.get('journal').tasks
   const status = taskConfigs.status
 
   const data = {

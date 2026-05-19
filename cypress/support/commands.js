@@ -1,6 +1,5 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-console */
-/* eslint-disable no-undef */
+/* eslint-disable promise/always-return */
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -99,7 +98,6 @@ Cypress.Commands.add('awaitDisappearSpinner', () => {
   )
 })
 
-/* eslint-disable-next-line node/handle-callback-err */
 Cypress.on('uncaught:exception', (err, runnable, promise) => {
   if (promise) {
     return false

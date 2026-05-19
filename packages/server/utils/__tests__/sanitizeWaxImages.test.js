@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const cheerio = require('cheerio')
 
 const { uuid, uuidValidate } = require('@coko/server')

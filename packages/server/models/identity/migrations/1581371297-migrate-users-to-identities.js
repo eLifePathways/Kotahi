@@ -1,11 +1,10 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 const { logger } = require('@coko/server')
 
 const User = require('../../user/user.model')
 const Identity = require('../identity.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   const users = await User.query().withGraphFetched('defaultIdentity')
 
   for (const user of users) {

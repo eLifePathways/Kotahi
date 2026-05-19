@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import pruneEmpty from '../pruneEmpty'
 
 describe('pruneEmpty', () => {
