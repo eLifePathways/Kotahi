@@ -361,9 +361,10 @@ const layoutFavicon = async layout => {
       active: true,
     })
 
-    const file = await File.findById(
-      activeConfig.formData.groupIdentity.favicon,
-    )
+    const faviconId = activeConfig?.formData?.groupIdentity?.favicon
+    if (!faviconId) return null
+
+    const file = await File.findById(faviconId)
 
     file.storedObjects = await setFileUrls(file.storedObjects)
     return file
