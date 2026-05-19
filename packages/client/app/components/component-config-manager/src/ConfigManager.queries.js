@@ -43,7 +43,7 @@ const formFields = `
 `
 
 export default gql`
-    query(
+    query SubmissionForm(
       $groupId: ID!
     ) {
       submissionForm: formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {

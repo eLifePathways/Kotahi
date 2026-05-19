@@ -29,7 +29,7 @@ const fragmentFields = `
 `
 
 const query = gql`
-  query($id: ID!) {
+  query Manuscript($id: ID!) {
     manuscript(id: $id) {
       ${fragmentFields}
     }

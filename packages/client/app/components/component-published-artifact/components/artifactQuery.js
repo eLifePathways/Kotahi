@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  query publishedManuscriptAndForms($id: ID!) {
+  query PublishedManuscriptAndForms($id: ID!) {
     publishedManuscript(id: $id) {
       id
       meta {

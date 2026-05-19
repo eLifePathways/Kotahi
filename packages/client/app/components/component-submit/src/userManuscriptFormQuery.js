@@ -151,7 +151,7 @@ export const SEARCH_ROR = gql`
 `
 
 const query = gql`
-  query($id: ID!, $groupId: ID, $submitPurpose: String!, $decisionPurpose: String!, $reviewPurpose: String!) {
+  query Manuscript($id: ID!, $groupId: ID, $submitPurpose: String!, $decisionPurpose: String!, $reviewPurpose: String!) {
     manuscript(id: $id) {
       ${fragmentFields}
       manuscriptVersions {
