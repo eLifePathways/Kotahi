@@ -59,7 +59,7 @@ const ChatWaxEditorLayout = readonly => props => {
 
   return (
     <div>
-      <SimpleGrid readonly={readonly}>
+      <SimpleGrid $readonly={readonly}>
         {readonly ? (
           <ReadOnlySimpleEditorDiv className="wax-surface-scroll">
             <WaxView {...props} />

@@ -22,7 +22,6 @@ import {
   OptionListItemButton,
   OptionsList,
 } from '../../component-email-templates/misc/styleds'
-import Each from '../../shared/Each'
 import { arrIf } from '../../../shared/generalUtils'
 import EventListControls from './EventListControls'
 import { filterEventAndNotifications } from '../misc/helpers'
@@ -205,7 +204,7 @@ const NotificationItem = ({
 }
 
 const EventsList = ({
-  events,
+  events = [],
   collapsedState,
   handleDelete,
   toggleActive,
@@ -250,109 +249,98 @@ const EventsList = ({
       <Nav>
         <EmptyContainer style={{ background: '#f9f9f9' }} />
         <ListWrapper>
-          <Each
-            of={events}
-            render={ev => {
-              const { active: isActive, name, notifications } = ev
+          {events.map(ev => {
+            const { active: isActive, name, notifications } = ev
 
-              const { excludeEvent, filteredNotifications } =
-                filterEventAndNotifications(
-                  filter.state,
-                  notifications,
-                  isActive,
-                )
+            const { excludeEvent, filteredNotifications } =
+              filterEventAndNotifications(filter.state, notifications, isActive)
 
-              if (excludeEvent) return null
+            if (excludeEvent) return null
 
-              const searchToLC = search.state.toLowerCase()
-              const srcEventToLC = t(T[name]).toLowerCase()
-              const searchMatches = srcEventToLC.includes(searchToLC)
+            const searchToLC = search.state.toLowerCase()
+            const srcEventToLC = t(T[name]).toLowerCase()
+            const searchMatches = srcEventToLC.includes(searchToLC)
 
-              if (!searchMatches) return null
+            if (!searchMatches) return null
 
-              const displayDraft =
-                !selected.state.id && selected?.state?.event === name
+            const displayDraft =
+              !selected.state.id && selected?.state?.event === name
 
-              const toggleCollapse = () => {
-                collapsedState.update({
-                  [name]: !collapsedState.state[name],
-                })
-              }
+            const toggleCollapse = () => {
+              collapsedState.update({
+                [name]: !collapsedState.state[name],
+              })
+            }
 
-              const hasEvents = notifications.length > 0
-              const sourceIsActive = isActive && hasEvents
+            const hasEvents = notifications.length > 0
+            const sourceIsActive = isActive && hasEvents
 
-              const notificationsRender = [
-                ...filteredNotifications,
-                ...arrIf(displayDraft, DRAFT_NOTIFICATION_SHAPE),
-              ]
+            const notificationsRender = [
+              ...filteredNotifications,
+              ...arrIf(displayDraft, DRAFT_NOTIFICATION_SHAPE),
+            ]
 
-              return (
-                <>
-                  <EventSource $inactive={!sourceIsActive}>
-                    <StyledListHeader
-                      $active={sourceIsActive}
-                      onClick={toggleCollapse}
-                      title={t(T[name])}
-                    >
-                      <p>{t(T[name])}</p>
-                    </StyledListHeader>
-                    <Actions>
-                      <CleanButton
-                        $hide={!isActive}
-                        data-event={name}
-                        onClick={createDraft}
-                        title={t('common.Create')}
-                      >
-                        <Plus style={{ height: '15px' }} />
-                      </CleanButton>
-                      <CleanButton
-                        $hide={!hasEvents}
-                        onClick={() => hasEvents && handleActivate(name)}
-                        title={
-                          isActive
-                            ? t('common.Deactivate')
-                            : t('common.Activate')
-                        }
-                      >
-                        <Power
-                          style={{
-                            strokeWidth: '2px',
-                            stroke: sourceIsActive
-                              ? color.success.base
-                              : color.error.base,
-                          }}
-                        />
-                      </CleanButton>
-                    </Actions>
-                  </EventSource>
-
-                  <NotificationsList
-                    $active={!!sourceIsActive}
-                    $collapsed={collapsedState.state[name]}
+            return (
+              <div key={name}>
+                <EventSource $inactive={!sourceIsActive}>
+                  <StyledListHeader
+                    $active={sourceIsActive}
+                    onClick={toggleCollapse}
+                    title={t(T[name])}
                   >
-                    <Each
-                      of={notificationsRender}
-                      render={item => {
-                        const isInactive = !sourceIsActive || !item.active
-                        const isSelected = item.id === selected.state.id
-                        return (
-                          <NotificationItem
-                            handleDelete={handleDelete}
-                            isInactive={isInactive}
-                            isSelected={isSelected}
-                            notification={item}
-                            selected={selected}
-                            toggleActive={toggleActive}
-                          />
-                        )
-                      }}
-                    />
-                  </NotificationsList>
-                </>
-              )
-            }}
-          />
+                    <p>{t(T[name])}</p>
+                  </StyledListHeader>
+                  <Actions>
+                    <CleanButton
+                      $hide={!isActive}
+                      data-event={name}
+                      onClick={createDraft}
+                      title={t('common.Create')}
+                    >
+                      <Plus style={{ height: '15px' }} />
+                    </CleanButton>
+                    <CleanButton
+                      $hide={!hasEvents}
+                      onClick={() => hasEvents && handleActivate(name)}
+                      title={
+                        isActive ? t('common.Deactivate') : t('common.Activate')
+                      }
+                    >
+                      <Power
+                        style={{
+                          strokeWidth: '2px',
+                          stroke: sourceIsActive
+                            ? color.success.base
+                            : color.error.base,
+                        }}
+                      />
+                    </CleanButton>
+                  </Actions>
+                </EventSource>
+
+                <NotificationsList
+                  $active={!!sourceIsActive}
+                  $collapsed={collapsedState.state[name]}
+                >
+                  {notificationsRender.map(item => {
+                    const isInactive = !sourceIsActive || !item.active
+                    const isSelected = item.id === selected.state.id
+                    return (
+                      <NotificationItem
+                        handleDelete={handleDelete}
+                        isInactive={isInactive}
+                        isSelected={isSelected}
+                        key={item.id || 'draft'}
+                        notification={item}
+                        selected={selected}
+                        toggleActive={toggleActive}
+                      />
+                    )
+                  })}
+                </NotificationsList>
+              </div>
+            )
+          })}
         </ListWrapper>
       </Nav>
     </Root>

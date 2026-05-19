@@ -9,7 +9,6 @@ import { FlexRow } from '../../component-cms-manager/src/style'
 import { DRAFT_TEMPLATE_OBJECT, LABELS } from '../misc/constants'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
 import { getBy } from '../../../shared/generalUtils'
-import Each from '../../shared/Each'
 import {
   CleanButton,
   CollapseIcon,
@@ -84,14 +83,17 @@ const TemplatesList = ({
         <CollapseIcon $collapsed={collapsedState.state} />
       </ListHeader>
       <OptionsList $collapsed={collapsedState.state}>
-        <Each
-          condition={!!templates?.length}
-          fallback={<EmptyListFallback>--- NO TEMPLATES ---</EmptyListFallback>}
-          of={templates}
-          render={template => (
-            <TemplateItem listTitle={listTitle} template={template} />
-          )}
-        />
+        {templates?.length ? (
+          templates.map(template => (
+            <TemplateItem
+              key={template.id}
+              listTitle={listTitle}
+              template={template}
+            />
+          ))
+        ) : (
+          <EmptyListFallback>--- NO TEMPLATES ---</EmptyListFallback>
+        )}
       </OptionsList>
     </Wrapper>
   )
@@ -114,7 +116,9 @@ const EmailTemplatesNav = () => {
   return (
     <NavRoot>
       <EmptyContainer />
-      <Each of={templatesLists} render={TemplatesList} />
+      {templatesLists.map(props => (
+        <TemplatesList key={props.listTitle} {...props} />
+      ))}
     </NavRoot>
   )
 }

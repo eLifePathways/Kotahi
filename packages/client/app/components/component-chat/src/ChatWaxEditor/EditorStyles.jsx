@@ -172,7 +172,7 @@ export const SimpleGrid = styled.div`
   grid-template-areas: 'menu' 'editor';
 
   ${props =>
-    props.readonly
+    props.$readonly
       ? css`
           grid-template-rows: 0 1fr;
         `

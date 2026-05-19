@@ -80,7 +80,7 @@ const ReadonlyFormTemplate = ({
         })
         .map(element => (
           <SectionRowGrid
-            expandedWidthDetails={[
+            $expandedWidthDetails={[
               'ThreadedDiscussion',
               'LocalContext',
             ].includes(element.component)}

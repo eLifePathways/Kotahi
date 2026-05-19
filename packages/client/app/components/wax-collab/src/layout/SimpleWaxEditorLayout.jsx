@@ -20,7 +20,7 @@ const SimpleWaxEditorLayout =
   (readonly, dataTestid = null) =>
   props => (
     <>
-      <SimpleGrid readonly={readonly}>
+      <SimpleGrid $readonly={readonly}>
         {readonly ? (
           <ReadOnlySimpleEditorDiv
             className="wax-surface-scroll"
@@ -42,6 +42,7 @@ const SimpleWaxEditorLayout =
           </>
         )}
       </SimpleGrid>
+
       {!readonly && (
         <SimpleInfoContainer>
           <CounterInfo />

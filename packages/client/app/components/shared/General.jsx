@@ -98,7 +98,7 @@ export const SectionRowGrid = styled(SectionRow)`
   display: grid;
   gap: ${grid(2)};
   grid-template-columns: ${props =>
-    props.expandedWidthDetails ? '1fr 3fr' : 'repeat(4, minmax(0, 1fr))'};
+    props.$expandedWidthDetails ? '1fr 3fr' : 'repeat(4, minmax(0, 1fr))'};
 `
 
 export const SectionAction = styled.div`

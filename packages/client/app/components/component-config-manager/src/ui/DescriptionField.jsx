@@ -7,7 +7,7 @@ const DescriptionField = ({ id, description }) => {
 
   return (
     <p id={id}>
-      <Trans components={{ strong: <strong /> }} i18nKey={description} />
+      <Trans components={[<strong key="0" />]} i18nKey={description} />
     </p>
   )
 }

@@ -9,7 +9,6 @@ import { getUpdatedPosition, normalize } from '../helpers'
 import { color } from '../../../../../theme'
 import { DROPDOWN_ID, handlebars } from '../constants'
 import Option from './Option'
-import Each from '../../../../shared/Each'
 import useHandlebarsAutoComplete from '../hooks/useHandlebarsAutoComplete'
 
 // #region styleds ------------------------------------------------------
@@ -132,12 +131,14 @@ const HandleBarsAutocomplete = () => {
         <small>RESULTS: {filteredOptions.length}</small>
       </Heading>
       <Options aria-label="Form Variables List" role="listbox">
-        <Each
-          of={filteredOptions}
-          render={(option, i) => (
-            <Option option={option} select={select} selected={index === i} />
-          )}
-        />
+        {filteredOptions.map((option, i) => (
+          <Option
+            key={option.value}
+            option={option}
+            select={select}
+            selected={index === i}
+          />
+        ))}
       </Options>
     </OptionsDropdown>
   )
