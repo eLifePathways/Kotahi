@@ -250,7 +250,7 @@ const cleanMath = file => {
 }
 
 const uploadManuscriptMutation = gql`
-  mutation ($file: Upload!) {
+  mutation UploadFile($file: Upload!) {
     uploadFile(file: $file) {
       name
       storedObjects {
@@ -272,7 +272,7 @@ const uploadManuscriptMutation = gql`
 `
 
 const createManuscriptMutation = gql`
-  mutation ($input: ManuscriptInput) {
+  mutation CreateManuscript($input: ManuscriptInput) {
     createManuscript(input: $input) {
       id
       created
@@ -316,7 +316,7 @@ const createManuscriptMutation = gql`
 `
 
 // const createFileMutation = gql`
-//   mutation ($file: Upload!, $meta: FileMetaInput!) {
+//   mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
 //     createFile(file: $file, meta: $meta) {
 //       id
 //       name
@@ -334,7 +334,7 @@ const createManuscriptMutation = gql`
 // `
 
 export const updateMutation = gql`
-  mutation($id: ID!, $input: String) {
+  mutation UpdateManuscript($id: ID!, $input: String) {
     updateManuscript(id: $id, input: $input) {
       id
       ${fragmentFields}
@@ -425,7 +425,7 @@ const uploadPromise = (files, client) => {
 }
 
 const getHtmlFromDocxQuery = gql`
-  query ($key: String!) {
+  query DocxToHtml($key: String!) {
     docxToHtml(key: $key) {
       html
       error

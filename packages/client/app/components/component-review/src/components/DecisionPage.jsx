@@ -69,7 +69,7 @@ import { getCurrentUserReview } from './review/util'
 import { getRoles } from '../../../../shared/manuscriptUtils'
 
 export const updateManuscriptMutation = gql`
-  mutation($id: ID!, $input: String) {
+  mutation UpdateManuscript($id: ID!, $input: String) {
     updateManuscript(id: $id, input: $input) {
       id
       ${fragmentFields}
@@ -78,7 +78,7 @@ export const updateManuscriptMutation = gql`
 `
 
 export const updateAdaMutation = gql`
-  mutation ($id: ID!, $adaState: String!) {
+  mutation UpdateAda($id: ID!, $adaState: String!) {
     updateAda(id: $id, adaState: $adaState) {
       manuscript {
         id
@@ -95,7 +95,7 @@ export const updateAdaMutation = gql`
 `
 
 const createFileMutation = gql`
-  mutation ($file: Upload!, $meta: FileMetaInput!) {
+  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
     createFile(file: $file, meta: $meta) {
       id
       created
@@ -113,7 +113,7 @@ const createFileMutation = gql`
 `
 
 const deleteFileMutation = gql`
-  mutation ($id: ID!) {
+  mutation DeleteFile($id: ID!) {
     deleteFile(id: $id)
   }
 `

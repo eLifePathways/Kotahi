@@ -22,7 +22,7 @@ import authorProofingWaxEditorConfig from './config/AuthorProofingWaxEditorConfi
 import AuthorProofingWaxEditorLayout from './layout/AuthorProofingWaxEditorLayout'
 
 const getAnystyleCslQuery = gql`
-  query ($textReferences: String!) {
+  query BuildCitationsCSL($textReferences: String!) {
     buildCitationsCSL(textReferences: $textReferences) {
       cslReferences
       error
@@ -31,7 +31,7 @@ const getAnystyleCslQuery = gql`
 `
 
 const getCrossRefQuery = gql`
-  query ($input: CitationSearchInput) {
+  query GetFormattedReferences($input: CitationSearchInput) {
     getFormattedReferences(input: $input) {
       success
       message
@@ -58,7 +58,7 @@ const getCrossRefQuery = gql`
 `
 
 const getDataciteQuery = gql`
-  query ($input: CitationSearchInput) {
+  query GetDataciteCslFromDOI($input: CitationSearchInput) {
     getDataciteCslFromDOI(input: $input) {
       success
       message
@@ -84,7 +84,7 @@ const getDataciteQuery = gql`
 `
 
 const getCiteProcQuery = gql`
-  query ($citation: String!) {
+  query FormatCitation($citation: String!) {
     formatCitation(citation: $citation) {
       formattedCitation
       citeHtml
@@ -94,7 +94,7 @@ const getCiteProcQuery = gql`
 `
 
 const getCalloutTextQuery = gql`
-  query ($input: CitationData) {
+  query FormatMultipleCitations($input: CitationData) {
     formatMultipleCitations(input: $input) {
       orderedCitations
       calloutTexts {

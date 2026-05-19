@@ -43,7 +43,7 @@ export const GET_USERS = gql`
 `
 
 const DELETE_USER = gql`
-  mutation ($id: ID) {
+  mutation DeleteUser($id: ID) {
     deleteUser(id: $id) {
       id
     }
@@ -51,7 +51,11 @@ const DELETE_USER = gql`
 `
 
 const SET_GLOBAL_ROLE = gql`
-  mutation ($userId: ID!, $role: String!, $shouldEnable: Boolean!) {
+  mutation SetGlobalRole(
+    $userId: ID!
+    $role: String!
+    $shouldEnable: Boolean!
+  ) {
     setGlobalRole(userId: $userId, role: $role, shouldEnable: $shouldEnable) {
       id
       groupRoles
@@ -61,7 +65,7 @@ const SET_GLOBAL_ROLE = gql`
 `
 
 const SET_GROUP_ROLE = gql`
-  mutation ($userId: ID!, $role: String!, $shouldEnable: Boolean!) {
+  mutation SetGroupRole($userId: ID!, $role: String!, $shouldEnable: Boolean!) {
     setGroupRole(userId: $userId, role: $role, shouldEnable: $shouldEnable) {
       id
       groupRoles

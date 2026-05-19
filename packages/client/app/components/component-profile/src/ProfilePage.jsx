@@ -18,7 +18,7 @@ import { ConfigContext } from '../../config/src'
 const { version: kotahiVersion } = packageJson
 
 const GET_USER = gql`
-  query user($id: ID) {
+  query User($id: ID) {
     user(id: $id) {
       id
       username
@@ -39,7 +39,7 @@ const GET_USER = gql`
 `
 
 const UPDATE_EMAIL = gql`
-  mutation updateEmail($id: ID!, $email: String!) {
+  mutation UpdateEmail($id: ID!, $email: String!) {
     updateEmail(id: $id, email: $email) {
       success
       error
@@ -52,7 +52,7 @@ const UPDATE_EMAIL = gql`
 `
 
 const UPDATE_USERNAME = gql`
-  mutation updateUsername($id: ID!, $username: String!) {
+  mutation UpdateUsername($id: ID!, $username: String!) {
     updateUsername(id: $id, username: $username) {
       id
       username
@@ -61,7 +61,7 @@ const UPDATE_USERNAME = gql`
 `
 
 export const UPDATE_LANGUAGE = gql`
-  mutation updateLanguage($id: ID!, $preferredLanguage: String!) {
+  mutation UpdateLanguage($id: ID!, $preferredLanguage: String!) {
     updateLanguage(id: $id, preferredLanguage: $preferredLanguage) {
       id
       preferredLanguage
@@ -70,7 +70,7 @@ export const UPDATE_LANGUAGE = gql`
 `
 
 const GET_GLOBAL_CHAT_NOTIFICATION_OPTION = gql`
-  query {
+  query NotificationOption {
     notificationOption(path: ["chat"]) {
       userId
       path
@@ -81,7 +81,7 @@ const GET_GLOBAL_CHAT_NOTIFICATION_OPTION = gql`
 `
 
 const UPDATE_GLOBAL_CHAT_NOTIFICATION_OPTION = gql`
-  mutation updateNotificationOption($option: String!) {
+  mutation UpdateNotificationOption($option: String!) {
     updateNotificationOption(path: ["chat"], option: $option) {
       id
       created

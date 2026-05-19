@@ -22,7 +22,7 @@ import { reviewFormUpdatedSubscription } from './reviewSubscriptions'
 import { getCurrentUserReview } from './review/util'
 
 const createFileMutation = gql`
-  mutation ($file: Upload!, $meta: FileMetaInput!) {
+  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
     createFile(file: $file, meta: $meta) {
       id
       created
@@ -41,7 +41,7 @@ const createFileMutation = gql`
 `
 
 const deleteFileMutation = gql`
-  mutation ($id: ID!) {
+  mutation DeleteFile($id: ID!) {
     deleteFile(id: $id)
   }
 `
@@ -160,7 +160,7 @@ const formStructure = `
 `
 
 const query = gql`
-  query($id: ID!, $groupId: ID) {
+  query Manuscript($id: ID!, $groupId: ID) {
     manuscript(id: $id) {
       parentId
       ${fragmentFields}
@@ -226,7 +226,7 @@ const query = gql`
 `
 
 const updateReviewMutationQuery = gql`
-  mutation($id: ID, $input: ReviewInput) {
+  mutation UpdateReview($id: ID, $input: ReviewInput) {
     updateReview(id: $id, input: $input) {
       ${reviewFields}
     }

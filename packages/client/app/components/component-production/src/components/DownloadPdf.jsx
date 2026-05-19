@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client/react'
 import { Spinner } from '../../../shared'
 
 const getPdfQuery = gql`
-  query ($manuscriptId: String!, $useHtml: Boolean) {
+  query ConvertToPdf($manuscriptId: String!, $useHtml: Boolean) {
     convertToPdf(manuscriptId: $manuscriptId, useHtml: $useHtml) {
       pdfUrl
     }

@@ -73,7 +73,7 @@ structure {
 `
 
 const createFormMutation = gql`
-  mutation ($form: CreateFormInput!) {
+  mutation CreateForm($form: CreateFormInput!) {
     createForm(form: $form) {
       id
     }
@@ -81,7 +81,7 @@ const createFormMutation = gql`
 `
 
 const updateFormMutation = gql`
-  mutation($form: FormInput!) {
+  mutation UpdateForm($form: FormInput!) {
     updateForm(form: $form) {
       ${formFieldsSegment}
     }
@@ -89,7 +89,7 @@ const updateFormMutation = gql`
 `
 
 const updateFormElementMutation = gql`
-  mutation ($element: FormElementInput!, $formId: ID!) {
+  mutation UpdateFormElement($element: FormElementInput!, $formId: ID!) {
     updateFormElement(element: $element, formId: $formId) {
       id
     }
@@ -97,7 +97,7 @@ const updateFormElementMutation = gql`
 `
 
 const deleteFormElementMutation = gql`
-  mutation ($formId: ID!, $elementId: ID!) {
+  mutation DeleteFormElement($formId: ID!, $elementId: ID!) {
     deleteFormElement(formId: $formId, elementId: $elementId) {
       id
     }
@@ -105,7 +105,7 @@ const deleteFormElementMutation = gql`
 `
 
 const deleteFormMutation = gql`
-  mutation ($formId: ID!) {
+  mutation DeleteForm($formId: ID!) {
     deleteForm(formId: $formId) {
       query {
         forms {
@@ -117,7 +117,7 @@ const deleteFormMutation = gql`
 `
 
 const query = gql`
-  query GET_FORM($category: String!, $groupId: ID) {
+  query GetForm($category: String!, $groupId: ID) {
     formsByCategory(category: $category, groupId: $groupId) {
       ${formFieldsSegment}
     }

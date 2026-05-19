@@ -32,7 +32,7 @@ import useChat from '../../../../hooks/useChat'
 import mutations from '../../../component-dashboard/src/graphql/mutations'
 
 export const updateMutation = gql`
-  mutation($id: ID!, $input: String) {
+  mutation UpdateManuscript($id: ID!, $input: String) {
     updateManuscript(id: $id, input: $input) {
       id
       ${fragmentFields}
@@ -41,7 +41,7 @@ export const updateMutation = gql`
 `
 
 const submitMutation = gql`
-  mutation($id: ID!, $input: String) {
+  mutation SubmitManuscript($id: ID!, $input: String) {
     submitManuscript(id: $id, input: $input) {
       id
       ${fragmentFields}
@@ -50,7 +50,7 @@ const submitMutation = gql`
 `
 
 const createNewVersionMutation = gql`
-  mutation($id: ID!) {
+  mutation CreateNewVersion($id: ID!) {
     createNewVersion(id: $id) {
       id
       ${fragmentFields}
@@ -59,7 +59,7 @@ const createNewVersionMutation = gql`
 `
 
 const createFileMutation = gql`
-  mutation ($file: Upload!, $meta: FileMetaInput!) {
+  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
     createFile(file: $file, meta: $meta) {
       id
       created
@@ -78,7 +78,7 @@ const createFileMutation = gql`
 `
 
 const deleteFileMutation = gql`
-  mutation ($id: ID!) {
+  mutation DeleteFile($id: ID!) {
     deleteFile(id: $id)
   }
 `

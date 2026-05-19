@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_INVITATION_RESPONSE = gql`
-  mutation (
+  mutation UpdateInvitationResponse(
     $id: ID!
     $responseComment: String
     $declinedReason: String
@@ -21,7 +21,7 @@ export const UPDATE_INVITATION_RESPONSE = gql`
   }
 `
 export const GET_INVITATION_MANUSCRIPT_ID = gql`
-  query invitationManuscriptId($id: ID) {
+  query InvitationManuscriptId($id: ID) {
     invitationManuscriptId(id: $id) {
       manuscriptId
       invitedPersonType
@@ -32,7 +32,7 @@ export const GET_INVITATION_MANUSCRIPT_ID = gql`
 `
 
 export const GET_INVITATION_STATUS = gql`
-  query invitationStatus($id: ID) {
+  query InvitationStatus($id: ID) {
     invitationStatus(id: $id) {
       status
       userId
@@ -49,7 +49,7 @@ export const GET_INVITATION_STATUS = gql`
 `
 
 export const GET_INVITATIONS_FOR_MANUSCRIPT = gql`
-  query getInvitationsForManuscript($id: ID) {
+  query GetInvitationsForManuscript($id: ID) {
     getInvitationsForManuscript(id: $id) {
       id
       declinedReason
@@ -77,7 +77,12 @@ export const GET_INVITATIONS_FOR_MANUSCRIPT = gql`
 `
 
 export const UPDATE_INVITATION_STATUS = gql`
-  mutation ($id: ID!, $status: String, $userId: ID, $responseDate: DateTime) {
+  mutation UpdateInvitationStatus(
+    $id: ID!
+    $status: String
+    $userId: ID
+    $responseDate: DateTime
+  ) {
     updateInvitationStatus(
       id: $id
       status: $status
@@ -91,7 +96,7 @@ export const UPDATE_INVITATION_STATUS = gql`
 `
 
 export const GET_LOGGED_IN_USER = gql`
-  query currentUser {
+  query CurrentUser {
     currentUser {
       id
     }

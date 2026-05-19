@@ -142,7 +142,7 @@ export const fragmentFields = `
 `
 
 export const SEARCH_ROR = gql`
-  query ($input: String!) {
+  query SearchRor($input: String!) {
     searchRor(input: $input) {
       id
       name

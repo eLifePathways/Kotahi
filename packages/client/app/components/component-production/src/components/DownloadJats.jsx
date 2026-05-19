@@ -8,7 +8,7 @@ import { Spinner, CommsErrorBanner } from '../../../shared'
 import { CloseButton, PopUpTextContainer, PopUpH2 } from './styles'
 
 const getJatsQuery = gql`
-  query ($manuscriptId: String!) {
+  query ConvertToJats($manuscriptId: String!) {
     convertToJats(manuscriptId: $manuscriptId) {
       xml
       zipLink
