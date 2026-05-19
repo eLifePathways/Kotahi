@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types, react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/refs */
 
 import { useApolloClient, useMutation, useQuery } from '@apollo/client/react'
-import { throttle } from 'lodash'
 import PropTypes from 'prop-types'
 import { useContext, useEffect, useRef } from 'react'
 import Modal from 'react-modal'
@@ -117,8 +116,9 @@ const AdminPage = () => {
   const { t } = useTranslation()
   const client = useApolloClient()
 
-  const { loading, error, data, refetch } = useQuery(QUERY, {
+  const { loading, error, data } = useQuery(QUERY, {
     fetchPolicy: 'network-only',
+    pollInterval: 120000,
   })
 
   const previousDataRef = useRef(null)
@@ -352,20 +352,8 @@ const AdminPage = () => {
       <Navigate replace to={dashboardRedirectUrl} />
     )
 
-  // Throttled refetch query `currentUser` once every 2mins
-  const throttledRefetch = throttle(refetch, 120000, { trailing: false })
-
-  // Triggered by captured events onClick and onKeyDown
-  const handleEvent = () => {
-    throttledRefetch()
-  }
-
   return (
-    <Root
-      $converting={conversion.converting}
-      onClickCapture={handleEvent}
-      onKeyDownCapture={handleEvent}
-    >
+    <Root $converting={conversion.converting}>
       <Menu
         brand={config?.groupIdentity?.brandName}
         brandLink={homeLink}
