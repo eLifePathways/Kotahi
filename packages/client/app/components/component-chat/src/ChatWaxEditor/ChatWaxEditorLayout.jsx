@@ -85,10 +85,10 @@ const ChatWaxEditorLayout = readonly => props => {
                 <WaxView {...props} />
               </SimpleEditorDiv>
               <SendButton
+                $primary
                 aria-label={sendTooltip}
                 data-cy="chat-input-send-button"
                 onClick={onClickSend}
-                primary
                 title={sendTooltip}
               >
                 <Send color="white" size={18} />

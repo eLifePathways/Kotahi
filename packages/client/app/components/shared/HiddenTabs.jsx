@@ -115,9 +115,9 @@ const HiddenTabs = ({
   return (
     <>
       <HiddenTabsContainer
+        $background={background}
         $config={config}
         $sticky={false}
-        background={background}
         gridArea={tabsContainerGridArea}
       >
         <div style={{ display: 'flex', alignItems: 'stretch' }}>

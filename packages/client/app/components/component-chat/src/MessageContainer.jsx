@@ -19,7 +19,7 @@ const MessageContainer = styled.section`
   height: 100vh;
 
   ${props =>
-    props.channels
+    props.$channels
       ? css`
           grid-template-rows: ${grid(5)} 1fr calc(${th('gridUnit')} * 8);
         `
@@ -28,7 +28,7 @@ const MessageContainer = styled.section`
         `}
 
   ${props =>
-    props.channels
+    props.$channels
       ? css`
           grid-template-areas:
             'channels'
@@ -146,7 +146,7 @@ const Container = ({
   if (activeTab) activeDiscussionKey = activeTab
 
   return (
-    <MessageContainer channels={channels}>
+    <MessageContainer $channels={channels}>
       {tabs ? (
         <HiddenTabs
           background="colorBackgroundHue"

@@ -56,9 +56,9 @@ export const TabsContainer = styled.div`
     `}
 
   ${props =>
-    props.background &&
+    props.$background &&
     css`
-      background-color: ${th(props.background)};
+      background-color: ${th(props.$background)};
     `}
 
   ${props =>
@@ -132,8 +132,8 @@ const Tabs = ({
   return (
     <>
       <TabsContainer
+        $background={background}
         $config={config}
-        background={background}
         gridArea={tabsContainerGridArea}
       >
         <div style={{ display: 'flex' }}>

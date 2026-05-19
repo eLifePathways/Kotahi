@@ -175,8 +175,8 @@ const SuperChatInput = ({
           )} */}
         <Form onSubmit={submit}>
           <InputWrapper
-            hasAttachment={!!quotedMessage || !!mediaPreview}
-            networkDisabled={networkDisabled}
+            $networkDisabled={networkDisabled}
+            // hasAttachment={!!quotedMessage || !!mediaPreview}
           >
             {mediaPreview && (
               <PreviewWrapper>

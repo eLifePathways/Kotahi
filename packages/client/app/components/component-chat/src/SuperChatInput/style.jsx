@@ -161,12 +161,12 @@ export const Form = styled.form`
 export const InputWrapper = styled.div`
   align-items: stretch;
   background: ${props =>
-    props.networkDisabled
+    props.$networkDisabled
       ? hexa(props.theme.special.default, 0.1)
       : th('colorBackground')};
   border-radius: 10px;
   color: ${props =>
-    props.networkDisabled ? th('colorText') : th('colorSecondary')};
+    props.$networkDisabled ? th('colorText') : th('colorSecondary')};
   display: flex;
   flex: auto;
   flex-direction: column;
@@ -177,7 +177,7 @@ export const InputWrapper = styled.div`
   &:hover,
   &:focus {
     border-color: ${props =>
-      props.networkDisabled ? th('borderColor') : th('colorWarning')};
+      props.$networkDisabled ? th('borderColor') : th('colorWarning')};
     transition: border-color 0.2s ease-in;
   }
 
