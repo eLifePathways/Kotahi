@@ -68,7 +68,8 @@ class Review extends BaseModel {
     }
   }
 
-  static async orderReviewPerUsername(reviews) {
+  static async orderReviewPerUsername(reviews, options = {}) {
+    const { trx } = options
     // eslint-disable-next-line global-require
     const User = require('../user/user.model')
     // eslint-disable-next-line global-require
@@ -79,19 +80,19 @@ class Review extends BaseModel {
         let users = null
 
         if (review.isCollaborative) {
-          const manuscript = await Manuscript.query().findById(
+          const manuscript = await Manuscript.query(trx).findById(
             review.manuscriptId,
           )
 
           const existingTeam = await manuscript
-            .$relatedQuery('teams')
+            .$relatedQuery('teams', trx)
             .where('role', 'collaborativeReviewer')
             .first()
 
           // eslint-disable-next-line no-param-reassign
-          users = await existingTeam.$relatedQuery('users')
+          users = await existingTeam.$relatedQuery('users', trx)
         } else {
-          users = await User.query().where({ id: review.userId })
+          users = await User.query(trx).where({ id: review.userId })
         }
 
         return { ...review, username: users[0]?.username || '' } // imported manuscripts may have invalid reviewers

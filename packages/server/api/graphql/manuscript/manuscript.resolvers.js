@@ -54,7 +54,7 @@ const {
   supplementaryFiles,
   updateAda,
   metaSource,
-  publishedReviewUsers,
+  //   publishedReviewUsers,
   removeAuthor,
 } = require('../../../controllers/manuscript/manuscript.controllers')
 
@@ -397,8 +397,9 @@ const resolvers = {
     },
   },
   PublishedReview: {
-    async users(parent) {
-      return publishedReviewUsers(parent)
+    async users(review, _, ctx) {
+      // return publishedReviewUsers(parent)
+      return ctx.loaders.Review.usersLoader.load(review.id)
     },
   },
 }

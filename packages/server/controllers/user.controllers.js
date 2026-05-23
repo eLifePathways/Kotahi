@@ -204,11 +204,17 @@ const getReciever = async (selectedEmail, externalName, trx) => {
  * also 'shared' and have COMPLETED their review.
  * If the current user isn't a 'shared' reviewer, return an empty array.
  */
-const getSharedReviewersIds = async (manuscriptId, currentUserId) => {
+const getSharedReviewersIds = async (
+  manuscriptId,
+  currentUserId,
+  options = {},
+) => {
   if (!currentUserId) return []
 
-  const reviewers = await Team.relatedQuery('members')
-    .for(Team.query().where({ objectId: manuscriptId, role: 'reviewer' }))
+  const { trx } = options
+
+  const reviewers = await Team.relatedQuery('members', trx)
+    .for(Team.query(trx).where({ objectId: manuscriptId, role: 'reviewer' }))
     .select('userId')
     .where({ isShared: true })
     .where(builder =>
@@ -304,7 +310,10 @@ const getUsers = async groupId => {
     .withGraphFetched('defaultIdentity')
 }
 
-const getUsersById = async userIds => User.query().findByIds(userIds)
+const getUsersById = async (userIds, options = {}) => {
+  const { trx } = options
+  return User.query(trx).findByIds(userIds)
+}
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()
