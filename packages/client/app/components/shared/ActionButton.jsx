@@ -67,9 +67,9 @@ const Spinner = styled.div`
 
   &::after {
     animation: ${rotate360} 1s linear infinite;
-    border: 2.5px solid ${props => props.fgColor};
-    border-color: ${props => props.fgColor} transparent
-      ${props => props.fgColor} transparent;
+    border: 2.5px solid ${props => props.$fgColor};
+    border-color: ${props => props.$fgColor} transparent
+      ${props => props.$fgColor} transparent;
     border-radius: 50%;
     box-sizing: border-box;
     /* stylelint-disable-next-line string-quotes */
@@ -125,7 +125,7 @@ const ActionButton = ({
   const fgColor = isLight ? color.text : color.textReverse
 
   let statusIndicator = null
-  if (status === 'pending') statusIndicator = <Spinner fgColor={fgColor} />
+  if (status === 'pending') statusIndicator = <Spinner $fgColor={fgColor} />
 
   if (status === 'success')
     statusIndicator = (

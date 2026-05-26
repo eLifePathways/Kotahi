@@ -103,7 +103,7 @@ const AuthorProofingWaxEditorLayout = readOnly => props => {
 
   return (
     <div style={fullScreenStyles}>
-      <Grid production readonly={readOnly}>
+      <Grid $production $readonly={readOnly}>
         {readOnly ? (
           <ProductionEditorDiv>
             <SideMenu />

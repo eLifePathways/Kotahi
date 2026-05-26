@@ -24,8 +24,8 @@ const ReviewerStatusBadge = ({ manuscript, currentUser }) => {
 
   return (
     <ConfigurableStatus
+      $lightText={statusConfig.lightText}
       color={statusConfig.color}
-      lightText={statusConfig.lightText}
     >
       {statusConfig.label}
     </ConfigurableStatus>

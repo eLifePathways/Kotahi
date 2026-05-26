@@ -76,7 +76,7 @@ const FullWaxEditorLayout = (readOnly, getActiveViewDom) => props => {
 
   return (
     <div id="wax-container" style={fullScreenStyles}>
-      <Grid readonly={readOnly} readOnlyComments>
+      <Grid $readonly={readOnly}>
         {readOnly ? (
           <FullWaxEditorGrid useComments={false}>
             <ReadOnlyEditorDiv className="wax-surface-scroll panelWrapper">

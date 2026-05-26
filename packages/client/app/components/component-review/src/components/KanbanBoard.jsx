@@ -29,20 +29,20 @@ const Kanban = styled.div.attrs({
   min-height: 300px;
 `
 
-const Column = styled.div(({ columns }) => ({
+const Column = styled.div(({ $columns }) => ({
   alignItems: 'flex-start',
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
   marginInline: '7.5px',
   /* stylelint-disable-next-line scss/operator-no-unspaced */
-  width: `calc(${100 / columns ?? 4}% - 15px)`,
+  width: `calc(${100 / $columns ?? 4}% - 15px)`,
 }))
 
 const StatusLabel = styled.div`
-  background-color: ${props => props.statusColor || '#ffffff'};
+  background-color: ${props => props.$statusColor || '#ffffff'};
   border-radius: 12px;
-  color: ${props => (props.lightText ? '#ffffff' : '#000000')};
+  color: ${props => (props.$lightText ? '#ffffff' : '#000000')};
   display: inline-block;
   font-weight: bold;
   margin-block: 4px;
@@ -253,10 +253,10 @@ const KanbanBoard = ({
             {LocalizedStatusOptions.filter(
               status => !filterOptions.includes(status.value.toLowerCase()),
             ).map(status => (
-              <Column columns={isAuthorBoard ? 2 : 4} key={status.value}>
+              <Column $columns={isAuthorBoard ? 2 : 4} key={status.value}>
                 <StatusLabel
-                  lightText={status.lightText}
-                  statusColor={status.color}
+                  $lightText={status.lightText}
+                  $statusColor={status.color}
                 >
                   {statusLabel(status)}
                 </StatusLabel>

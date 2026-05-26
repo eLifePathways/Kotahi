@@ -160,10 +160,7 @@ const KanbanCard = ({
             </DateDisplay>
             {showEmailInvitation && (
               <EmailDisplay>
-                <MailIcon
-                  invitationStatus={reviewer.status} // TODO why are we setting an arbitrary 'invitationStatus' attribute on this svg element?
-                />{' '}
-                {t('common.kanban.Invited via email')}
+                <MailIcon /> {t('common.kanban.Invited via email')}
               </EmailDisplay>
             )}
           </InfoGrid>

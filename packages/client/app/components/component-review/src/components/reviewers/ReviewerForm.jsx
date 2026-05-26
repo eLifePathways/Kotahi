@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
 import { required } from '../../../../xpub-validators/src'
-import { Button, Checkbox, TextField } from '../../../../pubsweet'
+import { Checkbox, TextField } from '../../../../pubsweet'
 import { ActionButton, Select } from '../../../../shared'
 import { EmailErrorMessageWrapper } from '../emailNotifications'
 
@@ -70,6 +70,7 @@ const ReviewerForm = ({
   setExternalEmail,
 }) => {
   const { t } = useTranslation()
+
   return (
     <form onSubmit={handleSubmit}>
       <RowGridStyled>
@@ -124,14 +125,14 @@ const ReviewerForm = ({
               reviewerUsers={reviewerUsers}
               validate={required}
             />
-            <Button
-              $primary
+            <ActionButton
               data-testid="invite-reviewer"
               disabled={!isValid}
+              primary
               type="submit"
             >
               {t('decisionPage.Invite reviewer')}
-            </Button>
+            </ActionButton>
           </>
         )}
       </RowGridStyled>

@@ -36,7 +36,7 @@ export const Status = styled.span`
 
 export const ConfigurableStatus = styled(Status)`
   background-color: ${p => p.color};
-  color: ${p => (p.lightText ? color.textReverse : color.text)};
+  color: ${p => (p.$lightText ? color.textReverse : color.text)};
 `
 
 export const safeLabel = status => {

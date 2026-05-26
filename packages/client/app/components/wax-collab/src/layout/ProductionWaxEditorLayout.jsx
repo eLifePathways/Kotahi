@@ -142,7 +142,7 @@ const ProductionWaxEditorLayout =
       return useMemo(
         () => (
           <div id="main-wax-editor" style={fullScreenStyles}>
-            <Grid production readonly={readOnly}>
+            <Grid $production $readonly={readOnly}>
               <>
                 <Menu className="waxmenu">
                   <TopBar />
