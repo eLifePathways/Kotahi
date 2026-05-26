@@ -5,8 +5,8 @@ import { Radio } from './Radio'
 
 const Flexbox = styled.div`
   display: flex;
-  flex-direction: ${props => (props.column ? 'column' : 'row')};
-  justify-content: ${props => (props.center ? 'center' : 'left')};
+  flex-direction: ${props => (props.$column ? 'column' : 'row')};
+  justify-content: ${props => (props.$center ? 'center' : 'left')};
 `
 
 export const RadioGroup = ({
@@ -25,7 +25,7 @@ export const RadioGroup = ({
   }
 
   return (
-    <Flexbox column={!inline} data-testid={dataTestid}>
+    <Flexbox $column={!inline} data-testid={dataTestid}>
       {options.map(option => (
         <Radio
           checked={option.value === radioValue}

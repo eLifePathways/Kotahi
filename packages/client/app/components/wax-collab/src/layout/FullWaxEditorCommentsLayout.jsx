@@ -100,7 +100,7 @@ const FullWaxEditorCommentsLayout = (readOnly, authorComments) => props => {
       id="wax-container"
     >
       {readOnly ? (
-        <Grid readonly>
+        <Grid $readonly>
           <FullWaxEditorGrid noScroll useComments>
             <ReadOnlyEditorWithCommentsEditor className="panelWrapper">
               <WaxView {...props} />
