@@ -15,8 +15,6 @@ describe('Form builder', () => {
   })
 
   it('viewing and adding fields in Submission, Review and Decision forms', () => {
-    // login as admin
-
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -35,6 +33,7 @@ describe('Form builder', () => {
     FormsPage.getFieldValidate().scrollIntoView().click()
     cy.get('[class*="react-select__option"]').eq(0).click()
     cy.contains('Save').click()
+
     // adding a field in submission form
     cy.get('[title="Add a field..."]').click()
     cy.getByDataTestId('fieldType').click()
@@ -42,7 +41,6 @@ describe('Form builder', () => {
     cy.contains('Save').click()
 
     // for review field
-    // Menu.clickSettings()
     cy.contains('Review').click()
     FormsPage.getFormTitleTab(0).should('contain', 'Review')
     FormsPage.clickFormOption(1)
@@ -61,7 +59,6 @@ describe('Form builder', () => {
     cy.contains('Save').click()
 
     // for decision field
-    // Menu.clickSettings()
     cy.contains('Decision').click()
     FormsPage.getFormTitleTab(0).should('contain', 'Decision')
     FormsPage.clickFormOption(1)
@@ -72,7 +69,6 @@ describe('Form builder', () => {
     // adding a field in decision form
     cy.get('[title="Add a field..."]').click({ force: true })
     cy.get('[data-testid="fieldType"]').click()
-    // cy.get('button')
 
     cy.get('[class*="react-select__option"]')
       .contains('Rich text')

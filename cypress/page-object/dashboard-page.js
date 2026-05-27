@@ -9,22 +9,20 @@
 
 const BUTTON = 'button'
 const HEADER = 'General__Heading'
-const SECTION_TITLE = 'General__Title'
-const SECTION_PLACEHOLDER = 'style__Placeholder'
-const SUBMISSION_TITLE = '[name="submission.$title"] > div'
+const SUBMISSION_TITLE = '[data-testid="submission.$title"] > div'
 const SUBMISSION_BUTTON = '+ New submission'
 const SUBMISSION_FILE_UPLOAD_INPUT = 'input[type=file]'
 const SUBMISSION_CREATED = 'Submission created'
 
 /* My Submissions */
-const SUBMITTED_MANUSCRIPTS = '[class*=style__ClickableManuscriptsRow]'
+const SUBMITTED_MANUSCRIPTS = '[data-testid=clickable-manuscripts-row]'
 const CREATE_NEW_VERSION_BUTTON = 'create-new-manuscript-version-button'
 
 /* Submitted Info */
-const DECISION_FIELDS = ':nth-child(1) > .General__Section-sc-1chiust-0 > div'
+const DECISION_FIELDS = ':nth-child(1) > [data-testid=section] > div'
 
 // 'To Review section'
-const DO_REVIEW_BUTTON = '[name="reviewerLinks"] button'
+const DO_REVIEW_BUTTON = '[data-testid="reviewerLinks"] button'
 const ACCEPT_REVIEW_BUTTON = 'accept-review'
 const REJECT_REVIEW_BUTTON = 'reject-review'
 
@@ -36,8 +34,7 @@ const COMPLETED_REVIEWS_STATUS = 'completed'
 const REJECTED_REVIEWS_STATUS = 'rejected'
 const ACCEPTED_REVIEWS_STATUS = 'accepted'
 const VERSION_TITLE = 'VersionTitle__Root-sc'
-const ARTICLE_LINK = '[name="reviewerLinks"] button'
-const DASHBOARD_TAB = '[data-test-id=tab-container]'
+const ARTICLE_LINK = '[data-testid="reviewerLinks"] button'
 
 export const DashboardPage = {
   getSubmittedManuscript() {
@@ -68,7 +65,7 @@ export const DashboardPage = {
     this.getSubmitButton().click()
   },
   getSectionTitleWithText(title) {
-    return cy.getByContainsClass(SECTION_TITLE).contains(title)
+    return cy.getByDataTestId('section-title').contains(title)
   },
   getSubmissionTitle() {
     return cy.get(SUBMISSION_TITLE)
@@ -80,7 +77,7 @@ export const DashboardPage = {
     return this.getSubmitButton().click()
   },
   getSectionPlaceholder(nth) {
-    return cy.getByContainsClass(SECTION_PLACEHOLDER).eq(nth)
+    return cy.getByDataTestId('placeholder').eq(nth)
   },
   getCreateNewVersionButton() {
     return cy.getByDataTestId(CREATE_NEW_VERSION_BUTTON)
@@ -156,9 +153,11 @@ export const DashboardPage = {
     this.getCompletedReviewButton().click({ force: true })
   },
   getDashboardTab() {
-    return cy.get(DASHBOARD_TAB)
+    return cy
+      .getByDataTestId('tab-container')
+      .filter(':has(a[href*="/dashboard/"])')
   },
   clickDashboardTab(nth) {
-    this.getDashboardTab().eq(nth).click()
+    this.getDashboardTab().eq(nth).find('a').click()
   },
 }

@@ -193,16 +193,17 @@ const Publish = ({
           <SectionAction>
             <ActionButtonsWrapper>
               {manuscript.published && manuscript.status !== 'unpublished' && (
-                <UnpublishButton onClick={handleUnpublish} primary>
+                <UnpublishButton $primary onClick={handleUnpublish}>
                   {t('decisionPage.decisionTab.Unpublish')}
                 </UnpublishButton>
               )}
               <PublishButton
+                $primary
+                data-testid="publish-button"
                 disabled={
                   (notAccepted && areVerdictOptionsComplete) || isPublishing
                 }
                 onClick={handlePublish}
-                primary
               >
                 {manuscript.published && manuscript.status !== 'unpublished'
                   ? t('decisionPage.decisionTab.Republish')
@@ -249,9 +250,9 @@ const Publish = ({
                         <Alert type="error">{adaJobDetails}</Alert>
                       )}
                       <Button
+                        $primary
                         disabled={isRefreshingAdaStatus}
                         onClick={handleRefreshAdaStatus}
-                        primary
                       >
                         {t('decisionPage.decisionTab.refreshAdaStatus')}
                       </Button>
@@ -294,11 +295,11 @@ const Publish = ({
                     value={values.adaState}
                   />
                   <Button
+                    $primary
                     disabled={
                       (notAccepted && areVerdictOptionsComplete) || isPublishing
                     }
                     onClick={handleSubmit}
-                    primary
                   >
                     {t('decisionPage.decisionTab.UpdateAda')}
                   </Button>

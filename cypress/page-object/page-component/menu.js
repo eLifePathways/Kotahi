@@ -9,7 +9,6 @@ import { UsersPage } from '../users-page'
  * These options are available on all other pages.
  */
 const MENU_CONTAINER = 'menu-container'
-const USER_BUTTON = 'menuStyleds__UserItem'
 const BACKGROUND = 'menuStyleds__MainNavWrapper'
 const MESSAGE_NOT_AUTHORISED = 'AdminPage__Root'
 
@@ -81,7 +80,7 @@ export const Menu = {
     this.getMyProfileButton().click()
   },
   getLoggedUserButton() {
-    return cy.getByContainsClass(USER_BUTTON)
+    return cy.getByDataTestId('user-item')
   },
   clickLoggedUser() {
     this.getLoggedUserButton().click()

@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid'
+import { uuid } from '@coko/client'
 
 export const stripHtml = htmlString => {
   const temp = document.createElement('span')

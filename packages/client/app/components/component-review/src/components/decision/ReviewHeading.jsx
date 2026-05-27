@@ -155,7 +155,7 @@ const ReviewHeading = ({
           </>
         )}
       <Controls>
-        <Button onClick={toggleOpen} plain>
+        <Button onClick={toggleOpen}>
           {open
             ? t('decisionPage.decisionTab.reviewModalHide')
             : t('decisionPage.decisionTab.reviewModalShow')}

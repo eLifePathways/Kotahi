@@ -1,12 +1,9 @@
 /* eslint-disable promise/always-return */
 
-import roles from '../../fixtures/role_names'
 import { ControlPage } from '../../page-object/control-page'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard } from '../../support/routes'
-
-const { seniorEditor } = roles
 
 describe('Editor assigning reviewers', () => {
   before(() => {
@@ -18,14 +15,7 @@ describe('Editor assigning reviewers', () => {
   })
 
   it('can assign 6 reviewers', () => {
-    // login as seniorEditor
-    cy.login(seniorEditor, dashboard)
-    cy.url().should('eq', `${Cypress.config().baseUrl}/journal/dashboard`)
-    cy.reload()
-    cy.awaitDisappearSpinner()
-
     cy.fixture('role_names').then(name => {
-      // login as seniorEditor
       cy.login(name.role.seniorEditor, dashboard)
       cy.reload()
       DashboardPage.clickDashboardTab(2)
@@ -50,6 +40,6 @@ describe('Editor assigning reviewers', () => {
 
     // Go to dashboard and verify number of invited reviewer
     Menu.clickDashboard()
-    cy.get('.ReviewStatusDonut__CenterLabel-sc-76zxfe-1').contains('6')
+    cy.getByDataTestId('donut-center-label').contains('6')
   })
 })

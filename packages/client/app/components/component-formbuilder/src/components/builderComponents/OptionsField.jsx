@@ -161,7 +161,7 @@ const FileReaderComponent = ({ push, setFieldValue }) => {
       <div className="container">
         <div {...getRootProps({ className: 'dropzone' })}>
           <input {...getInputProps()} />
-          <Button onClick={open} plain type="button">
+          <Button onClick={open} type="button">
             {t('formBuilder.Add options from a JSON file')}
           </Button>
         </div>
@@ -265,12 +265,7 @@ const RenderOptions = ({ form: { values, setFieldValue }, push, remove }) => {
         </li>
       ))}
       <LiControlOptions>
-        <Button
-          disabled={hasNewOption}
-          onClick={() => push()}
-          plain
-          type="button"
-        >
+        <Button disabled={hasNewOption} onClick={() => push()} type="button">
           {t('formBuilder.Add another option')}
         </Button>
         <FileReaderComponent push={push} setFieldValue={setFieldValue} />

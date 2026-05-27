@@ -15,17 +15,12 @@ describe('Assigning editors and decision reject', () => {
 
     cy.fixture('submission_form_data').then(data => {
       cy.fixture('role_names').then(name => {
-        // login as admin
         cy.login(name.role.admin, dashboard)
 
-        // select Control on the Manuscripts page
         Menu.clickManuscripts()
 
         ManuscriptsPage.selectOptionWithText('Control')
-        cy.reload()
-        // added a reload here because tests were failing on an unhandled promise.
 
-        // assign seniorEditor
         ControlPage.clickAssignSeniorEditorDropdown()
         ControlPage.selectDropdownOptionByName(name.role.seniorEditor)
 
@@ -36,15 +31,23 @@ describe('Assigning editors and decision reject', () => {
         ControlPage.selectDropdownOptionByName(name.role.admin)
 
         // reject submission
-        cy.log('Admin rejects a submission.')
-        ControlPage.clickDecisionTab(1)
+        ControlPage.clickDecisionTab()
+
+        cy.intercept('POST', '/graphql').as('autoSaveEditor')
         ControlPage.fillInDecision(data.rejectedDecision)
+        cy.wait('@autoSaveEditor')
+
+        cy.intercept('POST', '/graphql').as('autoSaveReject')
         ControlPage.clickReject()
+        cy.wait('@autoSaveReject')
+
+        /* eslint-disable-next-line cypress/no-unnecessary-waiting */
+        cy.wait(1000)
         ControlPage.clickSubmit()
         ControlPage.checkSvgExists()
       })
     })
 
-    cy.contains('Dashboard').click()
+    // cy.contains('Dashboard').click()
   })
 })

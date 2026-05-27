@@ -47,6 +47,7 @@ const TextField = props => {
     value = '',
     readonly,
     inline,
+    validationStatus,
     ...rest
   } = props
 
@@ -54,6 +55,7 @@ const TextField = props => {
     <Root $inline={inline} className={className}>
       {label && <Label htmlFor={uid}>{label}</Label>}
       <Input
+        $validationStatus={validationStatus}
         id={uid}
         readOnly={readonly}
         ref={innerRefProp}

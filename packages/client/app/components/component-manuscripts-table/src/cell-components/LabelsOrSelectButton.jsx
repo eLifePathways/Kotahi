@@ -35,11 +35,11 @@ const LabelsOrSelectButton = ({
 
   return (
     <StyledButton
+      $primary
       onClick={e => {
         e.stopPropagation()
         setReadyToEvaluateLabel(manuscript.id)
       }}
-      primary
     >
       {t('manuscriptsPage.Select')}
     </StyledButton>

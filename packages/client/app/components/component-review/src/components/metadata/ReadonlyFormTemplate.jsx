@@ -100,7 +100,7 @@ const ReadonlyFormTemplate = ({
             {copyHandleBarsCode && (
               <Cell>
                 {element.name}
-                <Action onClick={onCopyHandleBarsCode(element.name)} primary>
+                <Action onClick={onCopyHandleBarsCode(element.name)}>
                   {' '}
                   <Icon color={color.brand1.base()} inline>
                     file-plus

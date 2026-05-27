@@ -17,9 +17,7 @@ const Title = styled.span`
 `
 
 const ToggleReview = ({ open, toggle }) => (
-  <Button onClick={toggle} plain>
-    {open ? 'Hide' : 'Show'}
-  </Button>
+  <Button onClick={toggle}>{open ? 'Hide' : 'Show'}</Button>
 )
 
 const Bullet = ({ journal, recommendation }) => {

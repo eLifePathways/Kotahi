@@ -7,7 +7,11 @@ const FileRow = ({ file, columnDefinitions }) => {
   const rowCells = columnDefinitions.map(column => {
     const Renderer = column.component
     return (
-      <Cell key={column.name} {...column}>
+      <Cell
+        $centered={column.centered}
+        data-testid={column.name}
+        key={column.name}
+      >
         <Renderer file={file} />
       </Cell>
     )

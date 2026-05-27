@@ -148,7 +148,7 @@ describe('Form builder and Submission pages', () => {
         // Submit the form
         SubmissionFormPage.clickSubmitYourManuscript()
 
-        cy.get('[data-test-id="tab-container"]:nth(0)')
+        cy.get('[data-testid="tab-container"]:nth(0)')
           .should('contain', 'My Submissions')
           .should('exist')
         // Contains new title

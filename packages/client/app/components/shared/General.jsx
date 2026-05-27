@@ -3,7 +3,9 @@ import { grid, th } from '@coko/client'
 import { TabsContainer } from './Tabs'
 import { color } from '../../theme'
 
-export const Section = styled.section`
+export const Section = styled.section.attrs({
+  'data-testid': 'section',
+})`
   padding: ${grid(2)} ${grid(3)};
 `
 
@@ -63,7 +65,9 @@ export const Container = styled.div`
   width: 100%;
 `
 
-export const Title = styled.h2`
+export const Title = styled.h2.attrs({
+  'data-testid': 'section-title',
+})`
   font-size: ${th('fontSizeHeading5')};
   font-weight: 500;
 `

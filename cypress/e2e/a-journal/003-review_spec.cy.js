@@ -63,14 +63,14 @@ describe('Completing reviews', () => {
       cy.get('[data-testid="control-panel-team"]').click()
       cy.awaitDisappearSpinner()
       cy.get(
-        '[class*=KanbanBoard__Kanban] > :nth-child(1) > [class*=KanbanBoard__CardsWrapper] > [class*=KanbanCard]',
+        '[data-testid=kanban] > :nth-child(1) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
       ).should('contain', name.role.reviewers[5])
       // ControlPage.getInvitedReviewer
       cy.get(
-        '[class*=KanbanBoard__Kanban] > :nth-child(2) > [class*=KanbanBoard__CardsWrapper] > [class*=KanbanCard]',
+        '[data-testid=kanban] > :nth-child(2) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
       ).should('contain', name.role.reviewers[3])
       cy.get(
-        '[class*=KanbanBoard__Kanban] > :nth-child(4) > [class*=KanbanBoard__CardsWrapper] > [class*=KanbanCard]',
+        '[data-testid=kanban] > :nth-child(4) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
       ).should('contain', name.role.reviewers[1])
 
       cy.contains('See Declined (1)').should('exist')
@@ -96,7 +96,7 @@ const doReview = (name, reviewData) => {
       DashboardPage.clickDoReview()
       cy.awaitDisappearSpinner()
       cy.contains('Type of Research Object').should('exist')
-      cy.get('[class*=TabsContainer]').contains('Review').click()
+      cy.get('[data-testid=tab-container]').contains('Review').click()
       ReviewPage.getReviewCommentField().focus().type('comment', { delay: 200 })
       ReviewPage.getReviewCommentField().fillInput(reviewData.comment)
       if (reviewData.radioButton === 'accept')
@@ -105,9 +105,6 @@ const doReview = (name, reviewData) => {
         ReviewPage.clickRejectRadioButton()
       if (reviewData.radioButton === 'revise')
         ReviewPage.clickReviseRadioButton()
-
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000)
 
       // Submit the review
       ReviewPage.clickSubmitButton()

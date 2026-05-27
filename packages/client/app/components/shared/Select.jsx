@@ -80,6 +80,13 @@ const getValueContainer =
     )
   }
 
+const SelectOption = ({ innerProps, ...props }) => (
+  <components.Option
+    {...props}
+    innerProps={{ ...innerProps, 'data-testid': 'select-option' }}
+  />
+)
+
 export const Select = props => {
   const {
     // name,
@@ -125,7 +132,10 @@ export const Select = props => {
   return (
     <ReactSelect
       classNamePrefix="react-select"
-      components={{ ValueContainer: getValueContainer(dataTestid) }}
+      components={{
+        ValueContainer: getValueContainer(dataTestid),
+        Option: SelectOption,
+      }}
       isMulti={isMulti}
       options={options}
       {...otherProps}

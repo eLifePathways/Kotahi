@@ -4,9 +4,8 @@ import Creatable from 'react-select/async-creatable'
 
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { th, grid } from '@coko/client'
+import { th, grid, uuid } from '@coko/client'
 import PropTypes from 'prop-types'
-import { v4 as uuid } from 'uuid'
 import { useTranslation } from 'react-i18next'
 import { PlusCircle } from 'react-feather'
 import { isEmpty } from 'lodash'
@@ -194,7 +193,6 @@ const AuthorsInput = ({
 
           onChange(newVal)
         }}
-        plain
         title={
           validateAuthors(cleanedVal, authorFieldOptions)
             ? 'Correct or delete "persons" with invalid fields, then add a new one!'

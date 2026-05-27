@@ -5,7 +5,7 @@ import color from '../color'
 export default {
   Input: css`
     border-color: ${props => {
-      switch (props.validationStatus) {
+      switch (props.$validationStatus) {
         case 'success':
           return props.theme.colorBorder
         case 'warning':
@@ -17,7 +17,7 @@ export default {
       }
     }};
     color: ${props => {
-      switch (props.validationStatus) {
+      switch (props.$validationStatus) {
         case 'success':
           return props.theme.colorText
         case 'warning':
@@ -33,7 +33,7 @@ export default {
 
     &:focus {
       border-color: ${props => {
-        switch (props.validationStatus) {
+        switch (props.$validationStatus) {
           case 'success':
             return props.theme.colorSuccess
           case 'warning':

@@ -6,7 +6,7 @@
 import { useContext } from 'react'
 import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
-import { v4 as uuidv4 } from 'uuid'
+import { uuid } from '@coko/client'
 import styled from 'styled-components'
 import { WaxContext, ToolGroup } from 'wax-prosemirror-core'
 import Dropdown from 'react-dropdown'
@@ -99,7 +99,7 @@ class KotahiBlockDropDown extends ToolGroup {
 
     return (
       <DropdownStyled
-        key={uuidv4()}
+        key={uuid()}
         onChange={option => {
           this._tools[option.value].run(state, dispatch)
         }}

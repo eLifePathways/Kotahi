@@ -27,9 +27,7 @@ const Name = styled.span`
 `
 
 const ToggleInvitation = ({ open, toggle }) => (
-  <Button onClick={toggle} plain>
-    {open ? 'Hide' : 'Show'}
-  </Button>
+  <Button onClick={toggle}>{open ? 'Hide' : 'Show'}</Button>
 )
 
 const Bullet = styled.span`
@@ -175,7 +173,7 @@ const InvitationResult = ({ invitation }) => {
           </Name>
           {responseComment && (
             <Controls>
-              <Button onClick={toggleOpen} plain>
+              <Button onClick={toggleOpen}>
                 {open
                   ? t('decisionPage.decisionTab.reviewModalHide')
                   : t('decisionPage.decisionTab.reviewModalShow')}

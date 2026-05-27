@@ -5,10 +5,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { v4 as uuid } from 'uuid'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import { grid } from '@coko/client'
+import { grid, uuid } from '@coko/client'
 import { ActionButton, TextInput } from '../../shared'
 import FormWaxEditor from '../../component-formbuilder/src/components/FormWaxEditor'
 import TaskNotificationDetails from './TaskNotificationDetails'
@@ -397,7 +396,6 @@ const TaskEditModal = ({
                 : false
             }
             onClick={addNewTaskNotification}
-            primary
           >
             {t('modals.taskEdit.Add Notification Recipient')}
           </SecondaryActionButton>

@@ -537,6 +537,7 @@ const DecisionVersion = ({
                       actions.setSubmitting(false)
                     } catch (decisionError) {
                       actions.setErrors({ makeDecision: decisionError.message })
+                      actions.setSubmitting(false)
                     }
                   }}
                   reviewId={currentDecisionData.id}

@@ -17,6 +17,7 @@ describe('Create a new submission', () => {
     })
 
     DashboardPage.clickSubmissionButton() // Click on new submission
+    cy.url().should('include', 'newSubmission')
   })
 
   it('can upload a manuscript and add a title', () => {

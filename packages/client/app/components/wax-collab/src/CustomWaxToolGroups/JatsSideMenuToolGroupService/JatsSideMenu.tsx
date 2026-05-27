@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 
 import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
-import { v4 as uuidv4 } from 'uuid'
+import { uuid } from '@coko/client'
 import { ToolGroup } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
 import { VerticalTabs, BlockLevelTools } from './VerticalTabs'
@@ -112,7 +112,7 @@ class JatsSideMenu extends ToolGroup {
     const tabList = [frontMatterList, backMatterList /* citationList */]
 
     const TabsComponent = useMemo(
-      () => <VerticalTabs key={uuidv4()} tabList={tabList} />,
+      () => <VerticalTabs key={uuid()} tabList={tabList} />,
       [],
     )
 

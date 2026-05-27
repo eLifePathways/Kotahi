@@ -191,10 +191,10 @@ const ThreadedComment = ({
             value={modalFieldValue}
           />
           <Button
+            $primary
             onClick={() => {
               onSubmitClick()
             }}
-            primary
           >
             {t('modals.editDiscussion.saveEdit')}
           </Button>

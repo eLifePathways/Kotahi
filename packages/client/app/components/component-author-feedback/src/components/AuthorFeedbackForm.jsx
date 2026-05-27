@@ -36,7 +36,13 @@ export const FormActionButton = styled(ActionButton)`
 `
 // Below are the used Components
 
-const FileInputComponent = ({ entityId, disabled, ...restProps }) => {
+const FileInputComponent = ({
+  entityId,
+  disabled,
+  /* eslint-disable-next-line no-unused-vars */
+  validationStatus,
+  ...restProps
+}) => {
   return (
     <FilesUpload
       acceptMultiple

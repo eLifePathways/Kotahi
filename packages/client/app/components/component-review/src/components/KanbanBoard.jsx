@@ -20,7 +20,9 @@ import localizeReviewFilterOptions from '../../../../shared/localizeReviewFilter
 import KanbanCard from './reviewers/KanbanCard'
 import { findReviewFromReviewer } from './reviewers/util'
 
-const Kanban = styled.div`
+const Kanban = styled.div.attrs({
+  'data-testid': 'kanban',
+})`
   align-items: stretch;
   display: flex;
   margin: 15px 7.5px;
@@ -48,7 +50,9 @@ const StatusLabel = styled.div`
   padding: 4px 10px;
 `
 
-const CardsWrapper = styled.div`
+const CardsWrapper = styled.div.attrs({
+  'data-testid': 'kanban-cards-wrapper',
+})`
   background-color: #f8f8f9;
   border-radius: 8px;
   height: 100%;

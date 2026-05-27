@@ -314,7 +314,7 @@ const DeclineArticleOwnershipPage = ({ match }) => {
                         />
                       </StyledFormInput>
                       <ButtonWrapper>
-                        <Button primary type="submit">
+                        <Button $primary type="submit">
                           {t('declineReviewPage.Decline Invitation')}
                         </Button>
                       </ButtonWrapper>

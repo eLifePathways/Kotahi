@@ -33,13 +33,17 @@ const Actions = ({
           {['preprint1', 'preprint2'].includes(config.instanceName) &&
             values(articleStatuses).includes(manuscript.status) && (
               <LinkAction
+                data-testid="action-link"
                 to={`${urlFrag}/versions/${manuscript.id}/evaluation`}
               >
                 {t('manuscriptsTable.actions.Evaluation')}
               </LinkAction>
             )}
           {['journal', 'prc'].includes(config.instanceName) && (
-            <LinkAction to={`${urlFrag}/versions/${manuscript.id}/decision`}>
+            <LinkAction
+              data-testid="action-link"
+              to={`${urlFrag}/versions/${manuscript.id}/decision`}
+            >
               {t('manuscriptsTable.actions.Control')}
             </LinkAction>
           )}
@@ -50,7 +54,10 @@ const Actions = ({
       </LinkAction>
       {!archived && (
         <>
-          <LinkAction to={`${urlFrag}/versions/${manuscript.id}/production`}>
+          <LinkAction
+            data-testid="action-link"
+            to={`${urlFrag}/versions/${manuscript.id}/production`}
+          >
             {t('manuscriptsTable.actions.Production')}
           </LinkAction>
           {['preprint1', 'preprint2'].includes(config.instanceName) &&

@@ -54,8 +54,15 @@ const Link = styled(OriginalLink)`
 `
 
 const Action = props => {
+  const { primary, ...rest } = props
+
   if (props.to) return <Link {...props}>{props.children}</Link>
-  return <Button {...props}>{props.children}</Button>
+
+  return (
+    <Button $primary={primary} {...rest}>
+      {props.children}
+    </Button>
+  )
 }
 
 export default Action

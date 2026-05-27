@@ -38,7 +38,9 @@ const chartOptions = {
   height: '100%',
 }
 
-const CenterLabel = styled.div`
+const CenterLabel = styled.div.attrs({
+  'data-testid': 'donut-center-label',
+})`
   font-size: ${th('fontSizeBase')};
   left: 50%;
   pointer-events: none;

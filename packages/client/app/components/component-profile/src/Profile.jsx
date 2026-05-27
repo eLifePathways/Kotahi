@@ -208,7 +208,7 @@ const Profile = ({
           </Heading>
 
           {isCurrentUsersOwnProfile && (
-            <Button onClick={() => logoutUser()} primary>
+            <Button $primary onClick={() => logoutUser()}>
               {t('profilePage.Logout')}
             </Button>
           )}

@@ -45,7 +45,7 @@ const PageHeader = ({
             currentSearchQuery={currentSearchQuery}
           />
         )}
-        <Button onClick={onNewItemButtonClick} primary>
+        <Button $primary onClick={onNewItemButtonClick}>
           {newItemButtonText}
         </Button>
       </ControlsContainer>

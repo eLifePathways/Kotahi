@@ -19,7 +19,7 @@ const ModalContainer = styled.div`
 `
 
 const InlineTextField = styled(TextField)`
-  border-color: ${props => (props.error ? '#ff2d1a' : '#AAA')};
+  border-color: ${props => (props.$error ? '#ff2d1a' : '#AAA')};
   display: inline;
 `
 
@@ -65,8 +65,8 @@ const EnterEmail = ({ updateUserEmail, user }) => {
       >
         <EnterEmailLabel htmlFor="enter-email">Enter Email</EnterEmailLabel>
         <InlineTextField
+          $error={updateEmailError}
           autoFocus
-          error={updateEmailError}
           id="enter-email"
           onChange={e => setEmail(e.target.value)}
           placeholder="Enter your email"
@@ -75,7 +75,7 @@ const EnterEmail = ({ updateUserEmail, user }) => {
         <br />
         <UpdateEmailError>{updateEmailError}</UpdateEmailError>
         <ButtonContainer>
-          <Button onClick={() => updateEmail(user.id, email)} primary>
+          <Button $primary onClick={() => updateEmail(user.id, email)}>
             Next
           </Button>
         </ButtonContainer>

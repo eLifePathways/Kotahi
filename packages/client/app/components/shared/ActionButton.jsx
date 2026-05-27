@@ -101,7 +101,6 @@ const ActionButton = ({
   dataTestid,
   title,
   type,
-  // dataCy,
 }) => {
   if (disabled)
     return (
@@ -154,6 +153,7 @@ const ActionButton = ({
       $isCompact={isCompact}
       $primary={primary}
       className={className}
+      data-status={status || ''}
       data-testid={dataTestid}
       onClick={status !== 'pending' ? onClick : null}
       title={title}

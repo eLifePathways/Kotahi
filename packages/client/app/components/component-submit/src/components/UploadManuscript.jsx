@@ -1,7 +1,7 @@
-/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled, { css, keyframes, withTheme } from 'styled-components'
 import { th } from '@coko/client'
@@ -141,7 +141,7 @@ const Info = styled.div`
   font-weight: 400;
 
   ${props =>
-    !props.completed &&
+    !props.$completed &&
     css`
       cursor: default;
     `}
@@ -198,15 +198,25 @@ const UploadManuscript = ({
   // }
 
   // Show and then hide the error/success state
-  if (error || completed) {
-    setTimeout(() => {
+  useEffect(() => {
+    if (!error && !completed) return undefined
+    const timer = setTimeout(() => {
       setConversion({})
     }, 3000)
-  }
+    return () => clearTimeout(timer)
+  }, [error, completed])
+
+  const openDropzoneRef = useRef(null)
 
   useEffect(() => {
     if (!showUploadManuscript && showSubmitUrl) {
       uploadManuscript()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (showUploadManuscript && !showSubmitUrl && openDropzoneRef.current) {
+      openDropzoneRef.current()
     }
   }, [])
 
@@ -224,11 +234,7 @@ const UploadManuscript = ({
           onDrop={uploadManuscript}
         >
           {({ getRootProps, getInputProps, open }) => {
-            useEffect(() => {
-              if (showUploadManuscript && !showSubmitUrl) {
-                open()
-              }
-            }, [])
+            openDropzoneRef.current = open
 
             return (
               <Root {...getRootProps()}>
@@ -245,7 +251,7 @@ const UploadManuscript = ({
                       })}
                     </Error>
                   ) : (
-                    <Info completed={completed}>
+                    <Info $completed={completed}>
                       {completed
                         ? t('newSubmission.Submission created')
                         : t('newSubmission.Upload Manuscript')}

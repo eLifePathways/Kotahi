@@ -50,6 +50,7 @@ export const TextInput = props => {
     showOrcidId,
     validate,
     validationOrcid,
+    validationStatus,
     __typename,
     ...rest
   } = props

@@ -5,9 +5,6 @@ import styled from 'styled-components'
 import { FieldArray } from 'formik'
 import { cloneDeep, set, get } from 'lodash'
 import { TextField, Button, ValidatedFieldFormik } from '../../../pubsweet'
-// import { minSize } from '../../../xpub-validators/src'
-
-// const minSize1 = minSize(1)
 
 const Inline = styled.div`
   display: inline-block;
@@ -50,12 +47,12 @@ const LinksInput = ({ form, remove, push, value, name, onChange }) => {
       <UnbulletedList>
         <li>
           <Button
+            $primary
             onClick={() =>
               push({
                 url: '',
               })
             }
-            primary
             type="button"
           >
             {value && value.length ? 'Add another link' : 'Add a link'}

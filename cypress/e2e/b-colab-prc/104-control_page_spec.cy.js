@@ -217,8 +217,8 @@ describe('control page tests', () => {
       ControlPage.getHideReviewerNameCheckbox('should', 'be.checked')
       cy.fixture('role_names').then(name => {
         cy.login(name.role.reviewers[1], dashboard)
-        cy.get('[name="submission.$title"]:last').click()
-        cy.get('[class*=TabsContainer]').contains('Review').click()
+        cy.get('[data-testid="submission.$title"]:last').click()
+        cy.get('[data-testid=tab-container]').contains('Review').click()
         ControlPage.getReviewerName().should(
           'not.contain',
           name.role.reviewers[1],
@@ -233,8 +233,8 @@ describe('control page tests', () => {
       ControlPage.getHideReviewerNameCheckbox('should', 'not.be.checked')
       cy.fixture('role_names').then(name => {
         cy.login(name.role.reviewers[1], dashboard)
-        cy.get('[name="submission.$title"]:last').click()
-        cy.get('[class*=TabsContainer]').contains('Review').click()
+        cy.get('[data-testid="submission.$title"]:last').click()
+        cy.get('[data-testid=tab-container]').contains('Review').click()
         ControlPage.getReviewerName().should('contain', name.role.reviewers[1])
       })
     })

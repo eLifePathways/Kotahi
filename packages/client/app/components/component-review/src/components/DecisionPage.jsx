@@ -537,7 +537,7 @@ const DecisionPage = ({ currentUser }) => {
   if (loading) return <Spinner />
 
   if (error) {
-    if (error.graphQLErrors.find(e => e.message === 'Not Authorised!')) {
+    if (error.graphQLErrors?.find(e => e.message === 'Not Authorised!')) {
       return <AccessErrorPage message={t('decisionPage.unauthorized')} />
     }
 

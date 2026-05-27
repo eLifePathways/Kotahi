@@ -2,8 +2,7 @@
 
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { th } from '@coko/client'
-import { v4 as uuid } from 'uuid'
+import { th, uuid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 
 import { DeleteControl, TextInput } from '../../../shared'
@@ -113,7 +112,6 @@ const DoisInput = ({ onChange, value, overrideButtonLabel = undefined }) => {
 
           onChange(newVal)
         }}
-        plain
         type="button"
       >
         {!overrideButtonLabel

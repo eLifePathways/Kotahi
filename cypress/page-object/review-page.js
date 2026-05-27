@@ -32,7 +32,7 @@ export const ReviewPage = {
     return cy.getByContainsClass(REVIEW_METADATA_CELL).eq(nth)
   },
   getReviewCommentField() {
-    return cy.get('[contenteditable="true"]:nth(0)')
+    return cy.get('[data-testid="comment"] [contenteditable="true"]').first()
   },
   fillInReviewComment(reviewComment) {
     this.getReviewCommentField()
@@ -49,19 +49,19 @@ export const ReviewPage = {
     return cy.get(ACCEPT_RADIO_BUTTON)
   },
   clickAcceptRadioButton() {
-    this.getAcceptRadioButton().eq(0).click({ force: true })
+    this.getAcceptRadioButton().eq(0).check({ force: true })
   },
   getReviseRadioButton() {
     return cy.get(REVISE_RADIO_BUTTON)
   },
   clickReviseRadioButton() {
-    this.getReviseRadioButton().eq(0).click({ force: true })
+    this.getReviseRadioButton().eq(0).check({ force: true })
   },
   getRejectRadioButton() {
     return cy.get(REJECT_RADIO_BUTTON)
   },
   clickRejectRadioButton() {
-    this.getRejectRadioButton().eq(0).click({ force: true })
+    this.getRejectRadioButton().eq(0).check({ force: true })
   },
   getReviseButton() {
     return cy.get(REVISE_RADIO_BUTTON)

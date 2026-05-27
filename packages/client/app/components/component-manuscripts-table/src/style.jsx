@@ -72,7 +72,9 @@ export const ManuscriptsRow = styled.div`
   }
 `
 
-export const ClickableManuscriptsRow = styled(ManuscriptsRow)`
+export const ClickableManuscriptsRow = styled(ManuscriptsRow).attrs({
+  'data-testid': 'clickable-manuscripts-row',
+})`
   color: ${color.text};
 
   &:hover {

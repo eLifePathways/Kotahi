@@ -201,6 +201,7 @@ const CalloutComponent = ({ node, view, getPos }) => {
           </PopUpContent>
           <StatusBar>
             <Button
+              $primary
               disabled={items.length === 0 || loading} // This is now set to disabled if there are still versions to come in
               onClick={async e => {
                 e.preventDefault()
@@ -245,7 +246,6 @@ const CalloutComponent = ({ node, view, getPos }) => {
                 setIsOpen(false)
                 setLoading(false)
               }}
-              primary
               type="primary"
             >
               {loading ? 'Applying...' : 'Apply'}

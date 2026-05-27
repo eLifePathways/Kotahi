@@ -34,7 +34,9 @@ const FeildWrapper = styled.div`
   }
 `
 
-const Element = styled.div`
+const Element = styled.div.attrs({
+  'data-testid': 'formbuilder-element',
+})`
   background-color: ${color.backgroundB};
   border-radius: ${th('borderRadius')};
   display: flex;

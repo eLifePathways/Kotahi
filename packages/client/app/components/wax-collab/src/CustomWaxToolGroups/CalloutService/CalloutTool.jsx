@@ -1,6 +1,6 @@
 import { decorate, injectable } from 'inversify'
 import { Fragment } from 'prosemirror-model'
-import { v4 as uuidv4 } from 'uuid'
+import { uuid } from '@coko/client'
 import { LeftSideButton, Tools } from 'wax-prosemirror-core'
 import { NodeSelection } from 'prosemirror-state'
 import { isEmpty } from 'lodash'
@@ -21,7 +21,7 @@ class CalloutTool extends Tools {
         content = $from.parent.content.cut($from.parentOffset, $to.parentOffset)
 
       const callout = state.config.schema.nodes.callout.create(
-        { id: uuidv4() },
+        { id: uuid() },
         content,
       )
 

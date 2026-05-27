@@ -25,7 +25,12 @@ const CompactSectionWithFullWidth = styled(CompactSection)`
   }
 `
 
-const PartnerInputComponent = ({ entityId, ...restProps }) => {
+const PartnerInputComponent = ({
+  entityId,
+  /* eslint-disable-next-line no-unused-vars */
+  validationStatus,
+  ...restProps
+}) => {
   return (
     <FilesUpload
       acceptMultiple

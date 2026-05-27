@@ -224,7 +224,9 @@ export const RolesLabel = styled.div`
   white-space: nowrap;
 `
 
-export const UserItem = styled(Link)`
+export const UserItem = styled(Link).attrs({
+  'data-testid': 'user-item',
+})`
   align-items: end;
   border-bottom: 1px solid #fff2;
   color: ${color.textReverse};

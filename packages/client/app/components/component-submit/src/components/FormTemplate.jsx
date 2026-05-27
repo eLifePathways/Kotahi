@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
 /* eslint-disable react/prop-types */
 /* eslint-disable new-cap */
 
@@ -104,7 +104,9 @@ const MessageWrapper = styled.div`
   margin-top: -${({ theme }) => theme.spacing[1]}px;
 `
 
-const SafeRadioGroup = styled(RadioGroup)`
+const SafeRadioGroup = styled(RadioGroup).attrs({
+  'data-testid': 'safe-radio-group',
+})`
   position: relative;
 `
 
@@ -230,8 +232,14 @@ const FormTemplate = ({
   collaborativeObject,
 }) => {
   const config = useContext(ConfigContext)
+  const { t } = useTranslation()
   const [confirming, setConfirming] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [submitSucceeded, setSubmitSucceeded] = useState(false)
+  const [buttonIsPending, setButtonIsPending] = useState(false)
+  const [publishingResponse, setPublishingResponse] = useState([])
+  const [publishErrorsModalIsOpen, setPublishErrorsModalIsOpen] =
+    useState(false)
 
   const toggleConfirming = () => {
     setConfirming(confirm => !confirm)
@@ -298,6 +306,7 @@ const FormTemplate = ({
     >
       {({
         handleSubmit,
+        submitForm,
         setTouched,
         values,
         setFieldValue,
@@ -313,78 +322,6 @@ const FormTemplate = ({
           }
 
           debounceChange(value, fieldName)
-        }
-
-        const [submitSucceeded, setSubmitSucceeded] = useState(false)
-        const [buttonIsPending, setButtonIsPending] = useState(false)
-        const [publishingResponse, setPublishingResponse] = useState([])
-        const { t } = useTranslation()
-
-        const [publishErrorsModalIsOpen, setPublishErrorsModalIsOpen] =
-          useState(false)
-
-        const submitButton = (text, haspopup = false) => {
-          return (
-            <div>
-              <ActionButton
-                dataTestid={`${form.name
-                  ?.toLowerCase()
-                  .replace(/ /g, '-')
-                  .replace(/[^\w-]+/g, '')}-action-btn`}
-                onClick={async () => {
-                  setButtonIsPending(true)
-
-                  const hasErrors =
-                    Object.keys(await validateForm()).length !== 0
-
-                  // If there are errors, do a fake submit
-                  // to focus on the error
-                  if (
-                    hasErrors ||
-                    values.status === articleStatuses.evaluated ||
-                    values.status === articleStatuses.submitted ||
-                    !haspopup
-                  ) {
-                    await handleSubmit()
-                    setSubmitSucceeded(!hasErrors)
-                  } else {
-                    toggleConfirming()
-                  }
-
-                  if (!hasErrors && republish) {
-                    const response = (await republish(
-                      manuscriptId,
-                      config.groupId,
-                    )) || {
-                      steps: [],
-                    }
-
-                    setPublishingResponse(response)
-                    if (response.steps.some(step => !step.succeeded))
-                      setPublishErrorsModalIsOpen(true)
-                  }
-
-                  setButtonIsPending(false)
-                }}
-                primary
-                status={
-                  /* eslint-disable no-nested-ternary */
-                  buttonIsPending || isSubmitting
-                    ? 'pending'
-                    : publishingResponse?.steps?.some(step => !step.succeeded)
-                      ? 'failure'
-                      : Object.keys(errors).length && submitCount
-                        ? 'failure' // TODO Make this case 'failure', once we've fixed the validation delays in the form
-                        : submitSucceeded
-                          ? 'success'
-                          : ''
-                  /* eslint-enable no-nested-ternary */
-                }
-              >
-                {text}
-              </ActionButton>
-            </div>
-          )
         }
 
         // this is whether the form includes a popup
@@ -495,7 +432,7 @@ const FormTemplate = ({
 
                   return (
                     <Section
-                      cssOverrides={JSON.parse(element.sectioncss || '{}')}
+                      $cssOverrides={JSON.parse(element.sectioncss || '{}')}
                       key={`${element.id}`}
                     >
                       <FieldHead>
@@ -665,9 +602,69 @@ const FormTemplate = ({
                   )
                 })}
 
-              {showSubmitButton
-                ? submitButton(submissionButtonText, showPopup)
-                : null}
+              {showSubmitButton && (
+                <div>
+                  <ActionButton
+                    dataTestid={`${form.name
+                      ?.toLowerCase()
+                      .replace(/ /g, '-')
+                      .replace(/[^\w-]+/g, '')}-action-btn`}
+                    onClick={async () => {
+                      setButtonIsPending(true)
+
+                      const hasErrors =
+                        Object.keys(await validateForm()).length !== 0
+
+                      // If there are errors, do a fake submit
+                      // to focus on the error
+                      if (
+                        hasErrors ||
+                        values.status === articleStatuses.evaluated ||
+                        values.status === articleStatuses.submitted ||
+                        !showPopup
+                      ) {
+                        await submitForm()
+                        setSubmitSucceeded(!hasErrors)
+                      } else {
+                        toggleConfirming()
+                      }
+
+                      if (!hasErrors && republish) {
+                        const response = (await republish(
+                          manuscriptId,
+                          config.groupId,
+                        )) || {
+                          steps: [],
+                        }
+
+                        setPublishingResponse(response)
+                        if (response.steps.some(step => !step.succeeded))
+                          setPublishErrorsModalIsOpen(true)
+                      }
+
+                      setButtonIsPending(false)
+                    }}
+                    primary
+                    status={
+                      /* eslint-disable no-nested-ternary */
+                      buttonIsPending || isSubmitting
+                        ? 'pending'
+                        : publishingResponse?.steps?.some(
+                              step => !step.succeeded,
+                            )
+                          ? 'failure'
+                          : Object.keys(errors).length && submitCount
+                            ? 'failure' // TODO Make this case 'failure', once we've fixed the validation delays in the form
+                            : submitSucceeded
+                              ? 'success'
+                              : ''
+                      /* eslint-enable no-nested-ternary */
+                    }
+                  >
+                    {submissionButtonText}
+                  </ActionButton>
+                </div>
+              )}
 
               {confirming && (
                 <ModalWrapper>

@@ -3,8 +3,7 @@
 import { useState } from 'react'
 
 import styled from 'styled-components'
-import { grid, th } from '@coko/client'
-import { v4 as uuid } from 'uuid'
+import { grid, th, uuid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { cloneDeep, pick, isArray } from 'lodash'
 import { color } from '../../../../theme'

@@ -76,7 +76,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             article.reviews
-            <Action onClick={copyReviewsTemplate} primary>
+            <Action onClick={copyReviewsTemplate}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -88,7 +88,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             article.decision
-            <Action onClick={copyDecisionTemplate} primary>
+            <Action onClick={copyDecisionTemplate}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -104,7 +104,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             cmsLayout.logo
-            <Action onClick={() => copyIncludeFile('logo')} primary>
+            <Action onClick={() => copyIncludeFile('logo')}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -116,7 +116,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             cmsLayout.primaryColor
-            <Action onClick={copyCmsLayout('primaryColor')} primary>
+            <Action onClick={copyCmsLayout('primaryColor')}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -128,7 +128,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             cmsLayout.secondaryColor
-            <Action onClick={copyCmsLayout('secondaryColor')} primary>
+            <Action onClick={copyCmsLayout('secondaryColor')}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -143,7 +143,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             top menu
-            <Action onClick={() => copyIncludeFile('menu')} primary>
+            <Action onClick={() => copyIncludeFile('menu')}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -155,7 +155,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             Footer menu
-            <Action onClick={() => copyIncludeFile('footer')} primary>
+            <Action onClick={() => copyIncludeFile('footer')}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>
@@ -167,7 +167,7 @@ const ManuscriptMetadata = ({
           <Cell />
           <Cell>
             partners
-            <Action onClick={() => copyIncludeFile('partners')} primary>
+            <Action onClick={() => copyIncludeFile('partners')}>
               <Icon color={color.brand1.base()} inline>
                 file-plus
               </Icon>

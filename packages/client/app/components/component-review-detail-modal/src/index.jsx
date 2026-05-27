@@ -124,8 +124,6 @@ const ReviewDetailsModal = (
     // if (wsProvider && wsProvider?.roomname !== review?.id) {
     //   return () => wsProvider?.disconnect()
     // }
-
-    return null
   }, [review?.id])
 
   const LocalizedReviewFilterOptions = localizeReviewFilterOptions(

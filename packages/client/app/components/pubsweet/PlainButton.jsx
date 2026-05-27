@@ -7,7 +7,6 @@ const PlainButton = ({ className, children, type, disabled, onClick }) => (
     className={className}
     disabled={disabled}
     onClick={onClick}
-    plain
     type={type}
   >
     {children}

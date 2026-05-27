@@ -36,7 +36,7 @@ describe('checking manuscript version', () => {
       cy.contains('test-pdf.pdf').should('exist')
       cy.contains('Decision Status').scrollIntoView()
       // ReviewPage.clickRevise()
-      cy.get('[class*=FormTemplate__SafeRadioGroup]').eq(1).click()
+      cy.get('[data-testid=safe-radio-group] input[value=revise]').click()
       /* Submit the decision */
       ControlPage.clickSubmitDecisionButton()
       /* Check appears in front of button */

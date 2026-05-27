@@ -6,7 +6,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { isEmpty } from 'lodash'
 import { ErrorMessage, Formik } from 'formik'
-import { v4 as uuid } from 'uuid'
+import { uuid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import ValidatedField from '../../../component-submit/src/components/ValidatedField'
 import {

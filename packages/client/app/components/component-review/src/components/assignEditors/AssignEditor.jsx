@@ -97,7 +97,7 @@ const AssignEditor = ({
   return (
     <Select
       aria-label={`Assign ${teamRole}`}
-      data-testid={`assign${teamRole}`}
+      data-testid={`assign-${teamRole}`}
       isClearable
       label={teamName}
       onChange={selected => onChangeEditor(selected?.value)}

@@ -8,7 +8,7 @@ import { dashboard } from '../../support/routes'
 
 const decisionTextContent = 'Please fix Foo in the Paper!'
 const decisionFileName = 'test-pdf.pdf'
-const decisinFilePath = 'cypress/fixtures/test-pdf.pdf'
+const decisionFilePath = 'cypress/fixtures/test-pdf.pdf'
 
 describe('Completing a decision', () => {
   before(() => {
@@ -32,9 +32,9 @@ describe('Completing a decision', () => {
   beforeEach(() => {
     cy.fixture('role_names').then(name => {
       cy.login(name.role.seniorEditor, dashboard)
-      DashboardPage.clickDashboardTab(2)
+      DashboardPage.clickEditingQueueTab()
       DashboardPage.clickControl() // Navigate to Control Page
-      ControlPage.clickDecisionTab(1)
+      ControlPage.clickDecisionTab()
       ControlPage.getPublishButton().should('be.disabled') // Verify publish button is disabled
     })
   })
@@ -43,17 +43,23 @@ describe('Completing a decision', () => {
     cy.fixture('role_names').then(name => {
       ControlPage.clickDecisionTextInput()
       ControlPage.getDecisionTextInput().type(decisionTextContent)
+
       cy.get('[data-testid="dropzone"]:first > input').selectFile(
-        decisinFilePath,
+        decisionFilePath,
         {
           force: true,
         },
       )
+
+      cy.intercept('POST', '/graphql').as('autoSave')
       ControlPage.clickRevise()
+      cy.wait('@autoSave')
+
+      /* eslint-disable-next-line cypress/no-unnecessary-waiting */
+      cy.wait(1000)
       ControlPage.clickSubmitDecisionButton() // Submit the decision
       ControlPage.checkSvgExists() // Check appears in front of button
 
-      cy.log('Author revises and submits new version.')
       /* View Decision as an Author */
       cy.login(name.role.author, dashboard) // Login as an Author
       DashboardPage.getSubmittedManuscript().click() // Click on first MySubmission
@@ -81,11 +87,22 @@ describe('Completing a decision', () => {
 
   it('editor accepts the new version', () => {
     /* Editor Workflow: Approve the new Manuscript version */
-    ControlPage.getDecisionTextInput().type('Great Paper!')
-    ControlPage.getDecisionFileInput().eq(0).selectFile(decisinFilePath, {
+    ControlPage.clickDecisionTextInput()
+    ControlPage.getDecisionTextInput()
+      .scrollIntoView()
+      .click({ force: true })
+      .type('Great Paper!')
+
+    ControlPage.getDecisionFileInput().eq(0).selectFile(decisionFilePath, {
       force: true,
     })
+
+    cy.intercept('POST', '/graphql').as('autoSaveDecision')
     ControlPage.clickAccept()
+    cy.wait('@autoSaveDecision')
+
+    /* eslint-disable-next-line cypress/no-unnecessary-waiting */
+    cy.wait(1000)
     ControlPage.clickSubmitDecisionButton() // Submit the decision
     ControlPage.checkSvgExists()
     // The below should be fixed by #1872 !!!

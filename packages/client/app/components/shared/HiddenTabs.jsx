@@ -69,9 +69,9 @@ export const HiddenTabsContainer = styled(TabsContainer)`
   }
 `
 
-export const TabContainer = styled.div.attrs(props => ({
-  'data-test-id': props['data-test-id'] || 'tab-container',
-}))`
+export const TabContainer = styled.div.attrs({
+  'data-testid': 'tab-container',
+})`
   align-items: stretch;
   display: flex;
 `

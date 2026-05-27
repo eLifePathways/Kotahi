@@ -3,11 +3,11 @@
  * Page object representing the second option from the left side menu,
  * which contains a number of options & fields to fill in / dropdowns.
  */
-const FORM_TITLE_TAB = '[data-test-id="tab-container"] > div'
-const FORM_OPTION_LIST = '[class*=FormBuilder__Element] > button:nth-child(1)'
+const FORM_TITLE_TAB = '[data-testid="tab-container"] > div'
+const FORM_OPTION_LIST =
+  '[data-testid=formbuilder-element] > button:nth-child(1)'
 const NAME_FIELD = '[data-testid="name"]'
 const COMPONENT_TYPE = '[role=listbox]'
-const FIELD_VALIDATE = '[data-testid="validate"]'
 const FIELD_TYPE = '[data-testid="fieldType"]'
 const DOI_VALIDATION = '[class*=RadioBox__RadioGroup]'
 const UPDATE_FORM_BUTTON = '[type=submit]'
@@ -45,7 +45,7 @@ export const FormsPage = {
     return cy.get(FIELD_TYPE)
   },
   getFieldValidate() {
-    return cy.get(FIELD_VALIDATE)
+    return cy.getByDataTestId('validate')
   },
   getDoiValidation(nth) {
     return cy.get(DOI_VALIDATION).eq(nth).scrollIntoView()

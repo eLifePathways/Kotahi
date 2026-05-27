@@ -728,6 +728,7 @@ const CitationComponent = ({ node, getPos }) => {
                 </Button>
               )}
               <Button
+                $primary
                 onClick={e => {
                   e.preventDefault()
                   // this changes the display text. It also kicks off the useEffect
@@ -754,7 +755,6 @@ const CitationComponent = ({ node, getPos }) => {
 
                   setIsOpen(false)
                 }}
-                primary
                 type="primary"
               >
                 Apply

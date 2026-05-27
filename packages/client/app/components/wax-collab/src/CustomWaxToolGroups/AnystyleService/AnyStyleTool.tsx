@@ -6,7 +6,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import { useContext } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { uuidv4 } from '@coko/client'
 import { isEmpty } from 'lodash'
 import { injectable } from 'inversify'
 import { WaxContext, Tools /*, Commands */ } from 'wax-prosemirror-core'

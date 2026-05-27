@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { TextField, Button } from '../../pubsweet'
 
 const InlineTextField = styled(TextField)`
-  border-color: ${props => (props.error ? '#ff2d1a' : '#AAA')};
+  border-color: ${props => (props.$error ? '#ff2d1a' : '#AAA')};
   display: inline;
   width: calc(${th('gridUnit')} * 24);
 `
@@ -49,7 +49,7 @@ const ChangeEmail = ({ user, updateUserEmail }) => {
   return (
     <>
       <InlineTextField
-        error={updateEmailError}
+        $error={updateEmailError}
         onChange={e => setEmail(e.target.value)}
         value={email}
       />

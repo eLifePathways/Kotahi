@@ -12,13 +12,13 @@ export const Heading1 = styled.h1`
 
 export const Section = styled.section`
   display: flex;
-  flex-direction: ${({ cssOverrides }) =>
-    cssOverrides && cssOverrides['flex-direction']
-      ? cssOverrides['flex-direction']
+  flex-direction: ${({ $cssOverrides }) =>
+    $cssOverrides && $cssOverrides['flex-direction']
+      ? $cssOverrides['flex-direction']
       : 'column'};
   /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
-  flex-wrap: ${({ cssOverrides }) =>
-    cssOverrides && cssOverrides.wrap ? cssOverrides.wrap : 'nowrap'};
+  flex-wrap: ${({ $cssOverrides }) =>
+    $cssOverrides && $cssOverrides.wrap ? $cssOverrides.wrap : 'nowrap'};
   justify-content: space-between;
   margin: ${grid(3)} 0;
 `

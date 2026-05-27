@@ -10,7 +10,8 @@ import { inputComponents } from '../FormSettings'
 
 import { FilesUpload } from '../../../shared'
 
-const FileInputComponent = ({ entityId, ...restProps }) => {
+/* eslint-disable-next-line no-unused-vars */
+const FileInputComponent = ({ entityId, validationStatus, ...restProps }) => {
   return (
     <FilesUpload
       acceptMultiple={false}

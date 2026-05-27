@@ -26,10 +26,7 @@ const ReplyTextArea = styled.textarea`
     outline: 1px solid ${th('colorPrimary')};
   }
 
-  /* stylelint-disable order/properties-alphabetical-order */
-  ${override(
-    'Wax.CommentTextArea',
-  )}/* stylelint-enable order/properties-alphabetical-order */
+  ${override('Wax.CommentTextArea')}
 `
 
 const ActionWrapper = styled.div`
@@ -50,10 +47,7 @@ const Button = styled.button`
   cursor: pointer;
   padding: ${grid(2)} ${grid(4)};
 
-  /* stylelint-disable order/properties-alphabetical-order */
-  ${props =>
-    props.primary &&
-    primary} /* stylelint-enable order/properties-alphabetical-order */
+  ${props => props.$primary && primary}
   ${props => props.disabled && `cursor: not-allowed; opacity: 0.3;`}
 
   ${override('Wax.CommentButtons')}
@@ -119,8 +113,8 @@ const CommentReply = props => {
         <ActionWrapper>
           <ButtonGroup>
             <Button
+              $primary
               disabled={commentValue.length === 0 || isReadOnly}
-              primary
               type="submit"
             >
               Post

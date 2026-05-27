@@ -7,8 +7,7 @@ import { evaluate } from '../support/routes'
  * where users can see the list of submitted manuscripts & select Control,
  * View or Delete.
  */
-const MANUSCRIPTS_OPTIONS_LIST = '[class*=Action__ActionLink]'
-const MANUSCRIPTS_OPTIONS_E = '[class*=Action__ActionLink]'
+
 const BUTTON = 'button'
 const ACTIONBUTTON = 'Manuscripts__DropdownContainer'
 const LIVE_CHAT_BUTTON = '[class*=VideoChat__FloatRightButton]'
@@ -47,11 +46,11 @@ const CONFIRMATION_MESSAGE =
 
 const IMPORT_CONFIRMATION_POPUP = '[class*=Toastify] > [role=alert]'
 // const CONTROL = '[href*=decision]'
-const DROPDOWN_OPTION = '[class*=react-select__option]'
+const DROPDOWN_OPTION = '[data-testid="select-option"]'
 
 export const ManuscriptsPage = {
   getManuscriptsOptionsList() {
-    return cy.get(MANUSCRIPTS_OPTIONS_LIST)
+    return cy.getByDataTestId('action-link')
   },
   selectOptionWithText(text) {
     this.getManuscriptsOptionsList().contains(text).click()
@@ -60,10 +59,10 @@ export const ManuscriptsPage = {
     return this.getManuscriptsOptionsList().contains(text)
   },
   getOptionsElife() {
-    return cy.get(MANUSCRIPTS_OPTIONS_E)
+    return cy.getByDataTestId('action-link')
   },
   getOptionsElifeText(text) {
-    return cy.get(MANUSCRIPTS_OPTIONS_E).contains(text)
+    return cy.getByDataTestId('action-link').contains(text)
   },
   getSubmitButton() {
     return cy.get(BUTTON).contains('New submission')
@@ -176,7 +175,7 @@ export const ManuscriptsPage = {
     )
       // .scrollIntoView()
       .click()
-    cy.get('[class*="react-select__option"]').contains(statusLabel).click()
+    cy.get('[data-testid="select-option"]').contains(statusLabel).click()
   },
   getArticleLabel() {
     return cy.get(ARTICLE_LABEL)

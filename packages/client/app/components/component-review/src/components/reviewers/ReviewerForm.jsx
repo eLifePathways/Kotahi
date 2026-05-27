@@ -35,6 +35,7 @@ const ReviewerInput = ({ field, form: { setFieldValue }, reviewerUsers }) => {
     <Select
       {...field}
       aria-label="Invite reviewers"
+      data-testid="invite-reviewer-select"
       getOptionLabel={option => option?.username}
       getOptionValue={option => option.id}
       onChange={user => {
@@ -124,9 +125,9 @@ const ReviewerForm = ({
               validate={required}
             />
             <Button
+              $primary
               data-testid="invite-reviewer"
               disabled={!isValid}
-              primary
               type="submit"
             >
               {t('decisionPage.Invite reviewer')}

@@ -39,6 +39,7 @@ const CreateANewVersion = ({
             </p>
           )}
           <Button
+            $primary
             data-testid="create-new-manuscript-version-button"
             disabled={!newVerButtonIsEnabled}
             onClick={() => {
@@ -85,7 +86,6 @@ const CreateANewVersion = ({
                 },
               })
             }}
-            primary
           >
             {t('manuscriptSubmit.submitVersionButton')}
           </Button>

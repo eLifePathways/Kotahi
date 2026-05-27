@@ -14,7 +14,9 @@ import ReviewDetailsModal from '../../../../component-review-detail-modal/src'
 import { color } from '../../../../../theme'
 import { ColorBadge } from '../../../../shared'
 
-const Card = styled.div`
+const Card = styled.div.attrs({
+  'data-testid': 'kanban-card',
+})`
   background-color: ${color.gray97};
   border-bottom: 0.8px solid ${color.gray70};
   border-radius: 8px;
@@ -136,7 +138,7 @@ const KanbanCard = ({
         }
         updateTeamMember={updateTeamMember}
       />
-      <Card data-testid="reviewer-card" onClick={() => setOpen(true)}>
+      <Card onClick={() => setOpen(true)}>
         <LeftSide>
           <UserAvatar
             isClickable={!!reviewer.user}

@@ -75,7 +75,9 @@ export const HeadingWithAction = styled.div`
   grid-template-columns: 1fr auto;
 `
 
-export const Placeholder = styled.div`
+export const Placeholder = styled.div.attrs({
+  'data-testid': 'placeholder',
+})`
   color: ${color.textPlaceholder};
   display: grid;
   height: 100%;

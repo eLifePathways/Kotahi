@@ -2,9 +2,8 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useState, useEffect } from 'react'
-import { v4 as uuid } from 'uuid'
 import styled, { css } from 'styled-components'
-import { th, override } from '@coko/client'
+import { th, override, uuid } from '@coko/client'
 import { ConfigContext } from '../config/src'
 import { color } from '../../theme'
 
@@ -44,7 +43,9 @@ const Tab = styled.div`
   ${override('ui.Tab')}
 `
 
-export const TabsContainer = styled.div`
+export const TabsContainer = styled.div.attrs({
+  'data-testid': 'tabs-container',
+})`
   display: flex;
   justify-content: space-between;
 
@@ -77,9 +78,9 @@ export const TabsContainer = styled.div`
   }
 `
 
-const TabContainer = styled.div.attrs(props => ({
-  'data-test-id': props['data-test-id'] || 'tab-container',
-}))`
+const TabContainer = styled.div.attrs({
+  'data-testid': 'tab-container',
+})`
   align-items: stretch;
   display: flex;
 `

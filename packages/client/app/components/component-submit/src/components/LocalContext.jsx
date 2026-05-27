@@ -196,7 +196,6 @@ const LocalContext = ({
           <StyledButton
             disabled={false}
             onClick={retrieveData}
-            plain
             title=""
             type="button"
           >

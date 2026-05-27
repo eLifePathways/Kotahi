@@ -10,8 +10,7 @@ import {
   ApplicationContext,
   DocumentHelpers,
 } from 'wax-prosemirror-core'
-import { v4 as uuidv4 } from 'uuid'
-import { override } from '@coko/client'
+import { override, uuid } from '@coko/client'
 import CommentBox from './ui/comments/CommentBox'
 
 const ConnectedCommentStyled = styled.div`
@@ -97,7 +96,7 @@ export default ({ comment, top, commentId, recalculateTops }) => {
     }
 
     comment.attrs.conversation.push(obj)
-    const id = uuidv4()
+    const id = uuid()
     allCommentsWithSameId.forEach(singleComment => {
       activeView.dispatch(
         activeView.state.tr.removeMark(

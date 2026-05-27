@@ -1,5 +1,5 @@
 import { forEach, each } from 'lodash'
-import { v4 as uuidv4 } from 'uuid'
+import { uuid } from '@coko/client'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { DocumentHelpers } from 'wax-prosemirror-core'
 
@@ -37,7 +37,7 @@ export default (props, context) => {
         }, {})
 
         forEach(Object.keys(groupedCommentsById), key => {
-          const id = uuidv4()
+          const id = uuid()
           forEach(groupedCommentsById[key], comment => {
             comment.attrs.id = id
           })
@@ -57,7 +57,7 @@ export default (props, context) => {
             )
 
             notes.forEach(note => {
-              note.node.attrs.id = uuidv4()
+              note.node.attrs.id = uuid()
             })
           })
         }

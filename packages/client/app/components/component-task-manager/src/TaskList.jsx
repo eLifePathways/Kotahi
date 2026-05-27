@@ -8,7 +8,7 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from '@dnd-kit/sortable'
-import { v4 as uuid } from 'uuid'
+import { uuid } from '@coko/client'
 // import moment from 'moment-timezone'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
