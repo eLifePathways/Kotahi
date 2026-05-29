@@ -95,30 +95,28 @@ const getDateRangeSummaryStats = async (startDate, endDate, groupId) => {
     .select(
       Manuscript.raw(`
       COUNT(*) FILTER (
-        WHERE EXISTS (
-          SELECT 1 FROM all_versions v
-          WHERE v.root_id = r.id
-            AND v.status IS NOT NULL
-            AND v.status <> 'new'
-        )
+        WHERE r.status IS NOT NULL
+		AND r.status <> 'new'
       ) AS "submittedCount",
 
       COUNT(*) FILTER (
-        WHERE NOT EXISTS (
-          SELECT 1 FROM all_versions v
-          WHERE v.root_id = r.id
-            AND v.status IS NOT NULL
-            AND v.status <> 'new'
-        )
+        WHERE r.status IS NULL
+        OR r.status = 'new'
       ) AS "unsubmittedCount",
 
       COUNT(*) FILTER (
         WHERE EXISTS (
           SELECT 1 FROM all_versions v
-          JOIN teams t ON t.object_id = v.id
-          WHERE v.root_id = r.id
-            AND t.display_name IN ('Senior Editor', 'Handling Editor')
-        )
+            WHERE v.root_id = r.id
+            AND v.status IS NOT NULL
+            AND v.status <> 'new'
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM all_versions v
+            JOIN teams t ON t.object_id = v.id
+            WHERE v.root_id = r.id
+            AND t.display_name IN ('Editor', 'Senior Editor', 'Handling Editor')
+          )
       ) AS "unassignedCount",
 
       COUNT(*) FILTER (
