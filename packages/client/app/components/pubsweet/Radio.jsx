@@ -23,7 +23,7 @@ const Root = styled.label`
   align-items: center;
   color: ${props => (props.color ? props.color : props.theme.colorText)};
   cursor: pointer;
-  display: ${props => (props.inline ? 'inline-flex' : 'flex')};
+  display: ${props => (props.$inline ? 'inline-flex' : 'flex')};
   min-height: calc(${th('gridUnit')} * 3);
 
   ${override('ui.Radio')};
@@ -41,7 +41,7 @@ const Radio = ({
   required,
   onChange,
 }) => (
-  <Root checked={checked} className={className} color={color} inline={inline}>
+  <Root $inline={inline} checked={checked} className={className} color={color}>
     <Input
       checked={checked}
       disabled={disabled}

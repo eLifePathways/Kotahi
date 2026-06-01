@@ -20,9 +20,7 @@ const ValidationMenu = input => {
         if (validation.value !== 'required') {
           return (
             <Section key={validation.value}>
-              <Legend space>
-                {t(`fields.validate.labels.${validation.value}`)}
-              </Legend>
+              <Legend>{t(`fields.validate.labels.${validation.value}`)}</Legend>
               <ValidatedFieldFormik
                 component={TextField}
                 name={`validateValue.${validation.value}`}

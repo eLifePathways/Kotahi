@@ -39,7 +39,7 @@ export const EmailErrorMessageWrapper = styled.div`
   line-height: ${th('lineHeightBaseSmall')};
 
   ${props =>
-    props.isVisible === true
+    props.$isVisible === true
       ? css`
           display: flex;
         `
@@ -179,7 +179,7 @@ const EmailNotifications = ({
           {t('decisionPage.tasksTab.Notify')}
         </ActionButton>
       </RowGridStyled>
-      <EmailErrorMessageWrapper isVisible={selectedEmailIsBlacklisted}>
+      <EmailErrorMessageWrapper $isVisible={selectedEmailIsBlacklisted}>
         {t('decisionPage.tasksTab.User email address opted out')}
       </EmailErrorMessageWrapper>
     </SectionContent>
