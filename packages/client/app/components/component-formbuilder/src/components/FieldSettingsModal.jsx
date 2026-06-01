@@ -39,7 +39,7 @@ const ValidationSubFields = ({ values, setFieldValue }) => {
       {subFields.map(vOption => (
         <div key={vOption.value}>
           <MediumRow>
-            <Legend space>{vOption.label}</Legend>
+            <Legend>{vOption.label}</Legend>
             <ErrorMessageWrapper>
               <ErrorMessage name={`validateValue.${vOption.value}`} />
             </ErrorMessageWrapper>
@@ -280,7 +280,7 @@ const FieldSettingsModal = ({
               title={t('formBuilder.Field Properties')}
             >
               <Section>
-                <Legend space>{t('formBuilder.Field type')}</Legend>
+                <Legend>{t('formBuilder.Field type')}</Legend>
                 <ValidatedField
                   component={Select}
                   data-testid="fieldType"
@@ -312,7 +312,7 @@ const FieldSettingsModal = ({
               </Section>
               {fieldOption && fieldOption.componentOptions.length > 1 && (
                 <Section>
-                  <Legend space>{t('formBuilder.dataType')}</Legend>
+                  <Legend>{t('formBuilder.dataType')}</Legend>
                   <ValidatedField
                     component={Select}
                     data-testid="dataType"
@@ -336,13 +336,13 @@ const FieldSettingsModal = ({
                 })
                 .map(([key, value]) => {
                   return (
-                    <>
-                      <Section key={key}>
+                    <div key={key}>
+                      <Section>
                         {(value.showFieldTitle === false ||
                           value.showFieldTitle === undefined ||
                           value.title) && (
                           <MediumRow>
-                            <Legend space>
+                            <Legend>
                               {value.showFieldTitle && value.title
                                 ? value.title
                                 : t(
@@ -395,7 +395,7 @@ const FieldSettingsModal = ({
                           values={values}
                         />
                       )}
-                    </>
+                    </div>
                   )
                 })}
               {!editableProperties.some(([key]) => key === 'name') &&

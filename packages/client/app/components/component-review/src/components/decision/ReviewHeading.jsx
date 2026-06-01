@@ -34,9 +34,9 @@ const Controls = styled.span`
 
 const Bullet = styled.span`
   background-color: ${props =>
-    props.recommendation
-      ? props.journal?.recommendations?.find(
-          item => item.value === props.recommendation,
+    props.$recommendation
+      ? props.$journal?.recommendations?.find(
+          item => item.value === props.$recommendation,
         )?.color
       : 'black'};
   border-radius: 100%;
@@ -107,7 +107,7 @@ const ReviewHeading = ({
 
   return (
     <ReviewHeadingRoot>
-      <Bullet journal={journal} recommendation={recommendation} />
+      <Bullet $journal={journal} $recommendation={recommendation} />
       <Ordinal>
         {t('decisionPage.decisionTab.reviewNum', { num: ordinal })}
       </Ordinal>

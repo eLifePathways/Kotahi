@@ -24,7 +24,7 @@ class CheckboxGroup extends React.Component {
     const { value, inline, name, options, required } = this.props
 
     return (
-      <Flexbox column={!inline}>
+      <Flexbox $column={!inline}>
         {options.map(option => (
           <Checkbox
             checked={

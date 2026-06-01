@@ -44,9 +44,11 @@ const TextField = props => {
     className,
     label,
     type = 'text',
-    value = '',
+    value,
     readonly,
     inline,
+    // eslint-disable-next-line no-unused-vars
+    validate,
     validationStatus,
     ...rest
   } = props
@@ -60,7 +62,7 @@ const TextField = props => {
         readOnly={readonly}
         ref={innerRefProp}
         type={type}
-        value={value}
+        value={value ?? ''}
         {...rest}
       />
     </Root>
