@@ -5,7 +5,9 @@ import * as icons from 'react-feather'
 import ActionButton from './ActionButton'
 import { color } from '../../theme'
 
-const RoundButton = styled(ActionButton)`
+const RoundButton = styled(ActionButton).attrs(props => ({
+  'data-testid': props['data-testid'],
+}))`
   align-items: center;
   border-radius: 50%;
   height: 40px;
@@ -39,12 +41,14 @@ const RoundIconButton = ({
   primary,
   title,
   unreadMessagesCount,
+  'data-testid': dataTestId,
 }) => {
   const theme = useTheme()
   const Icon = icons[iconName]
   return (
     <RoundButton
       className={className}
+      data-testid={dataTestId}
       disabled={disabled}
       isCompact
       onClick={onClick}

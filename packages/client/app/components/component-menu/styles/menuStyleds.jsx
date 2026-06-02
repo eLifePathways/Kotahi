@@ -9,7 +9,9 @@ import PinButton from './PinButton'
 
 // #region Menu
 
-export const MainNavWrapper = styled.div`
+export const MainNavWrapper = styled.div.attrs({
+  'data-testid': 'main-nav-wrapper',
+})`
   /* stylelint-disable declaration-no-important */
 
   align-items: center;

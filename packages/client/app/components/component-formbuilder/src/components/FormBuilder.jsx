@@ -117,7 +117,7 @@ const BuilderElement = ({
   ).fieldOption?.label
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes}>
       <FeildWrapper
         className={isSelected || isDragging ? 'active' : undefined}
         id={formFeildId}
@@ -126,7 +126,9 @@ const BuilderElement = ({
           alignItems: 'center',
         }}
       >
-        <DragIcon />
+        <div {...listeners}>
+          <DragIcon />
+        </div>
         <Element
           className={isSelected || isDragging ? 'active' : undefined}
           key={`element-${element.id}`}

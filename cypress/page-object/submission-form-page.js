@@ -10,7 +10,6 @@ import { evaluate, submit } from '../support/routes'
  * It contains various input fields & dropdowns,
  * listed in the same order they appear on the page.
  */
-const PAGE_TITLE = '[class*=style__Heading]'
 const ADD_A_LINK_BUTTON = 'li > button'
 const ENTER_URL_FIELD = 'submission.'
 const TITLE_FIELD = 'submission.$title'
@@ -29,7 +28,7 @@ const REFERENCES_FIELD = 'submission.references'
 const SUBMIT_RESEARCH_BUTTON = 'research-object-submission-form-action-btn'
 const ELIFE_SUBMIT_RESEARCH_BUTTON = 'elife-submission-form-action-btn'
 const SUBMIT_YOUR_MANUSCRIPT_BUTTON = 'confirm-submit'
-const VALIDATION_ERROR_MESSAGE = 'FormTemplate__MessageWrapper'
+const VALIDATION_ERROR_MESSAGE = 'field-error-message'
 const CONTENT_EDITABLE_VALUE = '[contenteditable="true"]'
 const SUBMISSION_FORM_INPUT_BOX = 'ProseMirror'
 const WORD_COUNT_INFO = 'Counter Info'
@@ -39,7 +38,7 @@ const EDITOR_CLASS = '.wax-surface-scroll >  div .ProseMirror'
 const TYPE_OF_RESEARCH_OBJECT = '.css-1f7humo-control'
 
 // specific to preprint1
-const FORM_OPTION_LIST = '[class*=style__Section]'
+const FORM_OPTION_LIST = '[data-testid=submission-form-section]'
 const FORM_OPTION_VALUE = 'singleValue'
 const ARTICLE_ID_FIELD = 'submission.articleId'
 const REVIEW_1_DATE_FEILD = 'submission.review1date'
@@ -69,7 +68,7 @@ const ASSIGN_EDITORS_DROPDOWN = '[class*=General__SectionRow] > [class]'
 
 export const SubmissionFormPage = {
   getPageTitle() {
-    return cy.get(PAGE_TITLE)
+    return cy.get('h1').first()
   },
   getAddLinkButton() {
     return cy.get(ADD_A_LINK_BUTTON)
@@ -222,10 +221,10 @@ export const SubmissionFormPage = {
     cy.awaitDisappearSpinner()
   },
   getValidationErrorMessage(error) {
-    return cy.getByContainsClass(VALIDATION_ERROR_MESSAGE).contains(error)
+    return cy.getByDataTestId(VALIDATION_ERROR_MESSAGE).contains(error)
   },
   getValidationErrorMessage2() {
-    return cy.getByContainsClass(VALIDATION_ERROR_MESSAGE)
+    return cy.getByDataTestId(VALIDATION_ERROR_MESSAGE)
   },
   getTypeOfResearchObject() {
     return cy.get(TYPE_OF_RESEARCH_OBJECT)
@@ -277,7 +276,7 @@ export const SubmissionFormPage = {
       .scrollIntoView()
       .clear()
       .focus()
-      .type(`{selectall}${review1}`, { force: true, delay: 200 })
+      .type(`{selectall}${review1}`, { force: true })
   },
   getReview1Creator() {
     return cy.getByDataTestId(REVIEW_1_CREATOR_FIELD)
@@ -293,7 +292,7 @@ export const SubmissionFormPage = {
       .scrollIntoView()
       .clear()
       .focus()
-      .type(`{selectall}${review2}`, { force: true, delay: 200 })
+      .type(`{selectall}${review2}`, { force: true })
   },
   getReview2Creator() {
     return cy.getByDataTestId(REVIEW_2_CREATOR_FIELD)
@@ -315,7 +314,7 @@ export const SubmissionFormPage = {
       .scrollIntoView()
       .clear()
       .focus()
-      .type(`{selectall}${review3}`, { force: true, delay: 200 })
+      .type(`{selectall}${review3}`, { force: true })
   },
   getReview3Creator() {
     return cy.getByDataTestId(REVIEW_3_CREATOR_FIELD)
@@ -337,7 +336,7 @@ export const SubmissionFormPage = {
       .scrollIntoView()
       .clear()
       .focus()
-      .type(`{selectall}${summary}`, { force: true, delay: 200 })
+      .type(`{selectall}${summary}`, { force: true })
   },
   getSummaryCreator() {
     return cy.getByDataTestId(SUMMARY_CREATOR_FIELD)

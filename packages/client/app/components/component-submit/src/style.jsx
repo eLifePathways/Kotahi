@@ -10,7 +10,9 @@ export const Heading1 = styled.h1`
   margin: 0 0 calc(${th('gridUnit')} * 3);
 `
 
-export const Section = styled.section`
+export const Section = styled.section.attrs({
+  'data-testid': 'submission-form-section',
+})`
   display: flex;
   flex-direction: ${({ $cssOverrides }) =>
     $cssOverrides && $cssOverrides['flex-direction']

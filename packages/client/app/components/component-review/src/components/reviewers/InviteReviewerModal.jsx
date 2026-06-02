@@ -131,7 +131,7 @@ const InviteReviewerModal = ({
           </ActionButton>
           &nbsp;
           <ActionButton
-            dataTestid="submit-modal"
+            data-testid="submit-modal"
             onClick={async () => {
               const isInvitation =
                 condition?.value?.includes('email-notification')

@@ -155,6 +155,8 @@ describe('Manuscripts page tests', () => {
         cy.awaitDisappearSpinner()
         ManuscriptsPage.getTableHead().should('be.visible')
         ManuscriptsPage.getEvaluationButton().click('')
+        cy.awaitDisappearSpinner()
+        cy.url({ timeout: 10000 }).should('contain', 'evaluation')
 
         // fill the submit form and submit it
         cy.fixture('submission_form_data').then(data => {
@@ -269,6 +271,8 @@ describe('Manuscripts page tests', () => {
           ManuscriptsPage.getStatus(0).should('eq', 'Published')
         })
         ManuscriptsPage.clickEvaluation()
+        cy.url({ timeout: 10000 }).should('contain', 'evaluation')
+
         SubmissionFormPage.fillInArticleld('123 - Evaluated')
         SubmissionFormPage.fillInDoi(
           'https://doi.org/10.1101/2020.12.22.423946',

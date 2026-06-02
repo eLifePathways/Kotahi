@@ -8,7 +8,6 @@
  */
 
 const BUTTON = 'button'
-const HEADER = 'General__Heading'
 const SUBMISSION_TITLE = '[data-testid="submission.$title"] > div'
 const SUBMISSION_BUTTON = '+ New submission'
 const SUBMISSION_FILE_UPLOAD_INPUT = 'input[type=file]'
@@ -59,7 +58,7 @@ export const DashboardPage = {
     this.getSubmitButton().click()
   },
   getHeader() {
-    return cy.getByContainsClass(HEADER)
+    return cy.getByDataTestId('general-heading')
   },
   clickSubmit() {
     this.getSubmitButton().click()

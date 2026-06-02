@@ -94,7 +94,9 @@ const ModalWrapper = styled.div`
   z-index: 10000;
 `
 
-const MessageWrapper = styled.div`
+const MessageWrapper = styled.div.attrs({
+  'data-testid': 'field-error-message',
+})`
   color: ${th('colorError')};
   display: flex;
   font-family: ${th('fontInterface')};
@@ -605,7 +607,7 @@ const FormTemplate = ({
               {showSubmitButton && (
                 <div>
                   <ActionButton
-                    dataTestid={`${form.name
+                    data-testid={`${form.name
                       ?.toLowerCase()
                       .replace(/ /g, '-')
                       .replace(/[^\w-]+/g, '')}-action-btn`}

@@ -40,14 +40,18 @@ const RegisterInfoString = styled.p`
   text-align: center;
 `
 
-const LoginButton = styled(Button)`
+const LoginButton = styled(Button).attrs({
+  'data-testid': 'login-button',
+})`
   display: block;
   margin-top: ${grid(3)};
   width: 100%;
 `
 
 // TODO: Shared?
-const Container = styled.div`
+const Container = styled.div.attrs({
+  'data-testid': 'login-container',
+})`
   background: linear-gradient(
     134deg,
     ${color.brand1.base},

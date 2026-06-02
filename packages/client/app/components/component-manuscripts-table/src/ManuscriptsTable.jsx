@@ -41,6 +41,7 @@ const ManuscriptsTable = ({
           <FilterSortHeader
             columnInfo={info}
             key={info.name}
+            name={info.name}
             setFilter={setFilter}
             setSort={setSort}
             sortDirection={sortDirection}

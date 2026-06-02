@@ -9,7 +9,6 @@ const FORM_OPTION_LIST =
 const NAME_FIELD = '[data-testid="name"]'
 const COMPONENT_TYPE = '[role=listbox]'
 const FIELD_TYPE = '[data-testid="fieldType"]'
-const DOI_VALIDATION = '[class*=RadioBox__RadioGroup]'
 const UPDATE_FORM_BUTTON = '[type=submit]'
 
 export const FormsPage = {
@@ -48,10 +47,13 @@ export const FormsPage = {
     return cy.getByDataTestId('validate')
   },
   getDoiValidation(nth) {
-    return cy.get(DOI_VALIDATION).eq(nth).scrollIntoView()
+    return cy
+      .get('input[type="radio"][name="doiValidation"]')
+      .eq(nth)
+      .scrollIntoView()
   },
-  clickOptionsDoiVaildation(nth) {
-    this.getDoiValidation(nth).click()
+  clickOptionsDoiValidation(nth) {
+    this.getDoiValidation(nth).parent().click()
   },
   clickUpdateForm() {
     return cy.get(UPDATE_FORM_BUTTON).click()

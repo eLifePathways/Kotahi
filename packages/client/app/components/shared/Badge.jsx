@@ -18,7 +18,9 @@ const BadgesWrapper = styled(FlexRow)`
   overflow: hidden;
 `
 
-export const Status = styled.span`
+export const Status = styled.span.attrs({
+  'data-testid': 'badge-status',
+})`
   background-color: ${p => p.$bg};
   border-radius: ${p => p.$bRadius};
   box-shadow: inset 0 0 1px #0004;

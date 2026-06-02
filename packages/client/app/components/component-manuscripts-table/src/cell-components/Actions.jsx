@@ -49,7 +49,10 @@ const Actions = ({
           )}
         </>
       )}
-      <LinkAction to={`${urlFrag}/versions/${manuscript.id}/manuscript`}>
+      <LinkAction
+        data-testid="action-link"
+        to={`${urlFrag}/versions/${manuscript.id}/manuscript`}
+      >
         {t('manuscriptsTable.actions.View')}
       </LinkAction>
       {!archived && (
@@ -63,6 +66,7 @@ const Actions = ({
           {['preprint1', 'preprint2'].includes(config.instanceName) &&
             manuscript.status === articleStatuses.evaluated && (
               <Action
+                data-testid="action-link"
                 onActionCompleted={result => {
                   if (result.steps.some(step => !step.succeeded)) {
                     setPublishingResponse(result)

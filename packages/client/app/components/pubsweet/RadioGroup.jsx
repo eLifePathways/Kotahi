@@ -21,11 +21,19 @@ class RadioGroup extends React.Component {
   }
 
   render() {
-    const { className, disabled, inline, name, options, required } = this.props
+    const {
+      className,
+      disabled,
+      inline,
+      name,
+      options,
+      required,
+      'data-testid': dataTestId,
+    } = this.props
     const { value } = this.state
 
     return (
-      <Flexbox column={!inline}>
+      <Flexbox column={!inline} data-testid={dataTestId}>
         {options.map(option => (
           <Radio
             checked={option.value === value}

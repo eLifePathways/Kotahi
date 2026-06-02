@@ -63,7 +63,9 @@ const FlexRowWithSmallGapAbove = styled(FlexRow)`
   margin-top: 10px;
 `
 
-const RoundIconButtonWrapper = styled(RoundIconButton)`
+const RoundIconButtonWrapper = styled(RoundIconButton).attrs({
+  'data-testid': 'round-icon-button-wrapper',
+})`
   position: sticky;
 `
 

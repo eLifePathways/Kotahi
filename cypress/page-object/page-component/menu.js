@@ -9,7 +9,6 @@ import { UsersPage } from '../users-page'
  * These options are available on all other pages.
  */
 const MENU_CONTAINER = 'menu-container'
-const BACKGROUND = 'menuStyleds__MainNavWrapper'
 const MESSAGE_NOT_AUTHORISED = 'AdminPage__Root'
 
 export const Menu = {
@@ -86,7 +85,7 @@ export const Menu = {
     this.getLoggedUserButton().click()
   },
   getBackground() {
-    return cy.getByContainsClass(BACKGROUND)
+    return cy.getByDataTestId('main-nav-wrapper')
   },
   getMessageNotAuthorisedUser() {
     return cy.getByContainsClass(MESSAGE_NOT_AUTHORISED)

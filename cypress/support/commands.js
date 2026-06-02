@@ -93,7 +93,7 @@ Cypress.Commands.add('getByTitle', title => {
 })
 
 Cypress.Commands.add('awaitDisappearSpinner', () => {
-  cy.get('[class*=Spinner__LoadingPage]', { timeout: 50000 }).should(
+  cy.getByDataTestId('spinner-loading-page', { timeout: 50000 }).should(
     'not.exist',
   )
 })

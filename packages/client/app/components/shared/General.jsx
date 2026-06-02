@@ -119,7 +119,9 @@ const Page = styled.div`
   padding: ${grid(2)};
 `
 
-const Heading = styled.div`
+const Heading = styled.div.attrs({
+  'data-testid': 'general-heading',
+})`
   color: ${props =>
     props.$warning ? color.warning.shade10 : color.brand1.base};
   font-family: ${th('fontReading')};

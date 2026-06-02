@@ -30,6 +30,7 @@ const ManuscriptRow = ({
         $centered={column.centered}
         data-testid={column.name}
         key={column.name}
+        name={column.name}
       >
         <Renderer
           applyFilter={

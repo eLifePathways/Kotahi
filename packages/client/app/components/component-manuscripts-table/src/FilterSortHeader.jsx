@@ -55,6 +55,7 @@ const FilterSortHeader = ({
   sortDirection,
   setSort,
   setFilter,
+  name,
 }) => {
   const { t } = useTranslation()
 
@@ -129,7 +130,7 @@ const FilterSortHeader = ({
     ].concat(columnInfo.filterOptions)
 
     return (
-      <Cell $centered={columnInfo.centered}>
+      <Cell $centered={columnInfo.centered} name={name}>
         <Select
           aria-label={columnInfo.title}
           customStyles={{
@@ -187,7 +188,7 @@ const FilterSortHeader = ({
     }
 
     return (
-      <Cell $centered={columnInfo.centered} onClick={changeSort}>
+      <Cell $centered={columnInfo.centered} name={name} onClick={changeSort}>
         {columnInfo.title}
         {columnInfo.sortDirection === 'ASC' && <SortDown />}
         {columnInfo.sortDirection === 'DESC' && <SortUp />}
@@ -195,7 +196,11 @@ const FilterSortHeader = ({
     )
   }
 
-  return <Cell $centered={columnInfo.centered}>{columnInfo.title}</Cell>
+  return (
+    <Cell $centered={columnInfo.centered} name={name}>
+      {columnInfo.title}
+    </Cell>
+  )
 }
 
 export default FilterSortHeader

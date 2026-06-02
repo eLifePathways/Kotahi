@@ -10,16 +10,12 @@ import { evaluate } from '../support/routes'
 
 const BUTTON = 'button'
 const ACTIONBUTTON = 'Manuscripts__DropdownContainer'
-const LIVE_CHAT_BUTTON = '[class*=VideoChat__FloatRightButton]'
-const EXPAND_CHAT_BUTTON = '[class*=Manuscripts__RoundIconButtonWrapper]'
-const MANUSCRIPTS_PAGE_TITLE = '[class*=General__Heading-sc]'
+const LIVE_CHAT_BUTTON = '[data-testid=float-right-button]'
+const EXPAND_CHAT_BUTTON = '[data-testid=round-icon-button-wrapper]'
 const EVALUATION_BUTTON = '[href*=evaluation]'
 // const CONTROL_BUTTON = '[href*="/kotahi/versions/"]'
 const CREATED_CARET = 'Carets__Caret'
-const AUTHOR_FIELD = 'UserCombo__Primary'
-const STATUS_FIELD = 'Badge__Status'
 const TABLE_HEADER = '[class*=Table__Header]'
-const MANUSCRIPTS_TABLE_HEAD = '[class*=style__ManuscriptsHeaderRow]'
 const ARTICLE_TITLE = '[class*=Table__Row]>td:nth-child(1)'
 const ARTICLE_ID = '[name="submission.articleId"]'
 const ARTICLE_LABEL = '[name="submission.$customStatus"]'
@@ -89,7 +85,7 @@ export const ManuscriptsPage = {
     this.getLiveChatButton().click()
   },
   getManuscriptsPageTitle() {
-    return cy.get(MANUSCRIPTS_PAGE_TITLE)
+    return cy.getByDataTestId('general-heading')
   },
   getEvaluationButton() {
     return cy.contains('button', 'Evaluation')
@@ -140,13 +136,13 @@ export const ManuscriptsPage = {
     return cy.getByContainsClass(CREATED_CARET).eq(nth)
   },
   getAuthorField(nth) {
-    return cy.getByContainsClass(AUTHOR_FIELD).eq(nth)
+    return cy.getByDataTestId('usercombo-primary').eq(nth)
   },
   getAuthor(nth) {
     return this.getAuthorField(nth).invoke('text')
   },
   getStatusField(nth) {
-    return cy.getByContainsClass(STATUS_FIELD).eq(nth)
+    return cy.getByDataTestId('badge-status').eq(nth)
   },
   getStatus(nth) {
     return this.getStatusField(nth).invoke('text')
@@ -155,7 +151,7 @@ export const ManuscriptsPage = {
     this.getStatusField(nth).click()
   },
   getTableHead() {
-    return cy.get(MANUSCRIPTS_TABLE_HEAD)
+    return cy.getByDataTestId('manuscripts-header-row')
   },
   getArticleTitleByRow(nth) {
     return cy.get(ARTICLE_TITLE).eq(nth)
@@ -171,7 +167,7 @@ export const ManuscriptsPage = {
   },
   selectCustomStatus(statusLabel) {
     cy.get(
-      '[class*="ManuscriptsHeaderRow"] [data-testid="submission.$customStatus"]',
+      '[data-testid=manuscripts-header-row] [data-testid="submission.$customStatus"]',
     )
       // .scrollIntoView()
       .click()
@@ -212,7 +208,9 @@ export const ManuscriptsPage = {
   },
   getManuscriptRowsCount() {
     return cy
-      .get('[class*="ManuscriptsRow"]:not([class*="ManuscriptsHeaderRow"])')
+      .get(
+        '[class*="ManuscriptsRow"]:not([data-testid=manuscripts-header-row])',
+      )
       .its('length')
   },
   getTableJournal() {

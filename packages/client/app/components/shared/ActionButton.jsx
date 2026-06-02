@@ -98,7 +98,7 @@ const ActionButton = ({
   isCompact = false,
   children,
   className,
-  dataTestid,
+  'data-testid': dataTestid,
   title,
   type,
 }) => {

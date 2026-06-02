@@ -22,7 +22,9 @@ const SpinnerAnimation = styled.div`
   }
 `
 
-const LoadingPage = styled.div`
+const LoadingPage = styled.div.attrs({
+  'data-testid': 'spinner-loading-page',
+})`
   align-items: center;
   display: flex;
   height: 100%;

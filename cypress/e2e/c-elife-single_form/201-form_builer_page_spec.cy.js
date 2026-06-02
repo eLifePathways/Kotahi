@@ -18,6 +18,7 @@ describe('Form builder', () => {
     })
     FormsPage.verifyPageLoaded()
   })
+
   context('check Form builder elements visibility', () => {
     it('check elements from form builder', () => {
       cy.fixture('form_option').then(data => {
@@ -90,7 +91,7 @@ describe('Form builder', () => {
     it('check DOI validation has default selected Yes and select No', () => {
       FormsPage.clickFormOption(1)
       FormsPage.getDoiValidation(0).should('have.prop', 'checked')
-      FormsPage.clickOptionsDoiVaildation(1)
+      FormsPage.clickOptionsDoiValidation(1)
       FormsPage.getDoiValidation(1).should('have.prop', 'checked')
       cy.contains('Cancel').click()
     })

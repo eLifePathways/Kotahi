@@ -94,7 +94,9 @@ export const SnippetRow = styled.div`
   width: 100%;
 `
 
-export const ManuscriptsHeaderRow = styled(ManuscriptsRow)`
+export const ManuscriptsHeaderRow = styled(ManuscriptsRow).attrs({
+  'data-testid': 'manuscripts-header-row',
+})`
   align-items: baseline;
   background-color: ${props =>
     props.$archived ? color.warning.tint70 : color.backgroundB};

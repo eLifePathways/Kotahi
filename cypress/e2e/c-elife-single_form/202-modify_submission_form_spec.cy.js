@@ -69,7 +69,7 @@ describe('validating required field and doi values in submission form', () => {
       cy.fixture('form_option').then(data => {
         for (let i = 0; i < 4; i++) {
           SubmissionFormPage.getFormOptionList(i)
-            .get('[class*="MessageWrapper"]')
+            .get('[data-testid="field-error-message"]')
             .should('contain', data.required)
         }
       })

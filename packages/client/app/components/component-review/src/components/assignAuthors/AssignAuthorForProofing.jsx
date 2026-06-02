@@ -39,7 +39,7 @@ const AssignAuthorForProofing = ({
       </SectionHeader>
       <SectionRowGrid>
         <ActionButton
-          dataTestid="submit-author-proofing"
+          data-testid="submit-author-proofing"
           disabled={
             authorTeam?.members.length === 0 ||
             isAuthorProofingEnabled ||

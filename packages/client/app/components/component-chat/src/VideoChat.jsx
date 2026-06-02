@@ -8,7 +8,9 @@ import { useTranslation } from 'react-i18next'
 import { RoundIconButton } from '../../shared'
 import { ConfigContext } from '../../config/src'
 
-const FloatRightButton = styled(RoundIconButton)`
+const FloatRightButton = styled(RoundIconButton).attrs({
+  'data-testid': 'float-right-button',
+})`
   margin: ${grid(1)} ${grid(1)} ${grid(1)} ${grid(2)};
   position: absolute;
   right: 42px;
