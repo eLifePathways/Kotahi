@@ -39,8 +39,8 @@ export const NewSubmissionPage = {
     return cy.get(SUBMISSION_MESSAGE).invoke('text')
   },
   setCustomStatusField(statusLabel) {
-    cy.getByDataTestId('submission.$customStatus').scrollIntoView()
-    cy.getByDataTestId('submission.$customStatus').click()
+    cy.getByDataTestId('submission.$customStatus').first().scrollIntoView()
+    cy.getByDataTestId('submission.$customStatus').first().click()
     cy.get('[data-testid="select-option"]').contains(statusLabel).click()
   },
 }

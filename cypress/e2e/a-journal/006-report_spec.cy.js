@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return, promise/catch-or-return, promise/no-nesting */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { dashboard } from '../../support/routes'
 import { Menu } from '../../page-object/page-component/menu'
@@ -18,6 +19,7 @@ describe('Report Page', () => {
 
     /* Group Manager can access the Reports */
     Menu.getReportsButton().should('be.visible')
+    cy.wait(500)
     Menu.clickReports()
 
     /* Apply date range filter */

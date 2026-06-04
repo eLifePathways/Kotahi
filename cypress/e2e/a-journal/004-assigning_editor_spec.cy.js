@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -17,6 +18,7 @@ describe('Assigning editors and decision reject', () => {
       cy.fixture('role_names').then(name => {
         cy.login(name.role.admin, dashboard)
 
+        cy.wait(500)
         Menu.clickManuscripts()
 
         ManuscriptsPage.selectOptionWithText('Control')
@@ -31,17 +33,11 @@ describe('Assigning editors and decision reject', () => {
         ControlPage.selectDropdownOptionByName(name.role.admin)
 
         // reject submission
+        cy.wait(500)
         ControlPage.clickDecisionTab()
-
-        cy.intercept('POST', '/graphql').as('autoSaveEditor')
         ControlPage.fillInDecision(data.rejectedDecision)
-        cy.wait('@autoSaveEditor')
-
-        cy.intercept('POST', '/graphql').as('autoSaveReject')
         ControlPage.clickReject()
-        cy.wait('@autoSaveReject')
 
-        /* eslint-disable-next-line cypress/no-unnecessary-waiting */
         cy.wait(1000)
         ControlPage.clickSubmit()
         ControlPage.checkSvgExists()

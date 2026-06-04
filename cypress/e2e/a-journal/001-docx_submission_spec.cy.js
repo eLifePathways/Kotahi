@@ -17,6 +17,7 @@ describe('Create a new submission', () => {
       cy.login(name.role.author, dashboard)
     })
 
+    cy.wait(1000)
     DashboardPage.clickSubmissionButton() // Click on new submission
     cy.url().should('include', 'newSubmission')
   })
