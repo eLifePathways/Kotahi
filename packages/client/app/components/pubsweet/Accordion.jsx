@@ -19,7 +19,7 @@ const Root = styled.div`
 `
 
 const Header = styled.div.attrs(props => ({
-  'data-test-id': props['data-test-id'] || 'accordion-header',
+  'data-testid': props['data-testid'] || 'accordion-header',
 }))`
   align-items: center;
   cursor: pointer;

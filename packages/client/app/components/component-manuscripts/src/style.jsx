@@ -10,7 +10,9 @@ export const SelectAllField = styled.div`
   font-size: ${theme.fontSizeBaseSmall};
   line-height: ${theme.lineHeightBaseSmall};
 `
-export const SelectedManuscriptsNumber = styled.p`
+export const SelectedManuscriptsNumber = styled.p.attrs({
+  'data-testid': 'selected-manuscripts-number',
+})`
   color: ${props => (props.disabled ? color.gray60 : color.text)};
   font-weight: bold;
   margin-left: 10px;

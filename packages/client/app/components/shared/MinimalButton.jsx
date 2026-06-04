@@ -33,7 +33,7 @@ const BareButton = styled.button`
 `
 
 const MinimalButton = ({ children, type, ...rest }) => (
-  <BareButton type={type || 'button'} {...rest}>
+  <BareButton data-testid="minimal-button" type={type || 'button'} {...rest}>
     {children}
   </BareButton>
 )

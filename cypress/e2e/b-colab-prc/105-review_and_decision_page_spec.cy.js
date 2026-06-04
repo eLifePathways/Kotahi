@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 // import { beforeEach } from 'mocha'
 import { dashboard, manuscripts } from '../../support/routes1'
@@ -72,6 +73,7 @@ Cypress.Commands.add('addReviewer', reviewerIndex => {
     cy.login(name.role.seniorEditor, dashboard)
     cy.url().should('include', '/dashboard')
 
+    cy.wait(1000)
     DashboardPage.clickDashboardTab(2)
     DashboardPage.clickControl() // Navigate to Control Page
     cy.url().should('include', '/prc/versions')
@@ -91,13 +93,15 @@ Cypress.Commands.add('addReviewer', reviewerIndex => {
 Cypress.Commands.add(
   'submitReview',
   (reviewType, comment, confidentialComment) => {
+    cy.wait(1000)
     DashboardPage.clickDashboardTab(1)
     DashboardPage.clickAcceptReviewButton()
     cy.contains('button', 'Do Review').should('be.visible')
     DashboardPage.clickDoReviewAndVerifyPageLoaded()
     cy.contains('div', 'Metadata').should('be.visible')
 
-    cy.get('[class*=HiddenTabs__Tab]').contains('Review').invoke('click')
+    cy.get('[data-testid=hidden-tabs-tab]').contains('Review').invoke('click')
+    cy.wait(500)
     ReviewPage.fillInReviewComment(comment)
     ReviewPage.fillInConfidentialComment(confidentialComment)
 
@@ -135,7 +139,7 @@ Cypress.Commands.add('submitDecision', (decisionText, decisionAction) => {
 Cypress.Commands.add('verifyDecision', expectedDecisionText => {
   DashboardPage.clickCompletedReviewButton()
   cy.awaitDisappearSpinner()
-  cy.get('[class*=HiddenTabs__Tab]').contains('Decision').click()
+  cy.get('[data-testid=hidden-tabs-tab]').contains('Decision').click()
   ReviewPage.getAllSectionHeaders()
     .eq(-1)
     .should('contain', 'Decision')

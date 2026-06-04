@@ -23,12 +23,16 @@ const InlineTextField = styled(TextField)`
   display: inline;
 `
 
-const UpdateEmailError = styled.p`
+const UpdateEmailError = styled.p.attrs({
+  'data-testid': 'enter-email-update-email-error',
+})`
   color: #ff2d1a;
   font-size: 14px;
 `
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled.div.attrs({
+  'data-testid': 'enter-email-button-container',
+})`
   margin-top: 0.6em;
 
   button {

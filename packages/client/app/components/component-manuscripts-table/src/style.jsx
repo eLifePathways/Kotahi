@@ -4,7 +4,9 @@ import { AlertCircle } from 'react-feather'
 import { Button, Action } from '../../pubsweet'
 import { color } from '../../../theme'
 
-export const StyledButton = styled(Button)`
+export const StyledButton = styled(Button).attrs({
+  'data-testid': 'manuscripts-table-styled-button',
+})`
   cursor: pointer;
   max-width: 130px;
   min-width: unset;
@@ -21,7 +23,9 @@ export const UserAction = styled(Action)`
   width: fit-content;
 `
 
-export const InfoIcon = styled.div`
+export const InfoIcon = styled.div.attrs({
+  'data-testid': 'info-icon',
+})`
   align-items: center;
   background-color: #7cbff9;
   border-radius: 50%;
@@ -50,7 +54,9 @@ export const ManuscriptsTableStyled = styled.div`
   width: 100%;
 `
 
-export const ManuscriptsRow = styled.div`
+export const ManuscriptsRow = styled.div.attrs({
+  'data-testid': 'manuscripts-row',
+})`
   align-items: center;
   background-color: ${props =>
     props.$archived ? color.warning.tint90 : color.backgroundA};

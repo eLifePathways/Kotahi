@@ -97,7 +97,7 @@ const Review = ({
 
   const renderReviewerInfo = () =>
     review?.user && (
-      <div>
+      <div data-testid="reviewer-info">
         <Heading>
           <strong>{review.user.username}</strong>
         </Heading>
@@ -106,7 +106,9 @@ const Review = ({
     )
 
   const renderAnonymousReviewer = () => (
-    <Title>{t('reviewPage.Anonymous Reviewer')}</Title>
+    <div data-testid="reviewer-info">
+      <Title>{t('reviewPage.Anonymous Reviewer')}</Title>
+    </div>
   )
 
   if (isOldUnsubmitted)

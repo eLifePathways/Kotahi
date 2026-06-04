@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
@@ -22,6 +23,7 @@ describe('Completing a decision', () => {
       /* Group Manager assigns Editor to manuscript */
       cy.login(name.role.admin, dashboard)
 
+      cy.wait(500)
       DashboardPage.clickManuscriptNavButton()
       ManuscriptsPage.selectOptionWithText('Control')
       ControlPage.getAssignSeniorEditorDropdown().click({ force: true })
@@ -32,8 +34,11 @@ describe('Completing a decision', () => {
   beforeEach(() => {
     cy.fixture('role_names').then(name => {
       cy.login(name.role.seniorEditor, dashboard)
+      cy.wait(1000)
       DashboardPage.clickEditingQueueTab()
+      cy.wait(2000)
       DashboardPage.clickControl() // Navigate to Control Page
+      cy.wait(500)
       ControlPage.clickDecisionTab()
       ControlPage.getPublishButton().should('be.disabled') // Verify publish button is disabled
     })
@@ -43,19 +48,13 @@ describe('Completing a decision', () => {
     cy.fixture('role_names').then(name => {
       ControlPage.clickDecisionTextInput()
       ControlPage.getDecisionTextInput().type(decisionTextContent)
-
       cy.get('[data-testid="dropzone"]:first > input').selectFile(
         decisionFilePath,
         {
           force: true,
         },
       )
-
-      cy.intercept('POST', '/graphql').as('autoSave')
       ControlPage.clickRevise()
-      cy.wait('@autoSave')
-
-      /* eslint-disable-next-line cypress/no-unnecessary-waiting */
       cy.wait(1000)
       ControlPage.clickSubmitDecisionButton() // Submit the decision
       ControlPage.checkSvgExists() // Check appears in front of button
@@ -63,15 +62,14 @@ describe('Completing a decision', () => {
       /* View Decision as an Author */
       cy.login(name.role.author, dashboard) // Login as an Author
       DashboardPage.getSubmittedManuscript().click() // Click on first MySubmission
+
       // Verify Decision Content
       DashboardPage.getDecisionField(0).should('contain', decisionTextContent)
       DashboardPage.getDecisionField(1).should('contain', decisionFileName)
       DashboardPage.getDecisionField(2).should('contain', 'Revise')
       DashboardPage.clickCreateNewVersionButton() // Create new manuscript version
-
-      cy.getByDataTestId('submission.objectType').click()
+      cy.getByDataTestId('submission.objectType').first().click()
       cy.contains('Dataset').click({ force: true })
-
       SubmissionFormPage.fillInField(
         'submission.$abstract',
         'New abstract...',
@@ -97,11 +95,9 @@ describe('Completing a decision', () => {
       force: true,
     })
 
-    cy.intercept('POST', '/graphql').as('autoSaveDecision')
+    cy.wait(1000)
     ControlPage.clickAccept()
-    cy.wait('@autoSaveDecision')
 
-    /* eslint-disable-next-line cypress/no-unnecessary-waiting */
     cy.wait(1000)
     ControlPage.clickSubmitDecisionButton() // Submit the decision
     ControlPage.checkSvgExists()

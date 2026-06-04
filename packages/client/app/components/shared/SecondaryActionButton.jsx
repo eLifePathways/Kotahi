@@ -44,7 +44,9 @@ const Button = styled(BaseButton)`
   }
 `
 
-const LabelOnlySpan = styled.span`
+const LabelOnlySpan = styled.span.attrs({
+  'data-testid': 'secondary-action-button-label-only-span',
+})`
   padding: 0 ${grid(1)};
 `
 

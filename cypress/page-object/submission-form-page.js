@@ -77,21 +77,17 @@ export const SubmissionFormPage = {
     this.getAddLinkButton().click()
   },
   fillInField(dataTestId, text, shouldClearExisting = false) {
-    if (shouldClearExisting)
-      cy.get(
-        `input[data-testid="${dataTestId}"], select[data-testid="${dataTestId}"], textarea[data-testid="${dataTestId}"], [data-testid="${dataTestId}"] [contenteditable]`,
-      )
+    const selector = `[data-testid="${dataTestId}"] input, select[data-testid="${dataTestId}"], textarea[data-testid="${dataTestId}"], [data-testid="${dataTestId}"] [contenteditable]`
+
+    if (shouldClearExisting) {
+      cy.get(selector)
         .scrollIntoView()
         .click({ force: true })
         .clear()
         .type(text)
-    else
-      cy.get(
-        `input[data-testid="${dataTestId}"], select[data-testid="${dataTestId}"], textarea[data-testid="${dataTestId}"], [data-testid="${dataTestId}"] [contenteditable]`,
-      )
-        .scrollIntoView()
-        .click({ force: true })
-        .type(text)
+    } else {
+      cy.get(selector).scrollIntoView().click({ force: true }).type(text)
+    }
   },
   checkBox(dataTestId, checkboxLabel) {
     cy.getByDataTestId(dataTestId)
@@ -106,7 +102,7 @@ export const SubmissionFormPage = {
     this.getEnterUrlField(nth).fillInput(url)
   },
   getTitleField() {
-    return cy.getByDataTestId(TITLE_FIELD)
+    return cy.getByDataTestId(TITLE_FIELD).find('input')
   },
   fillInTitle(title) {
     this.getTitleField().fillInput(title)
@@ -176,7 +172,7 @@ export const SubmissionFormPage = {
   },
 
   getKeywordsField() {
-    return cy.getByDataTestId(KEYWORDS_FIELD)
+    return cy.getByDataTestId(KEYWORDS_FIELD).find('input')
   },
   fillInKeywords(keywords) {
     this.getKeywordsField().fillInput(keywords)
@@ -251,13 +247,13 @@ export const SubmissionFormPage = {
     this.getArticleld().fillInput(articleId)
   },
   getDoi() {
-    return cy.getByDataTestId(DOI_FIELD)
+    return cy.getByDataTestId(DOI_FIELD).find('input')
   },
   fillInDoi(doi) {
     this.getDoi().fillInput(doi)
   },
   getPreprintUri() {
-    return cy.getByDataTestId(SOURCE_URI_FIELD)
+    return cy.getByDataTestId(SOURCE_URI_FIELD).find('input')
   },
   fillInPreprintUri(sourceUri) {
     this.getPreprintUri().fillInput(sourceUri)
@@ -411,13 +407,13 @@ export const SubmissionFormPage = {
     return cy.get(ASSIGN_EDITORS_DROPDOWN).eq(nth)
   },
   getFirstAuthorField() {
-    return cy.getByDataTestId(FIRST_AUTHOR_FIELD)
+    return cy.getByDataTestId(FIRST_AUTHOR_FIELD).find('input')
   },
   fillInFirstAuthor(firstAuthor) {
     this.getFirstAuthorField().fillInput(firstAuthor)
   },
   getDatePublishedField() {
-    return cy.getByDataTestId(DATE_PUBLISHED_FIELD)
+    return cy.getByDataTestId(DATE_PUBLISHED_FIELD).find('input')
   },
   fillInDatePublished(datePublished) {
     this.getDatePublishedField().fillInput(datePublished)
@@ -435,7 +431,7 @@ export const SubmissionFormPage = {
     this.getReviewerField().fillInput(reviewer)
   },
   getEditDateField() {
-    return cy.getByDataTestId(EDIT_DATE_FIELD)
+    return cy.getByDataTestId(EDIT_DATE_FIELD).find('input')
   },
   fillInEditDate(editDate) {
     this.getEditDateField().fillInput(editDate)
@@ -461,7 +457,7 @@ export const SubmissionFormPage = {
     this.getEditDateField().should('have.value', getTodayDate())
   },
   getReviewCreatorField() {
-    return cy.getByDataTestId(REVIEW_CREATOR_FIELD)
+    return cy.getByDataTestId(REVIEW_CREATOR_FIELD).find('input')
   },
   fillInReviewCreator(reviewCreator) {
     this.getReviewCreatorField().fillInput(reviewCreator)

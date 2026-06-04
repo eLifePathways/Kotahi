@@ -2,6 +2,8 @@
 import { DashboardPage } from '../dashboard-page'
 import { UsersPage } from '../users-page'
 
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 /**
  * Page component which represents the left side menu bar,
  * which contains the Logged User, Dashboard & My profile options (for non-admin users),
@@ -57,14 +59,16 @@ export const Menu = {
     this.getSettingsButton().click({ force: true })
   },
   getManuscriptsButton() {
-    return cy.getByDataTestId('menu-Manuscripts')
+    return cy.getByDataTestId('menu-Manuscripts').should('be.visible')
   },
   clickManuscripts() {
     this.getManuscriptsButton().click()
   },
   clickManuscriptsAndAssertPageLoad() {
+    cy.wait(500)
     this.clickManuscripts()
-    cy.awaitDisappearSpinner()
+    // cy.awaitDisappearSpinner()
+    cy.url().should('contain', 'manuscripts')
   },
   getReportsButton() {
     return cy.getByDataTestId('menu-Reports')

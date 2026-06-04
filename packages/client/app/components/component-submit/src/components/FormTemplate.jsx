@@ -435,7 +435,8 @@ const FormTemplate = ({
                   return (
                     <Section
                       $cssOverrides={JSON.parse(element.sectioncss || '{}')}
-                      key={`${element.id}`}
+                      data-testid={element.name}
+                      key={element.name}
                     >
                       <FieldHead>
                         <Legend dangerouslySetInnerHTML={markup} />

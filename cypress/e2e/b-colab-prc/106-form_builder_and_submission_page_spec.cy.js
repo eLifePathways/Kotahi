@@ -122,8 +122,8 @@ describe('Form builder and Submission pages', () => {
     })
 
     it('author can NOT upload manuscript without filling in all the required fields', () => {
-      cy.get('[data-testid="submission.$title"]').clear()
-      cy.get('[data-testid="submission.$title"]').should('have.length', 1)
+      cy.get('[data-testid="submission.$title"] input').clear()
+      cy.get('[data-testid="submission.$title"] input').should('have.length', 1)
       SubmissionFormPage.clickSubmitResearch()
       cy.contains('Required').should('exist')
     })
