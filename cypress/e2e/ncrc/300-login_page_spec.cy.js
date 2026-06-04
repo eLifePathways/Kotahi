@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard, manuscripts, login } from '../../support/routes3'
@@ -41,9 +42,11 @@ describe('Login page tests', () => {
       })
       cy.awaitDisappearSpinner()
     })
+
     it('"Editing Queue" is the only tab in dashboard page for admin', () => {
       Menu.getDashboardButton().should('be.visible')
       DashboardPage.getDashboardTab().should('contain', 'Editing Queue')
+      cy.wait(1000)
       DashboardPage.getDashboardTab().click()
       DashboardPage.getSectionTitleWithText('Editing Queue').should(
         'be.visible',
@@ -68,9 +71,11 @@ describe('Login page tests', () => {
       })
       cy.awaitDisappearSpinner()
     })
+
     it('dashboard page is visible to the logged in user', () => {
       Menu.getDashboardButton().should('be.visible')
       DashboardPage.getDashboardTab().should('contain', 'Editing Queue')
+      cy.wait(1000)
       DashboardPage.getDashboardTab().click()
       DashboardPage.getSectionTitleWithText('Editing Queue').should(
         'be.visible',
@@ -80,7 +85,7 @@ describe('Login page tests', () => {
     it('Reviewer/Editor cannot access the admin-specific pages', () => {
       Menu.getFormsButton().should('not.exist')
       Menu.getUsersButton().should('not.exist')
-      Menu.getManuscriptsButton().should('not.exist')
+      Menu.assertManuscriptsButtonDoesNotExist()
       Menu.getMyProfileButton().should('be.visible')
       cy.visit(manuscripts)
       cy.contains('404 Page not found.').should('exist')

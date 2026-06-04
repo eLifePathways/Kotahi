@@ -61,6 +61,9 @@ export const Menu = {
   getManuscriptsButton() {
     return cy.getByDataTestId('menu-Manuscripts').should('be.visible')
   },
+  assertManuscriptsButtonDoesNotExist() {
+    return cy.getByDataTestId('menu-Manuscripts').should('not.exist')
+  },
   clickManuscripts() {
     this.getManuscriptsButton().click()
   },
