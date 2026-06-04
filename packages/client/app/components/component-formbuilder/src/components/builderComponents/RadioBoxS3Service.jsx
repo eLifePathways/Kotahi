@@ -102,7 +102,7 @@ const RadioboxS3ServiceBuilder = ({
 
   return (
     <>
-      <Flexbox column={!inline}>
+      <Flexbox $column={!inline}>
         {radioOptions.map(option => (
           <Radio
             checked={option.value === s3Values.type}

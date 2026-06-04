@@ -19,8 +19,7 @@ export const Section = styled.section.attrs(props => ({
       ? $cssOverrides['flex-direction']
       : 'column'};
   /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
-  flex-wrap: ${({ $cssOverrides }) =>
-    $cssOverrides && $cssOverrides.wrap ? $cssOverrides.wrap : 'nowrap'};
+  flex-wrap: ${({ $cssOverrides }) => $cssOverrides?.wrap ?? 'nowrap'};
   justify-content: space-between;
   margin: ${grid(3)} 0;
 `

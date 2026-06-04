@@ -87,7 +87,11 @@ const FilterSortHeader = ({
     }
 
     return (
-      <HeadingCell $centered={columnInfo.centered} onClick={changeSort}>
+      <HeadingCell
+        $centered={columnInfo.centered}
+        $flex={columnInfo.flex}
+        onClick={changeSort}
+      >
         {
           '\u200B' /* zero-width space so the layout engine understands where the baseline is */
         }
@@ -130,7 +134,7 @@ const FilterSortHeader = ({
     ].concat(columnInfo.filterOptions)
 
     return (
-      <Cell $centered={columnInfo.centered} name={name}>
+      <Cell $centered={columnInfo.centered} $flex={columnInfo.flex} name={name}>
         <Select
           aria-label={columnInfo.title}
           customStyles={{
@@ -188,7 +192,12 @@ const FilterSortHeader = ({
     }
 
     return (
-      <Cell $centered={columnInfo.centered} name={name} onClick={changeSort}>
+      <Cell
+        $centered={columnInfo.centered}
+        $flex={columnInfo.flex}
+        name={name}
+        onClick={changeSort}
+      >
         {columnInfo.title}
         {columnInfo.sortDirection === 'ASC' && <SortDown />}
         {columnInfo.sortDirection === 'DESC' && <SortUp />}
@@ -197,7 +206,7 @@ const FilterSortHeader = ({
   }
 
   return (
-    <Cell $centered={columnInfo.centered} name={name}>
+    <Cell $centered={columnInfo.centered} $flex={columnInfo.flex} name={name}>
       {columnInfo.title}
     </Cell>
   )

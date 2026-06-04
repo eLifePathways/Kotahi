@@ -28,6 +28,7 @@ const ManuscriptRow = ({
     return (
       <Cell
         $centered={column.centered}
+        $flex={column.flex}
         data-testid={column.name}
         key={column.name}
         name={column.name}

@@ -107,9 +107,7 @@ const Review = ({
 
   const renderAnonymousReviewer = () => (
     <div data-testid="reviewer-info">
-      <Heading>
-        <Title>{t('reviewPage.Anonymous Reviewer')}</Title>
-      </Heading>
+      <Title>{t('reviewPage.Anonymous Reviewer')}</Title>
     </div>
   )
 

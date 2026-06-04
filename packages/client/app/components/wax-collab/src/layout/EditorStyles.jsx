@@ -13,10 +13,10 @@ export const Grid = styled.div`
   /* stylelint-disable selector-class-pattern */
   display: grid;
   grid-template:
-    'menu' ${props => (props.readonly ? '0' : 'minmax(40px, auto)')}
+    'menu' ${props => (props.$readonly ? '0' : 'minmax(40px, auto)')}
     'editor' 1fr
     / 100%;
-  ${props => props.production && 'min-height: calc(100vh - 142px);'}
+  ${props => props.$production && 'min-height: calc(100vh - 142px);'}
   position: relative;
   /* :focus-within {
     z-index: 10000;

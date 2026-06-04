@@ -249,20 +249,25 @@ const FormBuilderPage = ({ category }) => {
   }
 
   useEffect(() => {
-    if (data?.formsByCategory?.length) {
-      setSelectedFormId(
-        prevFormId =>
-          prevFormId ??
-          data.formsByCategory.find(
-            f =>
-              f.purpose ===
-              (f.category === 'submission' ? 'submit' : f.category),
-          )?.id ??
-          data.formsByCategory[0].id,
-      )
-    } else {
+    if (!data?.formsByCategory?.length) {
       setSelectedFormId(null)
+      return
     }
+
+    const formIds = new Set(data.formsByCategory.map(f => f.id))
+
+    setSelectedFormId(prev => {
+      if (prev && formIds.has(prev)) {
+        return prev
+      }
+
+      return (
+        data.formsByCategory.find(
+          f =>
+            f.purpose === (f.category === 'submission' ? 'submit' : f.category),
+        )?.id ?? data.formsByCategory[0].id
+      )
+    })
   }, [data])
 
   if (loading) return <Spinner />
