@@ -185,7 +185,7 @@ describe('control page tests', () => {
         ControlPage.getNumberOfInvitedReviewers().should('eq', 1)
         cy.login(name.role.reviewers[1], dashboard)
         cy.awaitDisappearSpinner()
-        cy.wait(500)
+        cy.wait(1000)
         DashboardPage.clickDashboardTab(1)
         DashboardPage.clickAcceptReviewButton()
 

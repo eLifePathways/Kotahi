@@ -48,7 +48,7 @@ describe('Completing reviews', () => {
       // login as seniorEditor and assign the 3 reviews are completed
       cy.login(name.role.seniorEditor, dashboard)
 
-      cy.wait(500)
+      cy.wait(1000)
       DashboardPage.clickDashboardTab(2)
       cy.get('[fill="#56b984"]')
         .should('be.visible')
