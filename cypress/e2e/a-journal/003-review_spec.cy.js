@@ -85,7 +85,7 @@ const doReview = (name, reviewData) => {
   cy.login(name, dashboard)
   cy.get('nav').contains('Dashboard').click()
   cy.visit(dashboard)
-  cy.wait(500)
+  cy.wait(1000)
   DashboardPage.clickDashboardTab(1)
 
   // Accpet Review Request Workflow

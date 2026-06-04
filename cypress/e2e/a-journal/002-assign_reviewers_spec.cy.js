@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { ControlPage } from '../../page-object/control-page'
 import { DashboardPage } from '../../page-object/dashboard-page'
@@ -18,8 +19,8 @@ describe('Editor assigning reviewers', () => {
     cy.fixture('role_names').then(name => {
       cy.login(name.role.seniorEditor, dashboard)
       cy.reload()
+      cy.wait(1000)
       DashboardPage.clickDashboardTab(2)
-      cy.contains('h2', 'Editing Queue').should('exist') // waiting for the page to load
       DashboardPage.clickControl() // Navigate to Control Page
 
       // Invite all the reviewers

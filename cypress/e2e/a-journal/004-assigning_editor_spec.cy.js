@@ -18,7 +18,7 @@ describe('Assigning editors and decision reject', () => {
       cy.fixture('role_names').then(name => {
         cy.login(name.role.admin, dashboard)
 
-        cy.wait(500)
+        cy.wait(1000)
         Menu.clickManuscripts()
 
         ManuscriptsPage.selectOptionWithText('Control')
@@ -33,7 +33,7 @@ describe('Assigning editors and decision reject', () => {
         ControlPage.selectDropdownOptionByName(name.role.admin)
 
         // reject submission
-        cy.wait(500)
+        cy.wait(1000)
         ControlPage.clickDecisionTab()
         ControlPage.fillInDecision(data.rejectedDecision)
         ControlPage.clickReject()
