@@ -11,12 +11,16 @@ import Color from 'color'
 import { LabelBadge } from '../../../shared'
 import { color } from '../../../../theme'
 
-const BaseDropdown = styled.div`
+const BaseDropdown = styled.div.attrs({
+  'data-testid': 'label-dropdown-base-dropdown',
+})`
   display: inline-flex;
   position: relative;
 `
 
-const DropdownElement = styled.div`
+const DropdownElement = styled.div.attrs({
+  'data-testid': 'label-dropdown-element',
+})`
   align-items: center;
   background-color: lightgrey;
   border-radius: 8px;
@@ -25,7 +29,9 @@ const DropdownElement = styled.div`
   justify-content: center;
 `
 
-const DropdownMenu = styled.div`
+const DropdownMenu = styled.div.attrs({
+  'data-testid': 'label-dropdown-menu',
+})`
   background-color: ${color.backgroundA};
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -50,7 +56,9 @@ const ActionsContainer = styled.div`
   justify-content: space-between;
 `
 
-const StyledButton = styled.button`
+const StyledButton = styled.button.attrs({
+  'data-testid': 'label-dropdown-styled-button',
+})`
   align-items: center;
   background-color: transparent;
   background-repeat: no-repeat;

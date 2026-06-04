@@ -35,6 +35,7 @@ const Desc = styled.div`
 
 const Checkbox = ({
   className,
+  'data-testid': dataTestId,
   description,
   disabled,
   inline,
@@ -48,7 +49,12 @@ const Checkbox = ({
   checked = checked || false
 
   return (
-    <Root checked={checked} className={className} inline={inline}>
+    <Root
+      checked={checked}
+      className={className}
+      data-testid={dataTestId}
+      inline={inline}
+    >
       <Input
         checked={checked}
         disabled={disabled}

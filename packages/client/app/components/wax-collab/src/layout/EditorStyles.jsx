@@ -230,7 +230,9 @@ export const SimpleEditorDiv = styled.div`
   ${EditorElements}
 `
 
-export const ReadOnlySimpleEditorDiv = styled.div`
+export const ReadOnlySimpleEditorDiv = styled.div.attrs({
+  'data-testid': 'read-only-simple-editor-div',
+})`
   grid-area: editor;
   overflow: auto;
   position: relative;

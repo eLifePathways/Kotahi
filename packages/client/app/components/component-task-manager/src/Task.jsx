@@ -411,7 +411,12 @@ const Task = ({
         updateTaskNotification={updateTaskNotification}
       />
       <TaskRowContainer>
-        <TaskRow ref={setNodeRef} style={dragStyle} {...attributes}>
+        <TaskRow
+          data-testid="task-row"
+          ref={setNodeRef}
+          style={dragStyle}
+          {...attributes}
+        >
           <TitleFieldContainer>
             <TitleCell>
               <Handle {...listeners}>
@@ -454,7 +459,10 @@ const Task = ({
                 </MinimalButton>
                 {isActionDialog && (
                   <ActionDialog>
-                    <EditLabel onClick={() => setIsEditTaskMetaModal(true)}>
+                    <EditLabel
+                      data-testid="task-edit-label"
+                      onClick={() => setIsEditTaskMetaModal(true)}
+                    >
                       {t('taskManager.task.Edit')}
                     </EditLabel>
                     <DeleteLabel onClick={() => setIsConfirmingDelete(true)}>

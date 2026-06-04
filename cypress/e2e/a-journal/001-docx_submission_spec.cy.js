@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
@@ -61,6 +62,7 @@ Cypress.Commands.add('completeSubmissionForm', title => {
   // Verify your submission exists in dashboard
   DashboardPage.getSectionTitleWithText('My Submissions')
   // the following line is added so that it gives enough time for the dom to update the title of the submission in dashboard. Only a switch between tabs.
+  cy.wait(500)
   DashboardPage.clickDashboardTab(1)
   DashboardPage.clickDashboardTab(0)
   DashboardPage.getSubmissionTitle().should('contain', title)

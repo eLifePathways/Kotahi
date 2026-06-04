@@ -11,7 +11,9 @@ const PaginationInfo = styled.div`
   }
 `
 
-export const PaginationContainer = styled.div`
+export const PaginationContainer = styled.div.attrs(props => ({
+  'data-testid': props['data-testid'],
+}))`
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -19,7 +21,11 @@ export const PaginationContainer = styled.div`
   padding: ${grid(2)} ${grid(3)};
 `
 
-export const PaginationContainerShadowed = styled(PaginationContainer)`
+export const PaginationContainerShadowed = styled(PaginationContainer).attrs(
+  props => ({
+    'data-testid': props['data-testid'],
+  }),
+)`
   background-color: ${th('colorBackground')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${th('boxShadow')};
@@ -73,7 +79,7 @@ export const Pagination = ({
   const lastResult = Math.min((page - 1) * limit + limit, totalCount)
 
   return (
-    <PaginationContainer>
+    <PaginationContainer data-testid="pagination-container">
       <PaginationInfo>
         {totalCount > 0 ? (
           <Trans

@@ -80,12 +80,19 @@ const TaskList = ({
   const [tasks, setTasks] = useState(persistedTasks)
   const { t } = useTranslation()
   useEffect(() => {
-    setTasks(
+    setTasks(prev => {
       // Reorder required, as optimisticResponse doesn't honour array order, causing jitter with drag-n-drop
-      (persistedTasks || [])
+      const sorted = (persistedTasks || [])
         .slice()
-        .sort((a, b) => a.sequenceIndex - b.sequenceIndex),
-    )
+        .sort((a, b) => a.sequenceIndex - b.sequenceIndex)
+      // Preserve locally-added tasks (no `created` field = not yet confirmed by server)
+      // so they survive transient loading states that temporarily revert persistedTasks
+      const persistedIds = new Set(sorted.map(task => task.id))
+      const pendingLocal = prev.filter(
+        task => !persistedIds.has(task.id) && task.created == null,
+      )
+      return [...sorted, ...pendingLocal]
+    })
   }, [persistedTasks])
 
   const repackageTask = task => ({

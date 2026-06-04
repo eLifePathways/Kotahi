@@ -97,7 +97,7 @@ const Review = ({
 
   const renderReviewerInfo = () =>
     review?.user && (
-      <div>
+      <div data-testid="reviewer-info">
         <Heading>
           <strong>{review.user.username}</strong>
         </Heading>
@@ -106,7 +106,7 @@ const Review = ({
     )
 
   const renderAnonymousReviewer = () => (
-    <div>
+    <div data-testid="reviewer-info">
       <Heading>
         <Title>{t('reviewPage.Anonymous Reviewer')}</Title>
       </Heading>

@@ -36,14 +36,14 @@ const DECISION_FIELD = '[contenteditable="true"]'
 const REVIEW_MESSAGE = '[data-testid="readonly-editor"]'
 const REVIEW_OPTION_CHECKBOX =
   '[data-testid="review-option-checkbox"] > [type=checkbox]'
-const REVIEWER_NAME = '[data-testid="reviewer-name"]'
+const REVIEWER_NAME = '[data-testid="reviewer-info"]'
 const NO_REVIEWS_MESSAGE = '[data-testid="section-row"]'
 const ACCEPTED_TO_PUBLISH_REVIEW_ICON =
   '[data-testid="decision-review-name"] img'
 
 // Chat
 const MESSAGE_CONTAINER = '[data-testid="chat-panel"]'
-const CHAT_TAB = '[data-testid="chat-panel"] [data-test-id=tab-container]'
+const CHAT_TAB = '[data-testid="chat-panel"] [data-testid=tab-container]'
 const EXPAND_CHAT_BUTTON = '[data-testid="expand-chat"]'
 
 // Multiple Elements
@@ -342,10 +342,14 @@ export const ControlPage = {
     return cy.getByDataTestId('tab-container')
   },
   clickDecisionTab() {
-    cy.getByDataTestId('tab-decision').click({ force: true })
+    cy.getByDataTestId('tab-container')
+      .contains('Decision')
+      .click({ force: true })
   },
   clickReviewsTab() {
-    cy.getByDataTestId('tab-reviews').click({ force: true })
+    cy.getByDataTestId('tab-container')
+      .contains('Reviews')
+      .click({ force: true })
   },
   // Decision Form
   getDecisionTextInput() {

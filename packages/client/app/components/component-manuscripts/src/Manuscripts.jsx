@@ -69,7 +69,9 @@ const RoundIconButtonWrapper = styled(RoundIconButton).attrs({
   position: sticky;
 `
 
-const DropdownContainer = styled.div`
+const DropdownContainer = styled.div.attrs({
+  'data-testid': 'manuscripts-dropdown-container',
+})`
   width: 100px;
 
   button {

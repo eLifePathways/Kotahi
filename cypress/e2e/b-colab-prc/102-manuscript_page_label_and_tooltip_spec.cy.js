@@ -31,15 +31,15 @@ describe('Checking manuscripts page: label selection and tooltip', () => {
 
     // Function to select a label and verify it
     const selectLabelAndVerify = label => {
-      cy.get('[class*=LabelDropdown__DropdownElement]').click()
+      cy.getByDataTestId('label-dropdown-element').click()
       cy.screenshot('before-dropdown')
       cy.get('body').then($body => {
-        if (!$body.find('[class*=LabelDropdown__DropdownMenu]').length) {
+        if (!$body.find('[data-testid=label-dropdown-menu]').length) {
           cy.log('Dropdown not found in body!')
         }
       })
 
-      cy.get('[class*=LabelDropdown__DropdownMenu]').contains(label).click()
+      cy.get('[data-testid=label-dropdown-menu]').contains(label).click()
       ManuscriptsPage.getLabelDropdown().should('contain', label)
       Menu.clickManuscriptsAndAssertPageLoad()
     }
@@ -49,8 +49,11 @@ describe('Checking manuscripts page: label selection and tooltip', () => {
     labels.forEach(selectLabelAndVerify)
 
     // Unset the custom label
-    cy.get('[class*=LabelDropdown__StyledButton]').eq(0).click()
-    cy.get('[class*=style__StyledButton]').should('contain', 'Select')
+    cy.get('[data-testid=label-dropdown-styled-button]').eq(0).click()
+    cy.get('[data-testid=manuscripts-table-styled-button]').should(
+      'contain',
+      'Select',
+    )
   })
 
   context('tooltip tests', () => {

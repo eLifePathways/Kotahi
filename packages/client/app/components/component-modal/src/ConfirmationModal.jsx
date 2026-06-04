@@ -24,14 +24,18 @@ const styles = {
   },
 }
 
-const ModalContainer = styled.div`
+const ModalContainer = styled.div.attrs({
+  'data-testid': 'confirmation-modal-container',
+})`
   background-color: ${th('colorBackground')};
   border-radius: ${th('borderRadius')};
   padding: ${grid(2.5)} ${grid(3)};
   z-index: 10000;
 `
 
-const MessageString = styled.div`
+const MessageString = styled.div.attrs({
+  'data-testid': 'message-string',
+})`
   align-items: center;
   display: flex;
   justify-content: center;

@@ -682,9 +682,9 @@ const TaskNotificationDetails = ({
             isClearable
             label="Recipient"
             menuPortalTarget={document.querySelector('body')}
-            onChange={selected =>
+            onChange={selected => {
               handleRecipientInput(selected, taskEmailNotification)
-            }
+            }}
             options={recipientGroupedOptions}
             placeholder={t('modals.taskEdit.Select a recipient')}
             value={

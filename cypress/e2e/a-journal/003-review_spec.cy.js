@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ReviewPage } from '../../page-object/review-page'
@@ -47,6 +48,7 @@ describe('Completing reviews', () => {
       // login as seniorEditor and assign the 3 reviews are completed
       cy.login(name.role.seniorEditor, dashboard)
 
+      cy.wait(500)
       DashboardPage.clickDashboardTab(2)
       cy.get('[fill="#56b984"]')
         .should('be.visible')
@@ -83,6 +85,7 @@ const doReview = (name, reviewData) => {
   cy.login(name, dashboard)
   cy.get('nav').contains('Dashboard').click()
   cy.visit(dashboard)
+  cy.wait(500)
   DashboardPage.clickDashboardTab(1)
 
   // Accpet Review Request Workflow
@@ -97,7 +100,6 @@ const doReview = (name, reviewData) => {
       cy.awaitDisappearSpinner()
       cy.contains('Type of Research Object').should('exist')
       cy.get('[data-testid=tab-container]').contains('Review').click()
-      ReviewPage.getReviewCommentField().focus().type('comment', { delay: 200 })
       ReviewPage.getReviewCommentField().fillInput(reviewData.comment)
       if (reviewData.radioButton === 'accept')
         ReviewPage.clickAcceptRadioButton()

@@ -201,7 +201,7 @@ const DecisionVersions = ({
       {!hideChat && (
         <>
           {isDiscussionVisible && (
-            <Chat>
+            <Chat data-testid="chat-panel">
               <MessageContainer
                 channels={channels}
                 chatProps={chatProps}
@@ -217,6 +217,7 @@ const DecisionVersions = ({
           )}
           {!isDiscussionVisible && (
             <ChatButton
+              data-testid="expand-chat"
               iconName="MessageSquare"
               onClick={toggleDiscussionVisibility}
               title={t('chat.Show Chat')}

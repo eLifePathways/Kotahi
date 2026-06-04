@@ -5,7 +5,9 @@
 import styled from 'styled-components'
 import theme, { color } from '../../theme'
 
-export const StyledInput = styled.input`
+export const StyledInput = styled.input.attrs({
+  'data-testid': 'text-input',
+})`
   background: ${color.gray99};
   border: 1px solid ${color.gray80};
   border-radius: ${theme.borderRadius};

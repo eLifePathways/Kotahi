@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { darken, override, th } from '@coko/client'
 
 const StyledButton = styled.button.attrs(props => ({
-  'data-test-id': props['data-test-id'],
+  'data-testid': props['data-testid'],
   type: props.type || 'button',
 }))`
   background: ${th('colorSecondary')};

@@ -130,11 +130,13 @@ const ReviewHeading = ({
           <>
             <StyledCheckbox
               checked={isHiddenFromAuthor || isHiddenFromAuthor == null}
+              data-testid="review-option-checkbox"
               label={t('decisionPage.decisionTab.Hide review')}
               onChange={() => toggleIsHiddenFromAuthor(id, !isHiddenFromAuthor)}
             />
             <StyledCheckbox
               checked={isHiddenReviewerName || isHiddenReviewerName == null}
+              data-testid="review-option-checkbox"
               label={t('decisionPage.decisionTab.Hide reviewer name')}
               onChange={() =>
                 toggleIsHiddenReviewerNameFromPublishedAndAuthor(

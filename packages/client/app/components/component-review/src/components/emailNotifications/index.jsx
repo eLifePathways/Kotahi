@@ -154,7 +154,7 @@ const EmailNotifications = ({
       <SectionHeader>
         <Title>{t('decisionPage.tasksTab.Notifications')}</Title>
       </SectionHeader>
-      <RowGridStyled>
+      <RowGridStyled data-testid="email-notification-row">
         <SelectReceiver
           externalEmail={externalEmail}
           externalName={externalName}

@@ -69,6 +69,7 @@ describe.skip('users page tests', () => {
         UsersPage.getTitle().should('be.visible')
       })
     })
+
     it('group manager can be reverted to normal user', () => {
       cy.fixture('role_names').then(name => {
         UsersPage.getNthUserRow(1).should('contain', name.role.tester)

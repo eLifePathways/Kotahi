@@ -41,6 +41,6 @@ export const NewSubmissionPage = {
   setCustomStatusField(statusLabel) {
     cy.getByDataTestId('submission.$customStatus').scrollIntoView()
     cy.getByDataTestId('submission.$customStatus').click()
-    cy.get('[class*="react-select__option"]').contains(statusLabel).click()
+    cy.get('[data-testid="select-option"]').contains(statusLabel).click()
   },
 }

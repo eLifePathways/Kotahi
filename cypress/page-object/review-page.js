@@ -21,7 +21,7 @@ const PUBLISH_BUTTON = 'button[type="button"]'
 const CAN_BE_PUBLISHED_PUBLICLY_CHECKBOX = '[name=canBePublishedPublicly]'
 const PAGE_SECTIONS = 'General__SectionContent'
 const SECTION_HEADER = 'h2[class]'
-const DECISION_TEXT = '[class*=EditorStyles__ReadOnlySimpleEditorDiv]'
+const DECISION_TEXT = '[data-testid=read-only-simple-editor-div]'
 const DECISION_RECOMMENDATION = 'style__Legend-sc-1jvxmxn-2 bTVTjY'
 
 const DECISION_BUTTON_SELECTED =
@@ -32,15 +32,13 @@ export const ReviewPage = {
     return cy.getByContainsClass(REVIEW_METADATA_CELL).eq(nth)
   },
   getReviewCommentField() {
-    return cy.get('[data-testid="comment"] [contenteditable="true"]').first()
+    return cy.get('[data-testid=comment] [contenteditable="true"]')
   },
   fillInReviewComment(reviewComment) {
-    this.getReviewCommentField()
-      .focus()
-      .type(reviewComment, { delay: 200, force: true })
+    this.getReviewCommentField().focus().type(reviewComment, { force: true })
   },
   getConfidentialCommentField() {
-    return cy.get('[contenteditable="true"]:nth(1)')
+    return cy.get('[data-testid=confidentialComment] [contenteditable="true"]')
   },
   fillInConfidentialComment(confidentialComment) {
     this.getConfidentialCommentField().fillInput(confidentialComment)

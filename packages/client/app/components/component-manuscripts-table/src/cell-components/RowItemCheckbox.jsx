@@ -3,7 +3,9 @@
 import styled from 'styled-components'
 import { Checkbox } from '../../../pubsweet'
 
-const StyledCheckboxTable = styled(Checkbox)`
+const StyledCheckboxTable = styled(Checkbox).attrs({
+  'data-testid': 'row-item-checkbox',
+})`
   height: 16px;
   margin-right: 15px;
   width: 18px;

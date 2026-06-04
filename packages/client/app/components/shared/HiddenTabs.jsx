@@ -20,7 +20,9 @@ export const CompactChatButton = styled(RoundIconButton)`
   width: 33px;
 `
 
-export const Tab = styled.div`
+export const Tab = styled.div.attrs(props => ({
+  'data-testid': props['data-testid'] || 'hidden-tabs-tab',
+}))`
   /* stylelint-disable custom-property-no-missing-var-function */
   --bg-active: ${color.backgroundA};
   --bg-inactive: linear-gradient(

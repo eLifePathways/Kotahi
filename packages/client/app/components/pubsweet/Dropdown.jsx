@@ -119,7 +119,7 @@ const Dropdown = ({
       <DropdownTitle
         $primary={primary}
         color={color}
-        data-test-id={dataTestId}
+        data-testid={dataTestId}
         onBlur={() => setMenuIsOpen(false)}
         onClick={() => setMenuIsOpen(!menuIsOpen)}
         size={size}
@@ -154,7 +154,7 @@ const Dropdown = ({
               setMenuIsOpen(false)
             }}
             {...item.props}
-            data-test-id={item.dataTestId}
+            data-testid={item.dataTestId}
             onMouseDown={e => e.preventDefault()}
           >
             {item.title}

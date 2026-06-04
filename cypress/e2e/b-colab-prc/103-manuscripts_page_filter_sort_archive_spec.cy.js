@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { dashboard } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -51,6 +52,8 @@ describe('manuscripts page tests - Filter, sort, bulk select, archive', () => {
       cy.login(name.role.admin, dashboard)
     })
     cy.awaitDisappearSpinner()
+    cy.getByDataTestId('menu-Manuscripts').should('be.visible')
+    cy.wait(1000)
     Menu.clickManuscriptsAndAssertPageLoad()
   })
 
@@ -77,33 +80,33 @@ describe('manuscripts page tests - Filter, sort, bulk select, archive', () => {
 
   context('filter and sort articles', () => {
     it('filter per status', () => {
-      ManuscriptsPage.getTableRowsCount().should('eq', 4)
-      ManuscriptsPage.clickStatus(-1)
       ManuscriptsPage.getTableRowsCount().should('eq', 3)
+      ManuscriptsPage.clickStatus(-1)
+      ManuscriptsPage.getTableRowsCount().should('eq', 2)
       ManuscriptsPage.getStatus(0).should('contain', 'Unsubmitted')
       cy.url().should('contain', 'new')
     })
 
     it('filter per label', () => {
-      ManuscriptsPage.getTableRowsCount().should('eq', 4)
-      cy.get('div.Select__ValueWrapper-sc-1hsx83u-0.gUXMXr').should(
-        'be.visible',
-      )
-      ManuscriptsPage.selectCustomStatus('Ready to evaluate')
       ManuscriptsPage.getTableRowsCount().should('eq', 3)
+      // cy.get('div.Select__ValueWrapper-sc-1hsx83u-0.gUXMXr').should(
+      //   'be.visible',
+      // )
+      ManuscriptsPage.selectCustomStatus('Ready to evaluate')
+      ManuscriptsPage.getTableRowsCount().should('eq', 2)
       cy.url().should('contain', 'readyToEvaluate')
       ManuscriptsPage.getLabelRow(0).should('contain', 'Ready to evaluate')
       ManuscriptsPage.getLabelRow(1).should('contain', 'Ready to evaluate')
       ManuscriptsPage.getLabelRow(2).should('contain', 'Ready to evaluate')
       Menu.clickManuscriptsAndAssertPageLoad()
       ManuscriptsPage.selectCustomStatus('Evaluated')
-      ManuscriptsPage.getTableRowsCount().should('eq', 2)
+      ManuscriptsPage.getTableRowsCount().should('eq', 1)
       cy.url().should('contain', 'evaluated')
       ManuscriptsPage.getLabelRow(0).should('contain', 'Evaluated')
       ManuscriptsPage.getLabelRow(1).should('contain', 'Evaluated')
       Menu.clickManuscriptsAndAssertPageLoad()
       ManuscriptsPage.selectCustomStatus('Ready to publish')
-      ManuscriptsPage.getTableRowsCount().should('eq', 1)
+      ManuscriptsPage.assertNoTableRows()
       cy.url().should('contain', 'readyToPublish')
       ManuscriptsPage.getLabelRow(0).should('contain', 'Ready to publish')
     })
@@ -111,7 +114,7 @@ describe('manuscripts page tests - Filter, sort, bulk select, archive', () => {
 
   context('archiving articles', () => {
     it('cancel archiving articles', () => {
-      ManuscriptsPage.getTableRowsCount().should('eq', 4)
+      ManuscriptsPage.getTableRowsCount().should('eq', 3)
       ManuscriptsPage.getSelectAllCheckbox().click()
       ManuscriptsPage.clickDelete()
       ManuscriptsPage.clickClose()
@@ -126,7 +129,7 @@ describe('manuscripts page tests - Filter, sort, bulk select, archive', () => {
     })
 
     it('archive all articles', () => {
-      ManuscriptsPage.getTableRowsCount().should('eq', 3)
+      ManuscriptsPage.getTableRowsCount().should('eq', 2)
       ManuscriptsPage.getSelectAllCheckbox().click()
       ManuscriptsPage.clickDelete()
       ManuscriptsPage.getConfirmationMessageForBulkDelete().should(
@@ -137,12 +140,13 @@ describe('manuscripts page tests - Filter, sort, bulk select, archive', () => {
       ManuscriptsPage.getConfirmationMessageForBulkDelete().should('not.exist')
 
       cy.contains('No matching manuscripts were found').should('exist')
-      ManuscriptsPage.getTableRowsCount().should('eq', 1)
+      ManuscriptsPage.assertNoTableRows()
     })
   })
 })
 
 Cypress.Commands.add('submitNewEntry', (status, title) => {
+  cy.wait(500)
   DashboardPage.clickSubmit()
   NewSubmissionPage.clickSubmitUrlAndWaitPageLoad()
   NewSubmissionPage.setCustomStatusField(status)

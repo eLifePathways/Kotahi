@@ -159,4 +159,7 @@ export const DashboardPage = {
   clickDashboardTab(nth) {
     this.getDashboardTab().eq(nth).find('a').click()
   },
+  clickEditingQueueTab() {
+    cy.getByDataTestId('tab-container').contains('Editing Queue').click()
+  },
 }

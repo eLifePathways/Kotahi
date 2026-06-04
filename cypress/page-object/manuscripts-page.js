@@ -9,7 +9,6 @@ import { evaluate } from '../support/routes'
  */
 
 const BUTTON = 'button'
-const ACTIONBUTTON = 'Manuscripts__DropdownContainer'
 const LIVE_CHAT_BUTTON = '[data-testid=float-right-button]'
 const EXPAND_CHAT_BUTTON = '[data-testid=round-icon-button-wrapper]'
 const EVALUATION_BUTTON = '[href*=evaluation]'
@@ -19,26 +18,25 @@ const TABLE_HEADER = '[class*=Table__Header]'
 const ARTICLE_TITLE = '[class*=Table__Row]>td:nth-child(1)'
 const ARTICLE_ID = '[name="submission.articleId"]'
 const ARTICLE_LABEL = '[name="submission.$customStatus"]'
-const DROPDOWN_LABEL = '[class*=LabelDropdown__BaseDropdown]'
+const DROPDOWN_LABEL = '[data-testid=label-dropdown-base-dropdown]'
 const ARTICLE_TOPIC = '[class*=Table__Cell] > [title]'
-const TABLE_ROW = '[class*=style__ManuscriptsRow]'
+const TABLE_ROW = '[data-testid=manuscripts-row]'
 const TABLE_CELL = 'Table__Cell'
 const LABEL = '[name="submission.$customStatus"]'
-const CONFIRM_BUTTON = '[class*="ConfirmationModal"] button:nth-child(1)'
+const CONFIRM_BUTTON =
+  '[data-testid="confirmation-modal-container"] button:nth-child(1)'
 
 const ARTICLE_CHECKBOX =
-  '[class*=RowItemCheckbox__StyledCheckboxTable]label > [type*=checkbox]'
+  '[data-testid=row-item-checkbox]label > [type*=checkbox]'
 
 const SELECT_ALL_CHECKBOX = '[type=checkbox]'
-const NUMBER_OF_ARTICLES_SELECTED = 'style__SelectedManuscriptsNumber'
 const EDITOR_NAME_CELL = 'style__StyledAuthor'
-const TOOLTIP_ICON = 'style__InfoIcon'
 const TOOLTIP_TEXT = 'rc-tooltip-inner'
-const ARTICLES_COUNT = '[class*=Pagination] > strong'
+const ARTICLES_COUNT = '[data-testid=pagination-container] > div > strong'
 const PAGINATION_PAGE_BUTTON = 'Page '
 
 const CONFIRMATION_MESSAGE =
-  '[class*="ConfirmationModal"] [class*="MessageString"]'
+  '[data-testid="confirmation-modal-container"] [data-testid="message-string"]'
 
 const IMPORT_CONFIRMATION_POPUP = '[class*=Toastify] > [role=alert]'
 // const CONTROL = '[href*=decision]'
@@ -206,6 +204,9 @@ export const ManuscriptsPage = {
   getTableRowsCount() {
     return cy.get(TABLE_ROW).its('length')
   },
+  assertNoTableRows() {
+    return cy.get(TABLE_ROW).should('not.exist')
+  },
   getManuscriptRowsCount() {
     return cy
       .get(
@@ -238,10 +239,10 @@ export const ManuscriptsPage = {
     return cy.get(SELECT_ALL_CHECKBOX).eq(0)
   },
   getSelectedArticlesCount() {
-    return cy.getByContainsClass(NUMBER_OF_ARTICLES_SELECTED).invoke('text')
+    return cy.getByDataTestId('selected-manuscripts-number').invoke('text')
   },
   getActionDropdown() {
-    return cy.getByContainsClass(ACTIONBUTTON).click()
+    return cy.getByDataTestId('manuscripts-dropdown-container').click()
   },
   clickDelete() {
     this.getActionDropdown().contains('Archive').click()
@@ -268,7 +269,7 @@ export const ManuscriptsPage = {
     return cy.getByContainsClass(EDITOR_NAME_CELL)
   },
   getTooltipIcon() {
-    return cy.getByContainsClass(TOOLTIP_ICON)
+    return cy.getByDataTestId('info-icon')
   },
   getTooltipText() {
     return cy.getByContainsClass(TOOLTIP_TEXT)

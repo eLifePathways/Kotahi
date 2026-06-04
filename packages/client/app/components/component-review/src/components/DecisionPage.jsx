@@ -171,7 +171,8 @@ const DecisionPage = ({ currentUser }) => {
 
   const {
     loading,
-    data,
+    data: currentData,
+    previousData,
     error,
     refetch: refetchManuscript,
   } = useQuery(query, {
@@ -180,6 +181,7 @@ const DecisionPage = ({ currentUser }) => {
       groupId: config.groupId,
     },
   })
+  const data = currentData ?? previousData
 
   let editorialChannel, allChannel
 
@@ -393,42 +395,7 @@ const DecisionPage = ({ currentUser }) => {
     CREATE_TASK_EMAIL_NOTIFICATION_LOGS,
   )
 
-  const [updateTask] = useMutation(UPDATE_TASK, {
-    update(cache, { data: { updateTask: updatedTask } }) {
-      cache.modify({
-        id: cache.identify({
-          __typename: 'Manuscript',
-          id: updatedTask.manuscriptId,
-        }),
-        fields: {
-          /* eslint-disable-next-line default-param-last */
-          tasks(existingTaskRefs = [], { readField }) {
-            const newTaskRef = cache.writeFragment({
-              data: updatedTask,
-              fragment: gql`
-                fragment NewTask on Task {
-                  id
-                  title
-                  dueDate
-                  defaultDurationDays
-                }
-              `,
-            })
-
-            if (
-              existingTaskRefs.some(
-                ref => readField('id', ref) === updatedTask.id,
-              )
-            ) {
-              return existingTaskRefs
-            }
-
-            return [...existingTaskRefs, newTaskRef]
-          },
-        },
-      })
-    },
-  })
+  const [updateTask] = useMutation(UPDATE_TASK)
 
   const [updateTaskNotification] = useMutation(UPDATE_TASK_NOTIFICATION)
 
@@ -534,7 +501,7 @@ const DecisionPage = ({ currentUser }) => {
     })
   }
 
-  if (loading) return <Spinner />
+  if (loading && !data) return <Spinner />
 
   if (error) {
     if (error.graphQLErrors?.find(e => e.message === 'Not Authorised!')) {
