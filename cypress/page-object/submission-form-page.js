@@ -38,7 +38,7 @@ const EDITOR_CLASS = '.wax-surface-scroll >  div .ProseMirror'
 const TYPE_OF_RESEARCH_OBJECT = '.css-1f7humo-control'
 
 // specific to preprint1
-const FORM_OPTION_LIST = '[data-testid=submission-form-section]'
+const FORM_OPTION_LIST = '[data-testid^="submission."]'
 const FORM_OPTION_VALUE = 'singleValue'
 const ARTICLE_ID_FIELD = 'submission.articleId'
 const REVIEW_1_DATE_FEILD = 'submission.review1date'
@@ -240,11 +240,11 @@ export const SubmissionFormPage = {
   getDropdownOption(nth) {
     return cy.get(DROPDOWN_OPTION_LIST).eq(nth)
   },
-  getArticleld() {
+  getArticleId() {
     return cy.getByDataTestId(ARTICLE_ID_FIELD)
   },
-  fillInArticleld(articleId) {
-    this.getArticleld().fillInput(articleId)
+  fillInArticleId(articleId) {
+    this.getArticleId().find('input').fillInput(articleId)
   },
   getDoi() {
     return cy.getByDataTestId(DOI_FIELD).find('input')
@@ -262,7 +262,7 @@ export const SubmissionFormPage = {
     return cy.getByDataTestId(REVIEW_1_DATE_FEILD)
   },
   fillInReview1Date(review1Date) {
-    this.getReview1Date().fillInput(review1Date)
+    this.getReview1Date().find('input').fillInput(review1Date)
   },
   getReview1() {
     return cy.get(SUBMISSION_REVIEW1)
@@ -278,7 +278,7 @@ export const SubmissionFormPage = {
     return cy.getByDataTestId(REVIEW_1_CREATOR_FIELD)
   },
   fillInReview1Creator(review1Creator) {
-    this.getReview1Creator().fillInput(review1Creator)
+    this.getReview1Creator().find('input').fillInput(review1Creator)
   },
   getReview2() {
     return cy.get(SUBMISSION_REVIEW2)
@@ -294,13 +294,13 @@ export const SubmissionFormPage = {
     return cy.getByDataTestId(REVIEW_2_CREATOR_FIELD)
   },
   fillInReview2Creator(review2Creator) {
-    this.getReview2Creator().fillInput(review2Creator)
+    this.getReview2Creator().find('input').fillInput(review2Creator)
   },
   getReview2Date() {
     return cy.getByDataTestId(REVIEW_2_DATE_FEILD)
   },
   fillInReview2Date(review2Date) {
-    this.getReview2Date().fillInput(review2Date)
+    this.getReview2Date().find('input').fillInput(review2Date)
   },
   getReview3() {
     return cy.get(SUBMISSION_REVIEW3)
@@ -316,13 +316,13 @@ export const SubmissionFormPage = {
     return cy.getByDataTestId(REVIEW_3_CREATOR_FIELD)
   },
   fillInReview3Creator(review3Creator) {
-    this.getReview3Creator().fillInput(review3Creator)
+    this.getReview3Creator().find('input').fillInput(review3Creator)
   },
   getReview3Date() {
     return cy.getByDataTestId(REVIEW_3_DATE_FEILD)
   },
   fillInReview3Date(review3Date) {
-    this.getReview3Date().fillInput(review3Date)
+    this.getReview3Date().find('input').fillInput(review3Date)
   },
   getSummary() {
     return cy.get(SUBMISSION_SUMMARY)
@@ -338,13 +338,13 @@ export const SubmissionFormPage = {
     return cy.getByDataTestId(SUMMARY_CREATOR_FIELD)
   },
   fillInSummaryCreator(summaryCreator) {
-    this.getSummaryCreator().fillInput(summaryCreator)
+    this.getSummaryCreator().find('input').fillInput(summaryCreator)
   },
   getSummaryDate() {
     return cy.getByDataTestId(SUMMARY_DATE)
   },
   fillInSummaryDate(summaryDate) {
-    this.getSummaryDate().fillInput(summaryDate)
+    this.getSummaryDate().find('input').fillInput(summaryDate)
   },
   getStudySettingField() {
     return this.getWaxInputBox(1)
@@ -477,4 +477,5 @@ export const SubmissionFormPage = {
     return cy.getByTitle(WORD_COUNT_INFO)
   },
 }
+
 export default SubmissionFormPage

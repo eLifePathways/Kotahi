@@ -41,7 +41,7 @@ describe('Update the submission form field', () => {
     cy.get('button').contains('Submit a URL instead').click()
 
     cy.fixture('submission_form_data').then(data => {
-      SubmissionFormPage.fillInArticleld(data.articleId)
+      SubmissionFormPage.fillInArticleId(data.articleId)
       SubmissionFormPage.fillInDoi(data.doi)
       SubmissionFormPage.fillInPreprintUri(bioRxivArticleUrl)
       SubmissionFormPage.fillInTitle(data.description)
