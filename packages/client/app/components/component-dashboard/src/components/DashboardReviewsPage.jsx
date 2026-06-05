@@ -10,6 +10,7 @@ import {
   REVIEWER_RESPONSE,
   UPDATE_TAB,
   DASHBOARD,
+  UPDATE_MANUSCRIPT,
 } from '../../../../queries'
 import {
   extractFilters,
@@ -20,8 +21,6 @@ import {
 } from '../../../../shared/urlParamUtils'
 import ReviewerTable from './sections/ReviewerTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
-import { updateMutation } from '../../../component-submit/src/components/SubmitPage'
-import { updateManuscriptMutation } from '../../../component-review/src/components/DecisionPage'
 
 const DashboardReviewsPage = ({ currentUser }) => {
   const location = useLocation()
@@ -67,8 +66,8 @@ const DashboardReviewsPage = ({ currentUser }) => {
     fetchPolicy: 'network-only',
   })
 
-  const [update] = useMutation(updateMutation)
-  const [doUpdateManuscript] = useMutation(updateManuscriptMutation)
+  const [update] = useMutation(UPDATE_MANUSCRIPT)
+  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
 
   const setReadyToEvaluateLabels = id => {
     update({

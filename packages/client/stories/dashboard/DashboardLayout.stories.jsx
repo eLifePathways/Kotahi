@@ -27,11 +27,7 @@ export const Base = args => (
               <h2 style={{ color: '#333333' }}>Component</h2>
             </>
           )}
-          <DashboardLayout
-            createNewTaskAlerts={null}
-            urlFrag={urlFrag}
-            {...args}
-          />
+          <DashboardLayout urlFrag={urlFrag} {...args} />
         </>
       </ConfigProvider>
     </JournalProvider>

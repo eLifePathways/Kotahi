@@ -23,7 +23,7 @@ import {
   VALIDATE_ORCID,
   EXPAND_CHAT,
   USER_MANUSCRIPT,
-  USER_UPDATE_MANUSCRIPT,
+  UPDATE_MANUSCRIPT,
   SUBMIT_MANUSCRIPT,
   CREATE_NEW_MANUSCRIPT_VERSION,
   CREATE_FILE,
@@ -119,7 +119,7 @@ const SubmitPage = ({ currentUser }) => {
 
   const chatProps = useChat(channels)
 
-  const [update] = useMutation(USER_UPDATE_MANUSCRIPT)
+  const [update] = useMutation(UPDATE_MANUSCRIPT)
   const [submit] = useMutation(SUBMIT_MANUSCRIPT)
   const [createNewVersion] = useMutation(CREATE_NEW_MANUSCRIPT_VERSION)
   const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)

@@ -172,12 +172,6 @@ export const GET_TASKS = gql`
   }
 `
 
-export const CREATE_NEW_TASK_ALERTS = gql`
-  mutation CreateNewTaskAlerts($groupId: ID!) {
-    createNewTaskAlerts(groupId: $groupId)
-  }
-`
-
 export const REMOVE_TASK_ALERTS_FOR_CURRENT_USER = gql`
   mutation RemoveTaskAlertsForCurrentUser {
     removeTaskAlertsForCurrentUser

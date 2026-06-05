@@ -15,12 +15,10 @@ import {
   UPDATE_TAB,
   REMOVE_TASK_ALERTS_FOR_CURRENT_USER,
   DASHBOARD,
+  UPDATE_MANUSCRIPT,
 } from '../../../../queries'
 import EditorTable from './sections/EditorTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
-
-import { updateMutation } from '../../../component-submit/src/components/SubmitPage'
-import { updateManuscriptMutation } from '../../../component-review/src/components/DecisionPage'
 
 const DashboardEditsPage = ({ currentUser }) => {
   const location = useLocation()
@@ -55,8 +53,8 @@ const DashboardEditsPage = ({ currentUser }) => {
 
   const [updateTab] = useMutation(UPDATE_TAB)
 
-  const [update] = useMutation(updateMutation)
-  const [doUpdateManuscript] = useMutation(updateManuscriptMutation)
+  const [update] = useMutation(UPDATE_MANUSCRIPT)
+  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
 
   const setReadyToEvaluateLabels = id => {
     update({

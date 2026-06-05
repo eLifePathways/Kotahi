@@ -46,7 +46,7 @@ import {
   COMPLETE_COMMENTS,
   DELETE_PENDING_COMMENT,
   UPDATE_PENDING_COMMENT,
-  USER_UPDATE_MANUSCRIPT,
+  UPDATE_MANUSCRIPT,
   CREATE_TEAM,
   UPDATE_TEAM_MEMBER,
   UPDATE_COLLABORATIVE_TEAM_MEMBER,
@@ -183,7 +183,7 @@ const DecisionPage = ({ currentUser }) => {
 
   const [sendEmailMutation] = useMutation(SEND_EMAIL)
 
-  const [doUpdateManuscript] = useMutation(USER_UPDATE_MANUSCRIPT)
+  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
   const [doSendChannelMessage] = useMutation(CREATE_MESSAGE)
   const [makeDecision] = useMutation(MAKE_DECISION)
   const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)

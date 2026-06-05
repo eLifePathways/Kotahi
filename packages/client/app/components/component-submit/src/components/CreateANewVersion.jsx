@@ -8,7 +8,9 @@ import { useState } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { Button } from '../../../pubsweet'
-import { CREATE_NEW_MANUSCRIPT_VERSION } from '../../../../queries'
+
+import { NEW_MANUSCRIPT_VERSION_FRAGMENT } from '../../../../queries'
+
 import {
   SectionHeader,
   SectionRow,
@@ -64,7 +66,7 @@ const CreateANewVersion = ({
                       ) {
                         const newVersionRef = cache.writeFragment({
                           data: createNewVersion,
-                          fragment: CREATE_NEW_MANUSCRIPT_VERSION,
+                          fragment: NEW_MANUSCRIPT_VERSION_FRAGMENT,
                         })
 
                         if (

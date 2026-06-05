@@ -36,19 +36,6 @@ export const GET_SYSTEM_WIDE_DISCUSSION_CHANNEL = gql`
   }
 `
 
-export const GET_MESSAGE_BY_ID = gql`
-  query MessageById($messageId: ID) {
-    message(messageId: $messageId) {
-      id
-      content
-      user {
-        username
-        profilePicture
-      }
-    }
-  }
-`
-
 export const MESSAGES = gql`
   subscription messageCreated($channelId: ID!) {
     messageCreated(channelId: $channelId) {

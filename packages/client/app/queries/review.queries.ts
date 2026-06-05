@@ -31,14 +31,6 @@ export const UPDATE_REVIEW = gql`
   }
 `
 
-export const updateReviewMutation = gql`
-  mutation UpdateReview($id: ID, $input: ReviewInput) {
-    updateReview(id: $id, input: $input) {
-      ${reviewFields}
-    }
-  }
-`
-
 export const LOCK_UNLOCK_COLLABORATIVE_REVIEW = gql`
   mutation LockUnlockCollaborativeReview($id: ID!) {
     lockUnlockCollaborativeReview(id: $id) {

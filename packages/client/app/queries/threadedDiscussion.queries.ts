@@ -38,14 +38,6 @@ const discussionFields = `
   userCanEditAnyComment
 `
 
-export const GET_THREADED_DISCUSSIONS = gql`
-  query GetThreadedDiscussions($manuscriptId: ID!) {
-    threadedDiscussions(manuscriptId: $manuscriptId) {
-      ${discussionFields}
-    }
-  }
-`
-
 export const UPDATE_PENDING_COMMENT = gql`
   mutation(
     $manuscriptId: ID!
@@ -98,14 +90,6 @@ export const DELETE_PENDING_COMMENT = gql`
       commentId: $commentId
     ) {
       ${discussionFields}
-    }
-  }
-`
-
-export const CREATE_THREAD = gql`
-  mutation CreateThread($id: ID!, $decision: String) {
-    createThread(id: $id, decision: $decision) {
-      id
     }
   }
 `

@@ -86,6 +86,7 @@ export const CMS_GET_SUBMISSION_FORM = gql`
   }
 `
 
+// duplicate
 export const UPDATE_TEMPLATE = gql`
   mutation($id: ID!, $input: UpdateTemplateInput!) {
     updateTemplate(id: $id, input: $input) {
@@ -203,14 +204,6 @@ const cmsPageFields = `
 export const GET_CMS_PAGES = gql`
   query CmsPages {
     cmsPages {
-      ${cmsPageFields}
-    }
-  }
-`
-
-export const GET_CMS_PAGE = gql`
-  query CmsPage($id: ID!) {
-    cmsPage(id: $id) {
       ${cmsPageFields}
     }
   }
@@ -393,7 +386,7 @@ export const UPDATE_FLAX_ROOT_FOLDER = gql`
 
 // #region files
 
-export const getCmsFilesTree = gql`
+export const GET_CMS_FILES_TREE = gql`
   query GetCmsFilesTree($folderId: ID) {
     getCmsFilesTree(folderId: $folderId) {
       id
@@ -410,7 +403,7 @@ export const getCmsFilesTree = gql`
   }
 `
 
-export const getCmsFileContent = gql`
+export const GET_CMS_FILE_CONTENT = gql`
   query GetCmsFileContent($id: ID!) {
     getCmsFileContent(id: $id) {
       id
@@ -421,7 +414,7 @@ export const getCmsFileContent = gql`
   }
 `
 
-export const getFoldersList = gql`
+export const GET_FOLDERS_LIST = gql`
   query GetFoldersList {
     getFoldersList {
       id

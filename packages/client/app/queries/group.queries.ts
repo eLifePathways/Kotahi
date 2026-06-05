@@ -12,22 +12,6 @@ const fileFields = `
   }
 `
 
-export const GET_GROUP_BY_NAME = gql`
-  query GroupByName($name: String!) {
-    groupByName(name: $name) {
-      id
-      name
-      isArchived
-      oldConfig
-      configs {
-        id
-        formData
-        active
-      }
-    }
-  }
-`
-
 export const GET_GROUPS = gql`
   query Groups {
     groups {
@@ -48,26 +32,6 @@ export const GET_GROUPS = gql`
         flaxSiteUrl
     		translationOverrides
       }
-    }
-  }
-`
-
-export const GET_CONFIG = gql`
-  query Config($id: ID!) {
-    oldConfig
-    config(id: $id) {
-      id
-      formData
-      active
-      groupId
-      logo {
-        ${fileFields}
-      }
-      icon {
-        ${fileFields}
-      }
-
-      logoId
     }
   }
 `

@@ -67,17 +67,6 @@ const SuperChatInput = ({
   }
 
   const sendMessage = ({ body }) =>
-    // user is creating a new directMessageThread, break the chain
-    // and initiate a new group creation with the message being sent
-    // in views/directMessages/containers/newThread.js
-    // if (props.threadId === 'newDirectMessageThread') {
-    //   return props.createThread({
-    //     messageType: file ? 'media' : 'text',
-    //     file,
-    //     messageBody: body,
-    //   })
-    // }
-
     sendChannelMessages({ content: body, channelId: channelId })
 
   const submit = async e => {

@@ -48,34 +48,6 @@ export const GET_INVITATION_STATUS = gql`
   }
 `
 
-export const GET_INVITATIONS_FOR_MANUSCRIPT = gql`
-  query GetInvitationsForManuscript($id: ID) {
-    getInvitationsForManuscript(id: $id) {
-      id
-      declinedReason
-      responseComment
-      responseDate
-      toEmail
-      invitedPersonName
-      updated
-      status
-      invitedPersonType
-      userId
-      isShared
-      user {
-        id
-        username
-        profilePicture
-        isOnline
-        defaultIdentity {
-          id
-          identifier
-        }
-      }
-    }
-  }
-`
-
 export const UPDATE_INVITATION_STATUS = gql`
   mutation UpdateInvitationStatus(
     $id: ID!
@@ -124,17 +96,6 @@ export const UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER = gql`
     ) {
       id
       isShared
-    }
-  }
-`
-
-export const GET_EMAIL_INVITED_REVIEWERS = gql`
-  query GetEmailInvitedReviewers($manuscriptId: ID!) {
-    getEmailInvitedReviewers(manuscriptId: $manuscriptId) {
-      id
-      invitedPersonName
-      isShared
-      status
     }
   }
 `

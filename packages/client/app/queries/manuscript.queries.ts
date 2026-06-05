@@ -20,12 +20,6 @@ export const DELETE_MANUSCRIPT = gql`
   }
 `
 
-export const DELETE_MANUSCRIPTS = gql`
-  mutation DeleteManuscripts($ids: [ID]!) {
-    deleteManuscripts(ids: $ids)
-  }
-`
-
 export const GET_MANUSCRIPTS_AND_FORM = gql`
   query Manuscripts(
     $sort: ManuscriptsSort
@@ -273,19 +267,6 @@ export const CREATE_MANUSCRIPT = gql`
   }
 `
 
-export const UPDATE_MANUSCRIPT = gql`
-  mutation UpdateManuscript($id: ID!, $input: String) {
-    updateManuscript(id: $id, input: $input) {
-      id
-      id
-      meta {
-        source
-        manuscriptId
-      }
-    }
-  }
-`
-
 export const NEW_MANUSCRIPT_FRAGMENT = gql`
   fragment NewManuscript on Manuscript {
     id
@@ -459,7 +440,7 @@ export const MANUSCRIPT = gql`
   }
 `
 
-export const userReviewFields = `
+const userReviewFields = `
   id
   created
   updated
@@ -480,7 +461,7 @@ export const userReviewFields = `
   }
 `
 
-export const userFragmentFields = `
+const userFragmentFields = `
   id
   shortId
   created
@@ -667,7 +648,7 @@ export const USER_MANUSCRIPT = gql`
   }
 `
 
-export const USER_UPDATE_MANUSCRIPT = gql`
+export const UPDATE_MANUSCRIPT = gql`
   mutation UpdateManuscript($id: ID!, $input: String) {
     updateManuscript(id: $id, input: $input) {
       id
@@ -1435,19 +1416,6 @@ export const SUBMIT_AUTHOR_PROOFING_FEEDBACK = gql`
     submitAuthorProofingFeedback(id: $id, input: $input) {
       id
       ${productionFragmentFields}
-    }
-  }
-`
-
-export const UPDATE_TEMPLATE = gql`
-  mutation($id: ID!, $input: UpdateTemplateInput!) {
-    updateTemplate(id: $id, input: $input) {
-      id
-      name
-      groupId
-      ${productionFileFragment}
-      article
-      css
     }
   }
 `

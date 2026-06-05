@@ -29,8 +29,8 @@ import {
   UNARCHIVE_MANUSCRIPTS,
   PUBLISH_MANUSCRIPT,
   EXPAND_CHAT,
+  UPDATE_MANUSCRIPT,
 } from '../../../queries'
-import { updateMutation } from '../../component-submit/src/components/SubmitPage'
 import Manuscripts from './Manuscripts'
 import {
   extractFilters,
@@ -41,12 +41,11 @@ import {
 } from '../../../shared/urlParamUtils'
 import { validateDoi, validateSuffix } from '../../../shared/commsUtils'
 import useChat from '../../../hooks/useChat'
-import { updateManuscriptMutation } from '../../component-review/src/components/DecisionPage'
 
 const ManuscriptsPage = ({ currentUser }) => {
   const location = useLocation()
   const { t } = useTranslation()
-  const [doUpdateManuscript] = useMutation(updateManuscriptMutation)
+  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
   const config = useContext(ConfigContext)
   const { urlFrag } = config
   const chatRoomId = fnv.hash(config.clientUrl).hex()
@@ -252,7 +251,7 @@ const ManuscriptsPage = ({ currentUser }) => {
     })
   }
 
-  const [update] = useMutation(updateMutation)
+  const [update] = useMutation(UPDATE_MANUSCRIPT)
   const [chatExpand] = useMutation(EXPAND_CHAT)
 
   const [doPublishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
