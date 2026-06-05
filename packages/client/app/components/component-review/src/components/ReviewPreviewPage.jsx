@@ -2,61 +2,15 @@
 
 import { useContext } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import ReviewPreview from './reviewPreview/ReviewPreview'
 import { Heading, Page, Spinner } from '../../../shared'
 import { ConfigContext } from '../../../config/src'
-
-const fragmentFields = `
-  id
-  shortId
-  created
-  status
-  meta {
-    manuscriptId
-  }
-  submission
-  files {
-    id
-    name
-    tags
-    storedObjects {
-      mimetype
-      url
-    }
-  }
-`
-
-const query = gql`
-  query($id: ID!, $groupId: ID) {
-    manuscript(id: $id) {
-      ${fragmentFields}
-      manuscriptVersions {
-        ${fragmentFields}
-      }
-    }
-
-    formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {
-      structure {
-        children {
-          title
-          shortDescription
-          id
-          component
-          name
-          isReadOnly
-          hideFromReviewers
-          format
-        }
-      }
-    }
-  }
-`
+import { REVIEW_PREVIEW_MANUSCRIPT } from '../../../../queries'
 
 const ReviewPreviewPage = ({ match }) => {
   const config = useContext(ConfigContext)
 
-  const { loading, error, data } = useQuery(query, {
+  const { loading, error, data } = useQuery(REVIEW_PREVIEW_MANUSCRIPT, {
     variables: {
       id: match.params.version,
       groupId: config.groupId,

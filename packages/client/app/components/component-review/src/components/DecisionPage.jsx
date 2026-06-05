@@ -11,31 +11,26 @@ import {
   useQuery,
   useSubscription,
 } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import { set, debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
-import { fragmentFields } from '../../../component-submit/src/userManuscriptFormQuery'
 import { AccessErrorPage, CommsErrorBanner, Spinner } from '../../../shared'
 import DecisionVersions from './DecisionVersions'
 import { roles } from '../../../../globals'
 import { waxAiToolSystem } from '../../../component-production/helpers'
 
 import {
-  addReviewerMutation,
-  makeDecisionMutation,
-  publishManuscriptMutation,
-  query,
-  removeAuthorMutation,
-  removeReviewerMutation,
-  removeInvitationMutation,
-  sendEmail,
-  setShouldPublishFieldMutation,
-  updateReviewMutation,
-  lockUnlockCollaborativeReviewMutation,
-} from './queries'
-
-import {
+  ADD_REVIEWER,
+  MAKE_DECISION,
+  PUBLISH_MANUSCRIPT,
+  MANUSCRIPT_FOR_REVIEW,
+  REMOVE_AUTHOR,
+  REMOVE_REVIEWER,
+  REMOVE_INVITATION,
+  SEND_EMAIL,
+  SET_SHOULD_PUBLISH_FIELD,
+  UPDATE_REVIEW,
+  LOCK_UNLOCK_COLLABORATIVE_REVIEW,
   ASSIGN_AUTHOR_FOR_PROOFING,
   CREATE_MESSAGE,
   CREATE_TASK_EMAIL_NOTIFICATION_LOGS,
@@ -43,98 +38,34 @@ import {
   GET_BLACKLIST_INFORMATION,
   GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT,
   REFRESH_ADA_STATUS,
-  UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER_MUTATION,
+  UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER,
   UPDATE_TASK,
   UPDATE_TASKS,
   UPDATE_TASK_NOTIFICATION,
-} from '../../../../queries'
-import {
-  CREATE_TEAM_MUTATION,
-  updateTeamMemberMutation,
-  updateCollaborativeTeamMemberMutation,
-  UPDATE_TEAM_MUTATION,
-} from '../../../../queries/team'
-import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
-import {
   COMPLETE_COMMENT,
   COMPLETE_COMMENTS,
   DELETE_PENDING_COMMENT,
   UPDATE_PENDING_COMMENT,
-} from '../../../component-formbuilder/src/components/builderComponents/ThreadedDiscussion/queries'
-import { reviewFormUpdatedSubscription } from './reviewSubscriptions'
+  USER_UPDATE_MANUSCRIPT,
+  CREATE_TEAM,
+  UPDATE_TEAM_MEMBER,
+  UPDATE_COLLABORATIVE_TEAM_MEMBER,
+  UPDATE_TEAM,
+  CREATE_FILE,
+  DELETE_FILE,
+  CHAT_GPT,
+  REVIEW_FORM_UPDATED,
+  NEW_REVIEW_FRAGMENT,
+  NEW_TEAM_FRAGMENT,
+  UPDATE_ADA,
+} from '../../../../queries'
+
+import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 
 import useChat from '../../../../hooks/useChat'
 
 import { getCurrentUserReview } from './review/util'
 import { getRoles } from '../../../../shared/manuscriptUtils'
-
-export const updateManuscriptMutation = gql`
-  mutation UpdateManuscript($id: ID!, $input: String) {
-    updateManuscript(id: $id, input: $input) {
-      id
-      ${fragmentFields}
-    }
-  }
-`
-
-export const updateAdaMutation = gql`
-  mutation UpdateAda($id: ID!, $adaState: String!) {
-    updateAda(id: $id, adaState: $adaState) {
-      manuscript {
-        id
-        published
-      }
-      steps {
-        stepLabel
-        succeeded
-        errorMessage
-        errorDetails
-      }
-    }
-  }
-`
-
-const createFileMutation = gql`
-  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
-    createFile(file: $file, meta: $meta) {
-      id
-      created
-      name
-      updated
-      tags
-      objectId
-      storedObjects {
-        key
-        mimetype
-        url
-      }
-    }
-  }
-`
-
-const deleteFileMutation = gql`
-  mutation DeleteFile($id: ID!) {
-    deleteFile(id: $id)
-  }
-`
-
-const useChatGpt = gql`
-  query OpenAi(
-    $input: UserMessage!
-    $groupId: ID!
-    $history: [OpenAiMessage]
-    $system: SystemMessage
-    $format: String
-  ) {
-    openAi(
-      input: $input
-      groupId: $groupId
-      history: $history
-      format: $format
-      system: $system
-    )
-  }
-`
 
 let debouncers = {}
 
@@ -148,7 +79,7 @@ const DecisionPage = ({ currentUser }) => {
   const config = useContext(ConfigContext)
   const { urlFrag } = config
 
-  const { refetch } = useQuery(useChatGpt, {
+  const { refetch } = useQuery(CHAT_GPT, {
     fetchPolicy: 'network-only',
     skip: true,
   })
@@ -175,7 +106,7 @@ const DecisionPage = ({ currentUser }) => {
     previousData,
     error,
     refetch: refetchManuscript,
-  } = useQuery(query, {
+  } = useQuery(MANUSCRIPT_FOR_REVIEW, {
     variables: {
       id: manuscriptId,
       groupId: config.groupId,
@@ -250,73 +181,70 @@ const DecisionPage = ({ currentUser }) => {
     variables: { manuscriptId },
   })
 
-  const [sendEmailMutation] = useMutation(sendEmail)
+  const [sendEmailMutation] = useMutation(SEND_EMAIL)
 
-  const [doUpdateManuscript] = useMutation(updateManuscriptMutation)
+  const [doUpdateManuscript] = useMutation(USER_UPDATE_MANUSCRIPT)
   const [doSendChannelMessage] = useMutation(CREATE_MESSAGE)
-  const [makeDecision] = useMutation(makeDecisionMutation)
-  const [publishManuscript] = useMutation(publishManuscriptMutation)
-  const [updateTeam] = useMutation(UPDATE_TEAM_MUTATION)
-  const [createTeam] = useMutation(CREATE_TEAM_MUTATION)
-  const [updateTeamMember] = useMutation(updateTeamMemberMutation)
+  const [makeDecision] = useMutation(MAKE_DECISION)
+  const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
+  const [updateTeam] = useMutation(UPDATE_TEAM)
+  const [createTeam] = useMutation(CREATE_TEAM)
+  const [updateTeamMember] = useMutation(UPDATE_TEAM_MEMBER)
 
   const [updateCollaborativeTeamMember] = useMutation(
-    updateCollaborativeTeamMemberMutation,
+    UPDATE_COLLABORATIVE_TEAM_MEMBER,
   )
 
-  const [doUpdateReview] = useMutation(updateReviewMutation)
-  const [createFile] = useMutation(createFileMutation)
+  const [doUpdateReview] = useMutation(UPDATE_REVIEW)
+  const [createFile] = useMutation(CREATE_FILE)
   const [updatePendingComment] = useMutation(UPDATE_PENDING_COMMENT)
   const [completeComments] = useMutation(COMPLETE_COMMENTS)
   const [completeComment] = useMutation(COMPLETE_COMMENT)
   const [deletePendingComment] = useMutation(DELETE_PENDING_COMMENT)
-  const [setShouldPublishField] = useMutation(setShouldPublishFieldMutation)
-  const [updateAda] = useMutation(updateAdaMutation)
+  const [setShouldPublishField] = useMutation(SET_SHOULD_PUBLISH_FIELD)
+  const [updateAda] = useMutation(UPDATE_ADA)
 
-  const [lockUnlockReview] = useMutation(
-    lockUnlockCollaborativeReviewMutation,
-    {
-      update: async (cache, { data: { lockUnlockCollaborativeReview } }) => {
-        cache.modify({
-          id: cache.identify({
-            __typename: 'Review',
-            id: lockUnlockCollaborativeReview.id,
-          }),
-          fields: {
-            isLock() {
-              return lockUnlockCollaborativeReview.isLock
-            },
+  const [lockUnlockReview] = useMutation(LOCK_UNLOCK_COLLABORATIVE_REVIEW, {
+    update: async (cache, { data: { lockUnlockCollaborativeReview } }) => {
+      cache.modify({
+        id: cache.identify({
+          __typename: 'Review',
+          id: lockUnlockCollaborativeReview.id,
+        }),
+        fields: {
+          isLock() {
+            return lockUnlockCollaborativeReview.isLock
           },
-        })
+        },
+      })
 
-        const team =
-          data.manuscript.teams.find(
-            tm =>
-              tm.objectId === data.manuscript.id &&
-              tm.objectType === 'manuscript' &&
-              tm.role === 'collaborativeReviewer',
-          ) || {}
+      const team =
+        data.manuscript.teams.find(
+          tm =>
+            tm.objectId === data.manuscript.id &&
+            tm.objectType === 'manuscript' &&
+            tm.role === 'collaborativeReviewer',
+        ) || {}
 
-        if (team.members) {
-          team.members.forEach(member => {
-            cache.modify({
-              id: cache.identify({
-                __typename: 'TeamMember',
-                id: member.id,
-              }),
-              fields: {
-                status() {
-                  return lockUnlockCollaborativeReview.isLock
-                    ? 'closed'
-                    : 'inProgress'
-                },
+      if (team.members) {
+        team.members.forEach(member => {
+          cache.modify({
+            id: cache.identify({
+              __typename: 'TeamMember',
+              id: member.id,
+            }),
+            fields: {
+              status() {
+                return lockUnlockCollaborativeReview.isLock
+                  ? 'closed'
+                  : 'inProgress'
               },
-            })
+            },
           })
-        }
-      },
+        })
+      }
     },
-  )
+  })
 
   const [assignAuthorForProofing] = useMutation(ASSIGN_AUTHOR_FOR_PROOFING, {
     update: (cache, { data: { assignAuthorForProofingManuscript } }) => {
@@ -335,10 +263,10 @@ const DecisionPage = ({ currentUser }) => {
   })
 
   const [updateSharedStatusForInvitedReviewer] = useMutation(
-    UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER_MUTATION,
+    UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER,
   )
 
-  const [addReviewer] = useMutation(addReviewerMutation, {
+  const [addReviewer] = useMutation(ADD_REVIEWER, {
     update: (cache, { data: { addReviewer: revisedReviewersObject } }) => {
       cache.modify({
         id: cache.identify({
@@ -349,18 +277,7 @@ const DecisionPage = ({ currentUser }) => {
           teams(existingTeamRefs = []) {
             const newTeamRef = cache.writeFragment({
               data: revisedReviewersObject,
-              fragment: gql`
-                fragment NewTeam on Team {
-                  id
-                  role
-                  members {
-                    id
-                    user {
-                      id
-                    }
-                  }
-                }
-              `,
+              fragment: NEW_TEAM_FRAGMENT,
             })
 
             return [...existingTeamRefs, newTeamRef]
@@ -370,10 +287,10 @@ const DecisionPage = ({ currentUser }) => {
     },
   })
 
-  const [removeAuthor] = useMutation(removeAuthorMutation)
-  const [removeReviewer] = useMutation(removeReviewerMutation)
+  const [removeAuthor] = useMutation(REMOVE_AUTHOR)
+  const [removeReviewer] = useMutation(REMOVE_REVIEWER)
 
-  const [removeInvitation] = useMutation(removeInvitationMutation, {
+  const [removeInvitation] = useMutation(REMOVE_INVITATION, {
     update: (cache, { data: { removeInvitation: removeRevisedObject } }) => {
       cache.modify({
         id: cache.identify({
@@ -419,7 +336,7 @@ const DecisionPage = ({ currentUser }) => {
     },
   })
 
-  const [deleteFile] = useMutation(deleteFileMutation, {
+  const [deleteFile] = useMutation(DELETE_FILE, {
     update(cache, { data: { deleteFile: fileToDelete } }) {
       const id = cache.identify({
         __typename: 'File',
@@ -435,7 +352,7 @@ const DecisionPage = ({ currentUser }) => {
   // Count In the Collaborative Reviews and choose the correct one.
   const currentUserReview = getCurrentUserReview(data?.manuscript, currentUser)
 
-  useSubscription(reviewFormUpdatedSubscription, {
+  useSubscription(REVIEW_FORM_UPDATED, {
     variables: {
       formId: currentUserReview.id,
     },
@@ -452,7 +369,7 @@ const DecisionPage = ({ currentUser }) => {
           manuscript: { reviews },
         },
       } = await client.query({
-        query,
+        MANUSCRIPT_FOR_REVIEW,
         variables: {
           id: manuscriptId,
           groupId: config.groupId,
@@ -553,11 +470,7 @@ const DecisionPage = ({ currentUser }) => {
             reviews(existingReviewRefs = [], { readField }) {
               const newReviewRef = cache.writeFragment({
                 data: updatedReview,
-                fragment: gql`
-                  fragment NewReview on Review {
-                    id
-                  }
-                `,
+                fragment: NEW_REVIEW_FRAGMENT,
               })
 
               if (

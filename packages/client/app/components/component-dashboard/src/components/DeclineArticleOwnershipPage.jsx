@@ -8,13 +8,13 @@ import { useTranslation } from 'react-i18next'
 import { Field, Formik } from 'formik'
 
 import { Button, Checkbox, Spinner, TextArea } from '../../../pubsweet'
-import { ADD_EMAIL_TO_BLACKLIST } from '../../../../queries/index'
 import {
+  ADD_EMAIL_TO_BLACKLIST,
   UPDATE_INVITATION_RESPONSE,
   UPDATE_INVITATION_STATUS,
   GET_INVITATION_STATUS,
   GET_LOGGED_IN_USER,
-} from '../../../../queries/invitation'
+} from '../../../../queries'
 import { ConfigContext } from '../../../config/src'
 
 import {

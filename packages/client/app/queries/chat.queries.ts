@@ -1,6 +1,55 @@
 import { gql } from '@apollo/client'
 
-export const MESSAGES_SUBSCRIPTION = gql`
+export const CREATE_MESSAGE = gql`
+  mutation CreateMessage($content: String, $channelId: String) {
+    createMessage(content: $content, channelId: $channelId) {
+      content
+      user {
+        username
+      }
+    }
+  }
+`
+export const DELETE_MESSAGE = gql`
+  mutation DeleteMessage($messageId: ID!) {
+    deleteMessage(messageId: $messageId) {
+      id
+      content
+    }
+  }
+`
+
+export const UPDATE_MESSAGE = gql`
+  mutation UpdateMessage($messageId: ID!, $content: String!) {
+    updateMessage(messageId: $messageId, content: $content) {
+      content
+    }
+  }
+`
+
+export const GET_SYSTEM_WIDE_DISCUSSION_CHANNEL = gql`
+  query SystemWideDiscussionChannel($groupId: ID!) {
+    systemWideDiscussionChannel(groupId: $groupId) {
+      id
+      type
+    }
+  }
+`
+
+export const GET_MESSAGE_BY_ID = gql`
+  query MessageById($messageId: ID) {
+    message(messageId: $messageId) {
+      id
+      content
+      user {
+        username
+        profilePicture
+      }
+    }
+  }
+`
+
+export const MESSAGES = gql`
   subscription messageCreated($channelId: ID!) {
     messageCreated(channelId: $channelId) {
       id
@@ -25,7 +74,7 @@ export const MESSAGES_SUBSCRIPTION = gql`
   }
 `
 
-export const MESSAGE_DELETED_SUBSCRIPTION = gql`
+export const MESSAGE_DELETED = gql`
   subscription messageDeleted($channelId: ID!) {
     messageDeleted(channelId: $channelId) {
       id
@@ -34,7 +83,7 @@ export const MESSAGE_DELETED_SUBSCRIPTION = gql`
   }
 `
 
-export const MESSAGE_UPDATED_SUBSCRIPTION = gql`
+export const MESSAGE_UPDATED = gql`
   subscription messageUpdated($channelId: ID!) {
     messageUpdated(channelId: $channelId) {
       id
@@ -137,7 +186,16 @@ export const GET_MESSAGES = gql`
 `
 
 export const GET_UNREAD_MESSAGES_COUNT = gql`
-  query unreadMessagesCount($channelIds: [ID!]!) {
+  query UnreadMessagesCount($channelIds: [ID!]!) {
     unreadMessagesCount(channelIds: $channelIds)
+  }
+`
+
+export const EXPAND_CHAT = gql`
+  mutation ExpandChat($state: Boolean!) {
+    expandChat(state: $state) {
+      id
+      chatExpanded
+    }
   }
 `

@@ -2,20 +2,10 @@
 
 import React from 'react'
 import Modal from 'react-modal'
-import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { Spinner, CommsErrorBanner } from '../../../shared'
 import { CloseButton, PopUpTextContainer, PopUpH2 } from './styles'
-
-const getJatsQuery = gql`
-  query ConvertToJats($manuscriptId: String!) {
-    convertToJats(manuscriptId: $manuscriptId) {
-      xml
-      zipLink
-      error
-    }
-  }
-`
+import { CONVERT_TO_JATS } from '../../../../queries'
 
 const DownloadJatsComponent = ({ manuscript, resetMakingJats }) => {
   const [downloading, setDownloading] = React.useState(false)
@@ -26,7 +16,7 @@ const DownloadJatsComponent = ({ manuscript, resetMakingJats }) => {
     'This link is available for 24 hours',
   )
 
-  const { data, loading, error } = useQuery(getJatsQuery, {
+  const { data, loading, error } = useQuery(CONVERT_TO_JATS, {
     fetchPolicy: 'cache-and-network',
     variables: {
       manuscriptId: manuscript.id,

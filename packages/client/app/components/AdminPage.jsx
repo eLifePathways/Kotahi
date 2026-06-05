@@ -42,7 +42,7 @@ import CMSArticlePage from './component-cms-manager/src/CMSArticlePage'
 import CMSMetadataPage from './component-cms-manager/src/CMSMetadataPage'
 import CMSPublishingCollectionPage from './component-cms-manager/src/CMSPublishingCollectionPage'
 import CMSFileBrowserPage from './component-cms-manager/src/CMSFileBrowserPage'
-import QUERY from './adminPageQueries'
+import { CURRENT_USER } from '../queries'
 
 import Menu from './Menu'
 import { Spinner, PageError } from './shared'
@@ -116,7 +116,7 @@ const AdminPage = () => {
   const { t } = useTranslation()
   const client = useApolloClient()
 
-  const { loading, error, data } = useQuery(QUERY, {
+  const { loading, error, data } = useQuery(CURRENT_USER, {
     fetchPolicy: 'network-only',
     pollInterval: 120000,
   })

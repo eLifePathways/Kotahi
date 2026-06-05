@@ -11,8 +11,11 @@ import {
   URI_PAGENUM_PARAM,
   useQueryParams,
 } from '../../../../shared/urlParamUtils'
-import mutations from '../graphql/mutations'
-import queries from '../graphql/queries'
+import {
+  UPDATE_TAB,
+  REMOVE_TASK_ALERTS_FOR_CURRENT_USER,
+  DASHBOARD,
+} from '../../../../queries'
 import EditorTable from './sections/EditorTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
@@ -34,7 +37,7 @@ const DashboardEditsPage = ({ currentUser }) => {
 
   const limit = config?.manuscript?.paginationCount || 10
 
-  const { data, loading, error } = useQuery(queries.dashboard, {
+  const { data, loading, error } = useQuery(DASHBOARD, {
     variables: {
       wantedRoles,
       sort: sortName
@@ -50,7 +53,7 @@ const DashboardEditsPage = ({ currentUser }) => {
     fetchPolicy: 'network-only',
   })
 
-  const [updateTab] = useMutation(mutations.updateTab)
+  const [updateTab] = useMutation(UPDATE_TAB)
 
   const [update] = useMutation(updateMutation)
   const [doUpdateManuscript] = useMutation(updateManuscriptMutation)
@@ -82,7 +85,7 @@ const DashboardEditsPage = ({ currentUser }) => {
   }
 
   const [removeTaskAlertsForCurrentUser] = useMutation(
-    mutations.removeTaskAlertsForCurrentUserMutation,
+    REMOVE_TASK_ALERTS_FOR_CURRENT_USER,
   )
 
   useEffect(() => {

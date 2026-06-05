@@ -2,17 +2,9 @@
 
 import React from 'react'
 import Modal from 'react-modal'
-import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { Spinner } from '../../../shared'
-
-const getPdfQuery = gql`
-  query ConvertToPdf($manuscriptId: String!, $useHtml: Boolean) {
-    convertToPdf(manuscriptId: $manuscriptId, useHtml: $useHtml) {
-      pdfUrl
-    }
-  }
-`
+import { CONVERT_TO_PDF } from '../../../../queries'
 
 const getSimplifiedTitle = title => {
   if (!title) return 'title'
@@ -31,7 +23,7 @@ const DownloadPdfComponent = ({ manuscript, resetMakingPdf }) => {
   const [downloading, setDownloading] = React.useState(false)
   const [modalIsOpen, setModalIsOpen] = React.useState(true)
 
-  const { data, loading, error } = useQuery(getPdfQuery, {
+  const { data, loading, error } = useQuery(CONVERT_TO_PDF, {
     fetchPolicy: 'network-only',
     variables: {
       manuscriptId: manuscript.id,

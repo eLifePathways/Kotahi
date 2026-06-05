@@ -16,7 +16,7 @@ import {
 } from '../../../shared'
 import { ValidatedFieldFormik } from '../../../pubsweet'
 import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
-import { CREATE_FILE_MUTATION, DELETE_FILE_MUTATION } from '../../../../queries'
+import { CREATE_FILE, DELETE_FILE } from '../../../../queries'
 import SubmittedStatus from './SubmittedStatus'
 import { Legend } from '../../../component-submit/src/style'
 
@@ -111,9 +111,9 @@ const AuthorFeedbackForm = ({
     : t('productionPage.Submit')
 
   // Below are the create, delete file and formData save, submit actions
-  const [createFile] = useMutation(CREATE_FILE_MUTATION)
+  const [createFile] = useMutation(CREATE_FILE)
 
-  const [deleteFile] = useMutation(DELETE_FILE_MUTATION, {
+  const [deleteFile] = useMutation(DELETE_FILE, {
     update(cache, { data: { deleteFile: fileToDelete } }) {
       const id = cache.identify({
         __typename: 'File',

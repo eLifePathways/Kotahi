@@ -102,3 +102,55 @@ export const GET_LOGGED_IN_USER = gql`
     }
   }
 `
+
+export const REMOVE_INVITATION = gql`
+  mutation RemoveInvitation($id: ID!) {
+    removeInvitation(id: $id) {
+      id
+      manuscriptId
+      toEmail
+    }
+  }
+`
+
+export const UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER = gql`
+  mutation UpdateSharedStatusForInvitedReviewer(
+    $invitationId: ID!
+    $isShared: Boolean!
+  ) {
+    updateSharedStatusForInvitedReviewer(
+      invitationId: $invitationId
+      isShared: $isShared
+    ) {
+      id
+      isShared
+    }
+  }
+`
+
+export const GET_EMAIL_INVITED_REVIEWERS = gql`
+  query GetEmailInvitedReviewers($manuscriptId: ID!) {
+    getEmailInvitedReviewers(manuscriptId: $manuscriptId) {
+      id
+      invitedPersonName
+      isShared
+      status
+    }
+  }
+`
+
+export const GET_BLACKLIST_INFORMATION = gql`
+  query GetBlacklistInformation($email: String!, $groupId: ID!) {
+    getBlacklistInformation(email: $email, groupId: $groupId) {
+      id
+    }
+  }
+`
+
+export const ADD_EMAIL_TO_BLACKLIST = gql`
+  mutation AddEmailToBlacklist($email: String!, $groupId: ID!) {
+    addEmailToBlacklist(email: $email, groupId: $groupId) {
+      email
+    }
+  }
+`

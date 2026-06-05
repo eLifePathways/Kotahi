@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { th } from '@coko/client'
 import { color, space } from '../../../theme'
 import { Spinner, CommsErrorBanner, PlainOrRichText } from '../../shared'
-import query from './artifactQuery'
+import { PUBLISHED_MANUSCRIPT_AND_FORMS } from '../../../queries'
 
 const Page = styled.div`
   background: ${color.gray60};
@@ -40,7 +40,7 @@ const DetailText = styled.div`
 `
 
 const ArticleArtifactPage = ({ match }) => {
-  const { loading, data, error } = useQuery(query, {
+  const { loading, data, error } = useQuery(PUBLISHED_MANUSCRIPT_AND_FORMS, {
     variables: { id: match.params.version },
     fetchPolicy: 'network-only',
   })

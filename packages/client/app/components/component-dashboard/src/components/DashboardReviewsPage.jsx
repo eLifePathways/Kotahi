@@ -5,7 +5,12 @@ import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ConfigContext } from '../../../config/src'
-import { UPDATE_REVIEWER_STATUS_MUTATION } from '../../../../queries/team'
+import {
+  UPDATE_REVIEWER_STATUS,
+  REVIEWER_RESPONSE,
+  UPDATE_TAB,
+  DASHBOARD,
+} from '../../../../queries'
 import {
   extractFilters,
   extractSortData,
@@ -13,8 +18,6 @@ import {
   URI_REVIEWER_STATUS_PARAM,
   useQueryParams,
 } from '../../../../shared/urlParamUtils'
-import mutations from '../graphql/mutations'
-import queries from '../graphql/queries'
 import ReviewerTable from './sections/ReviewerTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 import { updateMutation } from '../../../component-submit/src/components/SubmitPage'
@@ -47,7 +50,7 @@ const DashboardReviewsPage = ({ currentUser }) => {
 
   const limit = config?.manuscript?.paginationCount || 10
 
-  const { loading, error, data } = useQuery(queries.dashboard, {
+  const { loading, error, data } = useQuery(DASHBOARD, {
     variables: {
       reviewerStatus: uriQueryParams.get(URI_REVIEWER_STATUS_PARAM),
       wantedRoles,
@@ -93,9 +96,9 @@ const DashboardReviewsPage = ({ currentUser }) => {
     })
   }
 
-  const [updateTab] = useMutation(mutations.updateTab)
-  const [reviewerRespond] = useMutation(mutations.reviewerResponseMutation)
-  const [updateReviewerStatus] = useMutation(UPDATE_REVIEWER_STATUS_MUTATION)
+  const [updateTab] = useMutation(UPDATE_TAB)
+  const [reviewerRespond] = useMutation(REVIEWER_RESPONSE)
+  const [updateReviewerStatus] = useMutation(UPDATE_REVIEWER_STATUS)
 
   useEffect(() => {
     updateTab({

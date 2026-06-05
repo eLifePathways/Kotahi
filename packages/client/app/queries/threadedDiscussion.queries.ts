@@ -101,3 +101,11 @@ export const DELETE_PENDING_COMMENT = gql`
     }
   }
 `
+
+export const CREATE_THREAD = gql`
+  mutation CreateThread($id: ID!, $decision: String) {
+    createThread(id: $id, decision: $decision) {
+      id
+    }
+  }
+`

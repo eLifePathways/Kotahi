@@ -1,36 +1,21 @@
 import { useSubscription } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 
-const FILES_UPLOADED_SUBSCRIPTION = gql`
-  subscription FilesUploaded {
-    filesUploaded
-  }
-`
-
-const FILES_DELETED_SUBSCRIPTION = gql`
-  subscription FilesDeleted {
-    filesDeleted
-  }
-`
-
-const FILE_UPDATED_SUBSCRIPTION = gql`
-  subscription FileUpdated {
-    fileUpdated {
-      id
-    }
-  }
-`
+import {
+  FILES_DELETED,
+  FILES_UPLOADED,
+  FILE_UPDATED,
+} from '../../../../queries'
 
 const useFilesUploadedSubscription = refetch => {
-  useSubscription(FILES_UPLOADED_SUBSCRIPTION, { onData: () => refetch() })
+  useSubscription(FILES_UPLOADED, { onData: () => refetch() })
 }
 
 const useFilesDeletedSubscription = refetch => {
-  useSubscription(FILES_DELETED_SUBSCRIPTION, { onData: () => refetch() })
+  useSubscription(FILES_DELETED, { onData: () => refetch() })
 }
 
 const useFileUpdatedSubscription = refetch => {
-  useSubscription(FILE_UPDATED_SUBSCRIPTION, { onData: () => refetch() })
+  useSubscription(FILE_UPDATED, { onData: () => refetch() })
 }
 
 export {

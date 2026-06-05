@@ -20,17 +20,17 @@ import { EditPageContainer } from './style'
 import { ConfigContext } from '../../config/src'
 
 import {
-  getCmsFileContent,
-  updateResource,
-  getCmsFilesTree,
-  addResourceToFolder,
-  deleteResource,
-  renameResource,
-  getFoldersList,
-  updateFlaxRootFolder,
-  rebuildFlaxSiteMutation,
-  getSubmissionForm,
-} from './queries'
+  GET_CMS_FILE_CONTENT,
+  UPDATE_RESOURCE,
+  GET_CMS_FILES_TREE,
+  ADD_RESOURCE_TO_FOLDER,
+  DELETE_RESOURCE,
+  RENAME_RESOURCE,
+  GET_FOLDERS_LIST,
+  UPDATE_FLAX_ROOT_FOLDER,
+  REBUILD_FLAX_SITE,
+  CMS_GET_SUBMISSION_FORM,
+} from '../../../queries'
 
 const StyledCodeMirror = styled(CodeMirror)`
   flex: 1;
@@ -99,23 +99,26 @@ const CMSFileBrowserPage = () => {
 
   const [imageSrc, setImageSrc] = useState('')
   const [treeData, setTreeData] = useState({})
-  const [addObject] = useMutation(addResourceToFolder)
-  const [deleteObject] = useMutation(deleteResource)
-  const [renameObject] = useMutation(renameResource)
-  const [updateFlaxFolder] = useMutation(updateFlaxRootFolder)
-  const [rebuildFlaxSite] = useMutation(rebuildFlaxSiteMutation)
+  const [addObject] = useMutation(ADD_RESOURCE_TO_FOLDER)
+  const [deleteObject] = useMutation(DELETE_RESOURCE)
+  const [renameObject] = useMutation(RENAME_RESOURCE)
+  const [updateFlaxFolder] = useMutation(UPDATE_FLAX_ROOT_FOLDER)
+  const [rebuildFlaxSite] = useMutation(REBUILD_FLAX_SITE)
 
   const {
     loading: loadingFolders,
     data: dataFolders,
     refetch,
-  } = useQuery(getFoldersList)
+  } = useQuery(GET_FOLDERS_LIST)
 
-  const { data: metadata, loadingMetadata } = useQuery(getSubmissionForm, {
-    variables: {
-      groupId,
+  const { data: metadata, loadingMetadata } = useQuery(
+    CMS_GET_SUBMISSION_FORM,
+    {
+      variables: {
+        groupId,
+      },
     },
-  })
+  )
 
   const [activeContent, setActiveContent] = useState({
     id: null,
@@ -125,9 +128,9 @@ const CMSFileBrowserPage = () => {
     isImage: false,
   })
 
-  const [updateObject] = useMutation(updateResource)
+  const [updateObject] = useMutation(UPDATE_RESOURCE)
 
-  const [getFileData] = useLazyQuery(getCmsFileContent, {
+  const [getFileData] = useLazyQuery(GET_CMS_FILE_CONTENT, {
     onCompleted: ({ getCmsFileContent: Content }) => {
       const extension = Content.name.split('.').pop().toLowerCase()
       const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg']
@@ -146,7 +149,7 @@ const CMSFileBrowserPage = () => {
     },
   })
 
-  const [getTreeData, { loading, error }] = useLazyQuery(getCmsFilesTree, {
+  const [getTreeData, { loading, error }] = useLazyQuery(GET_CMS_FILES_TREE, {
     fetchPolicy: 'network-only',
     onCompleted: ({ getCmsFilesTree: data }) => {
       if (isEmpty(treeData)) {

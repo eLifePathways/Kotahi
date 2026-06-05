@@ -11,8 +11,7 @@ import {
   URI_PAGENUM_PARAM,
   useQueryParams,
 } from '../../../../shared/urlParamUtils'
-import mutations from '../graphql/mutations'
-import queries from '../graphql/queries'
+import { UPDATE_TAB, DASHBOARD } from '../../../../queries'
 import SubmissionsTable from './sections/SubmissionsTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
@@ -31,7 +30,7 @@ const DashboardSubmissionsPage = ({ currentUser }) => {
 
   const limit = config?.manuscript?.paginationCount || 10
 
-  const { loading, error, data } = useQuery(queries.dashboard, {
+  const { loading, error, data } = useQuery(DASHBOARD, {
     variables: {
       wantedRoles,
       sort: sortName
@@ -47,7 +46,7 @@ const DashboardSubmissionsPage = ({ currentUser }) => {
     fetchPolicy: 'network-only',
   })
 
-  const [updateTab] = useMutation(mutations.updateTab)
+  const [updateTab] = useMutation(UPDATE_TAB)
 
   useEffect(() => {
     updateTab({

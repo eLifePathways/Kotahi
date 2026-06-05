@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Container } from '../../../shared'
-import { GET_INVITATION_STATUS } from '../../../../queries/invitation'
+import { GET_INVITATION_STATUS } from '../../../../queries'
 import { ConfigContext } from '../../../config/src'
 import InvitationError from './InvitationError'
 

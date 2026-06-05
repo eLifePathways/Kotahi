@@ -3,7 +3,6 @@
 import { useCallback, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -23,24 +22,7 @@ import {
 import { HeadingCell } from '../styles'
 import UploadComponent from './UploadComponent'
 import { TagDropdown } from './TagDropDown'
-
-const UPDATE_TAG_FILE = gql`
-  mutation UpdateTagsFile($input: UpdateTagsFileInput!) {
-    updateTagsFile(input: $input) {
-      id
-      name
-      tags
-      created
-      storedObjects {
-        type
-        key
-        mimetype
-        size
-        url
-      }
-    }
-  }
-`
+import { UPDATE_FILE_TAGS } from '../../../../../queries'
 
 const UploadAssetContainer = styled(Container)`
   display: flex;
@@ -106,7 +88,7 @@ const UploadAsset = ({
   const { t } = useTranslation()
   const [fileBeingDeletedId, setFileBeingDeletedId] = useState(null)
   const [filesState, setFilesState] = useState(files)
-  const [updateFile] = useMutation(UPDATE_TAG_FILE)
+  const [updateFile] = useMutation(UPDATE_FILE_TAGS)
 
   const uploadAssetsFn = useCallback(
     fileType => async acceptedFiles => {

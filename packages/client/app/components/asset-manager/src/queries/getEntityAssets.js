@@ -1,31 +1,6 @@
-import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 
-const GET_ENTITY_FILES = gql`
-  query GetEntityFilesQuery($input: EntityFilesInput) {
-    getEntityFiles(input: $input) {
-      id
-      name
-      alt
-      objectId
-      updated
-      inUse
-      storedObjects {
-        type
-        key
-        mimetype
-        size
-        url
-        imageMetadata {
-          width
-          height
-          space
-          density
-        }
-      }
-    }
-  }
-`
+import { GET_ENTITY_FILES } from '../../../../queries'
 
 const useGetEntityFiles = entityId =>
   useQuery(GET_ENTITY_FILES, {
@@ -42,5 +17,4 @@ const useGetEntityFiles = entityId =>
     },
   })
 
-export { GET_ENTITY_FILES }
 export default useGetEntityFiles

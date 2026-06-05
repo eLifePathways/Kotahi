@@ -22,14 +22,15 @@ import {
   GET_MANUSCRIPTS_AND_FORM,
   DELETE_MANUSCRIPT,
   IMPORT_MANUSCRIPTS,
-  IMPORTED_MANUSCRIPTS_SUBSCRIPTION,
+  IMPORTED_MANUSCRIPTS,
   GET_SYSTEM_WIDE_DISCUSSION_CHANNEL,
   ARCHIVE_MANUSCRIPTS,
   GET_MANUSCRIPTS_DATA,
   UNARCHIVE_MANUSCRIPTS,
+  PUBLISH_MANUSCRIPT,
+  EXPAND_CHAT,
 } from '../../../queries'
 import { updateMutation } from '../../component-submit/src/components/SubmitPage'
-import { publishManuscriptMutation } from '../../component-review/src/components/queries'
 import Manuscripts from './Manuscripts'
 import {
   extractFilters,
@@ -41,7 +42,6 @@ import {
 import { validateDoi, validateSuffix } from '../../../shared/commsUtils'
 import useChat from '../../../hooks/useChat'
 import { updateManuscriptMutation } from '../../component-review/src/components/DecisionPage'
-import mutations from '../../component-dashboard/src/graphql/mutations'
 
 const ManuscriptsPage = ({ currentUser }) => {
   const location = useLocation()
@@ -91,7 +91,7 @@ const ManuscriptsPage = ({ currentUser }) => {
     },
   )
 
-  useSubscription(IMPORTED_MANUSCRIPTS_SUBSCRIPTION, {
+  useSubscription(IMPORTED_MANUSCRIPTS, {
     onSubscriptionData: data => {
       const {
         subscriptionData: {
@@ -253,9 +253,9 @@ const ManuscriptsPage = ({ currentUser }) => {
   }
 
   const [update] = useMutation(updateMutation)
-  const [chatExpand] = useMutation(mutations.updateChatUI)
+  const [chatExpand] = useMutation(EXPAND_CHAT)
 
-  const [doPublishManuscript] = useMutation(publishManuscriptMutation)
+  const [doPublishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
   const client = useApolloClient()
 
   const publishManuscript = async manuscriptId => {

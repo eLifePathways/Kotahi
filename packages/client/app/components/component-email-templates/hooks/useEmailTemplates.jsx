@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client/react'
-import { GET_EMAIL_TEMPLATES } from '../../../queries'
 import {
-  CREATE_TEMPLATE,
-  DELETE_TEMPLATE,
-  UPDATE_TEMPLATE,
-} from '../graphql/mutations'
+  GET_EMAIL_TEMPLATES,
+  CREATE_EMAIL_TEMPLATE,
+  DELETE_EMAIL_TEMPLATE,
+  UPDATE_EMAIL_TEMPLATE,
+} from '../../../queries'
 import { safeCall } from '../../../shared/generalUtils'
 
 /**
@@ -25,17 +25,17 @@ const useEmailTemplates = ({ onFetch, onCreate, onUpdate, onDelete }) => {
     onCompleted: safeCall(onFetch),
   })
 
-  const [createTemplate] = useMutation(CREATE_TEMPLATE, {
+  const [createTemplate] = useMutation(CREATE_EMAIL_TEMPLATE, {
     refetchQueries: [{ query: GET_EMAIL_TEMPLATES }],
     onCompleted: safeCall(onCreate),
   })
 
-  const [deleteTemplate] = useMutation(DELETE_TEMPLATE, {
+  const [deleteTemplate] = useMutation(DELETE_EMAIL_TEMPLATE, {
     refetchQueries: [{ query: GET_EMAIL_TEMPLATES }],
     onCompleted: safeCall(onDelete),
   })
 
-  const [updateTemplate] = useMutation(UPDATE_TEMPLATE, {
+  const [updateTemplate] = useMutation(UPDATE_EMAIL_TEMPLATE, {
     refetchQueries: [{ query: GET_EMAIL_TEMPLATES }],
     onCompleted: safeCall(onUpdate),
   })

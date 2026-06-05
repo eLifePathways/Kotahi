@@ -15,12 +15,12 @@ import { EditPageContainer, EditPageLeft, EditPageRight } from './style'
 import PageHeader from './components/PageHeader'
 
 import {
-  createCMSPageMutation,
-  getCMSPages,
-  updateCMSPageDataMutation,
-  rebuildFlaxSiteMutation,
-  deleteCMSPageMutation,
-} from './queries'
+  GET_CMS_PAGES,
+  CREATE_CMS_PAGE,
+  UPDATE_CMS_PAGE_DATA,
+  REBUILD_FLAX_SITE,
+  DELETE_CMS_PAGE,
+} from '../../../queries'
 
 const CMSPagesPage = () => {
   const navigate = useNavigate()
@@ -35,12 +35,12 @@ const CMSPagesPage = () => {
     data,
     error,
     refetch: refetchCMSPages,
-  } = useQuery(getCMSPages)
+  } = useQuery(GET_CMS_PAGES)
 
-  const [createNewCMSPage] = useMutation(createCMSPageMutation)
-  const [updatePageDataQuery] = useMutation(updateCMSPageDataMutation)
-  const [rebuildFlaxSiteQuery] = useMutation(rebuildFlaxSiteMutation)
-  const [deleteCMSPage] = useMutation(deleteCMSPageMutation)
+  const [createNewCMSPage] = useMutation(CREATE_CMS_PAGE)
+  const [updatePageDataQuery] = useMutation(UPDATE_CMS_PAGE_DATA)
+  const [rebuildFlaxSiteQuery] = useMutation(REBUILD_FLAX_SITE)
+  const [deleteCMSPage] = useMutation(DELETE_CMS_PAGE)
 
   const flaxSiteUrlForGroup = `${config.flaxSiteUrl}/${groupName}/`
 

@@ -17,7 +17,6 @@ import {
 } from 'react-feather'
 import { takeRight } from 'lodash'
 import { useLazyQuery } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import Editor from './components/Editor'
 import PromptsInput from './PromptsInput'
 import {
@@ -42,16 +41,7 @@ import Checkbox from './components/Checkbox'
 // import useChatGpt from './hooks/useChatGpt'
 import { color } from '../../theme'
 import { ConfigContext } from '../config/src'
-
-const CHAT_GPT_QUERY = gql`
-  query ChatGpt(
-    $input: UserMessage!
-    $groupId: ID!
-    $history: [OpenAiMessage]
-  ) {
-    openAi(input: $input, groupId: $groupId, history: $history)
-  }
-`
+import { CHAT_GPT } from '../../queries'
 
 // #region styled
 const Assistant = styled(PromptsInput)`
@@ -353,7 +343,7 @@ const AiPDFDesigner = ({
     ...passedSettings,
   })
 
-  const [callOpenAi, { loading, error }] = useLazyQuery(CHAT_GPT_QUERY, {
+  const [callOpenAi, { loading, error }] = useLazyQuery(CHAT_GPT, {
     onCompleted: ({ openAi: chatGPT }) => {
       // eslint-disable-next-line camelcase
       const { message = '', finish_reason = '' } = JSON.parse(chatGPT)

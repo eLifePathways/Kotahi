@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useMutation, useQuery, useSubscription } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import ReviewLayout from './review/ReviewLayout'
@@ -13,225 +12,17 @@ import {
   COMPLETE_COMMENTS,
   COMPLETE_COMMENT,
   DELETE_PENDING_COMMENT,
-} from '../../../component-formbuilder/src/components/builderComponents/ThreadedDiscussion/queries'
-import { UPDATE_REVIEWER_STATUS_MUTATION } from '../../../../queries/team'
+  UPDATE_REVIEWER_STATUS,
+  CREATE_FILE,
+  DELETE_FILE,
+  UPDATE_REVIEW,
+  MANUSCRIPT,
+  EXPAND_CHAT,
+  REVIEW_FORM_UPDATED,
+} from '../../../../queries'
 import useChat from '../../../../hooks/useChat'
-import mutations from '../../../component-dashboard/src/graphql/mutations'
-import { reviewFormUpdatedSubscription } from './reviewSubscriptions'
 
 import { getCurrentUserReview } from './review/util'
-
-const createFileMutation = gql`
-  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
-    createFile(file: $file, meta: $meta) {
-      id
-      created
-      name
-      updated
-      name
-      tags
-      objectId
-      storedObjects {
-        key
-        mimetype
-        url
-      }
-    }
-  }
-`
-
-const deleteFileMutation = gql`
-  mutation DeleteFile($id: ID!) {
-    deleteFile(id: $id)
-  }
-`
-
-const reviewFields = `
-  id
-  created
-  updated
-  jsonData
-  isDecision
-  isHiddenReviewerName
-  isCollaborative
-  isLock
-  canBePublishedPublicly
-  isSharedWithCurrentUser
-  user {
-    id
-    username
-    defaultIdentity {
-      id
-      identifier
-    }
-  }
-`
-
-const fragmentFields = `
-  id
-  shortId
-  created
-  files {
-    id
-    created
-    updated
-    name
-    tags
-    storedObjects {
-      key
-      mimetype
-      url
-    }
-  }
-  reviews {
-    ${reviewFields}
-  }
-  decision
-  teams {
-    id
-    displayName
-    role
-    objectId
-    objectType
-    members {
-      id
-      user {
-        id
-        username
-      }
-      status
-      isShared
-    }
-  }
-  status
-  meta {
-    manuscriptId
-    source
-		comments
-    history {
-      type
-      date
-    }
-  }
-  submission
-`
-
-const formStructure = `
-  structure {
-    name
-    description
-    haspopup
-    popuptitle
-    popupdescription
-    children {
-      title
-      shortDescription
-      id
-      component
-      name
-      description
-      doiValidation
-      doiUniqueSuffixValidation
-      allowFutureDatesOnly
-      placeholder
-      parse
-      format
-      options {
-        id
-        label
-        labelColor
-        defaultValue
-        value
-      }
-      validate {
-        id
-        label
-        value
-      }
-      validateValue {
-        minChars
-        maxChars
-        minSize
-      }
-      isReadOnly
-      hideFromReviewers
-    }
-  }
-`
-
-const query = gql`
-  query Manuscript($id: ID!, $groupId: ID) {
-    manuscript(id: $id) {
-      parentId
-      ${fragmentFields}
-      manuscriptVersions {
-        ${fragmentFields}
-      }
-      channels {
-        id
-        type
-        topic
-      }
-    }
-
-    versionsOfManuscriptCurrentUserIsReviewerOf(manuscriptId: $id)
-
-    threadedDiscussions(manuscriptId: $id) {
-      id
-      created
-      updated
-      manuscriptId
-      threads {
-        id
-        comments {
-          id
-          manuscriptVersionId
-          commentVersions {
-            id
-            author {
-              id
-              username
-              profilePicture
-            }
-            comment
-            created
-          }
-          pendingVersion {
-            author {
-              id
-              username
-              profilePicture
-            }
-            comment
-          }
-        }
-      }
-      userCanAddComment
-      userCanEditOwnComment
-      userCanEditAnyComment
-    }
-
-    submissionForm: formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {
-      ${formStructure}
-    }
-
-    reviewForm: formForPurposeAndCategory(purpose: "review", category: "review", groupId: $groupId) {
-      ${formStructure}
-    }
-
-    decisionForm: formForPurposeAndCategory(purpose: "decision", category: "decision", groupId: $groupId) {
-      ${formStructure}
-    }
-  }
-`
-
-const updateReviewMutationQuery = gql`
-  mutation UpdateReview($id: ID, $input: ReviewInput) {
-    updateReview(id: $id, input: $input) {
-      ${reviewFields}
-    }
-  }
-`
 
 const ReviewPage = ({ currentUser }) => {
   const params = useParams()
@@ -239,16 +30,16 @@ const ReviewPage = ({ currentUser }) => {
   const config = useContext(ConfigContext)
 
   const { urlFrag } = config
-  const [updateReviewMutation] = useMutation(updateReviewMutationQuery)
-  const [updateReviewerStatus] = useMutation(UPDATE_REVIEWER_STATUS_MUTATION)
-  const [createFile] = useMutation(createFileMutation)
+  const [updateReviewMutation] = useMutation(UPDATE_REVIEW)
+  const [updateReviewerStatus] = useMutation(UPDATE_REVIEWER_STATUS)
+  const [createFile] = useMutation(CREATE_FILE)
   const [updatePendingComment] = useMutation(UPDATE_PENDING_COMMENT)
   const [completeComments] = useMutation(COMPLETE_COMMENTS)
   const [completeComment] = useMutation(COMPLETE_COMMENT)
   const [deletePendingComment] = useMutation(DELETE_PENDING_COMMENT)
-  const [chatExpand] = useMutation(mutations.updateChatUI)
+  const [chatExpand] = useMutation(EXPAND_CHAT)
 
-  const [deleteFile] = useMutation(deleteFileMutation, {
+  const [deleteFile] = useMutation(DELETE_FILE, {
     update(cache, { data: { deleteFile: fileToDelete } }) {
       const id = cache.identify({
         __typename: 'File',
@@ -259,7 +50,7 @@ const ReviewPage = ({ currentUser }) => {
     },
   })
 
-  const { loading, error, data } = useQuery(query, {
+  const { loading, error, data } = useQuery(MANUSCRIPT, {
     variables: {
       id: params.version,
       groupId: config.groupId,
@@ -270,7 +61,7 @@ const ReviewPage = ({ currentUser }) => {
   // Count In the Collaborative Reviews and choose the correct one.
   const currentUserReview = getCurrentUserReview(data?.manuscript, currentUser)
 
-  useSubscription(reviewFormUpdatedSubscription, {
+  useSubscription(REVIEW_FORM_UPDATED, {
     variables: {
       formId: currentUserReview.id,
     },
@@ -288,7 +79,7 @@ const ReviewPage = ({ currentUser }) => {
           manuscript: { reviews },
         },
       } = await client.query({
-        query,
+        MANUSCRIPT,
         variables: {
           id: params.version,
           groupId: config.groupId,

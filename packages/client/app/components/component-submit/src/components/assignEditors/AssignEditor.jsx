@@ -3,33 +3,15 @@
 
 import { useContext, useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import PropTypes from 'prop-types'
 import { Select } from '../../../../shared'
-import {
-  CREATE_TEAM_MUTATION,
-  UPDATE_TEAM_MUTATION,
-} from '../../../../../queries/team'
+import { CREATE_TEAM, UPDATE_TEAM, GET_ALL_USERS } from '../../../../../queries'
 import { ConfigContext } from '../../../../config/src'
 
 const editorOption = user => ({
   label: user.username || user.email || user.defaultIdentity?.name,
   value: user.id,
 })
-
-const query = gql`
-  {
-    users {
-      id
-      username
-      email
-      defaultIdentity {
-        id
-        name
-      }
-    }
-  }
-`
 
 // TODO Instead use ../../../../component-review/src/components/assignEditors/AssignEditor.js and delete this file
 const AssignEditor = ({ teamRole, manuscript }) => {
@@ -102,10 +84,10 @@ const AssignEditor = ({ teamRole, manuscript }) => {
     t => t.role === teamRole,
   )?.displayName
 
-  const { data, loading, error } = useQuery(query)
+  const { data, loading, error } = useQuery(GET_ALL_USERS)
 
-  const [updateTeam] = useMutation(UPDATE_TEAM_MUTATION)
-  const [createTeam] = useMutation(CREATE_TEAM_MUTATION)
+  const [updateTeam] = useMutation(UPDATE_TEAM)
+  const [createTeam] = useMutation(CREATE_TEAM)
 
   if (loading || error) {
     return null
