@@ -1353,9 +1353,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coko/server@npm:^5.0.0-alpha.17":
-  version: 5.0.0-alpha.17
-  resolution: "@coko/server@npm:5.0.0-alpha.17"
+"@coko/server@npm:^5.0.0-beta.0":
+  version: 5.0.0-beta.0
+  resolution: "@coko/server@npm:5.0.0-beta.0"
   dependencies:
     "@apollo/server": "npm:^5.5.0"
     "@as-integrations/express5": "npm:^1.1.2"
@@ -1423,7 +1423,7 @@ __metadata:
     zod: "npm:^4.3.6"
   bin:
     coko-server: ./dist/cli/coko-server.js
-  checksum: 10c0/3cff50d46f05ddbf1d0abd7df9ad97b5b31070ce50516f253da7acaa1e4edb05ee0b0043ddba67e78c2f52ee501dc3be0a7afbeb2f884017dfb1a5902ec0dd8c
+  checksum: 10c0/fdc990365e9f8e3b29dc50c6c71cf513c4039d7c4587b05dc1f1bfe9a2ab0f25bee37fa48fee1609e7672182ee5b9ebc26867fa5cd6711cf114c71faed3b4fd2
   languageName: node
   linkType: hard
 
@@ -8909,7 +8909,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "kotahi@workspace:."
   dependencies:
-    "@coko/server": "npm:^5.0.0-alpha.17"
+    "@coko/server": "npm:^5.0.0-beta.0"
     "@dqbd/tiktoken": "npm:^1.0.14"
     "@types/node": "npm:^25.6.0"
     archiver: "npm:^5.3.0"
