@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { dashboard } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -18,6 +19,7 @@ describe('Checking manuscripts page: label selection and tooltip', () => {
     cy.awaitDisappearSpinner()
     DashboardPage.getHeader().should('be.visible')
     // submission of new manuscript
+    cy.wait(2000)
     DashboardPage.clickSubmit()
     NewSubmissionPage.clickSubmitUrlAndWaitPageLoad()
     Menu.clickManuscriptsAndAssertPageLoad()
