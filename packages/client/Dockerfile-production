@@ -19,7 +19,7 @@ RUN yarn workspaces focus --production
 
 COPY . .
 
-RUN yarn coko-client-build-js
+RUN yarn coko-client-build
 
 ##############################################################
 # IMAGE FOR RUNNING
