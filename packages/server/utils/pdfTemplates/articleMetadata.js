@@ -1,3 +1,9 @@
+/* eslint-disable */
+
+/**
+ * See comment in publicationMetadata.js in the same folder.
+ */
+
 const striptags = require('striptags')
 const QRCode = require('qrcode-svg')
 
@@ -12,10 +18,8 @@ const QRCode = require('qrcode-svg')
 let userArticleMetadata = {}
 
 try {
-  // eslint-disable-next-line global-require, import/no-unresolved
   userArticleMetadata = require('../../../config/journal/export/articleMetadata.json')
 } catch {
-  // eslint-disable-next-line no-console
   // console.log("userArticleMetadata doesn't exist.")
 }
 

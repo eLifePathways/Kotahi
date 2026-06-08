@@ -19,7 +19,6 @@ class Form extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const Group = require('../group/group.model')
 
     return {

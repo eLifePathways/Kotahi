@@ -1,6 +1,5 @@
-/* eslint-disable jest/no-commented-out-tests */
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/no-nesting */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { dashboard, manuscripts } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -10,7 +9,6 @@ import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { ReviewPage } from '../../page-object/review-page'
 
-// eslint-disable-next-line jest/no-disabled-tests
 describe('control page tests', () => {
   // UPDATE 0.05.2025
   // SHARED checkbox can be clicked only on completed reviews
@@ -187,6 +185,7 @@ describe('control page tests', () => {
         ControlPage.getNumberOfInvitedReviewers().should('eq', 1)
         cy.login(name.role.reviewers[1], dashboard)
         cy.awaitDisappearSpinner()
+        cy.wait(1000)
         DashboardPage.clickDashboardTab(1)
         DashboardPage.clickAcceptReviewButton()
 
@@ -194,7 +193,10 @@ describe('control page tests', () => {
         DashboardPage.clickDoReview()
         cy.fixture('submission_form_data').then(data => {
           cy.contains('div', 'Metadata').should('be.visible')
-          cy.get('[class*=HiddenTabs__Tab]').contains('Review').invoke('click')
+          cy.get('[data-testid=tab-container]')
+            .contains('Review')
+            .invoke('click')
+          cy.wait(500)
           ReviewPage.fillInReviewComment(data.review1)
           ReviewPage.clickAcceptRadioButton()
           ReviewPage.clickSubmitButton()
@@ -215,13 +217,14 @@ describe('control page tests', () => {
       })
       ControlPage.clickReviewsTab()
     })
+
     it('By default the review and the reviewer name are hidden so reviewer can not see their name', () => {
-      ControlPage.getHideReviewToAuthorCheckbox('should', 'be.checked')
-      ControlPage.getHideReviewerNameCheckbox('should', 'be.checked')
+      ControlPage.getHideReviewToAuthorCheckbox().should('be.checked')
+      ControlPage.getHideReviewerNameCheckbox().should('be.checked')
       cy.fixture('role_names').then(name => {
         cy.login(name.role.reviewers[1], dashboard)
-        cy.get('[name="submission.$title"]:last').click()
-        cy.get('[class*=TabsContainer]').contains('Review').click()
+        cy.get('[data-testid="submission.$title"]:last').click()
+        cy.get('[data-testid=tab-container]').contains('Review').click()
         ControlPage.getReviewerName().should(
           'not.contain',
           name.role.reviewers[1],
@@ -236,8 +239,8 @@ describe('control page tests', () => {
       ControlPage.getHideReviewerNameCheckbox('should', 'not.be.checked')
       cy.fixture('role_names').then(name => {
         cy.login(name.role.reviewers[1], dashboard)
-        cy.get('[name="submission.$title"]:last').click()
-        cy.get('[class*=TabsContainer]').contains('Review').click()
+        cy.get('[data-testid="submission.$title"]:last').click()
+        cy.get('[data-testid=tab-container]').contains('Review').click()
         ControlPage.getReviewerName().should('contain', name.role.reviewers[1])
       })
     })
@@ -251,6 +254,7 @@ describe('control page tests', () => {
       cy.fixture('role_names').then(name => {
         // login as seniorEditor
         cy.login(name.role.seniorEditor, dashboard)
+        cy.wait(500)
         DashboardPage.clickDashboardTab(2)
         DashboardPage.clickControl() // Navigate to Control Page
       })
@@ -306,17 +310,13 @@ describe('control page tests', () => {
     })
 
     it('sending notification to unregistered user', () => {
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(3000)
       createTask({
         assignee: 'Unregistered User',
         title: 'First task for unregistered user',
       })
 
       cy.get('[data-cy="new-user-email"]').should('be.visible')
-      cy.get('[data-cy="new-user-email"]').type('uku.sidorela@gmail.com', {
-        delay: 10,
-      })
+      cy.get('[data-cy="new-user-email"]').type('uku.sidorela@gmail.com')
       cy.get('[data-cy="new-user-name"]').type('QA tester')
 
       cy.get('[data-cy="new-user-email"]').should(
@@ -327,14 +327,12 @@ describe('control page tests', () => {
     })
 
     it('sending 3 notifications via task details modal', () => {
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(3000)
       createTask({
         assignee: 'Collaborative reviewer',
         title: 'First task for registered users',
       })
-      cy.get('[class*=MinimalButton]').last().click()
-      cy.get('[class*=Task__EditLabel]').last().click()
+      cy.get('[data-testid=minimal-button]').last().click()
+      cy.get('[data-testid=task-edit-label]').last().click()
       cy.contains('Task details').should('exist')
       cy.contains('span', 'Add Notification Recipient').should('be.visible')
       cy.contains('button', 'Add Notification Recipient').click()
@@ -345,7 +343,6 @@ describe('control page tests', () => {
           cy.get('body').then($body => {
             // If the form didn't appear yet, click again
             if ($body.find('[data-testid="Recipient_select"]').length === 0) {
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(100) // slight buffer for animations
               cy.contains('button', 'Add Notification Recipient').click()
             }
@@ -360,8 +357,10 @@ describe('control page tests', () => {
       // cy.get('[class*=TaskEditModal__NotificationLogsToggle]').click()
       // cy.contains('Reviewer Invitation sent by Sinead Sullivan to Joane Pilger')
 
-      cy.get('[class*=SecondaryActionButton__LabelOnlySpan]:last').click({
-        oaforce: true,
+      cy.get(
+        '[data-testid=secondary-action-button-label-only-span]:last',
+      ).click({
+        force: true,
       })
 
       sendTaskNotification({
@@ -371,7 +370,9 @@ describe('control page tests', () => {
       // cy.get('[class*=TaskEditModal__NotificationLogsToggle]').click()
       // cy.contains('Author Invitation sent by Sinead Sullivan to Sherry Crofoot')
 
-      cy.get('[class*=SecondaryActionButton__LabelOnlySpan]:last').click({
+      cy.get(
+        '[data-testid=secondary-action-button-label-only-span]:last',
+      ).click({
         force: true,
       })
 
@@ -435,7 +436,7 @@ function sendNotification({
 function createTask({ assignee, title }) {
   cy.get('[title="Add a new task"]').click()
 
-  cy.get('[class*="TextInput__StyledInput"]:last').type(`${title}`)
+  cy.get('[data-testid="text-input"]:last').type(`${title}`)
 
   // Open the assignee select field
   cy.get('[data-testid="Assignee_select"]').last().click()
@@ -445,8 +446,8 @@ function createTask({ assignee, title }) {
   })
 
   // Wait for the dropdown option to appear and click it
-  cy.get('.react-select__option:last')
-    .contains(`${assignee}`)
+  cy.get('.react-select__option')
+    .contains(assignee)
     .should('be.visible')
     .click()
 }
@@ -456,7 +457,8 @@ function sendTaskNotification({ recipient, template }) {
     'have.attr',
     'disabled',
   )
-  cy.get('[data-testid="Recipient_select"] input', { timeout: 3000 })
+
+  cy.get('[data-testid="Recipient_select"] input')
     .last()
     .should('exist')
     .type(`${recipient}{enter}`, { force: true })

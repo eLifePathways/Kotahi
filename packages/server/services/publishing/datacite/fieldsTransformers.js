@@ -11,12 +11,13 @@ const calculateDataciteCitations = text => {
   citations.each((_, citation) => {
     const { doi } = safeParse($(citation).attr(CITATION_DATA_STRUCTURE))
 
-    doi &&
+    if (doi) {
       citationDois.push({
         relatedIdentifierType: 'DOI',
         relationType: 'IsCitedBy',
         relatedIdentifier: doi,
       })
+    }
   })
 
   return citationDois

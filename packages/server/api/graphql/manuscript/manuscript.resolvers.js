@@ -172,17 +172,17 @@ const resolvers = {
       return publishManuscript(id, ctx.req.headers['group-id'])
     },
 
-    async updateAda(_, { id, adaState }, ctx) {
+    async updateAda(_, { id, adaState }) {
       return updateAda(id, adaState)
     },
 
-    async refreshAdaStatus(_, { id }, ctx) {
+    async refreshAdaStatus(_, { id }) {
       return refreshAdaStatus(id)
     },
   },
   Subscription: {
     manuscriptsImportStatus: {
-      subscribe: async (_, vars, context) => {
+      subscribe: async () => {
         return subscriptionManager.asyncIterator(['IMPORT_MANUSCRIPTS_STATUS'])
       },
     },
@@ -225,7 +225,7 @@ const resolvers = {
       return manuscripts()
     },
 
-    async publishedManuscripts(_, { sort, offset, limit, groupId }, ctx) {
+    async publishedManuscripts(_, { sort, offset, limit, groupId }) {
       return publishedManuscripts(sort, offset, limit, groupId)
     },
 
@@ -346,11 +346,11 @@ const resolvers = {
   },
   PublishedManuscript: {
     ...manuscriptAndPublishedManuscriptSharedResolvers,
-    async css(parent) {
+    async css() {
       return getCss()
     },
 
-    async decisions(parent, { _ }, ctx) {
+    async decisions(parent, _, ctx) {
       return publishedManuscriptDecisions(parent, ctx.userId)
     },
 
@@ -366,7 +366,7 @@ const resolvers = {
       return parent.published
     },
 
-    async reviews(parent, { _ }, ctx) {
+    async reviews(parent, _, ctx) {
       return publishedManuscriptReviews(parent, ctx.userId)
     },
 

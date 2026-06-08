@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const validateJats = require('../validation')
 
 const correctJats = `<article xml:lang="en" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.3"><front><journal-meta><journal-id journal-id-type="pmc">BMJ</journal-id><journal-id journal-id-type="publisher">BR MED J</journal-id><journal-title-group><journal-title>Journal Title</journal-title><abbrev-journal-title>Jour.Ti.</abbrev-journal-title></journal-title-group><issn publication-format="print">1063-777X</issn><issn publication-format="electronic">1090-6517</issn><publisher><publisher-name>Journal Publisher Inc.</publisher-name></publisher></journal-meta><article-meta><title-group><article-title>This is the title</article-title></title-group></article-meta></front><body><p>This is some JATS.</p></body></article>`

@@ -21,27 +21,24 @@ const PUBLISH_BUTTON = 'button[type="button"]'
 const CAN_BE_PUBLISHED_PUBLICLY_CHECKBOX = '[name=canBePublishedPublicly]'
 const PAGE_SECTIONS = 'General__SectionContent'
 const SECTION_HEADER = 'h2[class]'
-const DECISION_TEXT = '[class*=EditorStyles__ReadOnlySimpleEditorDiv]'
+const DECISION_TEXT = '[data-testid=read-only-simple-editor-div]'
 const DECISION_RECOMMENDATION = 'style__Legend-sc-1jvxmxn-2 bTVTjY'
 
 const DECISION_BUTTON_SELECTED =
   '[class*=component-decision-viewer__RadioGroup] [checked]'
 
-// eslint-disable-next-line import/prefer-default-export
 export const ReviewPage = {
   getReviewMetadataCell(nth) {
     return cy.getByContainsClass(REVIEW_METADATA_CELL).eq(nth)
   },
   getReviewCommentField() {
-    return cy.get('[contenteditable="true"]:nth(0)')
+    return cy.get('[data-testid=comment] [contenteditable="true"]')
   },
   fillInReviewComment(reviewComment) {
-    this.getReviewCommentField()
-      .focus()
-      .type(reviewComment, { delay: 200, force: true })
+    this.getReviewCommentField().focus().type(reviewComment, { force: true })
   },
   getConfidentialCommentField() {
-    return cy.get('[contenteditable="true"]:nth(1)')
+    return cy.get('[data-testid=confidentialComment] [contenteditable="true"]')
   },
   fillInConfidentialComment(confidentialComment) {
     this.getConfidentialCommentField().fillInput(confidentialComment)
@@ -50,19 +47,19 @@ export const ReviewPage = {
     return cy.get(ACCEPT_RADIO_BUTTON)
   },
   clickAcceptRadioButton() {
-    this.getAcceptRadioButton().eq(0).click({ force: true })
+    this.getAcceptRadioButton().eq(0).check({ force: true })
   },
   getReviseRadioButton() {
     return cy.get(REVISE_RADIO_BUTTON)
   },
   clickReviseRadioButton() {
-    this.getReviseRadioButton().eq(0).click({ force: true })
+    this.getReviseRadioButton().eq(0).check({ force: true })
   },
   getRejectRadioButton() {
     return cy.get(REJECT_RADIO_BUTTON)
   },
   clickRejectRadioButton() {
-    this.getRejectRadioButton().eq(0).click({ force: true })
+    this.getRejectRadioButton().eq(0).check({ force: true })
   },
   getReviseButton() {
     return cy.get(REVISE_RADIO_BUTTON)

@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import { gql } from '@apollo/client'
 import * as cheerio from 'cheerio'
 
@@ -248,7 +250,7 @@ const cleanMath = file => {
 }
 
 const uploadManuscriptMutation = gql`
-  mutation ($file: Upload!) {
+  mutation UploadFile($file: Upload!) {
     uploadFile(file: $file) {
       name
       storedObjects {
@@ -270,7 +272,7 @@ const uploadManuscriptMutation = gql`
 `
 
 const createManuscriptMutation = gql`
-  mutation ($input: ManuscriptInput) {
+  mutation CreateManuscript($input: ManuscriptInput) {
     createManuscript(input: $input) {
       id
       created
@@ -314,7 +316,7 @@ const createManuscriptMutation = gql`
 `
 
 // const createFileMutation = gql`
-//   mutation ($file: Upload!, $meta: FileMetaInput!) {
+//   mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
 //     createFile(file: $file, meta: $meta) {
 //       id
 //       name
@@ -332,7 +334,7 @@ const createManuscriptMutation = gql`
 // `
 
 export const updateMutation = gql`
-  mutation($id: ID!, $input: String) {
+  mutation UpdateManuscript($id: ID!, $input: String) {
     updateManuscript(id: $id, input: $input) {
       id
       ${fragmentFields}
@@ -423,8 +425,8 @@ const uploadPromise = (files, client) => {
 }
 
 const getHtmlFromDocxQuery = gql`
-  query ($url: String!) {
-    docxToHtml(url: $url) {
+  query DocxToHtml($key: String!) {
+    docxToHtml(key: $key) {
       html
       error
     }
@@ -432,13 +434,18 @@ const getHtmlFromDocxQuery = gql`
 `
 
 const DocxToHTMLPromise = (file, data, client) => {
-  const theUrl = data.uploadFile.storedObjects[0].url
+  const originalObject =
+    data.uploadFile.storedObjects.find(o => o.type === 'original') ||
+    data.uploadFile.storedObjects[0]
+
+  const theKey = originalObject.key
+  const theUrl = originalObject.url
 
   return client
     .query({
       query: getHtmlFromDocxQuery,
       variables: {
-        url: theUrl,
+        key: theKey,
       },
       fetchPolicy: 'network-only',
     })
@@ -477,7 +484,7 @@ const createManuscriptPromise = (
 
   if (file) {
     source = typeof response === 'string' ? response : undefined
-    /* eslint-disable-next-line no-param-reassign */
+
     delete data.uploadFile.storedObjects[0].url
     files = [
       {
@@ -523,7 +530,7 @@ const createManuscriptPromise = (
 const redirectPromise = (
   setConversionState,
   journals,
-  history,
+  navigate,
   data,
   config,
 ) => {
@@ -539,7 +546,7 @@ const redirectPromise = (
 
   // redirect after a short delay
   window.setTimeout(() => {
-    history.push(route)
+    navigate(route)
   }, 2000)
 }
 
@@ -551,7 +558,7 @@ const skipXSweet = file =>
 
 export default ({
     client,
-    history,
+    navigate,
     journals,
     currentUser,
     setConversion,
@@ -635,7 +642,7 @@ export default ({
       return redirectPromise(
         setConversion,
         journals,
-        history,
+        navigate,
         manuscriptData.data,
         config,
       )

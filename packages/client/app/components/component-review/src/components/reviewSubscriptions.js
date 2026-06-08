@@ -21,7 +21,6 @@ const reviewFields = `
   }
 `
 
-// eslint-disable-next-line import/prefer-default-export
 export const reviewFormUpdatedSubscription = gql`
   subscription ReviewFormUpdated($formId: ID!) {
     reviewFormUpdated(formId: $formId) {

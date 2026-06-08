@@ -1,5 +1,6 @@
-FROM cokoapps/base-dev:20
+FROM cokoapps/base-dev:24
 
+RUN corepack enable
 WORKDIR /home/node/app
 RUN chown -R node:node .
 USER node

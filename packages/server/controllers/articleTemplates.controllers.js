@@ -1,10 +1,10 @@
 const { Readable } = require('stream')
 
-const { File, fileStorage, request } = require('@coko/server')
+const { File, fileStorage } = require('@coko/server')
 
 const { ArticleTemplate, CmsFileTemplate } = require('../models')
 
-const { getFilesWithUrl, getFileWithUrl } = require('../utils/fileStorageUtils')
+const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 
 const getArticleTemplate = async (groupId, isCms) => {
   return ArticleTemplate.query().findOne({ groupId, isCms }).throwIfNotFound()
@@ -16,16 +16,9 @@ const getTemplateArticle = async articleTemplate => {
     if (!articleFile) return ''
     const file = await File.query().findById(articleFile.fileId)
 
-    const { storedObjects } = await getFileWithUrl(file)
+    const originalObject = file.storedObjects.find(f => f.type === 'original')
 
-    const fileUrl = storedObjects.find(f => f.type === 'original')
-
-    const response = await request({
-      method: 'get',
-      url: fileUrl.url,
-    })
-
-    return response.data.toString()
+    return fileStorage.getFileContent(originalObject.key)
   }
 
   return articleTemplate.article
@@ -75,7 +68,6 @@ const updateTemplate = async (id, input) => {
       })
     }
 
-    // eslint-disable-next-line no-param-reassign
     input.article = ''
   }
 

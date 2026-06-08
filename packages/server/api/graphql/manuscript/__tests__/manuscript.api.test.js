@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const gql = require('graphql-tag')
 const { createGraphqlTestServer, migrationManager } = require('@coko/server')
 

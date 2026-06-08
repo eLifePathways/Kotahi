@@ -1,4 +1,5 @@
-/* eslint-disable jest/valid-expect-in-promise,jest/expect-expect */
+/* eslint-disable promise/always-return, promise/catch-or-return */
+
 /// <reference types="Cypress" />
 import {
   users,
@@ -31,10 +32,8 @@ describe.skip('users page tests', () => {
       UsersPage.getRemoveGroupManagerRoleButton()
         .its('length')
         .then(length => {
-          // eslint-disable-next-line jest/valid-expect
           expect(length).to.be.eq(7)
 
-          // eslint-disable-next-line no-plusplus
           for (let i = 0; i < 7; i++) {
             UsersPage.getRemoveGroupManagerRoleButton()
               .eq(i)
@@ -70,6 +69,7 @@ describe.skip('users page tests', () => {
         UsersPage.getTitle().should('be.visible')
       })
     })
+
     it('group manager can be reverted to normal user', () => {
       cy.fixture('role_names').then(name => {
         UsersPage.getNthUserRow(1).should('contain', name.role.tester)

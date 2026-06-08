@@ -1,4 +1,3 @@
-/* eslint-disable padding-line-between-statements */
 /// <reference types="Cypress" />
 /**
  * Page object representing the Control page,
@@ -8,85 +7,83 @@
  */
 
 // Emai Notifications
-const NOTIFY_BUTTON = '[class*=emailNotifications__RowGridStyled] > button'
-const EMAIL_NOTIFICATION_LOG_MESSAGE = 'style__InnerMessageContainer'
-const EMAIL_NOTIFICATION_SECTION = 'emailNotifications__RowGridStyled'
-const NEW_USER_CHECKBOX = '[class*=emailNotifications__RowGridStyled] > label'
+const NOTIFY_BUTTON = '[data-testid="email-notification-row"] > button'
+const EMAIL_NOTIFICATION_LOG_MESSAGE = 'email-log-message'
+const EMAIL_NOTIFICATION_SECTION = 'email-notification-row'
+const NEW_USER_CHECKBOX = '[data-testid="email-notification-row"] > label'
 const NEW_USER_EMAIL_FIELD = '[placeholder="Email"]'
 const NEW_USER_NAME_FIELD = '[placeholder="Name"]'
 const EMAIL_NOTIFICATION_DROPDOWNS =
-  '[class*=emailNotifications__RowGridStyled] > div'
+  '[data-testid="email-notification-row"] > div'
 
-const ASSIGN_SENIOR_EDITOR_DROPDOWN = 'Assign seniorEditor'
-const ASSIGN_HANDLING_EDITOR_DROPDOWN = 'Assign handlingEditor'
-const ASSIGN_EDITOR_DROPDOWN = 'Assign editor'
+const ASSIGN_SENIOR_EDITOR = 'assign-seniorEditor'
+const ASSIGN_HANDLING_EDITOR = 'assign-handlingEditor'
+const ASSIGN_MANUSCRIPT_EDITOR = 'assign-editor'
 
 // Reviews + Invitations
-const INVITE_REVIEWER_DROPDOWN = 'Invite reviewers'
-const INVITE_REVIEWER_OPTION_LIST = 'react-select'
+const INVITE_REVIEWER_SELECT = 'invite-reviewer-select'
 const INVITE_REVIEWER_SUBMIT_BUTTON = 'invite-reviewer'
-const INVITED_REVIEWERS = '[class*=KanbanCard__Card]'
+const INVITED_REVIEWERS = '[data-testid="kanban-card"]'
 const INVITE_REVIEWER_SUBMIT_MODAL_BUTTON = 'submit-modal'
 const REVIEWER_MODAL_SHARED_CHECKBOX = 'input[type="checkbox"]:nth(10)'
 
 // Decision + Publishing
-const PUBLISH_BUTTON =
-  '.General__SectionAction-sc-1chiust-11 > .Publish__ActionButtonsWrapper-sc-1pyb416-0 > .Button__StyledButton-sc-qdm33h-0'
-// '[class*=General__SectionAction-sc-1chiust-11] > .sc-bkzZxe'
+const PUBLISH_BUTTON = '[data-testid="publish-button"]'
 const PUBLISH_INFO_MESSAGE = 'General__SectionActionInfo-sc-1chiust-12'
 const DECISION_FIELD = '[contenteditable="true"]'
 
 // Review
-const REVIEW_MESSAGE = '[class*=EditorStyles__ReadOnlySimpleEditorDiv]'
+const REVIEW_MESSAGE = '[data-testid="readonly-editor"]'
 const REVIEW_OPTION_CHECKBOX =
-  '[class*=ReviewHeading__StyledCheckbox] > [type=checkbox]'
-const REVIEWER_NAME = '[class*=Review__Heading]'
-const NO_REVIEWS_MESSAGE = '[class*=General__SectionRow]'
-const ACCEPTED_TO_PUBLISH_REVIEW_ICON = '[class*=DecisionReview__Name] img'
+  '[data-testid="review-option-checkbox"] > [type=checkbox]'
+const REVIEWER_NAME = '[data-testid="reviewer-info"]'
+const NO_REVIEWS_MESSAGE = '[data-testid="section-row"]'
+const ACCEPTED_TO_PUBLISH_REVIEW_ICON =
+  '[data-testid="decision-review-name"] img'
 
 // Chat
-const MESSAGE_CONTAINER = '.General__Chat-sc-1chiust-18'
-const CHAT_TAB = '[class*=General__Chat] [data-test-id=tab-container]'
-const EXPAND_CHAT_BUTTON = '[class*=style__ChatButton]'
+const MESSAGE_CONTAINER = '[data-testid="chat-panel"]'
+const CHAT_TAB = '[data-testid="chat-panel"] [data-testid=tab-container]'
+const EXPAND_CHAT_BUTTON = '[data-testid="expand-chat"]'
 
 // Multiple Elements
 const SUBMIT_BUTTON = 'decision-action-btn' // Also Matches Notify Button
 
-const DROPDOWN_OPTION = '[class*=react-select__option]'
-const METADATA_TAB = 'HiddenTabs__TabContainer-sc-11z25w4-2'
-const METADATA_CELL = 'VersionSwitcher__Title'
-const ERROR_TEXT = 'style__ErrorText-'
-const FORM_STATUS = 'style__FormStatus-'
-const SHOW_BUTTON = '[class*=DecisionReview__Controls]>[type*=button]'
+const DROPDOWN_OPTION = '[data-testid="select-option"]'
+const METADATA_TAB = 'tab-container'
+const METADATA_CELL = 'version-title'
+const ERROR_TEXT = 'form-error-text'
+const FORM_STATUS = 'form-status'
+const SHOW_BUTTON = '[data-testid="decision-review-controls"]>[type*=button]'
 
 // Decision Form
 const DECISION_TEXT_INPUT = 'comment'
 //  ':nth-child(1) > :nth-child(2) > :nth-child(1) > :nth-child(1) > .EditorStyles__SimpleGrid-k4rcxo-9 > .EditorStyles__SimpleEditorDiv-k4rcxo-11'
 
-const DECISION_RADIO_BUTTON = '[class*=FormTemplate__SafeRadioGroup]'
+const DECISION_RADIO_BUTTON = '[data-testid="safe-radio-group"]'
 const DECISION_SUBMIT_BUTTON = 'decision-action-btn'
 const DECISION_FILE_INPUT = 'input[type=file]'
 
 const CHECK_SVG = 'check-svg'
 
-// eslint-disable-next-line import/prefer-default-export
 export const ControlPage = {
   getInviteReviewerDropdown() {
-    return cy.getByContainsAriaLabel(INVITE_REVIEWER_DROPDOWN)
+    return cy.getByDataTestId(INVITE_REVIEWER_SELECT)
+  },
+  openInviteReviewerDropdown() {
+    this.getInviteReviewerDropdown()
+      .closest('.react-select__control')
+      .click({ force: true })
+    this.getInviteReviewerDropdown().find('input').should('exist')
   },
   clickInviteReviewerDropdown() {
-    this.getInviteReviewerDropdown().click({ force: true })
+    this.openInviteReviewerDropdown()
   },
   inviteReviewer(name) {
-    this.clickInviteReviewerDropdown()
+    this.openInviteReviewerDropdown()
     this.selectReviewerNamed(name)
     this.clickInviteReviewerSubmit()
     this.clickReviewerSubmitModalButton()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    // cy.wait(1000)
-  },
-  getInviteReviewerOptionList() {
-    return cy.getByContainsId(INVITE_REVIEWER_OPTION_LIST)
   },
   getInviteReviewerSubmitButton() {
     return cy.getByDataTestId(INVITE_REVIEWER_SUBMIT_BUTTON)
@@ -94,8 +91,14 @@ export const ControlPage = {
   clickInviteReviewerSubmit() {
     this.getInviteReviewerSubmitButton().click()
   },
-  selectReviewerNamed(uuid) {
-    this.getInviteReviewerOptionList().contains(uuid).click()
+  selectReviewerNamed(name) {
+    this.getInviteReviewerDropdown()
+      .find('input')
+      .type(`{selectall}${name}`, { delay: 50, force: true })
+    cy.get('.react-select__menu', { timeout: 10000 })
+      .should('be.visible')
+      .contains('.react-select__option', name)
+      .click({ force: true })
   },
   getInvitedReviewersList() {
     return cy.get(INVITED_REVIEWERS)
@@ -107,7 +110,7 @@ export const ControlPage = {
     return cy.get(DECISION_FIELD).eq(nth)
   },
   fillInDecision(decision) {
-    this.getDecisionField(0).fillInput(decision)
+    this.getDecisionTextInput().click().type(decision, { force: true })
   },
   getPublishButton() {
     return cy.get(PUBLISH_BUTTON)
@@ -119,52 +122,80 @@ export const ControlPage = {
     return cy.getByContainsClass(PUBLISH_INFO_MESSAGE).invoke('text')
   },
   getAssignSeniorEditorDropdown() {
-    return cy.getByContainsAriaLabel(ASSIGN_SENIOR_EDITOR_DROPDOWN)
+    return cy.getByDataTestId(ASSIGN_SENIOR_EDITOR)
   },
   clickAssignSeniorEditorDropdown() {
     this.getAssignSeniorEditorDropdown().click({ force: true })
   },
   getAssignHandlingEditorDropdown() {
-    return cy.getByContainsAriaLabel(ASSIGN_HANDLING_EDITOR_DROPDOWN)
+    return cy.getByDataTestId(ASSIGN_HANDLING_EDITOR)
   },
   clickAssignHandlingEditorDropdown() {
     this.getAssignHandlingEditorDropdown().click({ force: true })
   },
   getAssignEditorDropdown() {
-    return cy.getByContainsAriaLabel(ASSIGN_EDITOR_DROPDOWN)
+    return cy.getByDataTestId(ASSIGN_MANUSCRIPT_EDITOR)
   },
   clickAssignEditorDropdown() {
     this.getAssignEditorDropdown().click({ force: true })
   },
   selectDropdownOptionByName(name) {
-    cy.get(DROPDOWN_OPTION).contains(name).click({ force: true })
+    cy.get(DROPDOWN_OPTION, { timeout: 10000 })
+      .should('be.visible')
+      .contains(name)
+      .click({ force: true })
+  },
+  waitForAssignEditorValue(testId, name) {
+    cy.get(`[data-testid="${testId}"]`, { timeout: 20000 }).should(
+      'contain',
+      name,
+    )
+    cy.awaitDisappearSpinner()
+  },
+  assignSeniorEditor(name) {
+    this.clickAssignSeniorEditorDropdown()
+    this.selectDropdownOptionByName(name)
+    this.waitForAssignEditorValue(ASSIGN_SENIOR_EDITOR, name)
+  },
+  assignHandlingEditor(name) {
+    this.clickAssignHandlingEditorDropdown()
+    this.selectDropdownOptionByName(name)
+    this.waitForAssignEditorValue(ASSIGN_HANDLING_EDITOR, name)
+  },
+  assignManuscriptEditor(name) {
+    this.clickAssignEditorDropdown()
+    this.selectDropdownOptionByName(name)
+    this.waitForAssignEditorValue(ASSIGN_MANUSCRIPT_EDITOR, name)
   },
 
   getMetadataCell() {
-    return cy.getByContainsClass(METADATA_CELL)
+    return cy.get(`[data-testid="${METADATA_CELL}"]`)
   },
 
   getErrorText() {
-    return cy.getByContainsClass(ERROR_TEXT)
+    return cy.get(`[data-testid="${ERROR_TEXT}"]`)
   },
 
+  getDecisionRadioGroup() {
+    return cy.get(DECISION_RADIO_BUTTON).should('be.visible')
+  },
   getAcceptRadioButton() {
-    return cy.get(DECISION_RADIO_BUTTON).eq(0)
+    return this.getDecisionRadioGroup().find('input[value="accept"]')
   },
   clickAccept() {
-    this.getAcceptRadioButton().click()
+    this.getAcceptRadioButton().click({ force: true })
   },
   getReviseRadioButton() {
-    return cy.get(DECISION_RADIO_BUTTON).eq(1)
+    return this.getDecisionRadioGroup().find('input[value="revise"]')
   },
   clickRevise() {
-    this.getReviseRadioButton().click()
+    this.getReviseRadioButton().click({ force: true })
   },
   getRejectRadioButton() {
-    return cy.get(DECISION_RADIO_BUTTON).eq(2)
+    return this.getDecisionRadioGroup().find('input[value="reject"]')
   },
   clickReject() {
-    this.getRejectRadioButton().click()
+    this.getRejectRadioButton().click({ force: true })
   },
   getSubmitButton() {
     return cy.getByDataTestId(SUBMIT_BUTTON)
@@ -173,7 +204,7 @@ export const ControlPage = {
     this.getSubmitButton().click()
   },
   getFormStatus() {
-    return cy.getByContainsClass(FORM_STATUS)
+    return cy.get(`[data-testid="${FORM_STATUS}"]`)
   },
   getShowButton() {
     return cy.get(SHOW_BUTTON)
@@ -189,7 +220,7 @@ export const ControlPage = {
   },
   clickHideReviewToAuthor() {
     this.getHideReviewToAuthorCheckbox().click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+
     // cy.wait(2000)
     // cy.getHideReviewToAuthorCheckbox('should', 'not.be.checked')
   },
@@ -198,7 +229,7 @@ export const ControlPage = {
   },
   clickHideReviewerNameToAuthor() {
     this.getHideReviewerNameCheckbox().click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+
     // cy.wait(2000)
   },
   getReviewerSubmitModalButton() {
@@ -251,7 +282,7 @@ export const ControlPage = {
     this.getMetadataCell(13).should('contain', getTodayDate())
   },
   getEmailNotificationSection() {
-    return cy.getByContainsClass(EMAIL_NOTIFICATION_SECTION)
+    return cy.get(`[data-testid="${EMAIL_NOTIFICATION_SECTION}"]`)
   },
   getNewUserCheckbox() {
     return cy.get(NEW_USER_CHECKBOX)
@@ -299,26 +330,33 @@ export const ControlPage = {
     this.getChatTab().eq(nth).click()
   },
   getLogMessage() {
-    return cy.getByContainsClass(EMAIL_NOTIFICATION_LOG_MESSAGE)
+    return cy.get(`[data-testid="${EMAIL_NOTIFICATION_LOG_MESSAGE}"]`)
   },
   getMetadataTab(nth) {
-    return cy.getByContainsClass(METADATA_TAB).eq(nth)
+    return cy.getByDataTestId(METADATA_TAB).eq(nth)
   },
   getWorkflowTab() {
-    return cy.get('[data-test-id=tab-container]').contains('Workflow')
+    return cy.getByDataTestId('tab-container').contains('Workflow')
   },
   getControlPageTabs() {
-    return cy.get('[data-test-id=tab-container]')
+    return cy.getByDataTestId('tab-container')
   },
   clickDecisionTab() {
-    this.getControlPageTabs().contains('Decision').click()
+    cy.getByDataTestId('tab-container')
+      .contains('Decision')
+      .click({ force: true })
   },
   clickReviewsTab() {
-    this.getControlPageTabs().contains('Reviews').click()
+    cy.getByDataTestId('tab-container')
+      .contains('Reviews')
+      .click({ force: true })
   },
   // Decision Form
   getDecisionTextInput() {
-    return cy.getByDataTestId(DECISION_TEXT_INPUT)
+    return cy
+      .getByDataTestId(DECISION_TEXT_INPUT)
+      .find('[contenteditable]')
+      .first()
   },
   clickDecisionTextInput() {
     return this.getDecisionTextInput().click()
@@ -338,8 +376,6 @@ export const ControlPage = {
     return cy.getByDataTestId(CHECK_SVG)
   },
   checkSvgExists() {
-    this.getCheckSvg().should('exist')
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.get('[data-testid="check-svg"]', { timeout: 10000 }).should('exist')
   },
 }

@@ -127,7 +127,7 @@ const deleteCmsPageFields = `
 `
 
 export const getCMSPages = gql`
-  query cmsPages {
+  query CmsPages {
     cmsPages {
       ${cmsPageFields}
     }
@@ -135,7 +135,7 @@ export const getCMSPages = gql`
 `
 
 export const getCMSPage = gql`
-  query cmsPage($id: ID!) {
+  query CmsPage($id: ID!) {
     cmsPage(id: $id) {
       ${cmsPageFields}
     }
@@ -143,7 +143,7 @@ export const getCMSPage = gql`
 `
 
 export const createCMSPageMutation = gql`
-  mutation createCMSPage($input: CMSPageInput!) {
+  mutation CreateCMSPage($input: CMSPageInput!) {
     createCMSPage(input: $input) {
       ${createCmsPageFields}
     }
@@ -151,7 +151,7 @@ export const createCMSPageMutation = gql`
 `
 
 export const updateCMSPageDataMutation = gql`
-  mutation updateCMSPage($id: ID!, $input: CMSPageInput!) {
+  mutation UpdateCMSPage($id: ID!, $input: CMSPageInput!) {
     updateCMSPage(id: $id, input: $input) {
         ${cmsPageFields}
     }
@@ -159,14 +159,14 @@ export const updateCMSPageDataMutation = gql`
 `
 
 export const deleteCMSPageMutation = gql`
-  mutation deleteCMSPage($id: ID!) {
+  mutation DeleteCMSPage($id: ID!) {
     deleteCMSPage(id: $id) {
         ${deleteCmsPageFields}
     }
   }
 `
 export const rebuildFlaxSiteMutation = gql`
-  mutation rebuildFlaxSite($params: String) {
+  mutation RebuildFlaxSite($params: String) {
     rebuildFlaxSite(params: $params) {
       status
       error
@@ -175,7 +175,7 @@ export const rebuildFlaxSiteMutation = gql`
 `
 
 export const getCMSLayout = gql`
-  query cmsLayout {
+  query CmsLayout {
     cmsLayout {
       ${cmsLayoutFields}
     }
@@ -183,7 +183,7 @@ export const getCMSLayout = gql`
 `
 
 export const getCmsFilesTree = gql`
-  query getCmsFilesTree($folderId: ID) {
+  query GetCmsFilesTree($folderId: ID) {
     getCmsFilesTree(folderId: $folderId) {
       id
       name
@@ -200,7 +200,7 @@ export const getCmsFilesTree = gql`
 `
 
 export const getCmsFileContent = gql`
-  query getCmsFileContent($id: ID!) {
+  query GetCmsFileContent($id: ID!) {
     getCmsFileContent(id: $id) {
       id
       content
@@ -211,7 +211,7 @@ export const getCmsFileContent = gql`
 `
 
 export const addResourceToFolder = gql`
-  mutation addResourceToFolder($id: ID!, $type: Boolean!) {
+  mutation AddResourceToFolder($id: ID!, $type: Boolean!) {
     addResourceToFolder(id: $id, type: $type) {
       id
       name
@@ -222,7 +222,7 @@ export const addResourceToFolder = gql`
 `
 
 export const deleteResource = gql`
-  mutation deleteResource($id: ID!) {
+  mutation DeleteResource($id: ID!) {
     deleteResource(id: $id) {
       id
       name
@@ -233,7 +233,7 @@ export const deleteResource = gql`
 `
 
 export const renameResource = gql`
-  mutation renameResource($id: ID!, $name: String!) {
+  mutation RenameResource($id: ID!, $name: String!) {
     renameResource(id: $id, name: $name) {
       id
       name
@@ -244,7 +244,7 @@ export const renameResource = gql`
 `
 
 export const updateResource = gql`
-  mutation updateResource($id: ID!, $content: String!) {
+  mutation UpdateResource($id: ID!, $content: String!) {
     updateResource(id: $id, content: $content) {
       id
       content
@@ -253,7 +253,7 @@ export const updateResource = gql`
 `
 
 export const getFoldersList = gql`
-  query getFoldersList {
+  query GetFoldersList {
     getFoldersList {
       id
       name
@@ -263,7 +263,7 @@ export const getFoldersList = gql`
 `
 
 export const updateFlaxRootFolder = gql`
-  mutation updateFlaxRootFolder($id: ID!) {
+  mutation UpdateFlaxRootFolder($id: ID!) {
     updateFlaxRootFolder(id: $id) {
       id
       name
@@ -273,7 +273,7 @@ export const updateFlaxRootFolder = gql`
 `
 
 export const updateCMSLayoutMutation = gql`
-  mutation updateCMSLayout($input: CMSLayoutInput!) {
+  mutation UpdateCMSLayout($input: CMSLayoutInput!) {
     updateCMSLayout(input: $input) {
       ${cmsLayoutFields}
     }
@@ -281,7 +281,7 @@ export const updateCMSLayoutMutation = gql`
 `
 
 export const createFileMutation = gql`
-  mutation ($file: Upload!, $meta: FileMetaInput!) {
+  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
     createFile(file: $file, meta: $meta) {
       id
       created
@@ -299,19 +299,19 @@ export const createFileMutation = gql`
 `
 
 export const deleteFileMutation = gql`
-  mutation ($id: ID!) {
+  mutation DeleteFile($id: ID!) {
     deleteFile(id: $id)
   }
 `
 
 export const generateNewCoarAuthTokenMutation = gql`
-  mutation ($name: String!, $groupId: ID!) {
+  mutation GenerateNewToken($name: String!, $groupId: ID!) {
     generateNewToken(name: $name, groupId: $groupId)
   }
 `
 
 export const updateCollectionMutation = gql`
-  mutation ($id: ID!, $input: PublishCollectionInput!) {
+  mutation UpdateCollection($id: ID!, $input: PublishCollectionInput!) {
     updateCollection(id: $id, input: $input) {
       id
       created
@@ -334,7 +334,7 @@ export const updateCollectionMutation = gql`
 `
 
 export const createCollectionMutation = gql`
-  mutation ($input: PublishCollectionInput!) {
+  mutation CreateCollection($input: PublishCollectionInput!) {
     createCollection(input: $input) {
       id
       created
@@ -357,7 +357,7 @@ export const createCollectionMutation = gql`
 `
 
 export const deleteCollectionMutation = gql`
-  mutation ($id: ID!) {
+  mutation DeleteCollection($id: ID!) {
     deleteCollection(id: $id) {
       success
     }
@@ -391,10 +391,8 @@ export const getManuscriptData = gql`
 `
 
 export const getSubmissionForm = gql`
-    query(
-      $groupId: ID!
-    ) {
-      submissionForm: formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {
+  query GetSubmissionForm($groupId: ID!) {
+    submissionForm: formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {
       ${formFields}
     }
   }

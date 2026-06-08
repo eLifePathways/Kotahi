@@ -29,7 +29,6 @@ const PasswordScalar = new GraphQLScalarType({
 
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {
-      // eslint-disable-next-line no-return-await
       return this.parseValue(ast.value)
     }
 

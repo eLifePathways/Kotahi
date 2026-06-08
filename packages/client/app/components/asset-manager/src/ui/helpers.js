@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import moment from 'moment-timezone'
 
 const suffixes = ['B', 'kB', 'MB', 'GB', 'TB']

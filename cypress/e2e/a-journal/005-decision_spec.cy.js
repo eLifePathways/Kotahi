@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -7,7 +9,7 @@ import { dashboard } from '../../support/routes'
 
 const decisionTextContent = 'Please fix Foo in the Paper!'
 const decisionFileName = 'test-pdf.pdf'
-const decisinFilePath = 'cypress/fixtures/test-pdf.pdf'
+const decisionFilePath = 'cypress/fixtures/test-pdf.pdf'
 
 describe('Completing a decision', () => {
   before(() => {
@@ -17,11 +19,11 @@ describe('Completing a decision', () => {
     cy.request('POST', `${restoreUrl}/commons.bootstrap`)
     cy.request('POST', `${seedUrl}/three_reviews_completed`)
 
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       /* Group Manager assigns Editor to manuscript */
       cy.login(name.role.admin, dashboard)
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
+      cy.wait(1000)
       DashboardPage.clickManuscriptNavButton()
       ManuscriptsPage.selectOptionWithText('Control')
       ControlPage.getAssignSeniorEditorDropdown().click({ force: true })
@@ -32,41 +34,42 @@ describe('Completing a decision', () => {
   beforeEach(() => {
     cy.fixture('role_names').then(name => {
       cy.login(name.role.seniorEditor, dashboard)
-      DashboardPage.clickDashboardTab(2)
+      cy.wait(1000)
+      DashboardPage.clickEditingQueueTab()
+      cy.wait(2000)
       DashboardPage.clickControl() // Navigate to Control Page
-      ControlPage.clickDecisionTab(1)
+      cy.wait(500)
+      ControlPage.clickDecisionTab()
       ControlPage.getPublishButton().should('be.disabled') // Verify publish button is disabled
     })
   })
 
   it('editor decided "revise" and then the author submits a new version', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       ControlPage.clickDecisionTextInput()
       ControlPage.getDecisionTextInput().type(decisionTextContent)
       cy.get('[data-testid="dropzone"]:first > input').selectFile(
-        decisinFilePath,
+        decisionFilePath,
         {
           force: true,
         },
       )
       ControlPage.clickRevise()
+      cy.wait(1000)
       ControlPage.clickSubmitDecisionButton() // Submit the decision
       ControlPage.checkSvgExists() // Check appears in front of button
 
-      cy.log('Author revises and submits new version.')
       /* View Decision as an Author */
       cy.login(name.role.author, dashboard) // Login as an Author
       DashboardPage.getSubmittedManuscript().click() // Click on first MySubmission
+
       // Verify Decision Content
       DashboardPage.getDecisionField(0).should('contain', decisionTextContent)
       DashboardPage.getDecisionField(1).should('contain', decisionFileName)
       DashboardPage.getDecisionField(2).should('contain', 'Revise')
       DashboardPage.clickCreateNewVersionButton() // Create new manuscript version
-
-      cy.getByDataTestId('submission.objectType').click()
+      cy.getByDataTestId('submission.objectType').first().click()
       cy.contains('Dataset').click({ force: true })
-
       SubmissionFormPage.fillInField(
         'submission.$abstract',
         'New abstract...',
@@ -82,11 +85,20 @@ describe('Completing a decision', () => {
 
   it('editor accepts the new version', () => {
     /* Editor Workflow: Approve the new Manuscript version */
-    ControlPage.getDecisionTextInput().type('Great Paper!')
-    ControlPage.getDecisionFileInput().eq(0).selectFile(decisinFilePath, {
+    ControlPage.clickDecisionTextInput()
+    ControlPage.getDecisionTextInput()
+      .scrollIntoView()
+      .click({ force: true })
+      .type('Great Paper!')
+
+    ControlPage.getDecisionFileInput().eq(0).selectFile(decisionFilePath, {
       force: true,
     })
+
+    cy.wait(1000)
     ControlPage.clickAccept()
+
+    cy.wait(1000)
     ControlPage.clickSubmitDecisionButton() // Submit the decision
     ControlPage.checkSvgExists()
     // The below should be fixed by #1872 !!!

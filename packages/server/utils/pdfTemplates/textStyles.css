@@ -4,7 +4,7 @@
 
 .math-node {
   cursor: auto;
-  font-family: 'Consolas', 'Ubuntu Mono', monospace;
+  font-family: Consolas, 'Ubuntu Mono', monospace;
   font-size: 16px;
   min-height: 1em;
   min-width: 1em;
@@ -16,10 +16,11 @@ p .math-node {
   margin-right: 4px;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .math-node .ProseMirror {
   background: #eee;
   box-shadow: none;
-  color: rgb(132, 33, 162);
+  color: rgb(132 33 162);
   min-height: 100%;
   padding: 0;
 }
@@ -48,6 +49,7 @@ math-inline .math-render {
   font-size: 0.85em;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 math-inline .math-src .ProseMirror {
   display: inline;
 }
@@ -69,10 +71,12 @@ math-display .math-render {
   text-align: center;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 math-display.ProseMirror-selectednode {
   background-color: #eee;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 math-display .math-src .ProseMirror {
   display: block;
   width: 100%;
@@ -91,20 +95,23 @@ math-display .katex-display {
 
 /* -- Other Math ---------------------------------------- */
 
+/* stylelint-disable-next-line selector-class-pattern */
 .math-node.ProseMirror-selectednode {
   outline: none;
 }
 
 .math-node .math-src {
-  color: rgb(132, 33, 162);
+  color: rgb(132 33 162);
   display: none;
   tab-size: 4;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .math-node.ProseMirror-selectednode .math-src {
   display: flex;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .math-node.ProseMirror-selectednode .math-render {
   display: none;
 }

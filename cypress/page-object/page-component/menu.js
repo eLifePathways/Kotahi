@@ -2,6 +2,8 @@
 import { DashboardPage } from '../dashboard-page'
 import { UsersPage } from '../users-page'
 
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 /**
  * Page component which represents the left side menu bar,
  * which contains the Logged User, Dashboard & My profile options (for non-admin users),
@@ -9,8 +11,6 @@ import { UsersPage } from '../users-page'
  * These options are available on all other pages.
  */
 const MENU_CONTAINER = 'menu-container'
-const USER_BUTTON = 'menuStyleds__UserItem'
-const BACKGROUND = 'menuStyleds__MainNavWrapper'
 const MESSAGE_NOT_AUTHORISED = 'AdminPage__Root'
 
 export const Menu = {
@@ -59,14 +59,19 @@ export const Menu = {
     this.getSettingsButton().click({ force: true })
   },
   getManuscriptsButton() {
-    return cy.getByDataTestId('menu-Manuscripts')
+    return cy.getByDataTestId('menu-Manuscripts').should('be.visible')
+  },
+  assertManuscriptsButtonDoesNotExist() {
+    return cy.getByDataTestId('menu-Manuscripts').should('not.exist')
   },
   clickManuscripts() {
     this.getManuscriptsButton().click()
   },
   clickManuscriptsAndAssertPageLoad() {
+    cy.wait(500)
     this.clickManuscripts()
-    cy.awaitDisappearSpinner()
+    // cy.awaitDisappearSpinner()
+    cy.url().should('contain', 'manuscripts')
   },
   getReportsButton() {
     return cy.getByDataTestId('menu-Reports')
@@ -81,13 +86,13 @@ export const Menu = {
     this.getMyProfileButton().click()
   },
   getLoggedUserButton() {
-    return cy.getByContainsClass(USER_BUTTON)
+    return cy.getByDataTestId('user-item')
   },
   clickLoggedUser() {
     this.getLoggedUserButton().click()
   },
   getBackground() {
-    return cy.getByContainsClass(BACKGROUND)
+    return cy.getByDataTestId('main-nav-wrapper')
   },
   getMessageNotAuthorisedUser() {
     return cy.getByContainsClass(MESSAGE_NOT_AUTHORISED)

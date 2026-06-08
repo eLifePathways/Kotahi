@@ -1,11 +1,14 @@
-export { default as getEntityFilesQuery } from './getEntityAssets'
-export { default as getSpecificFilesQuery } from './getSpecificFiles'
-export { default as uploadFilesMutation } from './uploadFiles'
-export { default as deleteFilesMutation } from './deleteFiles'
-export { default as updateFileMutation } from './updateFile'
+export { default as useGetEntityFiles } from './getEntityAssets'
+export {
+  default as useGetSpecificFiles,
+  GET_SPECIFIC_FILES,
+} from './getSpecificFiles'
+export { default as useUploadFiles } from './uploadFiles'
+export { default as useDeleteFiles } from './deleteFiles'
+export { default as useUpdateFile } from './updateFile'
 
 export {
-  filesUploadedSubscription,
-  filesDeletedSubscription,
-  fileUpdatedSubscription,
+  useFilesUploadedSubscription,
+  useFilesDeletedSubscription,
+  useFileUpdatedSubscription,
 } from './assetManagerSubscriptions'

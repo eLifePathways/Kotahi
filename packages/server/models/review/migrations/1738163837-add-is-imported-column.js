@@ -1,7 +1,7 @@
 const { useTransaction } = require('@coko/server')
 const Review = require('../review.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     await trx.schema.alterTable(Review.tableName, table => {
       table.boolean('is_imported').notNullable().defaultTo('false')
@@ -11,7 +11,7 @@ exports.up = async knex => {
   })
 }
 
-exports.down = async knex => {
+exports.down = async () => {
   return useTransaction(async trx => {
     await trx.schema.alterTable(Review.tableName, table => {
       table.dropColumn('is_imported')

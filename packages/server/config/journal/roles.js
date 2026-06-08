@@ -1,9 +1,0 @@
-module.exports = {
-  author: 'Author',
-  handlingEditor: 'Handling Editor',
-  editor: 'Editor',
-  managingEditor: 'Managing Editor',
-  seniorEditor: 'Senior Editor',
-  reviewer: 'Reviewer',
-  collaborativeReviewer: 'Collaborative Reviewer',
-}

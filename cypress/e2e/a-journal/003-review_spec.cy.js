@@ -1,5 +1,6 @@
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ReviewPage } from '../../page-object/review-page'
 import { dashboard } from '../../support/routes'
@@ -47,6 +48,7 @@ describe('Completing reviews', () => {
       // login as seniorEditor and assign the 3 reviews are completed
       cy.login(name.role.seniorEditor, dashboard)
 
+      cy.wait(1000)
       DashboardPage.clickDashboardTab(2)
       cy.get('[fill="#56b984"]')
         .should('be.visible')
@@ -63,14 +65,14 @@ describe('Completing reviews', () => {
       cy.get('[data-testid="control-panel-team"]').click()
       cy.awaitDisappearSpinner()
       cy.get(
-        '[class*=KanbanBoard__Kanban] > :nth-child(1) > [class*=KanbanBoard__CardsWrapper] > [class*=KanbanCard]',
+        '[data-testid=kanban] > :nth-child(1) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
       ).should('contain', name.role.reviewers[5])
       // ControlPage.getInvitedReviewer
       cy.get(
-        '[class*=KanbanBoard__Kanban] > :nth-child(2) > [class*=KanbanBoard__CardsWrapper] > [class*=KanbanCard]',
+        '[data-testid=kanban] > :nth-child(2) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
       ).should('contain', name.role.reviewers[3])
       cy.get(
-        '[class*=KanbanBoard__Kanban] > :nth-child(4) > [class*=KanbanBoard__CardsWrapper] > [class*=KanbanCard]',
+        '[data-testid=kanban] > :nth-child(4) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
       ).should('contain', name.role.reviewers[1])
 
       cy.contains('See Declined (1)').should('exist')
@@ -83,6 +85,7 @@ const doReview = (name, reviewData) => {
   cy.login(name, dashboard)
   cy.get('nav').contains('Dashboard').click()
   cy.visit(dashboard)
+  cy.wait(1000)
   DashboardPage.clickDashboardTab(1)
 
   // Accpet Review Request Workflow
@@ -96,8 +99,7 @@ const doReview = (name, reviewData) => {
       DashboardPage.clickDoReview()
       cy.awaitDisappearSpinner()
       cy.contains('Type of Research Object').should('exist')
-      cy.get('[class*=TabsContainer]').contains('Review').click()
-      ReviewPage.getReviewCommentField().focus().type('comment', { delay: 200 })
+      cy.get('[data-testid=tab-container]').contains('Review').click()
       ReviewPage.getReviewCommentField().fillInput(reviewData.comment)
       if (reviewData.radioButton === 'accept')
         ReviewPage.clickAcceptRadioButton()
@@ -105,9 +107,6 @@ const doReview = (name, reviewData) => {
         ReviewPage.clickRejectRadioButton()
       if (reviewData.radioButton === 'revise')
         ReviewPage.clickReviseRadioButton()
-
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000)
 
       // Submit the review
       ReviewPage.clickSubmitButton()

@@ -27,7 +27,6 @@ const createMessage = async (content, channelId, userId) => {
 
   let match
 
-  // eslint-disable-next-line no-cond-assign
   while ((match = taggedRegex.exec(content))) {
     const taggedUserId = match[1]
     taggedUserIds.add(taggedUserId)

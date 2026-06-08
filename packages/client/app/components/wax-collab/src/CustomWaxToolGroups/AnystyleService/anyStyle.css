@@ -8,6 +8,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -19,11 +20,10 @@ placeholder-any-style {
   width: 64px;
 }
 
-placeholder-any-style:before {
-  -webkit-animation: rotate360 1s linear infinite;
+placeholder-any-style::before {
   animation: rotate360 1s linear infinite;
   border: 5px solid #525e76;
-  border-color: #525e76 transparent #525e76 transparent;
+  border-color: #525e76 transparent;
   border-radius: 50%;
   content: ' ';
   display: block;

@@ -10,7 +10,6 @@ const UPLOAD_MANUSCRIPT_BUTTON = 'UploadManuscript__Info'
 const SUBMIT_URL_BUTTON = 'submitUrl'
 const SUBMISSION_MESSAGE = 'body'
 
-// eslint-disable-next-line import/prefer-default-export
 export const NewSubmissionPage = {
   getUploadManuscriptButton() {
     return cy.getByContainsClass(UPLOAD_MANUSCRIPT_BUTTON)
@@ -40,8 +39,8 @@ export const NewSubmissionPage = {
     return cy.get(SUBMISSION_MESSAGE).invoke('text')
   },
   setCustomStatusField(statusLabel) {
-    cy.getByDataTestId('submission.$customStatus').scrollIntoView()
-    cy.getByDataTestId('submission.$customStatus').click()
-    cy.get('[class*="react-select__option"]').contains(statusLabel).click()
+    cy.getByDataTestId('submission.$customStatus').first().scrollIntoView()
+    cy.getByDataTestId('submission.$customStatus').first().click()
+    cy.get('[data-testid="select-option"]').contains(statusLabel).click()
   },
 }

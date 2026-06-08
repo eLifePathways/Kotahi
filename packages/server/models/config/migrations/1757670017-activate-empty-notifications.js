@@ -1,7 +1,7 @@
 const { useTransaction } = require('@coko/server')
 const { Config, Notification } = require('../..')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)
 
@@ -36,7 +36,6 @@ exports.up = async knex => {
             .filter(Boolean)
 
           if (eventsToActivate.length > 0) {
-            // eslint-disable-next-line no-param-reassign
             config.formData.notification.eventsConfig = eventsConfig
 
             await config.$query(trx).patch({ formData: config.formData })

@@ -1,6 +1,6 @@
 const Team = require('../team.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   const orphanTeams = await Team.query()
     .whereNull('objectId')
     .andWhere(builder => {

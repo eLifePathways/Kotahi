@@ -1,4 +1,4 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/no-nesting */
 
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -64,7 +64,6 @@ describe('Manuscripts page tests', () => {
       ManuscriptsPage.clickEvaluationAndVerifyUrl()
       SubmissionFormPage.getWordCountInfo().its('length').should('eq', 4)
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 4; i++) {
         SubmissionFormPage.getWordCountInfo()
           .eq(i)
@@ -99,7 +98,7 @@ describe('Manuscripts page tests', () => {
       SubmissionFormPage.getSummaryDate().should('have.value', '')
 
       cy.fixture('submission_form_data').then(data => {
-        SubmissionFormPage.fillInArticleld(data.articleId)
+        SubmissionFormPage.fillInArticleId(data.articleId)
         SubmissionFormPage.fillInDoi(data.doi)
         SubmissionFormPage.fillInPreprintUri(data.articleId)
         SubmissionFormPage.fillInTitle(data.description)
@@ -126,15 +125,15 @@ describe('Manuscripts page tests', () => {
     it('sort article after Article id', () => {
       ManuscriptsPage.clickSubmit()
       NewSubmissionPage.clickSubmitUrlAndWaitPageLoadElife()
-      SubmissionFormPage.fillInArticleld('456')
+      SubmissionFormPage.fillInArticleId('456')
       Menu.clickManuscriptsAndAssertPageLoad()
       ManuscriptsPage.clickSubmit()
       NewSubmissionPage.clickSubmitUrlAndWaitPageLoadElife()
-      SubmissionFormPage.fillInArticleld('abc')
+      SubmissionFormPage.fillInArticleId('abc')
       Menu.clickManuscriptsAndAssertPageLoad()
       ManuscriptsPage.clickSubmit()
       NewSubmissionPage.clickSubmitUrlAndWaitPageLoadElife()
-      SubmissionFormPage.fillInArticleld('def')
+      SubmissionFormPage.fillInArticleId('def')
       Menu.clickManuscriptsAndAssertPageLoad()
       ManuscriptsPage.getArticleIdByRow(1).should('contain', 'def')
       ManuscriptsPage.getArticleIdByRow(2).should('contain', 'abc')
@@ -156,10 +155,12 @@ describe('Manuscripts page tests', () => {
         cy.awaitDisappearSpinner()
         ManuscriptsPage.getTableHead().should('be.visible')
         ManuscriptsPage.getEvaluationButton().click('')
+        cy.awaitDisappearSpinner()
+        cy.url({ timeout: 10000 }).should('contain', 'evaluation')
 
         // fill the submit form and submit it
         cy.fixture('submission_form_data').then(data => {
-          SubmissionFormPage.fillInArticleld(data.articleId)
+          SubmissionFormPage.fillInArticleId(data.articleId)
           SubmissionFormPage.fillInDoi(data.doi)
           SubmissionFormPage.fillInPreprintUri(data.articleId)
           SubmissionFormPage.fillInTitle(data.description)
@@ -205,7 +206,10 @@ describe('Manuscripts page tests', () => {
       ManuscriptsPage.getStatus(0).should('eq', 'Published')
       ManuscriptsPage.clickEvaluation()
       cy.fixture('submission_form_data').then(data => {
-        SubmissionFormPage.getArticleld().should('have.value', data.articleId)
+        SubmissionFormPage.getArticleId()
+          .find('input')
+          .should('have.value', data.articleId)
+
         SubmissionFormPage.getDoi().should(
           'have.value',
           data.doi.split('https://doi.org/')[1],
@@ -217,48 +221,40 @@ describe('Manuscripts page tests', () => {
         // SubmissionFormPage.getReview1()
         //   .find('p')
         //   .should('contain', data.review1)
-        SubmissionFormPage.getReview1Creator().should(
-          'have.value',
-          data.creator,
-        )
-        SubmissionFormPage.getReview1Date().should(
-          'have.value',
-          data.review1Date,
-        )
+        SubmissionFormPage.getReview1Creator()
+          .find('input')
+          .should('have.value', data.creator)
+        SubmissionFormPage.getReview1Date()
+          .find('input')
+          .should('have.value', data.review1Date)
         // Some of the field valuations are commented because editor is jumping in Cypress
         // SubmissionFormPage.getReview2()
         //   .find('p')
         //   .should('contain', data.review2)
-        SubmissionFormPage.getReview2Creator().should(
-          'have.value',
-          data.creator,
-        )
-        SubmissionFormPage.getReview2Date().should(
-          'have.value',
-          data.review2Date,
-        )
+        SubmissionFormPage.getReview2Creator()
+          .find('input')
+          .should('have.value', data.creator)
+        SubmissionFormPage.getReview2Date()
+          .find('input')
+          .should('have.value', data.review2Date)
         // SubmissionFormPage.getReview3()
         //   .find('p')
         //   .should('contain', data.review3)
-        SubmissionFormPage.getReview3Creator().should(
-          'have.value',
-          data.creator,
-        )
-        SubmissionFormPage.getReview3Date().should(
-          'have.value',
-          data.review3Date,
-        )
+        SubmissionFormPage.getReview3Creator()
+          .find('input')
+          .should('have.value', data.creator)
+        SubmissionFormPage.getReview3Date()
+          .find('input')
+          .should('have.value', data.review3Date)
         // SubmissionFormPage.getSummary()
         //   .find('p')
         //   .should('contain', data.summary)
-        SubmissionFormPage.getSummaryCreator().should(
-          'have.value',
-          data.creator,
-        )
-        SubmissionFormPage.getSummaryDate().should(
-          'have.value',
-          data.summaryDate,
-        )
+        SubmissionFormPage.getSummaryCreator()
+          .find('input')
+          .should('have.value', data.creator)
+        SubmissionFormPage.getSummaryDate()
+          .find('input')
+          .should('have.value', data.summaryDate)
       })
     })
 
@@ -270,7 +266,9 @@ describe('Manuscripts page tests', () => {
           ManuscriptsPage.getStatus(0).should('eq', 'Published')
         })
         ManuscriptsPage.clickEvaluation()
-        SubmissionFormPage.fillInArticleld('123 - Evaluated')
+        cy.url({ timeout: 10000 }).should('contain', 'evaluation')
+
+        SubmissionFormPage.fillInArticleId('123 - Evaluated')
         SubmissionFormPage.fillInDoi(
           'https://doi.org/10.1101/2020.12.22.423946',
         )
@@ -291,7 +289,7 @@ describe('Manuscripts page tests', () => {
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoadElife()
         ManuscriptsPage.clickEvaluation()
-        SubmissionFormPage.getArticleld().should(
+        SubmissionFormPage.getArticleId().should(
           'not.have.value',
           data.articleId,
         )

@@ -111,7 +111,7 @@ const generateImages = async ({ input, format = 'b64_json' }) => {
 
     return JSON.stringify(response.data)
   } catch (e) {
-    console.error('openAi:', e)
+    logger.error('openAi:', e)
     throw new Error(e)
   }
 }
@@ -159,7 +159,7 @@ const embeddings = async (input, retries = 3, delay = 5000) => {
 
     return JSON.stringify(response.data)
   } catch (e) {
-    console.error('openAi:', e)
+    logger.error('openAi:', e)
     throw new Error(e)
   }
 }

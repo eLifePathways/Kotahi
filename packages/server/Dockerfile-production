@@ -1,5 +1,6 @@
-FROM cokoapps/base:20
+FROM cokoapps/base:24
 
+RUN corepack enable
 WORKDIR /home/node/app
 
 COPY .yarnrc.yml .

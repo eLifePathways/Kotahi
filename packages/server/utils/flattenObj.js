@@ -1,6 +1,6 @@
 function flattenObj(obj, parent, res = {}) {
   // TODO clean this up with nicer code
-  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+
   for (const key in obj) {
     const propName = parent ? `${parent}_${key}` : key
 

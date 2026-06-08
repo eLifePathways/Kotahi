@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { ControlPage } from '../../page-object/control-page'
@@ -16,17 +16,13 @@ describe('Assigning editors and decision reject', () => {
 
     cy.fixture('submission_form_data').then(data => {
       cy.fixture('role_names').then(name => {
-        // login as admin
         cy.login(name.role.admin, dashboard)
 
-        // select Control on the Manuscripts page
+        cy.wait(1000)
         Menu.clickManuscripts()
 
         ManuscriptsPage.selectOptionWithText('Control')
-        cy.reload()
-        // added a reload here because tests were failing on an unhandled promise.
 
-        // assign seniorEditor
         ControlPage.clickAssignSeniorEditorDropdown()
         ControlPage.selectDropdownOptionByName(name.role.seniorEditor)
 
@@ -37,15 +33,17 @@ describe('Assigning editors and decision reject', () => {
         ControlPage.selectDropdownOptionByName(name.role.admin)
 
         // reject submission
-        cy.log('Admin rejects a submission.')
-        ControlPage.clickDecisionTab(1)
+        cy.wait(1000)
+        ControlPage.clickDecisionTab()
         ControlPage.fillInDecision(data.rejectedDecision)
         ControlPage.clickReject()
+
+        cy.wait(1000)
         ControlPage.clickSubmit()
         ControlPage.checkSvgExists()
       })
     })
 
-    cy.contains('Dashboard').click()
+    // cy.contains('Dashboard').click()
   })
 })

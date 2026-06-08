@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import { uuid } from '@coko/client'
 
 // TODO: In ../index.js, this is defined as a block. It's not going to work in footnotes; I think we might need to modify our existing MixedCitationSpan to work like this?
 
@@ -61,12 +61,13 @@ const reference = {
           originalText: hook?.dom?.getAttribute('data-original-text') || '',
           citationNumber: hook?.dom?.getAttribute('data-citation-number') || '',
         })
-        typeof next !== 'undefined' && next()
+
+        if (typeof next !== 'undefined') next()
       },
     },
   ],
   toDOM(hook, next) {
-    const uuid = uuidv4()
+    const uid = uuid()
     // Get the original text and save it.
     // const originalText = getTextFromNode(hook?.node)
 
@@ -92,12 +93,10 @@ const reference = {
     }
 
     if (!hook?.node?.attrs?.refId) {
-      // eslint-disable-next-line no-param-reassign
-      hook.node.attrs.refId = uuid
-      attrs.id = uuid
+      hook.node.attrs.refId = uid
+      attrs.id = uid
     }
 
-    // eslint-disable-next-line no-param-reassign
     hook.value = ['p', attrs, 0]
     next()
   },

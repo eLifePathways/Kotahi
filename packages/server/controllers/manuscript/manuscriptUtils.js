@@ -1,5 +1,6 @@
 const Handlebars = require('handlebars')
 const { set, get } = require('lodash')
+const { logger } = require('@coko/server')
 
 const checkIsAbstractValueEmpty = require('../../utils/checkIsAbstractValueEmpty')
 const { ensureJsonIsParsed } = require('../../utils/objectUtils')
@@ -100,7 +101,7 @@ const stripConfidentialDataFromReviews = (
 const getEvaluationsAndDates = manuscript => {
   const evaluationValues = Object.entries(manuscript.submission)
     .filter(
-      ([prop, value]) =>
+      ([prop]) =>
         !Number.isNaN(Number(prop.split('review')[1])) &&
         prop.includes('review'),
     )
@@ -135,14 +136,14 @@ const getSafelyNamedJsonbFieldInfo = (fieldName, submissionForm) => {
     submissionForm.structure.children.find(f => f.name === fieldName)
 
   if (!field) {
-    console.warn(`Ignoring unknown field "${fieldName}"`)
+    logger.warn(`Ignoring unknown field "${fieldName}"`)
     return null
   }
 
   const name = fieldName.split('submission.')[1]
 
   if (!/^\$?[a-zA-Z]\w*$/.test(name)) {
-    console.warn(`Ignoring unsupported field "${fieldName}"`)
+    logger.warn(`Ignoring unsupported field "${fieldName}"`)
     return null
   }
 
@@ -155,7 +156,7 @@ const getSafelyNamedJsonbFieldInfo = (fieldName, submissionForm) => {
 /** Check that the field exists and is not dangerously named (to avoid sql injection) */
 const isValidNonJsonbField = (fieldName, submissionForm) => {
   if (!/^[a-zA-Z]\w*$/.test(fieldName)) {
-    console.warn(`Ignoring unsupported field "${fieldName}"`)
+    logger.warn(`Ignoring unsupported field "${fieldName}"`)
     return false
   }
 
@@ -163,7 +164,7 @@ const isValidNonJsonbField = (fieldName, submissionForm) => {
     !submissionForm ||
     submissionForm.structure.children.find(f => f.name === fieldName)
   ) {
-    console.warn(`Ignoring unknown field "${fieldName}"`)
+    logger.warn(`Ignoring unknown field "${fieldName}"`)
     return false
   }
 
@@ -192,17 +193,15 @@ const applySortOrder = ({ field, isAscending }, submissionForm, addOrder) => {
     const { name: jsonName } = jsonbField
     addOrder(`LOWER(m.submission->>?)${sortDirection}`, jsonName)
   } else if (isValidNonJsonbField(field, submissionForm)) {
-    // eslint-disable-next-line no-param-reassign
-
     let sortingField = ''
     if (field === 'created') sortingField = 'COALESCE(p.created, m.created)'
     else if (field === 'shortId') sortingField = 'm.short_id'
     else if (field === 'updated') sortingField = 'm.updated'
-    else console.warn(`Could not sort on field "${field}"`)
+    else logger.warn(`Could not sort on field "${field}"`)
 
     addOrder(`${sortingField}${sortDirection}`)
   } else {
-    console.warn(`Could not sort on field "${field}`)
+    logger.warn(`Could not sort on field "${field}`)
   }
 
   addOrder(`m.short_id${sortDirection}`) // Secondary ordering
@@ -246,8 +245,9 @@ const applyFilters = (
 
           addWhere(`${filterField} >= ?`, dateFrom.toISOString())
           addWhere(`${filterField} <= ?`, dateTo.toISOString())
+          /* eslint-disable-next-line */
         } catch (error) {
-          console.warn(
+          logger.warn(
             `Could not filter ${filter.field} by value '${filter.value}': could not parse as a date range.`,
           )
         }
@@ -256,7 +256,7 @@ const applyFilters = (
       }
 
       if (!/^[\w :./,()\-<>=_]+$/.test(filter.value)) {
-        console.warn(
+        logger.warn(
           `Ignoring filter "${filter.field}" with illegal value "${filter.value}"`, // To prevent code injection!
         )
         return // i.e., continue.
@@ -280,7 +280,7 @@ const applyFilters = (
       } else if (filter.field === 'archived') {
         // ignore: this is handled elsewhere
       } else {
-        console.warn(
+        logger.warn(
           `Could not filter on field "${filter.field}" by value "${filter.value}"`,
         )
       }

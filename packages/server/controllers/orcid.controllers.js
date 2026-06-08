@@ -1,5 +1,5 @@
 const axios = require('axios')
-const config = require('config')
+const { config } = require('@coko/server')
 const OrcidStrategy = require('passport-orcid')
 const get = require('lodash/get')
 
@@ -17,8 +17,7 @@ const seekEvent = require('../services/notification.service')
 
 const ORCID_API =
   /*
-  config['auth-orcid'].useSandboxedOrcid &&
-  config['auth-orcid'].useSandboxedOrcid.toLowerCase() === 'true'
+  config.get('auth-orcid').useSandboxedOrcid
     ? 'https://pub.sandbox.orcid.org/v3.0'
     : */ 'https://pub.orcid.org/v3.0'
 
@@ -92,9 +91,7 @@ const createOrcidStrategy = () => {
 
   return new OrcidStrategy(
     {
-      sandbox:
-        config['auth-orcid'].useSandboxedOrcid &&
-        config['auth-orcid'].useSandboxedOrcid.toLowerCase() === 'true',
+      sandbox: config.get('auth-orcid').useSandboxedOrcid,
       scope: '/authenticate',
       // this works here only with webpack dev server's proxy (ie. clientUrl/auth -> serverUrl/auth)
       // or when the server and client are served from the same url
@@ -137,7 +134,7 @@ const createOrcidStrategy = () => {
           .where({ 'teams.objectId': groupId })
           .resultSize()
       } catch (err) {
-        console.error(err)
+        logger.error(err)
       }
 
       // TODO: Update the user details on every login, asynchronously
@@ -220,11 +217,9 @@ const toDate = date => {
 }
 
 const orcidRequest = (identity, endpoint) => {
-  const apiRoot =
-    config['auth-orcid'].useSandboxedOrcid &&
-    config['auth-orcid'].useSandboxedOrcid.toLowerCase() === 'true'
-      ? 'https://pub.sandbox.orcid.org/v3.0'
-      : 'https://pub.orcid.org/v3.0'
+  const apiRoot = config.get('auth-orcid').useSandboxedOrcid
+    ? 'https://pub.sandbox.orcid.org/v3.0'
+    : 'https://pub.orcid.org/v3.0'
 
   return request({
     method: 'get',
@@ -343,11 +338,12 @@ const handleOrcidOAuthResponse = async user => {
     redirectionUrl = `${urlFrag}/dashboard`
   }
 
-  isFirstLogin &&
+  if (isFirstLogin) {
     seekEvent('user-first-login', {
       user,
       groupId,
     })
+  }
 
   const res = `${clientUrl}${urlFrag}/login?token=${jwt}&redirectUrl=${redirectionUrl}`
 

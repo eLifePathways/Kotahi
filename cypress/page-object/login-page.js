@@ -5,13 +5,11 @@
  * to the ORCID login page & after the user successfully logs in, the page redirects
  * to the app.
  */
-const LOGIN_BUTTON = 'LoginButton'
 const LOGO = 'img'
-const LOGIN_BACKGROUND = 'Login__Container'
 
 export const LoginPage = {
   getLoginButton() {
-    return cy.getByContainsClass(LOGIN_BUTTON)
+    return cy.getByDataTestId('login-button')
   },
   clickLogin() {
     this.getLoginButton().click()
@@ -20,7 +18,7 @@ export const LoginPage = {
     return cy.get(LOGO)
   },
   getBackground() {
-    return cy.getByContainsClass(LOGIN_BACKGROUND)
+    return cy.getByDataTestId('login-container')
   },
 }
 export default LoginPage

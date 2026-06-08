@@ -9,9 +9,7 @@ class NotificationDigest extends BaseModel {
   async $afterInsert(queryContext) {
     await super.$afterInsert(queryContext)
 
-    const {
-      sendAutomatedNotifications,
-    } = require('../../utils/jobUtils') /* eslint-disable-line global-require */
+    const { sendAutomatedNotifications } = require('../../utils/jobUtils')
 
     const debounceSendAutomatedNotifications = debounce(
       sendAutomatedNotifications,
@@ -22,7 +20,6 @@ class NotificationDigest extends BaseModel {
   }
 
   static get relationMappings() {
-    // eslint-disable-next-line global-require
     const User = require('../user/user.model')
 
     return {

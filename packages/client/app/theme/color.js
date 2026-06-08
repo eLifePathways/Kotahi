@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import Color from 'color'
 import lightenBy from '../shared/lightenBy'
 
@@ -8,6 +10,7 @@ const validateInstanceConfigColors = (colorCode, fallbackColor) => {
   try {
     Color(colorCode)
     return colorCode
+    /* eslint-disable-next-line */
   } catch (err) {
     return fallbackColor || defaultBrandColor1
   }

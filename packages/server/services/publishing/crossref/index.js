@@ -3,9 +3,8 @@ const fsPromised = require('fs').promises
 const fs = require('fs')
 const xml2js = require('xml2js')
 const axios = require('axios')
-const config = require('config')
 
-const { uuid } = require('@coko/server')
+const { config, uuid } = require('@coko/server')
 
 const { fetchUserDetails } = require('../../../controllers/orcid.controllers')
 
@@ -260,7 +259,7 @@ const emailRegex =
 
 /** Send submission to register an article, with appropriate metadata */
 const publishArticleToCrossref = async manuscript => {
-  let publishedDomain = config['flax-site'].clientFlaxSiteUrl
+  let publishedDomain = config.get('flax-site').clientFlaxSiteUrl
   const activeConfig = await Config.getCached(manuscript.groupId)
   const group = await Group.query().findById(manuscript.groupId).first()
 
@@ -497,7 +496,7 @@ const publishReviewsToCrossref = async manuscript => {
 
   const group = await Group.query().findById(manuscript.groupId).first()
 
-  let publishedDomain = config['flax-site'].clientFlaxSiteUrl
+  let publishedDomain = config.get('flax-site').clientFlaxSiteUrl
 
   const {
     formData: {
@@ -522,7 +521,7 @@ const publishReviewsToCrossref = async manuscript => {
 
   if (!$doi) throw new Error('Field submission.$doi is not present')
 
-  if (!config['flax-site'].clientFlaxSiteUrl) {
+  if (!config.get('flax-site').clientFlaxSiteUrl) {
     throw new Error('Flax should be configured and running')
   }
 

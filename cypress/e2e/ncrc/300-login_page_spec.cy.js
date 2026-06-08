@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard, manuscripts, login } from '../../support/routes3'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -12,7 +14,6 @@ describe('Login page tests', () => {
   })
 
   it('checking Kotahi branding in the login page', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('branding_settings').then(settings => {
       cy.visit(login)
 
@@ -37,14 +38,15 @@ describe('Login page tests', () => {
     beforeEach(() => {
       cy.fixture('role_names').then(name => {
         // login as admin
-        // eslint-disable-next-line jest/valid-expect-in-promise
         cy.login(name.role.admin, dashboard)
       })
       cy.awaitDisappearSpinner()
     })
+
     it('"Editing Queue" is the only tab in dashboard page for admin', () => {
       Menu.getDashboardButton().should('be.visible')
       DashboardPage.getDashboardTab().should('contain', 'Editing Queue')
+      cy.wait(1000)
       DashboardPage.getDashboardTab().click()
       DashboardPage.getSectionTitleWithText('Editing Queue').should(
         'be.visible',
@@ -64,15 +66,16 @@ describe('Login page tests', () => {
   context('other users can only access the Dashboard page', () => {
     beforeEach(() => {
       // login as a reviewer
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('role_names').then(name => {
         cy.login(name.role.reviewers[0], dashboard)
       })
       cy.awaitDisappearSpinner()
     })
+
     it('dashboard page is visible to the logged in user', () => {
       Menu.getDashboardButton().should('be.visible')
       DashboardPage.getDashboardTab().should('contain', 'Editing Queue')
+      cy.wait(1000)
       DashboardPage.getDashboardTab().click()
       DashboardPage.getSectionTitleWithText('Editing Queue').should(
         'be.visible',
@@ -82,7 +85,7 @@ describe('Login page tests', () => {
     it('Reviewer/Editor cannot access the admin-specific pages', () => {
       Menu.getFormsButton().should('not.exist')
       Menu.getUsersButton().should('not.exist')
-      Menu.getManuscriptsButton().should('not.exist')
+      Menu.assertManuscriptsButtonDoesNotExist()
       Menu.getMyProfileButton().should('be.visible')
       cy.visit(manuscripts)
       cy.contains('404 Page not found.').should('exist')

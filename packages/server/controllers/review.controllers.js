@@ -38,17 +38,15 @@ const convertFilesToFullObjects = async (
     )
     .map(field => field.name)
 
-  /* eslint-disable-next-line no-param-reassign */
   review.jsonData = ensureJsonIsParsed(review.jsonData)
 
-  /* eslint-disable-next-line no-restricted-syntax */
   for (const [key, value] of Object.entries(review.jsonData)) {
     if (fileFieldNames.includes(key)) {
       const fileRecords = Array.isArray(value) ? value : []
       const fileIds = fileRecords.map(file => file.id || file) // Paranoia, in case some files are already in full object form
       /* eslint-disable-next-line no-await-in-loop */
       const files = await getFilesByIds(fileIds)
-      /* eslint-disable-next-line no-param-reassign, no-await-in-loop */
+      /* eslint-disable-next-line no-await-in-loop */
       review.jsonData[key] = await getFilesWithUrl(files)
     }
   }
@@ -62,7 +60,6 @@ const convertFilesToFullObjects = async (
 const convertFilesToIdsOnly = (reviewDelta, form) => {
   if (!reviewDelta.jsonData) return
   if (typeof reviewDelta.jsonData === 'string')
-    /* eslint-disable-next-line no-param-reassign */
     reviewDelta.jsonData = JSON.parse(reviewDelta.jsonData)
 
   const fileFieldNames = form.structure.children
@@ -71,10 +68,8 @@ const convertFilesToIdsOnly = (reviewDelta, form) => {
     )
     .map(field => field.name)
 
-  /* eslint-disable-next-line no-restricted-syntax */
   for (const [key, value] of Object.entries(reviewDelta.jsonData)) {
     if (fileFieldNames.includes(key) && Array.isArray(value)) {
-      /* eslint-disable-next-line no-param-reassign */
       reviewDelta.jsonData[key] = value.map(file => file.id || file)
     }
   }

@@ -1,16 +1,13 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const EmailTemplate = require('../emailTemplate.model')
 const Group = require('../../group/group.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   try {
     return useTransaction(async trx => {
       const emailTemplates = await EmailTemplate.query(trx)
       const groups = await Group.query(trx)
-
-      logger.info(`Existing Email templates count: ${emailTemplates.length}`)
-      logger.info(`Existing Groups count: ${groups.length}`)
 
       // Existing instances migrating to multi-tenancy groups
       if (
@@ -22,8 +19,6 @@ exports.up = async knex => {
         await EmailTemplate.query(trx)
           .patch({ groupId: groups[0].id })
           .where('groupId', null)
-
-        logger.info('groupId patched successfully in email template table')
       }
     })
   } catch (error) {

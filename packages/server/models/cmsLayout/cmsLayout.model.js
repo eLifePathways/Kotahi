@@ -6,7 +6,6 @@ class CMSLayout extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const { File } = require('@coko/server')
 
     return {

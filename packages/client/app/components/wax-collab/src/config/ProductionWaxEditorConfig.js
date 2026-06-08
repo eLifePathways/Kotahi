@@ -34,6 +34,7 @@ import CitationService from '../CustomWaxToolGroups/CitationService/CitationServ
 import CalloutService from '../CustomWaxToolGroups/CalloutService/CalloutService'
 import 'wax-table-service/dist/index.css'
 
+/* eslint-disable-next-line no-unused-vars */
 const updateTitle = title => {
   // this gets fired when the title is changed in original version of this—not called now, but might still be needed
   // console.log(`Title changed: ${title}`)

@@ -6,11 +6,10 @@ class EmailTemplate extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const TaskEmailNotification = require('../taskEmailNotification/taskEmailNotification.model')
-    /* eslint-disable-next-line global-require */
+
     const TaskEmailNotificationLog = require('../taskEmailNotificationLog/taskEmailNotificationLog.model')
-    /* eslint-disable-next-line global-require */
+
     const Notification = require('../notification/notification.model')
 
     return {

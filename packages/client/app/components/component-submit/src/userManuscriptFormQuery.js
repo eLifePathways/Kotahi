@@ -142,7 +142,7 @@ export const fragmentFields = `
 `
 
 export const SEARCH_ROR = gql`
-  query ($input: String!) {
+  query SearchRor($input: String!) {
     searchRor(input: $input) {
       id
       name
@@ -151,7 +151,7 @@ export const SEARCH_ROR = gql`
 `
 
 const query = gql`
-  query($id: ID!, $groupId: ID, $submitPurpose: String!, $decisionPurpose: String!, $reviewPurpose: String!) {
+  query Manuscript($id: ID!, $groupId: ID, $submitPurpose: String!, $decisionPurpose: String!, $reviewPurpose: String!) {
     manuscript(id: $id) {
       ${fragmentFields}
       manuscriptVersions {

@@ -1,13 +1,17 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 export default {
   deleteManuscriptMutation: gql`
-    mutation ($id: ID!) {
+    mutation DeleteManuscript($id: ID!) {
       deleteManuscript(id: $id)
     }
   `,
   reviewerResponseMutation: gql`
-    mutation ($currentUserId: ID!, $action: String, $teamId: ID!) {
+    mutation ReviewerResponse(
+      $currentUserId: ID!
+      $action: String
+      $teamId: ID!
+    ) {
       reviewerResponse(
         currentUserId: $currentUserId
         action: $action
@@ -30,7 +34,7 @@ export default {
     }
   `,
   createManuscriptMutation: gql`
-    mutation ($input: ManuscriptInput) {
+    mutation CreateManuscript($input: ManuscriptInput) {
       createManuscript(input: $input) {
         id
         created
@@ -72,17 +76,17 @@ export default {
     }
   `,
   createNewTaskAlertsMutation: gql`
-    mutation ($groupId: ID!) {
+    mutation CreateNewTaskAlerts($groupId: ID!) {
       createNewTaskAlerts(groupId: $groupId)
     }
   `,
   removeTaskAlertsForCurrentUserMutation: gql`
-    mutation {
+    mutation RemoveTaskAlertsForCurrentUser {
       removeTaskAlertsForCurrentUser
     }
   `,
   updateTab: gql`
-    mutation ($tab: String) {
+    mutation UpdateRecentTab($tab: String) {
       updateRecentTab(tab: $tab) {
         id
         recentTab
@@ -90,7 +94,7 @@ export default {
     }
   `,
   updateChatUI: gql`
-    mutation ($state: Boolean!) {
+    mutation ExpandChat($state: Boolean!) {
       expandChat(state: $state) {
         id
         chatExpanded
@@ -98,7 +102,7 @@ export default {
     }
   `,
   updateMenu: gql`
-    mutation ($expanded: Boolean!) {
+    mutation UpdateMenu($expanded: Boolean!) {
       updateMenuUI(expanded: $expanded) {
         id
         menuPinned

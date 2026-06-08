@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop, global-require */
 /** Wait until the users table exists. I'm not sure this is needed, if we use await correctly
  * when running migrations or restoring from dump.
  */
@@ -17,10 +16,8 @@
 //     }
 //   }
 // }
-/* eslint-enable no-await-in-loop, global-require */
 
 const clearDb = async () => {
-  /* eslint-disable-next-line global-require */
   const { db } = require('@coko/server')
 
   await db.raw(`
@@ -41,10 +38,8 @@ const clearDb = async () => {
 
 /** Clears all objects from the public schema and reruns all the migrations. */
 const resetDb = async () => {
-  /* eslint-disable global-require */
   // const { logger, db, migrate } = require('@coko/server')
   const seedGroups = require('./seedGroups')
-  /* eslint-enable global-require */
 
   await clearDb()
 
@@ -72,7 +67,6 @@ if (require.main === module) {
 }
 
 const applyDump = async (dumpSql, dumpName = '') => {
-  /* eslint-disable-next-line no-await-in-loop, global-require */
   const { logger, db } = require('@coko/server')
 
   if (dumpSql) {

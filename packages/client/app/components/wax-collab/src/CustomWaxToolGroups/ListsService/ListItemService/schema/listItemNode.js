@@ -36,7 +36,6 @@ const listItemNode = {
 
     attrs['data-listnumber'] = hook.node.attrs.listnumber
 
-    // eslint-disable-next-line no-param-reassign
     hook.value = ['li', attrs, 0]
     next()
   },

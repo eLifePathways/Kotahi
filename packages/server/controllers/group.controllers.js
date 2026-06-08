@@ -1,10 +1,10 @@
-const appConfig = require('config')
+const { config: appConfig } = require('@coko/server')
 
 const Group = require('../models/group/group.model')
 const { stripSensitiveInformation } = require('./config/configUtils')
 const { getConfigJsonString } = require('./config/configObject')
 
-const groupByName = async (_, { name }, ctx) => {
+const groupByName = async (_, { name }) => {
   const group = await Group.findOne({
     name,
   })

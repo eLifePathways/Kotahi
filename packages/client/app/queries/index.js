@@ -1,7 +1,7 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 export const CREATE_MESSAGE = gql`
-  mutation createMessage($content: String, $channelId: String) {
+  mutation CreateMessage($content: String, $channelId: String) {
     createMessage(content: $content, channelId: $channelId) {
       content
       user {
@@ -11,7 +11,7 @@ export const CREATE_MESSAGE = gql`
   }
 `
 export const DELETE_MESSAGE = gql`
-  mutation deleteMessage($messageId: ID!) {
+  mutation DeleteMessage($messageId: ID!) {
     deleteMessage(messageId: $messageId) {
       id
       content
@@ -20,14 +20,14 @@ export const DELETE_MESSAGE = gql`
 `
 
 export const UPDATE_MESSAGE = gql`
-  mutation updateMessage($messageId: ID!, $content: String!) {
+  mutation UpdateMessage($messageId: ID!, $content: String!) {
     updateMessage(messageId: $messageId, content: $content) {
       content
     }
   }
 `
 export const GET_BLACKLIST_INFORMATION = gql`
-  query getBlacklistInformation($email: String!, $groupId: ID!) {
+  query GetBlacklistInformation($email: String!, $groupId: ID!) {
     getBlacklistInformation(email: $email, groupId: $groupId) {
       id
     }
@@ -35,7 +35,7 @@ export const GET_BLACKLIST_INFORMATION = gql`
 `
 
 export const GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT = gql`
-  query getCoarNotificationsForManuscript($manuscriptId: ID!) {
+  query GetCoarNotificationsForManuscript($manuscriptId: ID!) {
     coarNotificationsForManuscript(manuscriptId: $manuscriptId) {
       id
       manuscriptId
@@ -46,7 +46,7 @@ export const GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT = gql`
 `
 
 export const GET_EMAIL_INVITED_REVIEWERS = gql`
-  query getEmailInvitedReviewers($manuscriptId: ID!) {
+  query GetEmailInvitedReviewers($manuscriptId: ID!) {
     getEmailInvitedReviewers(manuscriptId: $manuscriptId) {
       id
       invitedPersonName
@@ -57,7 +57,10 @@ export const GET_EMAIL_INVITED_REVIEWERS = gql`
 `
 
 export const UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER_MUTATION = gql`
-  mutation ($invitationId: ID!, $isShared: Boolean!) {
+  mutation UpdateSharedStatusForInvitedReviewer(
+    $invitationId: ID!
+    $isShared: Boolean!
+  ) {
     updateSharedStatusForInvitedReviewer(
       invitationId: $invitationId
       isShared: $isShared
@@ -68,7 +71,7 @@ export const UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER_MUTATION = gql`
   }
 `
 export const ADD_EMAIL_TO_BLACKLIST = gql`
-  mutation ($email: String!, $groupId: ID!) {
+  mutation AddEmailToBlacklist($email: String!, $groupId: ID!) {
     addEmailToBlacklist(email: $email, groupId: $groupId) {
       email
     }
@@ -76,7 +79,7 @@ export const ADD_EMAIL_TO_BLACKLIST = gql`
 `
 
 export const REFRESH_ADA_STATUS = gql`
-  mutation ($id: ID!) {
+  mutation RefreshAdaStatus($id: ID!) {
     refreshAdaStatus(id: $id) {
       id
       submission
@@ -85,7 +88,7 @@ export const REFRESH_ADA_STATUS = gql`
 `
 
 export const GET_MESSAGE_BY_ID = gql`
-  query messageById($messageId: ID) {
+  query MessageById($messageId: ID) {
     message(messageId: $messageId) {
       id
       content
@@ -98,7 +101,7 @@ export const GET_MESSAGE_BY_ID = gql`
 `
 
 export const SEARCH_USERS = gql`
-  query searchUsers($teamId: ID, $query: String) {
+  query SearchUsers($teamId: ID, $query: String) {
     searchUsers(teamId: $teamId, query: $query) {
       id
       username
@@ -109,25 +112,25 @@ export const SEARCH_USERS = gql`
 `
 
 export const ARCHIVE_MANUSCRIPTS = gql`
-  mutation ($ids: [ID!]!) {
+  mutation ArchiveManuscripts($ids: [ID!]!) {
     archiveManuscripts(ids: $ids)
   }
 `
 
 export const UNARCHIVE_MANUSCRIPTS = gql`
-  mutation ($ids: [ID!]!) {
+  mutation UnarchiveManuscripts($ids: [ID!]!) {
     unarchiveManuscripts(ids: $ids)
   }
 `
 
 export const DELETE_MANUSCRIPT = gql`
-  mutation ($id: ID!) {
+  mutation DeleteManuscript($id: ID!) {
     deleteManuscript(id: $id)
   }
 `
 
 export const DELETE_MANUSCRIPTS = gql`
-  mutation ($ids: [ID]!) {
+  mutation DeleteManuscripts($ids: [ID]!) {
     deleteManuscripts(ids: $ids)
   }
 `
@@ -270,19 +273,19 @@ export const GET_MANUSCRIPTS_AND_FORM = gql`
 `
 
 export const IMPORT_MANUSCRIPTS = gql`
-  mutation ($groupId: ID!) {
+  mutation ImportManuscripts($groupId: ID!) {
     importManuscripts(groupId: $groupId)
   }
 `
 
 export const IMPORTED_MANUSCRIPTS_SUBSCRIPTION = gql`
-  subscription manuscriptsImportStatus {
+  subscription ManuscriptsImportStatus {
     manuscriptsImportStatus
   }
 `
 
 export const GET_SYSTEM_WIDE_DISCUSSION_CHANNEL = gql`
-  query systemWideDiscussionChannel($groupId: ID!) {
+  query SystemWideDiscussionChannel($groupId: ID!) {
     systemWideDiscussionChannel(groupId: $groupId) {
       id
       type
@@ -334,7 +337,7 @@ const exportFields = `
 `
 
 export const GET_MANUSCRIPTS_DATA = gql`
-  query getManuscriptsData($selectedManuscripts: [ID!]!) {
+  query GetManuscriptsData($selectedManuscripts: [ID!]!) {
     getManuscriptsData(selectedManuscripts: $selectedManuscripts) {
       ${exportFields}
       manuscriptVersions {
@@ -409,7 +412,7 @@ assigneeEmail
 `
 
 export const UPDATE_TASKS = gql`
-  mutation($manuscriptId: ID, $groupId: ID!, $tasks: [TaskInput!]!) {
+  mutation UpdateTasks($manuscriptId: ID, $groupId: ID!, $tasks: [TaskInput!]!) {
     updateTasks(manuscriptId: $manuscriptId, groupId: $groupId, tasks: $tasks) {
       ${taskFields}
     }
@@ -417,7 +420,7 @@ export const UPDATE_TASKS = gql`
 `
 
 export const UPDATE_TASK = gql`
-  mutation($task: TaskInput!) {
+  mutation UpdateTask($task: TaskInput!) {
     updateTask(task: $task) {
       ${taskFields}
     }
@@ -425,14 +428,14 @@ export const UPDATE_TASK = gql`
 `
 
 export const UPDATE_TASK_NOTIFICATION = gql`
-  mutation ($taskNotification: TaskEmailNotificationInput!) {
+  mutation UpdateTaskNotification ($taskNotification: TaskEmailNotificationInput!) {
     updateTaskNotification(taskNotification: $taskNotification) {
       ${taskFields}
     }
   }
 `
 export const DELETE_TASK_NOTIFICATION = gql`
-  mutation($id: ID!) {
+  mutation DeleteTaskNotification($id: ID!) {
     deleteTaskNotification(id: $id)
     {
       ${taskFields}
@@ -440,7 +443,7 @@ export const DELETE_TASK_NOTIFICATION = gql`
   }
 `
 export const UPDATE_TASK_STATUS = gql`
-  mutation($task: UpdateTaskStatusInput!) {
+  mutation UpdateTaskStatus($task: UpdateTaskStatusInput!) {
     updateTaskStatus(task: $task) {
       ${taskFields}
     }
@@ -448,7 +451,7 @@ export const UPDATE_TASK_STATUS = gql`
 `
 
 export const CREATE_TASK_EMAIL_NOTIFICATION_LOGS = gql`
-mutation($taskEmailNotificationLog: TaskEmailNotificationLogInput!) {
+mutation CreateTaskEmailNotificationLog($taskEmailNotificationLog: TaskEmailNotificationLogInput!) {
   createTaskEmailNotificationLog(taskEmailNotificationLog: $taskEmailNotificationLog) {
     ${taskFields}
   }
@@ -456,7 +459,7 @@ mutation($taskEmailNotificationLog: TaskEmailNotificationLogInput!) {
 `
 
 export const GET_CONFIG = gql`
-  query config($id: ID!) {
+  query Config($id: ID!) {
     oldConfig
     config(id: $id) {
       id
@@ -476,7 +479,7 @@ export const GET_CONFIG = gql`
 `
 
 export const UPDATE_CONFIG = gql`
-  mutation ($id: ID!, $input: ConfigInput) {
+  mutation UpdateConfig($id: ID!, $input: ConfigInput) {
     updateConfig(id: $id, input: $input) {
       id
       formData
@@ -486,7 +489,7 @@ export const UPDATE_CONFIG = gql`
 `
 
 export const GET_EMAIL_TEMPLATES = gql`
-  query {
+  query EmailTemplates {
     emailTemplates {
       id
       created
@@ -505,7 +508,7 @@ export const GET_EMAIL_TEMPLATES = gql`
 `
 
 export const GET_GROUP_BY_NAME = gql`
-  query groupByName($name: String!) {
+  query GroupByName($name: String!) {
     groupByName(name: $name) {
       id
       name
@@ -521,7 +524,7 @@ export const GET_GROUP_BY_NAME = gql`
 `
 
 export const GET_GROUPS = gql`
-  query groups {
+  query Groups {
     groups {
       id
       name
@@ -545,7 +548,7 @@ export const GET_GROUPS = gql`
 `
 
 export const ASSIGN_AUTHOR_FOR_PROOFING = gql`
-  mutation ($id: ID!) {
+  mutation AssignAuthorForProofingManuscript($id: ID!) {
     assignAuthorForProofingManuscript(id: $id) {
       id
       status
@@ -554,7 +557,7 @@ export const ASSIGN_AUTHOR_FOR_PROOFING = gql`
 `
 
 export const CREATE_FILE_MUTATION = gql`
-  mutation ($file: Upload!, $meta: FileMetaInput!) {
+  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
     createFile(file: $file, meta: $meta) {
       id
       created
@@ -573,7 +576,7 @@ export const CREATE_FILE_MUTATION = gql`
 `
 
 export const DELETE_FILE_MUTATION = gql`
-  mutation ($id: ID!) {
+  mutation DeleteFile($id: ID!) {
     deleteFile(id: $id)
   }
 `

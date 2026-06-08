@@ -13,4 +13,4 @@ const role = {
   ],
 }
 
-module.exports = role
+export default role

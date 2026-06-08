@@ -79,6 +79,7 @@ const templateContent = template => {
     } = template.emailContent
 
     return { cc, subject, body, description, ccEditors }
+    /* eslint-disable-next-line */
   } catch (error) {
     logger.error('Error parsing email template:', template)
     return {

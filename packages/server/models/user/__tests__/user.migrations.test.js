@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const path = require('path')
 const fs = require('fs-extra')
 
@@ -18,9 +20,7 @@ describe('User migrations', () => {
       .select('tablename')
       .where('schemaname', 'public')
 
-    /* eslint-disable-next-line no-restricted-syntax */
     for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
       await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
     }
   })
@@ -48,10 +48,10 @@ describe('User migrations', () => {
     const file = await createFile(
       fs.createReadStream(filePath),
       'profile.svg',
-      null,
-      null,
-      ['profilePicture'],
-      userWithPic.id,
+      {
+        tags: ['profilePicture'],
+        objectId: userWithPic.id,
+      },
     )
 
     const storedObject = file.getStoredObjectBasedOnType('small')

@@ -26,7 +26,7 @@ import { gql } from '@apollo/client'
  */
 
 const GET_SUBMISSION_FORM_COMPONENTS_QUERY = gql`
-  query ($groupId: ID!) {
+  query FormForPurposeAndCategory($groupId: ID!) {
     formForPurposeAndCategory(
       purpose: "submit"
       category: "submission"

@@ -1,12 +1,11 @@
-/* eslint-disable jest/no-commented-out-tests */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
 import { dashboard } from '../../support/routes'
 
 describe('Create a new submission', () => {
-  // eslint-disable-next-line jest/no-disabled-tests
   before(() => {
     const restoreUrl = Cypress.config('restoreUrl')
     cy.request('POST', `${restoreUrl}/commons.bootstrap`)
@@ -18,7 +17,9 @@ describe('Create a new submission', () => {
       cy.login(name.role.author, dashboard)
     })
 
+    cy.wait(1000)
     DashboardPage.clickSubmissionButton() // Click on new submission
+    cy.url().should('include', 'newSubmission')
   })
 
   it('can upload a manuscript and add a title', () => {
@@ -26,6 +27,7 @@ describe('Create a new submission', () => {
       'cypress/fixtures/test-docx.docx',
       { force: true },
     ) // Upload manuscript .docx
+    cy.wait(2000)
     DashboardPage.confirmSubmissionCreated()
     cy.url().should('contain', '/submit')
 
@@ -45,6 +47,7 @@ describe('Create a new submission', () => {
       'cypress/fixtures/test-pdf.pdf',
       { force: true },
     )
+    cy.wait(2000)
     DashboardPage.confirmSubmissionCreated()
     cy.url().should('contain', '/submit')
 
@@ -62,6 +65,7 @@ Cypress.Commands.add('completeSubmissionForm', title => {
   // Verify your submission exists in dashboard
   DashboardPage.getSectionTitleWithText('My Submissions')
   // the following line is added so that it gives enough time for the dom to update the title of the submission in dashboard. Only a switch between tabs.
+  cy.wait(500)
   DashboardPage.clickDashboardTab(1)
   DashboardPage.clickDashboardTab(0)
   DashboardPage.getSubmissionTitle().should('contain', title)

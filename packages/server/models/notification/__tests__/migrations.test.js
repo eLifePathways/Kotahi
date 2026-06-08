@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { migrationManager, db } = require('@coko/server')
 const Group = require('../../group/group.model')
 const Config = require('../../config/config.model')
@@ -9,9 +11,7 @@ describe('Notification Migrations', () => {
       .select('tablename')
       .where('schemaname', 'public')
 
-    /* eslint-disable-next-line no-restricted-syntax */
     for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
       await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
     }
   })

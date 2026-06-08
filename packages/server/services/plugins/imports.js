@@ -1,4 +1,4 @@
-/* eslint-disable global-require, no-console, import/no-dynamic-require, no-await-in-loop, no-continue, no-plusplus */
+/* eslint-disable no-console, no-await-in-loop, no-plusplus */
 
 const { uuid } = require('@coko/server')
 const { chunk } = require('lodash')
@@ -40,7 +40,6 @@ const saveImportedManuscripts = async (
     // Save first version manuscripts in chunks of ten; then save the later versions one at a time so creation date preserves sequence
     const chunks = chunk(firstVersions, 10).concat(laterVersions.map(x => [x]))
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const ch of chunks) {
       await Manuscript.query(trx).upsertGraphAndFetch(ch, {
         relate: true,

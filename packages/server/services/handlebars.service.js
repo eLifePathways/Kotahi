@@ -117,7 +117,6 @@ const transformFormToMatchOverridenKeys = form => {
 const getManuscriptLink = async (appUrl, userId, manuscriptId) => {
   const {
     getUserRolesInManuscript,
-    // eslint-disable-next-line global-require
   } = require('../controllers/user.controllers')
 
   const roles = manuscriptId

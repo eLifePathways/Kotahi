@@ -1,5 +1,6 @@
-/* eslint-disable jest/valid-expect-in-promise,cypress/no-unnecessary-waiting */
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/catch-or-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { manuscripts } from '../../support/routes'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -95,7 +96,6 @@ describe.skip('manuscripts page tests', () => {
     it('word count button should be visible & display info', () => {
       SubmissionFormPage.getWordCountInfo().its('length').should('eq', 7)
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 7; i++) {
         SubmissionFormPage.getWordCountInfo()
           .eq(i)
@@ -199,7 +199,7 @@ describe.skip('manuscripts page tests', () => {
         SubmissionFormPage.fillInReviewer(data.creator)
         SubmissionFormPage.checkEditDateIsUpdated()
         SubmissionFormPage.fillInReviewCreator(data.creator)
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
       })
@@ -246,7 +246,7 @@ describe.skip('manuscripts page tests', () => {
         ManuscriptsPage.clickEvaluation()
         SubmissionFormPage.fillInValueAdded('Evaluated')
         SubmissionFormPage.clickTopicsCheckboxContainsText('Vaccine')
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
         ManuscriptsPage.clickEvaluation()
@@ -392,7 +392,6 @@ describe.skip('manuscripts page tests', () => {
     })
 
     it('filter article after label and url contain that label', () => {
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(3000)
       ManuscriptsPage.clickArticleLabel(-1)
       ManuscriptsPage.getTableRowsCount().should('eq', 2)
@@ -455,11 +454,11 @@ describe.skip('manuscripts page tests', () => {
         SubmissionFormPage.fillInJournal(data.journal)
         SubmissionFormPage.fillInReviewer(data.creator)
         SubmissionFormPage.fillInReviewCreator(data.creator)
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
       })
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
+
       cy.wait(3000)
       ManuscriptsPage.clickStatus(-1)
       ManuscriptsPage.getTableRowsCount().should('eq', 3)
@@ -494,11 +493,11 @@ describe.skip('manuscripts page tests', () => {
         SubmissionFormPage.fillInJournal(data.journal)
         SubmissionFormPage.fillInReviewer(data.creator)
         SubmissionFormPage.fillInReviewCreator(data.creator)
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
       })
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
+
       cy.wait(3000)
       ManuscriptsPage.getTableRowsCount().should('eq', 4)
       ManuscriptsPage.clickTableHead(5)
@@ -530,11 +529,11 @@ describe.skip('manuscripts page tests', () => {
         SubmissionFormPage.fillInJournal(data.journal)
         SubmissionFormPage.fillInReviewer(data.creator)
         SubmissionFormPage.fillInReviewCreator(data.creator)
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
       })
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
+
       cy.wait(3000)
       ManuscriptsPage.clickStatus(-1)
       ManuscriptsPage.getTableRowsCount().should('eq', 3)
@@ -573,11 +572,11 @@ describe.skip('manuscripts page tests', () => {
         SubmissionFormPage.fillInJournal(data.journal)
         SubmissionFormPage.fillInReviewer(data.creator)
         SubmissionFormPage.fillInReviewCreator(data.creator)
-        // eslint-disable-next-line
+
         SubmissionFormPage.waitThreeSec()
         SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
       })
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
+
       cy.wait(3000)
       ManuscriptsPage.getTableRowsCount().should('eq', 4)
       ManuscriptsPage.clickTableHead(5)

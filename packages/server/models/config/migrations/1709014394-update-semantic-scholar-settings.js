@@ -1,18 +1,16 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
-const variableConfig = require('config')
+const { config: variableConfig } = require('@coko/server')
 
 const Config = require('../config.model')
 
 const shouldRunDefaultImportsForColab = [true, 'true'].includes(
-  variableConfig['import-for-prc'].default_import,
+  variableConfig.get('import-for-prc').default_import,
 )
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)
-
-    logger.info(`Existing Configs count: ${configs.length}`)
 
     if (configs.length > 0) {
       await Promise.all(
@@ -60,9 +58,5 @@ exports.up = async knex => {
         }),
       )
     }
-
-    logger.info(
-      `Updated Semantic Scholar settings default value for prc instances.`,
-    )
   })
 }
