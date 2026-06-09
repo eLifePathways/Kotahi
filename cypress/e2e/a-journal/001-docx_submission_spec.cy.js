@@ -27,6 +27,7 @@ describe('Create a new submission', () => {
       'cypress/fixtures/test-docx.docx',
       { force: true },
     ) // Upload manuscript .docx
+    cy.wait(1000)
     DashboardPage.confirmSubmissionCreated()
     cy.url().should('contain', '/submit')
 
@@ -46,6 +47,7 @@ describe('Create a new submission', () => {
       'cypress/fixtures/test-pdf.pdf',
       { force: true },
     )
+    cy.wait(1000)
     DashboardPage.confirmSubmissionCreated()
     cy.url().should('contain', '/submit')
 
