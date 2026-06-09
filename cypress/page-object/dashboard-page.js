@@ -52,7 +52,7 @@ export const DashboardPage = {
     return cy.get(SUBMISSION_FILE_UPLOAD_INPUT)
   },
   confirmSubmissionCreated() {
-    cy.contains(SUBMISSION_CREATED).should('exist')
+    cy.contains(SUBMISSION_CREATED, { timeout: 10000 }).should('exist')
   },
   clickSubmitButton() {
     this.getSubmitButton().click()

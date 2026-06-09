@@ -1,11 +1,6 @@
 name: Lint Job
 
 on:
-  pull_request:
-    branches:
-      - main
-      - staging
-      - release/**
   workflow_call:
 
 jobs:
@@ -19,7 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Install dependencies
         run: |
