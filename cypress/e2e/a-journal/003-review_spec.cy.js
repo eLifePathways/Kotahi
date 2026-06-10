@@ -54,6 +54,7 @@ describe('Completing reviews', () => {
         .should('be.visible')
         .trigger('mouseover', { force: true })
       cy.contains('Completed: 3')
+      cy.wait(1000)
       cy.get('[fill="#fff2cd"]').should('be.visible').trigger('mouseover')
       cy.contains('Invited: 1')
       cy.get('[fill="#d7efd4"]').should('be.visible').trigger('mouseover')
