@@ -33,6 +33,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          package-manager-cache: false
 
       - name: Bump version
         id: bump_version
