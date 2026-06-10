@@ -74,7 +74,7 @@ export const Menu = {
     cy.url().should('contain', 'manuscripts')
   },
   getReportsButton() {
-    return cy.getByDataTestId('menu-Reports')
+    return cy.get('[data-testid=menu-Reports]', { timeout: 10000 })
   },
   clickReports() {
     this.getReportsButton().click()

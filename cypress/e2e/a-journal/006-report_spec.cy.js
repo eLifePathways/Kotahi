@@ -19,7 +19,7 @@ describe('Report Page', () => {
 
     /* Group Manager can access the Reports */
     Menu.getReportsButton().should('be.visible')
-    cy.wait(500)
+    cy.wait(1000)
     Menu.clickReports()
 
     /* Apply date range filter */
