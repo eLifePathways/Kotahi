@@ -1,4 +1,5 @@
 /* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
@@ -21,7 +22,9 @@ describe('Update the submission form field', () => {
     })
 
     // enter the from page and assert the fileds()
+    cy.wait(1000)
     Menu.clickSettings()
+    cy.wait(1000)
     Menu.clickForms()
     cy.contains('Submission').click()
 
@@ -34,6 +37,7 @@ describe('Update the submission form field', () => {
     cy.get('[data-testid="publishingTag"]').type('test_tag')
     // cy.contains('Update Field').click({ force: true })
     cy.contains('Save').click({ force: true })
+    cy.wait(1000)
     Menu.clickManuscripts()
     ManuscriptsPage.clickSubmit()
     // Upload manuscript
