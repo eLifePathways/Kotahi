@@ -94,7 +94,7 @@ export const DashboardPage = {
     this.getControlButton().click()
   },
   getManuscriptNavButton() {
-    return cy.get(MANUSCRIPT_NAV_BUTTON)
+    return cy.get(MANUSCRIPT_NAV_BUTTON, { timeout: 10000 })
   },
   clickManuscriptNavButton() {
     this.getManuscriptNavButton().click()
