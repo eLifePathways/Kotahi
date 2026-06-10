@@ -38,7 +38,8 @@ services:
       - pagedjs
       - xsweet
       - anystyle
-    command: ['yarn', 'coko-server', 'start-dev']
+    command:
+      ['/bin/sh', '-c', 'rm -f /tmp/healthy && exec yarn coko-server start-dev']
     ports:
       - ${SERVER_PORT:-3000}:3000
       - ${WS_YJS_SERVER_PORT:-5010}:${WS_YJS_SERVER_PORT:-5010}
@@ -142,13 +143,12 @@ services:
       - ./packages/server/startup.js:/home/node/app/startup.js
       - ./packages/server/utils:/home/node/app/utils
       - ./packages/server/profiles:/home/node/app/profiles
-      # - ./packages/server/node_modules/@coko/server:/home/node/app/node_modules/@coko/server
     healthcheck:
-      test:
-        ['CMD-SHELL', 'curl --fail http://localhost:3000/healthcheck || exit 1']
-      # interval: 1s
+      test: ['CMD', '/bin/sh', '/home/node/app/scripts/server_healthy.sh']
+      interval: 1s
       retries: 30
     tty: true
+    init: true
 
   pagedjs:
     depends_on:
@@ -279,6 +279,7 @@ services:
       - FLAX_CLIENT_SECRET=${FLAX_CLIENT_SECRET:-}
       - FLAX_CLIENT_API_URL=${FLAX_CLIENT_API_URL:-http://server:3000}
       - FLAX_DEFAULT_GROUP=${FLAX_DEFAULT_GROUP:-"kotahi"}
+    init: true
 
   devdocs:
     build:
