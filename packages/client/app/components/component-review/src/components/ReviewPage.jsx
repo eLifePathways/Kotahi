@@ -79,7 +79,7 @@ const ReviewPage = ({ currentUser }) => {
           manuscript: { reviews },
         },
       } = await client.query({
-        MANUSCRIPT,
+        query: MANUSCRIPT,
         variables: {
           id: params.version,
           groupId: config.groupId,

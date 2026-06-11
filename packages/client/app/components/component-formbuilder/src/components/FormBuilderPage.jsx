@@ -34,31 +34,31 @@ const FormBuilderPage = ({ category }) => {
   // TODO Structure forms for graphql and retrieve IDs from these mutations to allow Apollo Cache to do its magic, rather than forcing refetch.
   const [deleteForm] = useMutation(DELETE_FORM, {
     refetchQueries: [
-      { GET_FORM, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
   const [deleteFormElement] = useMutation(DELETE_FORM_ELEMENT, {
     refetchQueries: [
-      { GET_FORM, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
   const [updateForm] = useMutation(UPDATE_FORM, {
     refetchQueries: [
-      { GET_FORM, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
   const [updateFormElement] = useMutation(UPDATE_FORM_ELEMENT, {
     refetchQueries: [
-      { GET_FORM, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
   const [createForm] = useMutation(CREATE_FORM, {
     refetchQueries: [
-      { GET_FORM, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 

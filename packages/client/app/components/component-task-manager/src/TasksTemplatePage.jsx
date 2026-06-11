@@ -16,19 +16,27 @@ const TasksTemplatePage = () => {
   const config = useContext(ConfigContext)
 
   const [updateTask] = useMutation(UPDATE_TASK, {
-    refetchQueries: [{ GET_TASKS, variables: { groupId: config.groupId } }],
+    refetchQueries: [
+      { query: GET_TASKS, variables: { groupId: config.groupId } },
+    ],
   })
 
   const [updateTaskNotification] = useMutation(UPDATE_TASK_NOTIFICATION, {
-    refetchQueries: [{ GET_TASKS, variables: { groupId: config.groupId } }],
+    refetchQueries: [
+      { query: GET_TASKS, variables: { groupId: config.groupId } },
+    ],
   })
 
   const [deleteTaskNotification] = useMutation(DELETE_TASK_NOTIFICATION, {
-    refetchQueries: [{ GET_TASKS, variables: { groupId: config.groupId } }],
+    refetchQueries: [
+      { query: GET_TASKS, variables: { groupId: config.groupId } },
+    ],
   })
 
   const [updateTasks] = useMutation(UPDATE_TASKS, {
-    refetchQueries: [{ GET_TASKS, variables: { groupId: config.groupId } }],
+    refetchQueries: [
+      { query: GET_TASKS, variables: { groupId: config.groupId } },
+    ],
   })
 
   const { loading, error, data } = useQuery(GET_TASKS, {
