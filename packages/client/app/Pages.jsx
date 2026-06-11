@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect } from 'react'
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useQuery } from '@apollo/client/react'
 
@@ -17,19 +17,14 @@ import DynamicFavicon from './dynamicFavicon'
 
 import { GET_GROUPS } from './queries'
 
-import Login from './components/component-login/src'
-import ArticleArtifactPage from './components/component-published-artifact/components/ArticleArtifactPage'
-import DeclineArticleOwnershipPage from './components/component-dashboard/src/components/DeclineArticleOwnershipPage'
-import AcceptArticleOwnershipPage from './components/component-dashboard/src/components/AcceptArticleOwnershipPage'
-import InvitationAcceptedPage from './components/component-dashboard/src/components/InvitationAcceptedPage'
 import AssetManager from './components/asset-manager/src/AssetManagerPage'
-import AdminPage from './components/AdminPage'
-import GroupPage from './components/component-frontpage/src/GroupPage'
 import { JournalProvider } from './components/xpub-journal'
 import journal from '../config/journal'
 import ModalProvider from './components/asset-manager/src/ui/Modal/ModalProvider'
 import { XpubProvider } from './components/xpub-with-context/src'
 import { reloadTranslationsForGroup } from './i18n'
+
+import Router from './Router'
 
 const Container = styled.div`
   display: grid;
@@ -63,13 +58,7 @@ const Pages = () => {
 
   const groups = data?.groups ? data.groups : []
 
-  const hasMultipleGroups = groups && groups.length > 1
-  let onlyGroupName = ''
   let currentGroup = null
-
-  if (!hasMultipleGroups) {
-    onlyGroupName = groups[0]?.name
-  }
 
   const name = location.pathname.split('/')[1]
 
@@ -123,8 +112,6 @@ const Pages = () => {
     config?.groupIdentity?.secondaryColor,
   )
 
-  const { urlFrag } = config
-
   return (
     <XpubProvider>
       <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
@@ -134,66 +121,7 @@ const Pages = () => {
             <GlobalStyle />
             <ConfigProvider config={config}>
               <YjsProvider>
-                <Routes>
-                  {hasMultipleGroups ? (
-                    <Route element={<GroupPage />} path="/" />
-                  ) : (
-                    <Route
-                      element={
-                        <Navigate replace to={`/${onlyGroupName}/login`} />
-                      }
-                      path="/"
-                    />
-                  )}
-
-                  <Route
-                    element={
-                      <Navigate
-                        replace
-                        to={hasMultipleGroups ? '/' : `/${onlyGroupName}/login`}
-                      />
-                    }
-                    path="/login"
-                  />
-
-                  <Route
-                    element={
-                      <Navigate
-                        replace
-                        to={
-                          window.localStorage.getItem('token')
-                            ? `${urlFrag}/dashboard`
-                            : `${urlFrag}/login`
-                        }
-                      />
-                    }
-                    path={urlFrag}
-                  />
-
-                  {/* <Route element={<Frontpage />} path={`${urlFrag}`} /> */}
-                  {/* <Route element={<GroupPage />} path="/" /> */}
-
-                  <Route element={<Login />} path={`${urlFrag}/login`} />
-
-                  <Route
-                    element={<ArticleArtifactPage />}
-                    path={`${urlFrag}/versions/:version/artifacts/:artifactId`}
-                  />
-                  <Route
-                    element={<DeclineArticleOwnershipPage />}
-                    path={`${urlFrag}/decline/:invitationId`}
-                  />
-                  <Route
-                    element={<AcceptArticleOwnershipPage />}
-                    path={`${urlFrag}/acceptarticle/:invitationId`}
-                  />
-                  <Route
-                    element={<InvitationAcceptedPage />}
-                    path={`${urlFrag}/invitation/accepted`}
-                  />
-                  {/* AdminPage has nested routes within */}
-                  <Route element={<AdminPage />} path={`${urlFrag}/*`} />
-                </Routes>
+                <Router />
               </YjsProvider>
             </ConfigProvider>
           </DynamicThemeProvider>

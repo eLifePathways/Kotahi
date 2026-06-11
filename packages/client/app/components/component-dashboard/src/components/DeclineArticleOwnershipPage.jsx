@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
-
 import { useState, useContext } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client/react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -67,12 +65,12 @@ const StyledFormInput = styled(FormInput)`
   }
 `
 
-const DeclineArticleOwnershipPage = ({ match }) => {
+const DeclineArticleOwnershipPage = () => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
 
   const config = useContext(ConfigContext)
-  const { invitationId } = match.params
+  const { invitationId } = useParams()
 
   const { data, loading } = useQuery(GET_INVITATION_STATUS, {
     variables: { id: invitationId },

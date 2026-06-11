@@ -1,7 +1,7 @@
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { th, grid } from '@coko/client'
 import styled from 'styled-components'
@@ -61,7 +61,7 @@ const GroupPage = () => {
     )
 
   if (data?.groups.length === 1) {
-    navigate(`/${data?.groups[0]?.name}`)
+    return <Navigate replace to={`/${data?.groups[0]?.name}`} />
   }
 
   const redirectToLogin = value => {

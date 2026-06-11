@@ -127,6 +127,10 @@ const Login = () => {
       ? getQueryStringByName('redirectUrl')
       : redirectLink
 
+  if (localStorage.getItem('token')) {
+    return <Navigate replace to={getNextUrl(config)} />
+  }
+
   if (token) {
     window.localStorage.setItem('token', token)
     const intendedPage = localStorage.getItem('intendedPage')
@@ -140,9 +144,12 @@ const Login = () => {
   }
 
   const nextpage = `${serverUrl}/auth/orcid?group_id=${config?.groupId}`
-  return redirectLink ? (
-    <Navigate replace to={redirectLink} />
-  ) : (
+
+  if (redirectLink) {
+    return <Navigate replace to={redirectLink} />
+  }
+
+  return (
     <Container>
       <Centered>
         <Content>
