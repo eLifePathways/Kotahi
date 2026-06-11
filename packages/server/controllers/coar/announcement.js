@@ -18,11 +18,7 @@ const isReviewDoi = () => {
 }
 
 const isFlaxSetup = () => {
-  return (
-    flaxConfig.port !== '' &&
-    flaxConfig.host !== '' &&
-    flaxConfig.protocol !== ''
-  )
+  return flaxConfig.clientFlaxSiteUrl !== ''
 }
 
 const getFlaxUrl = async (groupName, shortId) => {
@@ -30,16 +26,11 @@ const getFlaxUrl = async (groupName, shortId) => {
   let flaxUrl = ''
 
   if (!flaxConfig) return { flaxReviewUrl, flaxUrl }
-  const flaxHost = flaxConfig.host
-  const flaxPort = flaxConfig.port
-  const flaxProtocol = flaxConfig.protocol
 
-  const flaxServerUrl = `${flaxProtocol}://${flaxHost}${
-    flaxPort ? `:${flaxPort}` : ''
-  }`
+  const { clientFlaxSiteUrl } = flaxConfig
 
-  flaxReviewUrl = `${flaxServerUrl}/${groupName}/articles/${shortId}/index.html#reviews`
-  flaxUrl = `${flaxServerUrl}/${groupName}/articles/${shortId}/index.html`
+  flaxReviewUrl = `${clientFlaxSiteUrl}/${groupName}/articles/${shortId}/index.html#reviews`
+  flaxUrl = `${clientFlaxSiteUrl}/${groupName}/articles/${shortId}/index.html`
 
   return { flaxReviewUrl, flaxUrl }
 }

@@ -35,8 +35,6 @@ const getRequestData = async manuscript => {
       manuscriptId: manuscript.id,
     })) || {}
 
-  if (!payload) return false
-
   const { flaxReviewUrl, flaxUrl } = await getFlaxUrl(
     group.name,
     manuscript.shortId,
@@ -71,7 +69,7 @@ const getRequestData = async manuscript => {
     context: {
       id: `https://doi.org/${manuscript.doi}`,
     },
-    inReplyTo: payload.id,
+    ...(payload?.id ? { inReplyTo: payload.id } : {}),
   }
 
   if (reviewer) {
@@ -92,7 +90,7 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
   const requestData = await getRequestData(manuscript)
   const inboxUrl = await getScietyInboxUrl(groupId)
 
-  if ((!isReviewDoi() && !isFlaxSetup()) || !inboxUrl || !requestData) {
+  if ((!isReviewDoi() && !isFlaxSetup()) || !inboxUrl) {
     return false
   }
 
@@ -110,7 +108,7 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
 
     await CoarNotification.query().insert({ groupId, manuscriptId, payload })
 
-    return response ? response.data : false
+    return response?.data ?? false
   } catch (err) {
     logger.error(err)
     throw err

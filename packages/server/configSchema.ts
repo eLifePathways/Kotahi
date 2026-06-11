@@ -5,7 +5,7 @@ const MicroserviceSchema = z.strictObject({
   clientSecret: z.string().min(1, 'Client Secret is required'),
   protocol: z.enum(['http', 'https']).default('https'),
   host: z.string().min(1, 'Host is required'),
-  port: z.coerce.number().int().positive().max(65535),
+  port: z.coerce.number().int().positive().max(65535).optional(),
 })
 
 const schema = z.strictObject({

@@ -1,6 +1,7 @@
 const { Readable } = require('stream')
 
 const {
+  config,
   createFile,
   fileStorage,
   request,
@@ -105,7 +106,14 @@ const cmsFileTree = async (groupId, folderId) => {
   )
 
   const files = await File.query().whereIn('id', fileIds)
-  const filesWithUrl = await getFilesWithUrl(files)
+  // Finiscky, works because the browser does not request the url field.
+  // Acceptable because of the plan to delete all cms related code.
+  // Use the internal S3 URL for signing so flax (inside Docker) can reach these URLs.
+  // S3_PUBLIC_URL is a browser-facing URL and won't resolve within the Docker network.
+  const fileStorageConfig = config.get('fileStorage')
+  const filesWithUrl = await getFilesWithUrl(files, {
+    s3: { ...fileStorageConfig, publicUrl: fileStorageConfig.url },
+  })
 
   const getChildren = children =>
     children.map(child => {

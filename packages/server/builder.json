@@ -1,11 +1,14 @@
 {
   "assetExtensions": [
+    "csl",
+    "css",
     "graphql",
     "jpg",
     "json",
     "md",
     "njk",
     "sh",
+    "sql",
     "svg",
     "ttf",
     "txt",

@@ -24,11 +24,11 @@ const notificationResolvers = require('./notification/notification.resolvers')
 const notificationUserOptionResolvers = require('./notificationUserOption/notificationUserOption.resolvers')
 const openAiResolvers = require('./openAi/openAi.resolvers')
 const orcidResolvers = require('./orcid/orcid.resolvers')
-const payloadVerifierResolvers = require('./payloadVerifier/payloadVerifier.resolvers')
+// const payloadVerifierResolvers = require('./payloadVerifier/payloadVerifier.resolvers')
 const pdfExportResolvers = require('./pdfExport/pdfExport.resolvers')
 const publishedArtifactResolvers = require('./publishedArtifact/publishedArtifact.resolvers')
 const publishingCollectionResolvers = require('./publishingCollection/publishingCollection.resolvers')
-const referenceResolvers = require('./reference/reference.resolvers')
+// const referenceResolvers = require('./reference/reference.resolvers')
 const reportResolvers = require('./report/report.resolvers')
 const reviewResolvers = require('./review/review.resolvers')
 const rorResolvers = require('./ror/ror.resolvers')
@@ -64,11 +64,11 @@ const typeDefFilePaths = [
   'notificationUserOption/notificationUserOption.graphql',
   'openAi/openAi.graphql',
   'orcid/orcid.graphql',
-  'payloadVerifier/payloadVerifier.graphql',
+  //   'payloadVerifier/payloadVerifier.graphql',
   'pdfExport/pdfExport.graphql',
   'publishedArtifact/publishedArtifact.graphql',
   'publishingCollection/publishingCollection.graphql',
-  'reference/reference.graphql',
+  //   'reference/reference.graphql',
   'report/report.graphql',
   'review/review.graphql',
   'ror/ror.graphql',
@@ -112,11 +112,11 @@ const resolvers = merge(
   notificationUserOptionResolvers,
   openAiResolvers,
   orcidResolvers,
-  payloadVerifierResolvers,
+  //   payloadVerifierResolvers,
   pdfExportResolvers,
   publishedArtifactResolvers,
   publishingCollectionResolvers,
-  referenceResolvers,
+  //   referenceResolvers,
   reportResolvers,
   reviewResolvers,
   rorResolvers,

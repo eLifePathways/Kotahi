@@ -14,6 +14,7 @@ module.exports = defineConfig({
   },
   screenshotOnRunFailure: false,
   video: false,
+  allowCypressEnv: false,
 
   // custom config options
   restoreUrl,
