@@ -21,7 +21,7 @@ import AssetManager from './components/asset-manager/src/AssetManagerPage'
 import { JournalProvider } from './components/xpub-journal'
 import journal from '../config/journal'
 import ModalProvider from './components/asset-manager/src/ui/Modal/ModalProvider'
-import { XpubProvider } from './components/xpub-with-context/src'
+import { XpubProvider } from './components/xpub-with-context/src/index'
 import { reloadTranslationsForGroup } from './i18n'
 
 import Router from './Router'

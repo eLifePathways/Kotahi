@@ -12,9 +12,15 @@ import {
   UserMenuContainer,
   UserName,
 } from '../styles'
-import NavItem from './NavItem'
+// import NavItem from './NavItem'
 
-const UserComponent = ({ user, loginLink, profileLink, t, expanded }) => {
+const UserComponent = ({
+  user,
+  // loginLink,
+  profileLink,
+  t,
+  expanded,
+}) => {
   return (
     <UserMenuContainer>
       {user && (
@@ -35,7 +41,7 @@ const UserComponent = ({ user, loginLink, profileLink, t, expanded }) => {
           </UserInfo>
         </UserItem>
       )}
-      {!user && <NavItem icon="logIn" link={loginLink} name="Login" />}
+      {/* {!user && <NavItem icon="logIn" link={loginLink} name="Login" />} */}
     </UserMenuContainer>
   )
 }

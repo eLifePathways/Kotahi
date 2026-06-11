@@ -17,8 +17,7 @@ import {
 import { UPDATE_MENU } from '../queries'
 
 const Menu = ({
-  className,
-  loginLink = '/login',
+  // loginLink = '/login',
   navLinkComponents,
   user,
   notice,
@@ -74,7 +73,6 @@ const Menu = ({
   return (
     <Root
       aria-expanded={!menuIsMinimal}
-      className={className}
       data-testid="menu-container"
       onMouseLeave={handlers.mouseleaveNav}
     >
@@ -96,7 +94,7 @@ const Menu = ({
       <MainNavWrapper>
         <UserComponent
           expanded={!menuIsMinimal}
-          loginLink={loginLink}
+          // loginLink={loginLink}
           profileLink={profileLink}
           t={t}
           user={user}
