@@ -11,13 +11,13 @@ import {
   Routes,
   useLocation,
 } from 'react-router-dom'
-import styled from 'styled-components'
 import i18next from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { JournalContext } from './xpub-journal'
 import { XpubContext } from './xpub-with-context/src'
 import { ConfigContext } from './config/src'
 import { getLanguages } from '../i18n'
+import Layout from '../ui/base/Layout'
 
 import FormBuilderPage from './component-formbuilder/src/components/FormBuilderPage'
 import ManuscriptPage from './component-manuscript/src/components/ManuscriptPage'
@@ -53,24 +53,6 @@ import DashboardSubmissionsPage from './component-dashboard/src/components/Dashb
 const getParams = ({ routerPath, path }) => {
   return matchPath(routerPath, path).params
 }
-
-const Root = styled.div`
-  display: flex;
-  height: 100vh;
-  max-height: 100vh;
-  ${props =>
-    props.$converting &&
-    `
-     button,
-     a {
-       pointer-events: none;
-     }
-  `};
-  overflow: hidden;
-  position: relative;
-  width: 100vw;
-  z-index: 0;
-`
 
 // TODO: Redirect if token expires
 const PrivateRoute = ({
@@ -351,7 +333,7 @@ const AdminPage = () => {
     )
 
   return (
-    <Root $converting={conversion.converting}>
+    <Layout $converting={conversion.converting}>
       <Menu
         brand={config?.groupIdentity?.brandName}
         brandLink={homeLink}
@@ -739,7 +721,7 @@ const AdminPage = () => {
           <Route element={<PageError errorCode={403} />} path="*" />
         )}
       </Routes>
-    </Root>
+    </Layout>
   )
 }
 
