@@ -1,18 +1,19 @@
-/* eslint-disable react/prop-types */
-
 import { useContext } from 'react'
 import { useQuery } from '@apollo/client/react'
+import { useParams } from 'react-router-dom'
+
 import ReviewPreview from './reviewPreview/ReviewPreview'
 import { Heading, Page, Spinner } from '../../../shared'
 import { ConfigContext } from '../../../config/src'
 import { REVIEW_PREVIEW_MANUSCRIPT } from '../../../../queries'
 
-const ReviewPreviewPage = ({ match }) => {
+const ReviewPreviewPage = () => {
   const config = useContext(ConfigContext)
+  const { version } = useParams()
 
   const { loading, error, data } = useQuery(REVIEW_PREVIEW_MANUSCRIPT, {
     variables: {
-      id: match.params.version,
+      id: version,
       groupId: config.groupId,
     },
     partialRefetch: true,

@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
@@ -11,14 +10,17 @@ import {
   URI_PAGENUM_PARAM,
   useQueryParams,
 } from '../../../../shared/urlParamUtils'
-import { UPDATE_TAB, DASHBOARD } from '../../../../queries'
+import { CURRENT_USER, UPDATE_TAB, DASHBOARD } from '../../../../queries'
 import SubmissionsTable from './sections/SubmissionsTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
-const DashboardSubmissionsPage = ({ currentUser }) => {
+const DashboardSubmissionsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['author']
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   const applyQueryParams = useQueryParams()
 

@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/immutability */
-/* eslint-disable react/prop-types */
 
 /* eslint-disable no-shadow */
 
@@ -30,6 +29,7 @@ import {
   PUBLISH_MANUSCRIPT,
   EXPAND_CHAT,
   UPDATE_MANUSCRIPT,
+  CURRENT_USER,
 } from '../../../queries'
 import Manuscripts from './Manuscripts'
 import {
@@ -42,13 +42,16 @@ import {
 import { validateDoi, validateSuffix } from '../../../shared/commsUtils'
 import useChat from '../../../hooks/useChat'
 
-const ManuscriptsPage = ({ currentUser }) => {
+const ManuscriptsPage = () => {
   const location = useLocation()
   const { t } = useTranslation()
   const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
   const config = useContext(ConfigContext)
   const { urlFrag } = config
   const chatRoomId = fnv.hash(config.clientUrl).hex()
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   /** Returns an array of column names, e.g.
    *  ['shortId', 'created', 'titleAndAbstract', 'submission.topic', 'status'] */

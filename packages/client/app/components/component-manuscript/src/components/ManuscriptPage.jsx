@@ -1,18 +1,22 @@
-/* eslint-disable react/prop-types */
-
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import Manuscript from './Manuscript'
 import { Spinner, CommsErrorBanner } from '../../../shared'
-import { MANUSCRIPT_FOR_MANUSCRIPT_PAGE } from '../../../../queries'
+import {
+  MANUSCRIPT_FOR_MANUSCRIPT_PAGE,
+  CURRENT_USER,
+} from '../../../../queries'
 
-const ManuscriptPage = ({ currentUser }) => {
+const ManuscriptPage = () => {
   const params = useParams()
   const { data, loading, error } = useQuery(MANUSCRIPT_FOR_MANUSCRIPT_PAGE, {
     variables: {
       id: params.version,
     },
   })
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   if (loading) return <Spinner />
   if (error) return <CommsErrorBanner error={error} />

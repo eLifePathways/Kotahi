@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
@@ -16,14 +15,18 @@ import {
   REMOVE_TASK_ALERTS_FOR_CURRENT_USER,
   DASHBOARD,
   UPDATE_MANUSCRIPT,
+  CURRENT_USER,
 } from '../../../../queries'
 import EditorTable from './sections/EditorTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
-const DashboardEditsPage = ({ currentUser }) => {
+const DashboardEditsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['seniorEditor', 'handlingEditor', 'editor']
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   const applyQueryParams = useQueryParams()
 

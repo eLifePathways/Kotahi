@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useQuery } from '@apollo/client/react'
+import Modal from 'react-modal'
 
 import { grid } from '@coko/client'
 
@@ -52,6 +53,7 @@ const modals = {
 }
 
 const Pages = () => {
+  Modal.setAppElement('#root')
   const location = useLocation()
 
   const { loading, error, data } = useQuery(GET_GROUPS)

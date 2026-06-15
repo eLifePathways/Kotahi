@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import React, { useContext } from 'react'
@@ -20,6 +19,7 @@ import {
   PRODUCTION_MANUSCRIPT_UPDATE,
   SUBMIT_AUTHOR_PROOFING_FEEDBACK,
   UPDATE_TEMPLATE,
+  CURRENT_USER,
 } from '../../../../queries'
 
 const showAuthorProofingMode = (
@@ -49,7 +49,7 @@ const showAuthorProofingMode = (
   )
 }
 
-const ProductionPage = ({ currentUser }) => {
+const ProductionPage = () => {
   const params = useParams()
   const { groupId, controlPanel, submission } = useContext(ConfigContext)
   const client = useApolloClient()
@@ -117,6 +117,9 @@ const ProductionPage = ({ currentUser }) => {
     //   }
     // },
   })
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   const [update] = useMutation(PRODUCTION_MANUSCRIPT_UPDATE)
 

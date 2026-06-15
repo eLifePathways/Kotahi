@@ -1,10 +1,11 @@
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { useApolloClient } from '@apollo/client/react'
+import { useApolloClient, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Container, Content, UploadContainer, Heading } from '../style'
 import UploadManuscript from './UploadManuscript'
 import { ConfigContext } from '../../../config/src'
+import { CURRENT_USER } from '../../../../queries'
 
 const acceptUploadFiles = [
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -25,9 +26,14 @@ const acceptFiles =
     ? acceptUploadFiles.join()
     : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
-const Dashboard = ({ currentUser }) => {
+const Dashboard = () => {
   const client = useApolloClient()
   const { t } = useTranslation()
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+
+  // @ts-ignore
+  const currentUser = currentUserData.currentUser
 
   const {
     submission: { submissionPage },

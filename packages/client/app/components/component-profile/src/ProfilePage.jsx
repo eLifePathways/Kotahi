@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable promise/catch-or-return */
 /* eslint-disable promise/always-return */
 
@@ -21,15 +20,21 @@ import {
   UPDATE_LANGUAGE,
   GET_GLOBAL_CHAT_NOTIFICATION_OPTION,
   UPDATE_GLOBAL_CHAT_NOTIFICATION_OPTION,
+  CURRENT_USER,
 } from '../../../queries'
 
 const { version: kotahiVersion } = packageJson
 
-const ProfilePage = ({ currentUser }) => {
+const ProfilePage = () => {
   const { id } = useParams()
 
   const { urlFrag } = useContext(ConfigContext)
   const [didLogout, setDidLogout] = useState(false)
+
+  const { data: currentUserData, loading: currentUserLoading } =
+    useQuery(CURRENT_USER)
+
+  const currentUser = currentUserData?.currentUser
 
   const {
     loading,
@@ -70,7 +75,7 @@ const ProfilePage = ({ currentUser }) => {
     })
   }
 
-  if (loading) return <Spinner />
+  if (loading || currentUserLoading) return <Spinner />
   if (error) return <CommsErrorBanner error={error} />
 
   if (didLogout) {

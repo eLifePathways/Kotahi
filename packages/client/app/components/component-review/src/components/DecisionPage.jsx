@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/immutability */
-/* eslint-disable react/prop-types */
+
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import { useEffect, useState, useContext } from 'react'
@@ -58,6 +58,7 @@ import {
   NEW_REVIEW_FRAGMENT,
   NEW_TEAM_FRAGMENT,
   UPDATE_ADA,
+  CURRENT_USER,
 } from '../../../../queries'
 
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
@@ -69,7 +70,7 @@ import { getRoles } from '../../../../shared/manuscriptUtils'
 
 let debouncers = {}
 
-const DecisionPage = ({ currentUser }) => {
+const DecisionPage = () => {
   const params = useParams()
   const manuscriptId = params.version
 
@@ -83,6 +84,9 @@ const DecisionPage = ({ currentUser }) => {
     fetchPolicy: 'network-only',
     skip: true,
   })
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   useEffect(() => {
     return () => {

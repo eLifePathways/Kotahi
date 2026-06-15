@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client/react'
 import { CommsErrorBanner, Spinner } from '../../shared'
@@ -16,6 +14,7 @@ import {
   DELETE_USER,
   SET_GROUP_ROLE,
   SET_GLOBAL_ROLE,
+  CURRENT_USER,
 } from '../../../queries'
 
 const defaultSortDirections = {
@@ -25,9 +24,12 @@ const defaultSortDirections = {
   groupManager: 'ASC',
 }
 
-const UsersPage = ({ currentUser }) => {
+const UsersPage = () => {
   const location = useLocation()
   const applyQueryParams = useQueryParams()
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   const params = new URLSearchParams(location.search)
   const page = params.get(URI_PAGENUM_PARAM) || 1

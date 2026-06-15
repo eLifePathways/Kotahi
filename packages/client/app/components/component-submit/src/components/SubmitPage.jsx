@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { debounce, set } from 'lodash'
@@ -28,6 +26,7 @@ import {
   CREATE_NEW_MANUSCRIPT_VERSION,
   CREATE_FILE,
   DELETE_FILE,
+  CURRENT_USER,
 } from '../../../../queries'
 
 let debouncers = {}
@@ -48,7 +47,7 @@ const useValidateORCID = () => {
   return { validationOrcid }
 }
 
-const SubmitPage = ({ currentUser }) => {
+const SubmitPage = () => {
   const navigate = useNavigate()
   const params = useParams()
   const location = useLocation()
@@ -69,6 +68,9 @@ const SubmitPage = ({ currentUser }) => {
   const submitPurpose = 'submit'
   const decisionPurpose = 'decision'
   const reviewPurpose = 'review'
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   const { data, loading, error } = useQuery(
     USER_MANUSCRIPT,

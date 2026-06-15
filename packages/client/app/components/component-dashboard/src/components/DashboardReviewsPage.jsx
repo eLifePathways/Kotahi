@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
@@ -11,6 +10,7 @@ import {
   UPDATE_TAB,
   DASHBOARD,
   UPDATE_MANUSCRIPT,
+  CURRENT_USER,
 } from '../../../../queries'
 import {
   extractFilters,
@@ -22,9 +22,12 @@ import {
 import ReviewerTable from './sections/ReviewerTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
-const DashboardReviewsPage = ({ currentUser }) => {
+const DashboardReviewsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
+
+  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const currentUser = currentUserData.currentUser
 
   const wantedRoles = [
     'reviewer',
