@@ -7,9 +7,7 @@ import { th, grid } from '@coko/client'
 import styled from 'styled-components'
 import { Spinner, CommsErrorBanner, Select } from '../../shared'
 import { GET_GROUPS } from '../../../queries'
-import theme, { color } from '../../../theme'
-import { DynamicThemeProvider } from '../../theme/src'
-import GlobalStyle from '../../../theme/elements/GlobalStyle'
+import { color } from '../../../theme'
 
 const Container = styled.div`
   background: ${color.gray97};
@@ -43,7 +41,7 @@ export const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-const GroupPage = () => {
+const GroupsPage = () => {
   const navigate = useNavigate()
   const [selectedOption, setSelectedOption] = useState('')
   const { loading, error, data } = useQuery(GET_GROUPS)
@@ -81,27 +79,24 @@ const GroupPage = () => {
   })
 
   return (
-    <DynamicThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Container>
-        <Content>
-          Select group to login
-          <LoginSelect
-            aria-label="Select group"
-            isClearable={false}
-            label="Select group"
-            onChange={selected => {
-              redirectToLogin(selected.value)
-            }}
-            options={groups}
-            placeholder="Select group"
-            value={selectedOption}
-            width="100%"
-          />
-        </Content>
-      </Container>
-    </DynamicThemeProvider>
+    <Container>
+      <Content>
+        Select group to login
+        <LoginSelect
+          aria-label="Select group"
+          isClearable={false}
+          label="Select group"
+          onChange={selected => {
+            redirectToLogin(selected.value)
+          }}
+          options={groups}
+          placeholder="Select group"
+          value={selectedOption}
+          width="100%"
+        />
+      </Content>
+    </Container>
   )
 }
 
-export default GroupPage
+export default GroupsPage

@@ -29,10 +29,7 @@ const MenuPage = (): ReactNode => {
   const { urlFrag, instanceName } = config
 
   // TO DO - this should be in a more generic place than the menu
-  const { loading, error, data } = useQuery(CURRENT_USER, {
-    fetchPolicy: 'network-only',
-    pollInterval: 120000,
-  })
+  const { loading, error, data } = useQuery(CURRENT_USER)
 
   if (loading) return null
 

@@ -199,7 +199,13 @@ const cokoTheme = {
   },
 }
 
-export const setBrandColors = (color1 = '#3AAE2A', color2 = '#9e9e9e') => {
+export const colorPrimaryDefault = '#3aae2a'
+export const colorSecondaryDefault = '#9e9e9e'
+
+export const setBrandColors = (
+  color1 = colorPrimaryDefault,
+  color2 = colorSecondaryDefault,
+) => {
   cokoTheme.colorPrimary = color1
   cokoTheme.colorSecondary = color2
   internalSetBrandColors(color1, color2)

@@ -1,5 +1,5 @@
 import { type ReactNode, useContext } from 'react'
-import { Route, Routes, Navigate, Outlet, useParams } from 'react-router-dom'
+import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 
 import AcceptArticleOwnershipPage from './components/component-dashboard/src/components/AcceptArticleOwnershipPage'
@@ -19,7 +19,7 @@ import DashboardSubmissionsPage from './components/component-dashboard/src/compo
 import DecisionPage from './components/component-review/src/components/DecisionPage'
 import DeclineArticleOwnershipPage from './components/component-dashboard/src/components/DeclineArticleOwnershipPage'
 import FormBuilderPage from './components/component-formbuilder/src/components/FormBuilderPage'
-import GroupPage from './components/component-frontpage/src/GroupPage'
+import GroupsPage from './components/component-frontpage/src/GroupsPage'
 import InvitationAcceptedPage from './components/component-dashboard/src/components/InvitationAcceptedPage'
 import Login from './components/component-login/src'
 import ManuscriptPage from './components/component-manuscript/src/components/ManuscriptPage'
@@ -38,32 +38,13 @@ import UsersPage from './components/component-users-manager/src/UsersPage'
 import { ConfigContext } from './components/config/src'
 import { XpubContext } from './components/xpub-with-context/src'
 
-import { GroupWrapperPage, MenuPage } from './pages'
+import { AuthenticatedPage, GroupPage, MenuPage } from './pages'
 
 import { CURRENT_USER } from './queries'
 
 import Layout from './ui/base/Layout'
 
 // #region helpers
-const Authenticated = (): ReactNode => {
-  const { groupName } = useParams()
-
-  // if (
-  //   ['journal', 'prc'].includes(instanceName) &&
-  //   currentUser &&
-  //   !currentUser.email &&
-  //   path !== `${urlFrag}/profile` // TODO configure this url via config manager
-  // ) {
-  //   return <Navigate replace to={`${urlFrag}/profile`} />
-  // }
-
-  if (!localStorage.getItem('token')) {
-    return <Navigate replace to={`/${groupName}/login`} />
-  }
-
-  return <Outlet />
-}
-
 enum Role {
   // global
   Admin = 'admin',
@@ -113,16 +94,43 @@ const RoleGate = (props: RoleGateProps): ReactNode => {
 }
 // #endregion helpers
 
+/**
+ * TO DO - dashboard tabs don't need to be separate urls
+ * (OR dashboard does not need tabs at all ???)
+ *
+ * kept separate here in order to call config context within config provider
+ * (config provider starts at /:groupName)
+ *
+ * Clean solution for the above is to not use config in the router and simply
+ * hide / show sections in the ui
+ */
+const DashboardRoutes = (): ReactNode => {
+  const config = useContext(ConfigContext)
+  return (
+    <Routes>
+      <Route element={<DashboardRedirect />} path="" />
+      {config?.dashboard?.showSections?.includes('submission') && (
+        <Route element={<DashboardSubmissionsPage />} path="submissions" />
+      )}
+      {config?.dashboard?.showSections?.includes('review') && (
+        <Route element={<DashboardReviewsPage />} path="reviews" />
+      )}
+      {config?.dashboard?.showSections?.includes('editor') && (
+        <Route element={<DashboardEditsPage />} path="edits" />
+      )}
+    </Routes>
+  )
+}
+
 const Router = (): ReactNode => {
   // TO DO - look into how to get rid of these two
   const [conversion] = useContext(XpubContext)
-  const config = useContext(ConfigContext)
 
   return (
     <Routes>
-      <Route element={<GroupPage />} path="/" />
+      <Route element={<GroupsPage />} path="/" />
 
-      <Route element={<GroupWrapperPage />} path="/:groupName">
+      <Route element={<GroupPage />} path="/:groupName">
         <Route element={<Navigate replace to="login"></Navigate>} index />
         <Route element={<Login />} path="login" />
 
@@ -148,7 +156,7 @@ const Router = (): ReactNode => {
           path="versions/:version/artifacts/:artifactId"
         />
 
-        <Route element={<Authenticated />}>
+        <Route element={<AuthenticatedPage />}>
           <Route
             element={
               <Layout converting={conversion.converting}>
@@ -193,39 +201,15 @@ const Router = (): ReactNode => {
 
               <Route
                 element={
-                  // TO DO - dashboard tabs don't need to be separate urls
-                  // (OR dashboard does not need tabs at all ???)
                   <DashboardLayout>
-                    <Routes>
-                      <Route element={<DashboardRedirect />} path="" />
-
-                      {config?.dashboard?.showSections?.includes(
-                        'submission',
-                      ) && (
-                        <Route
-                          element={<DashboardSubmissionsPage />}
-                          path="submissions"
-                        />
-                      )}
-
-                      {config?.dashboard?.showSections?.includes('review') && (
-                        <Route
-                          element={<DashboardReviewsPage />}
-                          path="reviews"
-                        />
-                      )}
-
-                      {config?.dashboard?.showSections?.includes('editor') && (
-                        <Route element={<DashboardEditsPage />} path="edits" />
-                      )}
-                    </Routes>
+                    <DashboardRoutes />
                   </DashboardLayout>
                 }
                 path="dashboard/*"
               />
             </Route>
 
-            <Route path="admin/*">
+            <Route path="admin">
               <Route
                 element={<RoleGate roles={[Role.GroupAdmin, Role.Admin]} />}
               >
@@ -249,7 +233,7 @@ const Router = (): ReactNode => {
                 <Route element={<UsersPage />} path="users" />
                 <Route element={<TasksTemplatePage />} path="tasks" />
 
-                <Route path="cms/*">
+                <Route path="cms">
                   <Route element={<CMSPagesPage />} path="pages/:pageId?" />
                   <Route element={<CMSLayoutPage />} path="layout" />
                   <Route element={<CMSArticlePage />} path="article" />

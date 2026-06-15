@@ -6,6 +6,16 @@ import lightenBy from '../shared/lightenBy'
 const defaultBrandColor1 = '#2fac66'
 const defaultBrandColor2 = '#704f79'
 
+export const validateColor = colorCode => {
+  try {
+    Color(colorCode)
+    return colorCode
+  } catch {
+    console.error(`${colorCode} is not a valid color code`)
+    return null
+  }
+}
+
 const validateInstanceConfigColors = (colorCode, fallbackColor) => {
   try {
     Color(colorCode)

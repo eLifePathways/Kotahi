@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { darken, override, th } from '@coko/client'
+import { darken, override, th, grid } from '@coko/client'
 
 const StyledButton = styled.button.attrs(props => ({
   'data-testid': props['data-testid'],
@@ -8,16 +8,13 @@ const StyledButton = styled.button.attrs(props => ({
   background: ${th('colorSecondary')};
   border: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
   border-radius: ${th('borderRadius')};
-  color: ${props => (props.color ? props.color : props.theme.colorText)};
-  cursor: ${p => (p.disabled ? 'not-allowed' : 'pointer')};
+  color: ${th('colorText')};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   font-family: ${th('fontInterface')};
-  font-size: ${props =>
-    props.size === 'small'
-      ? props.theme.fontSizeBaseSmall
-      : props.theme.fontSizeBase};
-  line-height: calc(${th('gridUnit')} * 3);
-  min-width: calc(${th('gridUnit')} * 12);
-  padding: ${props => (props.size === 'small' ? '0' : props.theme.gridUnit)};
+  font-size: ${th('fontSizeBase')};
+  line-height: ${grid(3)};
+  min-width: ${grid(12)};
+  padding: ${grid(1)};
 
   &:focus,
   &:hover {
@@ -43,49 +40,24 @@ const StyledButton = styled.button.attrs(props => ({
   ${props =>
     props.$primary &&
     css`
-      background: ${props.background
-        ? props.background
-        : props.theme.colorPrimary};
-
-      color: ${props.color ? props.color : props.theme.colorTextReverse};
+      background: ${th('colorPrimary')};
+      color: ${th('colorTextReverse')};
 
       &:focus,
       &:hover {
-        background-color: ${props.background
-          ? darken(props.background, 0.3)
-          : darken(props.theme.colorPrimary, 0.3)};
+        background-color: ${darken('colorPrimary', 0.3)};
       }
 
       &:active {
-        background-color: ${props.background
-          ? darken(props.background, 0.5)
-          : darken(props.theme.colorPrimary, 0.5)};
+        background-color: ${darken('colorPrimary', 0.5)};
       }
 
       &[disabled] {
         &:focus,
         &:hover,
         &:active {
-          background: ${props.background
-            ? props.background
-            : props.theme.colorPrimary};
+          background: ${th('colorPrimary')};
         }
-      }
-    `};
-
-  ${props =>
-    props.outline &&
-    css`
-      border: ${th('borderWidth')} ${th('borderStyle')}
-        ${props.color ? props.color : props.colorPrimary};
-      padding: ${props.size === 'small' ? '0' : props.theme.gridUnit};
-      text-decoration: none;
-
-      &:hover,
-      &:focus,
-      &:active {
-        border: ${th('borderWidth')} ${th('borderStyle')}
-          ${props.color ? props.color : props.colorPrimary};
       }
     `};
 
