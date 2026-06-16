@@ -150,7 +150,7 @@ const Router = (): ReactNode => {
           path="invitation/accepted"
         />
 
-        {/* TO DO - should this be public? */}
+        {/* TO DO - still necessary? used by docmaps server-side */}
         <Route
           element={<ArticleArtifactPage />}
           path="versions/:version/artifacts/:artifactId"
