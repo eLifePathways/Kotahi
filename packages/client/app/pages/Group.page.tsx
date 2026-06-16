@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useMemo } from 'react'
 import { useParams, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { ThemeProvider } from 'styled-components'
@@ -51,6 +51,46 @@ const GroupPage = (): ReactNode => {
     activeConfig?.translationOverrides,
   ])
 
+  const config = useMemo(() => {
+    // TODO: Remove old config once refactor of config is completed
+    const oldConfig = JSON.parse(currentGroup?.oldConfig || '{}')
+
+    return {
+      id: activeConfig?.id,
+      groupId: currentGroup?.id,
+      groupName: currentGroup?.name,
+      formData: activeConfig?.formData,
+      urlFrag: `/${currentGroup?.name}`,
+      logo: activeConfig?.logo,
+      icon: activeConfig?.icon,
+      flaxSiteUrl: activeConfig?.flaxSiteUrl,
+      ...oldConfig,
+      ...JSON.parse(activeConfig?.formData || '{}'),
+    }
+  }, [
+    currentGroup?.id,
+    currentGroup?.name,
+    currentGroup?.oldConfig,
+    activeConfig?.id,
+    activeConfig?.formData,
+    activeConfig?.logo,
+    activeConfig?.icon,
+    activeConfig?.flaxSiteUrl,
+  ])
+
+  const groupThemeOverrides: ThemeOverrides = useMemo(() => {
+    if (!config?.groupIdentity) return {}
+
+    const { primaryColor, secondaryColor } = config.groupIdentity
+    const isPrimaryValid = validateColor(primaryColor)
+    const isSecondaryValid = validateColor(secondaryColor)
+
+    return {
+      colorPrimary: isPrimaryValid ? primaryColor : colorPrimaryDefault,
+      colorSecondary: isSecondaryValid ? secondaryColor : colorSecondaryDefault,
+    }
+  }, [config])
+
   if (loading) return <Spinner />
 
   if (error) {
@@ -63,39 +103,11 @@ const GroupPage = (): ReactNode => {
 
   window.localStorage.setItem('groupId', currentGroup.id)
 
-  // TODO: Remove old config once refactor of config is completed
-  const oldConfig = JSON.parse(currentGroup?.oldConfig || '{}')
-
-  const config = {
-    id: activeConfig?.id,
-    groupId: currentGroup?.id,
-    groupName: currentGroup?.name,
-    formData: activeConfig?.formData,
-    urlFrag: `/${currentGroup?.name}`,
-    logo: activeConfig?.logo,
-    icon: activeConfig?.icon,
-    flaxSiteUrl: activeConfig?.flaxSiteUrl,
-    ...oldConfig,
-    ...JSON.parse(activeConfig?.formData || '{}'),
-  }
-
   // TO DO - refactor colors so that the theme is not bypassed
   setBrandColors(
     config?.groupIdentity?.primaryColor,
     config?.groupIdentity?.secondaryColor,
   )
-
-  const groupThemeOverrides: ThemeOverrides = {}
-
-  if (validateColor(config?.groupIdentity?.primaryColor)) {
-    groupThemeOverrides.colorPrimary =
-      config?.groupIdentity?.primaryColor || colorPrimaryDefault
-  }
-
-  if (validateColor(config?.groupIdentity?.secondaryColor)) {
-    groupThemeOverrides.colorSecondary =
-      config?.groupIdentity?.secondaryColor || colorSecondaryDefault
-  }
 
   // TO DO - should yjs provider wrap the whole group?
   return (
