@@ -17,9 +17,10 @@ const AuthenticatedPage = (): ReactNode => {
   const config = useContext(ConfigContext)
   const journal = useContext(JournalContext)
 
-  const { loading, data, previousData } = useQuery(CURRENT_USER, {
+  const { loading, data } = useQuery(CURRENT_USER, {
     fetchPolicy: 'network-only',
-    pollInterval: 120000,
+    pollInterval: 60000,
+    notifyOnNetworkStatusChange: false, // stops screen flickering
     skip: !localStorage.getItem('token'),
   })
 
@@ -49,8 +50,7 @@ const AuthenticatedPage = (): ReactNode => {
     }
   }, [currentUser, updateLanguage])
 
-  // Do this to prevent polling-related flicker
-  if (loading && !previousData) {
+  if (loading) {
     return <Spinner />
   }
 
