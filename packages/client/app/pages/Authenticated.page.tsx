@@ -1,17 +1,20 @@
 /* eslint-disable react-hooks/immutability */
 
 import { type ReactNode, useContext, useEffect } from 'react'
-import { Outlet, Navigate, useParams } from 'react-router-dom'
+import { Outlet, Navigate, useParams, useLocation } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client/react'
 import i18next from 'i18next'
 
 import { CURRENT_USER, UPDATE_LANGUAGE } from '../queries'
 import { Spinner } from '../components/shared'
 import { JournalContext } from '../components/xpub-journal'
+import { ConfigContext } from '../components/config/src'
 import { getLanguages } from '../i18n'
 
 const AuthenticatedPage = (): ReactNode => {
+  const { pathname } = useLocation()
   const { groupName } = useParams()
+  const config = useContext(ConfigContext)
   const journal = useContext(JournalContext)
 
   const { loading, data, previousData } = useQuery(CURRENT_USER, {
@@ -61,6 +64,15 @@ const AuthenticatedPage = (): ReactNode => {
   // read the query data.
   // @ts-ignore
   journal.textStyles = data?.builtCss?.css
+
+  if (
+    ['journal', 'prc'].includes(config.instanceName) &&
+    currentUser &&
+    !currentUser.email &&
+    pathname !== `/${groupName}/profile` // TODO configure this url via config manager
+  ) {
+    return <Navigate replace to={`/${groupName}/profile`} />
+  }
 
   return <Outlet />
 }
