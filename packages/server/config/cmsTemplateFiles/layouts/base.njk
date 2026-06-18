@@ -37,15 +37,19 @@
 
         {% if cmsLayout.favicon %}<link rel="icon" href="{{cmsConfig.defaultImagesDirectory}}/favicon.png?{{cmsLayout.favicon.id}}">{% endif %}
         <meta name="twitter:dnt" content="on">
-				<meta name="citation_title" content="{{article.articleMetadata.submission.$title | safe}}">
-					{% for author in article.articleMetadata.submission.$authors %}
-							<meta name="citation_author" content="{{author.lastName}}, {{author.firstName}}">	
-					{% endfor %}
-				{# <meta name="googlebot" content="noindex, nofollow, noarchive" /> #}
-				<meta name="citation_publication_date" content="{{ article.headerInfo.publishedOn | replace('Z','') | postDate }}">	
-				<meta name="citation_journal_title" content="{{cmsLayout.publishConfig.title | title | safe}}">
+        <meta name="citation_title" content="{{article.articleMetadata.submission.$title | safe}}">
+        {% for author in article.articleMetadata.submission.$authors %}
+            <meta name="citation_author" content="{{author.lastName}}, {{author.firstName}}">	
+        {% endfor %}
+        {# <meta name="googlebot" content="noindex, nofollow, noarchive" /> #}
+        <meta name="citation_publication_date" content="{{ article.headerInfo.publishedOn | replace('Z','') | postDate }}">	
+        <meta name="citation_journal_title" content="{{cmsLayout.publishConfig.title | title | safe}}">
         <meta name="citation_volume" content="{{article.articleMetadata.submission.$volumeNumber | safe }}">
-        <meta name="citation_issue" content="{{article.articleMetadata.submission.$issueNumber | safe }}">				
+        <meta name="citation_issue" content="{{article.articleMetadata.submission.$issueNumber | safe }}">
+        {% if article.articleMetadata.submission.$doi %}<meta name="citation_doi" content="{{ article.articleMetadata.submission.$doi | safe }}">{% endif %}
+        {% if article.articleMetadata.submission.$abstract %}<meta name="citation_abstract" content="{{ article.articleMetadata.submission.$abstract | striptags | safe }}">{% endif %}
+        {% if cmsLayout.publishConfig.issn %}<meta name="citation_issn" content="{{ cmsLayout.publishConfig.issn }}">{% endif %}
+        {% if cmsLayout.publishConfig.electronicIssn %}<meta name="citation_issn" content="{{ cmsLayout.publishConfig.electronicIssn }}">{% endif %}
 
         {% block styles %}
             <link rel="stylesheet" href="/{% if cmsLayout.hexCode %}{{cmsLayout.hexCode}}/{% endif %}assets/css/main.css?{{ [1,2,3,4,5,6,7,8,9] | random }}{{ [1,2,3,4,5,6,7,8,9] | random }}{{ [1,2,3,4,5,6,7,8,9] | random }}">
@@ -54,7 +58,6 @@
     </head>
 
     <body class="{{class}} {% block bodyclass %}{% endblock %}">
-
         {% block topbar %}
             {% include "_partials/menu.njk" %}
         {% endblock %}
