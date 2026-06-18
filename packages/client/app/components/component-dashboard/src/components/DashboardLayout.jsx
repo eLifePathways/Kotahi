@@ -35,11 +35,7 @@ const Tabs = styled.div`
   margin-top: ${grid(1)};
 `
 
-const DashboardLayout = ({
-  createNewTaskAlerts, // For testing only. Pass in null to disable.
-  urlFrag,
-  children,
-}) => {
+const DashboardLayout = ({ urlFrag, children }) => {
   const config = useContext(ConfigContext)
   const navigate = useNavigate()
   const location = useLocation()
@@ -90,12 +86,6 @@ const DashboardLayout = ({
             >
               {t('dashboardPage.New submission')}
             </Button>
-
-            {createNewTaskAlerts && (
-              <Button onClick={createNewTaskAlerts}>
-                {t('dashboardPage.New Alerts')}
-              </Button>
-            )}
           </ControlsContainer>
         </FlexRow>
       </HeadingWithAction>

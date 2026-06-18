@@ -2,7 +2,6 @@
 
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import { CommsErrorBanner, Spinner } from '../../shared'
 import {
   extractSortData,
@@ -12,67 +11,19 @@ import {
 } from '../../../shared/urlParamUtils'
 import UsersTable from './UsersTable'
 
+import {
+  GET_USERS,
+  DELETE_USER,
+  SET_GROUP_ROLE,
+  SET_GLOBAL_ROLE,
+} from '../../../queries'
+
 const defaultSortDirections = {
   username: 'ASC',
   created: 'DESC',
   lastOnline: 'DESC',
   groupManager: 'ASC',
 }
-
-export const GET_USERS = gql`
-  query Users($sort: UsersSort, $offset: Int, $limit: Int) {
-    paginatedUsers(sort: $sort, offset: $offset, limit: $limit) {
-      totalCount
-      users {
-        id
-        username
-        globalRoles
-        groupRoles
-        email
-        profilePicture
-        defaultIdentity {
-          id
-          identifier
-        }
-        created
-        isOnline
-        lastOnline
-      }
-    }
-  }
-`
-
-const DELETE_USER = gql`
-  mutation DeleteUser($id: ID) {
-    deleteUser(id: $id) {
-      id
-    }
-  }
-`
-
-const SET_GLOBAL_ROLE = gql`
-  mutation SetGlobalRole(
-    $userId: ID!
-    $role: String!
-    $shouldEnable: Boolean!
-  ) {
-    setGlobalRole(userId: $userId, role: $role, shouldEnable: $shouldEnable) {
-      id
-      groupRoles
-      globalRoles
-    }
-  }
-`
-
-const SET_GROUP_ROLE = gql`
-  mutation SetGroupRole($userId: ID!, $role: String!, $shouldEnable: Boolean!) {
-    setGroupRole(userId: $userId, role: $role, shouldEnable: $shouldEnable) {
-      id
-      groupRoles
-      globalRoles
-    }
-  }
-`
 
 const UsersPage = ({ currentUser }) => {
   const location = useLocation()

@@ -8,13 +8,11 @@ import { Navigate } from 'react-router-dom'
 import {
   ASSIGN_USER_AS_AUTHOR,
   ASSIGN_USER_AS_REVIEWER,
-} from '../../../../queries/team'
-import {
   GET_INVITATION_MANUSCRIPT_ID,
   GET_LOGGED_IN_USER,
   UPDATE_INVITATION_STATUS,
-} from '../../../../queries/invitation'
-import mutations from '../graphql/mutations'
+  REVIEWER_RESPONSE,
+} from '../../../../queries'
 import { ConfigContext } from '../../../config/src'
 import { LinkAction, Spinner } from '../../../shared'
 import InvitationError from './InvitationError'
@@ -76,25 +74,22 @@ const InvitationAcceptedPage = () => {
     },
   })
 
-  const [addReviewerResponse] = useMutation(
-    mutations.reviewerResponseMutation,
-    {
-      onCompleted: () => {
-        updateInvitationStatus({
-          variables: {
-            id: invitationId,
-            status: 'ACCEPTED',
-            userId: loggedInUserId,
-            responseDate: currentDate,
-          },
-        })
-      },
-      onError: () => {
-        localStorage.removeItem('invitationId')
-        setErrorMessage('assignReviewerFailed')
-      },
+  const [addReviewerResponse] = useMutation(REVIEWER_RESPONSE, {
+    onCompleted: () => {
+      updateInvitationStatus({
+        variables: {
+          id: invitationId,
+          status: 'ACCEPTED',
+          userId: loggedInUserId,
+          responseDate: currentDate,
+        },
+      })
     },
-  )
+    onError: () => {
+      localStorage.removeItem('invitationId')
+      setErrorMessage('assignReviewerFailed')
+    },
+  })
 
   let manuscriptId
 

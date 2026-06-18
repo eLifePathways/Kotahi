@@ -1,12 +1,4 @@
-import { gql } from '@apollo/client'
-
-const VALIDATE_DOI = gql`
-  query validateDOI($doiOrUrl: String) {
-    validateDOI(doiOrUrl: $doiOrUrl) {
-      isDOIValid
-    }
-  }
-`
+import { VALIDATE_DOI, VALIDATE_SUFFIX } from '../queries'
 
 /** 2nd-order function to get a validator for DOIs.
  * E.g. `const errorMessage = validateDoi(client)(value)`
@@ -29,14 +21,6 @@ export const validateDoi = client => async value => {
     })
 }
 
-const VALIDATE_SUFFIX = gql`
-  query validateSuffix($suffix: String, $groupId: ID!) {
-    validateSuffix(suffix: $suffix, groupId: $groupId) {
-      isDOIValid
-    }
-  }
-`
-
 // TODO: Test this changes refelect as expected in sandbox crossref
 export const validateSuffix = (client, groupId) => async value => {
   const res = await client.query({
@@ -53,9 +37,3 @@ export const validateSuffix = (client, groupId) => async value => {
 
   return 'Suffix is invalid or not available'
 }
-
-export const VALIDATE_ORCID = gql`
-  query OrcidValidate($input: String!) {
-    orcidValidate(input: $input)
-  }
-`

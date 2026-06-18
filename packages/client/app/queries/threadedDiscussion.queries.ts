@@ -38,14 +38,6 @@ const discussionFields = `
   userCanEditAnyComment
 `
 
-export const GET_THREADED_DISCUSSIONS = gql`
-  query GetThreadedDiscussions($manuscriptId: ID!) {
-    threadedDiscussions(manuscriptId: $manuscriptId) {
-      ${discussionFields}
-    }
-  }
-`
-
 export const UPDATE_PENDING_COMMENT = gql`
   mutation(
     $manuscriptId: ID!

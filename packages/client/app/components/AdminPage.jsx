@@ -23,9 +23,7 @@ import FormBuilderPage from './component-formbuilder/src/components/FormBuilderP
 import ManuscriptPage from './component-manuscript/src/components/ManuscriptPage'
 import ManuscriptsPage from './component-manuscripts/src/ManuscriptsPage'
 import ProductionPage from './component-production/src/components/ProductionPage'
-import ProfilePage, {
-  UPDATE_LANGUAGE,
-} from './component-profile/src/ProfilePage'
+import ProfilePage from './component-profile/src/ProfilePage'
 import ReportPage from './component-reporting/src/ReportPage'
 import DecisionPage from './component-review/src/components/DecisionPage'
 import ReviewPage from './component-review/src/components/ReviewPage'
@@ -42,7 +40,7 @@ import CMSArticlePage from './component-cms-manager/src/CMSArticlePage'
 import CMSMetadataPage from './component-cms-manager/src/CMSMetadataPage'
 import CMSPublishingCollectionPage from './component-cms-manager/src/CMSPublishingCollectionPage'
 import CMSFileBrowserPage from './component-cms-manager/src/CMSFileBrowserPage'
-import QUERY from './adminPageQueries'
+import { CURRENT_USER, UPDATE_LANGUAGE } from '../queries'
 
 import Menu from './Menu'
 import { Spinner, PageError } from './shared'
@@ -116,7 +114,7 @@ const AdminPage = () => {
   const { t } = useTranslation()
   const client = useApolloClient()
 
-  const { loading, error, data } = useQuery(QUERY, {
+  const { loading, error, data } = useQuery(CURRENT_USER, {
     fetchPolicy: 'network-only',
     pollInterval: 120000,
   })

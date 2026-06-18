@@ -2,127 +2,20 @@
 /* eslint-disable react/prop-types */
 
 import { useState, useEffect, useContext } from 'react'
-import { gql } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
 import { cloneDeep, omitBy } from 'lodash'
 import { ConfigContext } from '../../../config/src'
 import FormBuilderLayout from './FormBuilderLayout'
 import { Spinner, CommsErrorBanner } from '../../../shared'
 import pruneEmpty from '../../../../shared/pruneEmpty'
-
-const formFieldsSegment = `
-id
-created
-updated
-purpose
-category
-groupId
-structure {
-  name
-  description
-  haspopup
-  popuptitle
-  popupdescription
-  children {
-    title
-    shortDescription
-    id
-    component
-    name
-    description
-    doiValidation
-    doiUniqueSuffixValidation
-    allowFutureDatesOnly
-    uploadAttachmentSource
-	isS3Component
-    s3Url
-    s3Bucket
-    s3Region
-    allowFutureDatesOnly
-    placeholder
-    inline
-    sectioncss
-    parse
-    format
-    options {
-      id
-      label
-      labelColor
-      defaultValue
-      value
-    }
-    validate {
-      id
-      label
-      value
-    }
-    validateValue {
-      minChars
-      maxChars
-      minSize
-    }
-    isReadOnly
-    hideFromReviewers
-    hideFromAuthors
-    permitPublishing
-    publishingTag
-    aiPrompt
-	metadataMapping
-  }
-}
-`
-
-const createFormMutation = gql`
-  mutation CreateForm($form: CreateFormInput!) {
-    createForm(form: $form) {
-      id
-    }
-  }
-`
-
-const updateFormMutation = gql`
-  mutation UpdateForm($form: FormInput!) {
-    updateForm(form: $form) {
-      ${formFieldsSegment}
-    }
-  }
-`
-
-const updateFormElementMutation = gql`
-  mutation UpdateFormElement($element: FormElementInput!, $formId: ID!) {
-    updateFormElement(element: $element, formId: $formId) {
-      id
-    }
-  }
-`
-
-const deleteFormElementMutation = gql`
-  mutation DeleteFormElement($formId: ID!, $elementId: ID!) {
-    deleteFormElement(formId: $formId, elementId: $elementId) {
-      id
-    }
-  }
-`
-
-const deleteFormMutation = gql`
-  mutation DeleteForm($formId: ID!) {
-    deleteForm(formId: $formId) {
-      query {
-        forms {
-          id
-        }
-      }
-    }
-  }
-`
-
-const query = gql`
-  query GetForm($category: String!, $groupId: ID) {
-    formsByCategory(category: $category, groupId: $groupId) {
-      ${formFieldsSegment}
-    }
-  }
-`
+import {
+  GET_FORM,
+  CREATE_FORM,
+  UPDATE_FORM,
+  UPDATE_FORM_ELEMENT,
+  DELETE_FORM_ELEMENT,
+  DELETE_FORM,
+} from '../../../../queries'
 
 const prepareForSubmit = values => {
   const cleanedValues = omitBy(cloneDeep(values), value => value === '')
@@ -132,40 +25,40 @@ const prepareForSubmit = values => {
 const FormBuilderPage = ({ category }) => {
   const config = useContext(ConfigContext)
 
-  const { loading, data, error } = useQuery(query, {
+  const { loading, data, error } = useQuery(GET_FORM, {
     variables: { category, groupId: config.groupId },
   })
 
   const cleanedForms = pruneEmpty(data?.formsByCategory)
 
   // TODO Structure forms for graphql and retrieve IDs from these mutations to allow Apollo Cache to do its magic, rather than forcing refetch.
-  const [deleteForm] = useMutation(deleteFormMutation, {
+  const [deleteForm] = useMutation(DELETE_FORM, {
     refetchQueries: [
-      { query, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
-  const [deleteFormElement] = useMutation(deleteFormElementMutation, {
+  const [deleteFormElement] = useMutation(DELETE_FORM_ELEMENT, {
     refetchQueries: [
-      { query, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
-  const [updateForm] = useMutation(updateFormMutation, {
+  const [updateForm] = useMutation(UPDATE_FORM, {
     refetchQueries: [
-      { query, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
-  const [updateFormElement] = useMutation(updateFormElementMutation, {
+  const [updateFormElement] = useMutation(UPDATE_FORM_ELEMENT, {
     refetchQueries: [
-      { query, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 
-  const [createForm] = useMutation(createFormMutation, {
+  const [createForm] = useMutation(CREATE_FORM, {
     refetchQueries: [
-      { query, variables: { category, groupId: config.groupId } },
+      { query: GET_FORM, variables: { category, groupId: config.groupId } },
     ],
   })
 

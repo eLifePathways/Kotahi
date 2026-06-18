@@ -1,46 +1,23 @@
 /* eslint-disable promise/always-return, promise/no-callback-in-promise */
 
 import { useContext } from 'react'
-import { gql } from '@apollo/client'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { omit } from 'lodash'
 import { ConfigContext } from '../../config/src'
 import {
-  createCollectionMutation,
-  deleteCollectionMutation,
-  updateCollectionMutation,
-  getManuscriptData,
-} from './queries'
+  GET_COLLECTIONS,
+  CMS_GET_MANUSCRIPT_DATA,
+  UPDATE_COLLECTION,
+  CREATE_COLLECTION,
+  DELETE_COLLECTION,
+} from '../../../queries'
 import { CommsErrorBanner, Spinner } from '../../shared'
 import CollectionList from './collection/CollectionList'
-
-const GET_COLLECTIONS = gql`
-  query GetPublishingCollection($groupId: ID!) {
-    publishingCollection(groupId: $groupId) {
-      id
-      created
-      updated
-      formData {
-        title
-        description
-        publicationDate
-        image
-        issueNumber
-      }
-      active
-      manuscripts {
-        id
-        submission
-      }
-      groupId
-    }
-  }
-`
 
 const useAsyncQuery = () => {
   const config = useContext(ConfigContext)
 
-  const { refetch } = useQuery(getManuscriptData, {
+  const { refetch } = useQuery(CMS_GET_MANUSCRIPT_DATA, {
     skip: true, // you should skip the initial query
   })
 
@@ -78,9 +55,9 @@ const useAsyncQuery = () => {
 
 const CmsPublishingCollectionPage = () => {
   const config = useContext(ConfigContext)
-  const [update] = useMutation(updateCollectionMutation)
-  const [createCollection] = useMutation(createCollectionMutation)
-  const [deleteCollection] = useMutation(deleteCollectionMutation)
+  const [update] = useMutation(UPDATE_COLLECTION)
+  const [createCollection] = useMutation(CREATE_COLLECTION)
+  const [deleteCollection] = useMutation(DELETE_COLLECTION)
 
   const { loadOptions: manuscriptLoadOptions } = useAsyncQuery()
 

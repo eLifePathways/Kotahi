@@ -18,7 +18,7 @@ import { FlexRow } from '../../../../../globals'
 import { color } from '../../../../../theme'
 import dataciteLogo from '../../../../../../public/datacite-logo-vector.svg'
 import { Button } from '../../../../pubsweet'
-import CHECK_API_PAYLOAD from './queries'
+import { CHECK_API_PAYLOAD } from '../../../../../queries'
 import { mapEntries } from '../../../../../shared/generalUtils'
 
 const { parse, stringify } = JSON

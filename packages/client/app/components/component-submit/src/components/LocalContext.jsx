@@ -1,7 +1,6 @@
 import { useState, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import { last } from 'lodash'
 import styled from 'styled-components'
 import { grid, th, uuid } from '@coko/client'
@@ -10,6 +9,7 @@ import { ConfigContext } from '../../../config/src'
 import { Button } from '../../../pubsweet'
 import { color } from '../../../../theme'
 import { SubNote } from '../style'
+import { SEARCH_LOCAL_CONTEXT } from '../../../../queries'
 
 const Input = styled.input`
   background: ${th('color.gray99')};
@@ -76,39 +76,6 @@ const ItemTag = styled.span`
 
 const ItemValue = styled.span``
 
-const useLocalContext = gql`
-  query searchLocalContext($input: InputSearchlocalContext!) {
-    searchLocalContext(input: $input) {
-      localContext {
-        id
-        notice {
-          id
-          identifier
-          noticeType
-          name
-          imgUrl
-          svgUrl
-          defaultText
-        }
-
-        label {
-          id
-          identifier
-          name
-          labelType
-          language
-          languageTag
-          labelText
-          imgUrl
-          svgUrl
-        }
-      }
-      errorMessage
-      errorCode
-    }
-  }
-`
-
 const LocalContext = ({
   onChange = () => {},
   readonly = false,
@@ -121,7 +88,7 @@ const LocalContext = ({
   const [localContextValue, setLocalContextValue] = useState(value?.url || '')
   const localContextRef = useRef(null)
 
-  const { refetch } = useQuery(useLocalContext, {
+  const { refetch } = useQuery(SEARCH_LOCAL_CONTEXT, {
     fetchPolicy: 'network-only',
     skip: true,
   })

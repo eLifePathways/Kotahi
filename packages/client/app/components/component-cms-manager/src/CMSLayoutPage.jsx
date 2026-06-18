@@ -8,26 +8,26 @@ import { Container, Spinner, CommsErrorBanner } from '../../shared'
 import PageHeader from './components/PageHeader'
 
 import {
-  getCMSLayout,
-  updateCMSLayoutMutation,
-  updateCMSPageDataMutation,
-  rebuildFlaxSiteMutation,
-  createFileMutation,
-  deleteFileMutation,
-} from './queries'
+  GET_CMS_LAYOUT,
+  UPDATE_CMS_LAYOUT,
+  UPDATE_CMS_PAGE_DATA,
+  REBUILD_FLAX_SITE,
+  CREATE_FILE,
+  DELETE_FILE,
+} from '../../../queries'
 
 const CMSLayoutPage = () => {
-  const { loading, data, error } = useQuery(getCMSLayout)
-  const [updateCMSLayout] = useMutation(updateCMSLayoutMutation)
-  const [updateCMSPageInfo] = useMutation(updateCMSPageDataMutation)
-  const [rebuildFlaxSite] = useMutation(rebuildFlaxSiteMutation)
-  const [createFile] = useMutation(createFileMutation)
+  const { loading, data, error } = useQuery(GET_CMS_LAYOUT)
+  const [updateCMSLayout] = useMutation(UPDATE_CMS_LAYOUT)
+  const [updateCMSPageInfo] = useMutation(UPDATE_CMS_PAGE_DATA)
+  const [rebuildFlaxSite] = useMutation(REBUILD_FLAX_SITE)
+  const [createFile] = useMutation(CREATE_FILE)
   const config = useContext(ConfigContext)
   const { groupName } = config
 
   const flaxSiteUrlForGroup = `${config.flaxSiteUrl}/${groupName}/`
 
-  const [deleteFile] = useMutation(deleteFileMutation, {
+  const [deleteFile] = useMutation(DELETE_FILE, {
     update(cache, { data: { deleteFile: fileToDelete } }) {
       const id = cache.identify({
         __typename: 'File',

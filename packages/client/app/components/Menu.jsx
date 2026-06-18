@@ -13,7 +13,8 @@ import {
   UserComponent,
   StyledPinButton,
 } from './component-menu'
-import mutations from './component-dashboard/src/graphql/mutations'
+
+import { UPDATE_MENU } from '../queries'
 
 const Menu = ({
   className,
@@ -26,7 +27,7 @@ const Menu = ({
   const { t } = useTranslation()
   const [menuIsMinimal, setMenuIsMinimal] = useState(!user.menuPinned)
   const [menuPinned, setMenuPinned] = useState(!!user.menuPinned)
-  const [updateMenuState] = useMutation(mutations.updateMenu)
+  const [updateMenuState] = useMutation(UPDATE_MENU)
 
   const renderLinks = useMemo(() => {
     return (

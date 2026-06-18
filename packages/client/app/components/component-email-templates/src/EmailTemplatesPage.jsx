@@ -4,14 +4,14 @@ import { useQuery } from '@apollo/client/react'
 import { CommsErrorBanner, Spinner } from '../../shared'
 import EmailTemplates from './EmailTemplates'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
-import GET_VARIABLES from './handlebarsAutocomplete/graphql/graphql'
 import { handlebars } from './handlebarsAutocomplete/constants'
 import { ConfigContext } from '../../config/src'
+import { GET_TEMPLATE_VARIABLES } from '../../../queries'
 
 const EmailTemplatesPage = ({ wrapper: Wrapper = Fragment }) => {
   const config = useContext(ConfigContext)
   const { groupId } = config
-  useQuery(GET_VARIABLES, {
+  useQuery(GET_TEMPLATE_VARIABLES, {
     variables: { groupId },
     onCompleted: ({ getVariables: variables = [] }) => {
       handlebars.store({ variables })

@@ -4,7 +4,6 @@
 
 import { useContext, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
-import { gql } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
 
 import { serverUrl } from '@coko/client'
@@ -15,84 +14,16 @@ import { Spinner, CommsErrorBanner } from '../../shared'
 import packageJson from '../../../../package.json'
 import { ConfigContext } from '../../config/src'
 
+import {
+  GET_USER,
+  UPDATE_EMAIL,
+  UPDATE_USERNAME,
+  UPDATE_LANGUAGE,
+  GET_GLOBAL_CHAT_NOTIFICATION_OPTION,
+  UPDATE_GLOBAL_CHAT_NOTIFICATION_OPTION,
+} from '../../../queries'
+
 const { version: kotahiVersion } = packageJson
-
-const GET_USER = gql`
-  query User($id: ID) {
-    user(id: $id) {
-      id
-      username
-      profilePicture
-      isOnline
-      email
-      globalRoles
-      groupRoles
-      defaultIdentity {
-        identifier
-        email
-        type
-        aff
-        id
-      }
-    }
-  }
-`
-
-const UPDATE_EMAIL = gql`
-  mutation UpdateEmail($id: ID!, $email: String!) {
-    updateEmail(id: $id, email: $email) {
-      success
-      error
-      user {
-        id
-        email
-      }
-    }
-  }
-`
-
-const UPDATE_USERNAME = gql`
-  mutation UpdateUsername($id: ID!, $username: String!) {
-    updateUsername(id: $id, username: $username) {
-      id
-      username
-    }
-  }
-`
-
-export const UPDATE_LANGUAGE = gql`
-  mutation UpdateLanguage($id: ID!, $preferredLanguage: String!) {
-    updateLanguage(id: $id, preferredLanguage: $preferredLanguage) {
-      id
-      preferredLanguage
-    }
-  }
-`
-
-const GET_GLOBAL_CHAT_NOTIFICATION_OPTION = gql`
-  query NotificationOption {
-    notificationOption(path: ["chat"]) {
-      userId
-      path
-      groupId
-      option
-    }
-  }
-`
-
-const UPDATE_GLOBAL_CHAT_NOTIFICATION_OPTION = gql`
-  mutation UpdateNotificationOption($option: String!) {
-    updateNotificationOption(path: ["chat"], option: $option) {
-      id
-      created
-      updated
-      userId
-      path
-      option
-      objectId
-    }
-  }
-`
 
 const ProfilePage = ({ currentUser }) => {
   const { id } = useParams()

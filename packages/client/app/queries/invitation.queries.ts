@@ -48,34 +48,6 @@ export const GET_INVITATION_STATUS = gql`
   }
 `
 
-export const GET_INVITATIONS_FOR_MANUSCRIPT = gql`
-  query GetInvitationsForManuscript($id: ID) {
-    getInvitationsForManuscript(id: $id) {
-      id
-      declinedReason
-      responseComment
-      responseDate
-      toEmail
-      invitedPersonName
-      updated
-      status
-      invitedPersonType
-      userId
-      isShared
-      user {
-        id
-        username
-        profilePicture
-        isOnline
-        defaultIdentity {
-          id
-          identifier
-        }
-      }
-    }
-  }
-`
-
 export const UPDATE_INVITATION_STATUS = gql`
   mutation UpdateInvitationStatus(
     $id: ID!
@@ -99,6 +71,47 @@ export const GET_LOGGED_IN_USER = gql`
   query CurrentUser {
     currentUser {
       id
+    }
+  }
+`
+
+export const REMOVE_INVITATION = gql`
+  mutation RemoveInvitation($id: ID!) {
+    removeInvitation(id: $id) {
+      id
+      manuscriptId
+      toEmail
+    }
+  }
+`
+
+export const UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER = gql`
+  mutation UpdateSharedStatusForInvitedReviewer(
+    $invitationId: ID!
+    $isShared: Boolean!
+  ) {
+    updateSharedStatusForInvitedReviewer(
+      invitationId: $invitationId
+      isShared: $isShared
+    ) {
+      id
+      isShared
+    }
+  }
+`
+
+export const GET_BLACKLIST_INFORMATION = gql`
+  query GetBlacklistInformation($email: String!, $groupId: ID!) {
+    getBlacklistInformation(email: $email, groupId: $groupId) {
+      id
+    }
+  }
+`
+
+export const ADD_EMAIL_TO_BLACKLIST = gql`
+  mutation AddEmailToBlacklist($email: String!, $groupId: ID!) {
+    addEmailToBlacklist(email: $email, groupId: $groupId) {
+      email
     }
   }
 `

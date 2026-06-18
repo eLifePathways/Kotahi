@@ -1,11 +1,6 @@
 import { useMutation } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 
-const DELETE_FILES = gql`
-  mutation DeleteFiles($ids: [ID!]!) {
-    deleteFiles(ids: $ids)
-  }
-`
+import { DELETE_FILES } from '../../../../queries'
 
 const useDeleteFiles = () => useMutation(DELETE_FILES)
 

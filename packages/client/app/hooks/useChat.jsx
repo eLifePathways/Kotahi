@@ -2,11 +2,12 @@
 
 import { useEffect } from 'react'
 import { useApolloClient, useQuery, useMutation } from '@apollo/client/react'
-import { CREATE_MESSAGE, SEARCH_USERS } from '../queries'
 import {
-  MESSAGES_SUBSCRIPTION,
-  MESSAGE_DELETED_SUBSCRIPTION,
-  MESSAGE_UPDATED_SUBSCRIPTION,
+  CREATE_MESSAGE,
+  SEARCH_USERS,
+  MESSAGES,
+  MESSAGE_DELETED,
+  MESSAGE_UPDATED,
   CHANNEL_VIEWED,
   GET_CHANNEL_NOTIFICATION_OPTION,
   UPDATE_CHANNEL_NOTIFICATION_OPTION,
@@ -14,7 +15,7 @@ import {
   CHANNEL_USERS_FOR_MENTION,
   GET_UNREAD_MESSAGES_COUNT,
   GET_MESSAGES,
-} from '../components/component-chat/src/Messages/queries'
+} from '../queries'
 
 const cleanSuggestionUserObject = user => {
   if (!user) return null
@@ -59,7 +60,7 @@ const handleMessageSubscriptionUpdate = (prev, subscriptionData, idKey) => {
 
 const subscribeToNewMessages = (subscribeToMore, channelId) =>
   subscribeToMore({
-    document: MESSAGES_SUBSCRIPTION,
+    document: MESSAGES,
     variables: { channelId },
     updateQuery: (prev, { subscriptionData }) =>
       handleMessageSubscriptionUpdate(prev, subscriptionData, 'messageCreated'),
@@ -67,7 +68,7 @@ const subscribeToNewMessages = (subscribeToMore, channelId) =>
 
 const subscribeToUpdatedMessage = (subscribeToMore, channelId) =>
   subscribeToMore({
-    document: MESSAGE_UPDATED_SUBSCRIPTION,
+    document: MESSAGE_UPDATED,
     variables: { channelId },
     updateQuery: (prev, { subscriptionData }) =>
       handleMessageSubscriptionUpdate(prev, subscriptionData, 'messageUpdated'),
@@ -75,7 +76,7 @@ const subscribeToUpdatedMessage = (subscribeToMore, channelId) =>
 
 const subscribeToDeletedMessage = (subscribeToMore, channelId) =>
   subscribeToMore({
-    document: MESSAGE_DELETED_SUBSCRIPTION,
+    document: MESSAGE_DELETED,
     variables: { channelId },
     updateQuery: (prev, { subscriptionData }) => {
       if (!subscriptionData.data) return prev

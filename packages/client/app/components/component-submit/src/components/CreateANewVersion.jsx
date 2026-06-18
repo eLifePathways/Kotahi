@@ -5,10 +5,12 @@ import { useState } from 'react'
 // // TODO: Sort out the imports, perhaps make DecisionReview a shared component?
 // import Review from '../../../component-review/src/components/decision/DecisionReview'
 // import { UserAvatar } from '../../../../components/component-avatar/src'
-import { gql } from '@apollo/client'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { Button } from '../../../pubsweet'
+
+import { NEW_MANUSCRIPT_VERSION_FRAGMENT } from '../../../../queries'
+
 import {
   SectionHeader,
   SectionRow,
@@ -64,11 +66,7 @@ const CreateANewVersion = ({
                       ) {
                         const newVersionRef = cache.writeFragment({
                           data: createNewVersion,
-                          fragment: gql`
-                            fragment NewManuscriptVersion on Manuscript {
-                              id
-                            }
-                          `,
+                          fragment: NEW_MANUSCRIPT_VERSION_FRAGMENT,
                         })
 
                         if (

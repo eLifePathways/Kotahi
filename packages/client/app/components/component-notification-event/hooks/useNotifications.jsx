@@ -9,7 +9,7 @@ import {
   SET_EVENT_ACTIVE,
   SET_NOTIFICATION_ACTIVE,
   UPDATE_NOTIFICATION,
-} from '../graphql/graphql'
+} from '../../../queries'
 import { safeCall } from '../../../shared/generalUtils'
 
 const useNotifications = (options = {}) => {

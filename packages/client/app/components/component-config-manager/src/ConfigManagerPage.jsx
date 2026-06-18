@@ -1,74 +1,30 @@
 import { useContext, useState } from 'react'
-import { gql } from '@apollo/client'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { ConfigContext } from '../../config/src'
-import { UPDATE_CONFIG } from '../../../queries'
 import {
-  createFileMutation,
-  deleteFileMutation,
-  generateNewCoarAuthTokenMutation,
-} from '../../component-cms-manager/src/queries'
+  UPDATE_CONFIG,
+  GET_SUBMISSION_FORM,
+  GET_CONFIG_AND_EMAIL_TEMPLATES,
+  CREATE_FILE,
+  DELETE_FILE,
+  GENERATE_NEW_COAR_AUTH_TOKEN,
+} from '../../../queries'
 
-import getSubmissionForm from './ConfigManager.queries'
 import { CommsErrorBanner, Spinner } from '../../shared'
 import ConfigManagerForm from './ConfigManagerForm'
-
-const fileFields = `
-  id
-  name
-  tags
-  storedObjects {
-    mimetype
-    key
-    url
-    type
-  }
-`
-
-const GET_CONFIG_AND_EMAIL_TEMPLATES = gql`
-  query GetConfigAndEmailTemplates($id: ID!) {
-    config(id: $id) {
-      id
-      formData
-      active
-      logo {
-        ${fileFields}
-      }
-      
-      icon {
-        ${fileFields}
-      }
-      groupId
-    }
-    emailTemplates {
-      id
-      created
-      updated
-      emailTemplateType
-      emailContent {
-        cc
-        subject
-        body
-        description
-      }
-    }
-  }
-`
 
 const ConfigManagerPage = () => {
   const config = useContext(ConfigContext)
   const [update] = useMutation(UPDATE_CONFIG)
-  const [createFile] = useMutation(createFileMutation)
-  const [deleteFile] = useMutation(deleteFileMutation)
+  const [createFile] = useMutation(CREATE_FILE)
+  const [deleteFile] = useMutation(DELETE_FILE)
 
-  const [generateNewCoarAuthToken] = useMutation(
-    generateNewCoarAuthTokenMutation,
-  )
+  const [generateNewCoarAuthToken] = useMutation(GENERATE_NEW_COAR_AUTH_TOKEN)
 
   const [updateConfigStatus, setUpdateConfigStatus] = useState(null)
 
   const { data: metadata, loading: loadingMetadata } = useQuery(
-    getSubmissionForm,
+    GET_SUBMISSION_FORM,
     {
       variables: {
         groupId: config.groupId,

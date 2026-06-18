@@ -5,7 +5,7 @@ import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Accordion } from '../../pubsweet'
 import { ConfigContext } from '../../config/src'
-import queries from './queries'
+import { FRONTPAGE } from '../../../queries'
 import FullWaxEditor from '../../wax-collab/src/FullWaxEditor'
 import { Container, Placeholder, VisualAbstract, Abstract } from './style'
 import {
@@ -61,7 +61,7 @@ const Frontpage = () => {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
 
-  const { loading, data, error } = useQuery(queries.frontpage, {
+  const { loading, data, error } = useQuery(FRONTPAGE, {
     variables: {
       sort,
       offset: (page - 1) * limit,

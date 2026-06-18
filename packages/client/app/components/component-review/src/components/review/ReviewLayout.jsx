@@ -6,7 +6,6 @@ import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { set, flatten } from 'lodash'
-import { gql } from '@apollo/client'
 import { ensureJsonIsParsed } from '../../../../../shared/objectUtils'
 import ReadonlyFormTemplate from '../metadata/ReadonlyFormTemplate'
 import Review from './Review'
@@ -26,6 +25,7 @@ import SharedReviewerGroupReviews from './SharedReviewerGroupReviews'
 import FormTemplate from '../../../../component-submit/src/components/FormTemplate'
 import { ConfigContext } from '../../../../config/src'
 import YjsContext from '../../../../provider-yjs/YjsProvider'
+import { NEW_REVIEW_FRAGMENT } from '../../../../../queries'
 
 const ReviewLayout = ({
   currentUser,
@@ -167,11 +167,7 @@ const ReviewLayout = ({
               reviews(existingReviewRefs = [], { readField }) {
                 const newReviewRef = cache.writeFragment({
                   data: updateReviewTemp,
-                  fragment: gql`
-                    fragment NewReview on Review {
-                      id
-                    }
-                  `,
+                  fragment: NEW_REVIEW_FRAGMENT,
                 })
 
                 if (

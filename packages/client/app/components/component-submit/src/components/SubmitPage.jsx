@@ -4,84 +4,31 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { debounce, set } from 'lodash'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import Submit from './Submit'
-import query, { fragmentFields } from '../userManuscriptFormQuery'
 import { AccessErrorPage, Spinner } from '../../../shared'
 import gatherManuscriptVersions from '../../../../shared/manuscript_versions'
-import {
-  publishManuscriptMutation,
-  setShouldPublishFieldMutation,
-} from '../../../component-review/src/components/queries'
 import { validateManuscriptSubmission } from '../../../../shared/manuscriptUtils'
 import CommsErrorBanner from '../../../shared/CommsErrorBanner'
+import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
+import useChat from '../../../../hooks/useChat'
 import {
-  validateDoi,
-  validateSuffix,
-  VALIDATE_ORCID,
-} from '../../../../shared/commsUtils'
-import {
+  PUBLISH_MANUSCRIPT,
+  SET_SHOULD_PUBLISH_FIELD,
   UPDATE_PENDING_COMMENT,
   COMPLETE_COMMENTS,
   COMPLETE_COMMENT,
   DELETE_PENDING_COMMENT,
-} from '../../../component-formbuilder/src/components/builderComponents/ThreadedDiscussion/queries'
-import useChat from '../../../../hooks/useChat'
-import mutations from '../../../component-dashboard/src/graphql/mutations'
-
-export const updateMutation = gql`
-  mutation UpdateManuscript($id: ID!, $input: String) {
-    updateManuscript(id: $id, input: $input) {
-      id
-      ${fragmentFields}
-    }
-  }
-`
-
-const submitMutation = gql`
-  mutation SubmitManuscript($id: ID!, $input: String) {
-    submitManuscript(id: $id, input: $input) {
-      id
-      ${fragmentFields}
-    }
-  }
-`
-
-const createNewVersionMutation = gql`
-  mutation CreateNewVersion($id: ID!) {
-    createNewVersion(id: $id) {
-      id
-      ${fragmentFields}
-    }
-  }
-`
-
-const createFileMutation = gql`
-  mutation CreateFile($file: Upload!, $meta: FileMetaInput!) {
-    createFile(file: $file, meta: $meta) {
-      id
-      created
-      name
-      updated
-      name
-      tags
-      objectId
-      storedObjects {
-        key
-        mimetype
-        url
-      }
-    }
-  }
-`
-
-const deleteFileMutation = gql`
-  mutation DeleteFile($id: ID!) {
-    deleteFile(id: $id)
-  }
-`
+  VALIDATE_ORCID,
+  EXPAND_CHAT,
+  USER_MANUSCRIPT,
+  UPDATE_MANUSCRIPT,
+  SUBMIT_MANUSCRIPT,
+  CREATE_NEW_MANUSCRIPT_VERSION,
+  CREATE_FILE,
+  DELETE_FILE,
+} from '../../../../queries'
 
 let debouncers = {}
 
@@ -109,7 +56,7 @@ const SubmitPage = ({ currentUser }) => {
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config
-  const [chatExpand] = useMutation(mutations.updateChatUI)
+  const [chatExpand] = useMutation(EXPAND_CHAT)
   const { validationOrcid } = useValidateORCID()
 
   useEffect(() => {
@@ -124,7 +71,7 @@ const SubmitPage = ({ currentUser }) => {
   const reviewPurpose = 'review'
 
   const { data, loading, error } = useQuery(
-    query,
+    USER_MANUSCRIPT,
     {
       variables: {
         id: params.version,
@@ -172,18 +119,18 @@ const SubmitPage = ({ currentUser }) => {
 
   const chatProps = useChat(channels)
 
-  const [update] = useMutation(updateMutation)
-  const [submit] = useMutation(submitMutation)
-  const [createNewVersion] = useMutation(createNewVersionMutation)
-  const [publishManuscript] = useMutation(publishManuscriptMutation)
-  const [createFile] = useMutation(createFileMutation)
+  const [update] = useMutation(UPDATE_MANUSCRIPT)
+  const [submit] = useMutation(SUBMIT_MANUSCRIPT)
+  const [createNewVersion] = useMutation(CREATE_NEW_MANUSCRIPT_VERSION)
+  const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
+  const [createFile] = useMutation(CREATE_FILE)
   const [updatePendingComment] = useMutation(UPDATE_PENDING_COMMENT)
   const [completeComments] = useMutation(COMPLETE_COMMENTS)
   const [completeComment] = useMutation(COMPLETE_COMMENT)
   const [deletePendingComment] = useMutation(DELETE_PENDING_COMMENT)
-  const [setShouldPublishField] = useMutation(setShouldPublishFieldMutation)
+  const [setShouldPublishField] = useMutation(SET_SHOULD_PUBLISH_FIELD)
 
-  const [deleteFile] = useMutation(deleteFileMutation, {
+  const [deleteFile] = useMutation(DELETE_FILE, {
     update(cache, { data: { deleteFile: fileToDelete } }) {
       const id = cache.identify({
         __typename: 'File',

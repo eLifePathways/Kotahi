@@ -3,192 +3,24 @@
 
 import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { gql } from '@apollo/client'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 
 import Production from './Production'
 import { ConfigContext } from '../../../config/src'
 import { Spinner, CommsErrorBanner } from '../../../shared'
-import { GET_SPECIFIC_FILES } from '../../../asset-manager/src/queries'
 import ModalContext from '../../../asset-manager/src/ui/Modal/ModalContext'
 import DownloadPdfComponent from './DownloadPdf'
 import DownloadJatsComponent from './DownloadJats'
 import { waxAiToolSystem } from '../../helpers'
 
-const fileFragment = `
-  files {
-    id
-    name
-    tags
-    created
-    storedObjects {
-      type
-      key
-      mimetype
-      size
-      url
-    }
-  }
-`
-
-const formFields = `
-  structure {
-    name
-    description
-    haspopup
-    popuptitle
-    popupdescription
-    children {
-      title
-      shortDescription
-      id
-      component
-      name
-      description
-      doiValidation
-      doiUniqueSuffixValidation
-      allowFutureDatesOnly
-      placeholder
-      permitPublishing
-      parse
-      format
-      options {
-        id
-        label
-        labelColor
-        defaultValue
-        value
-      }
-      validate {
-        id
-        label
-        value
-      }
-      validateValue {
-        minChars
-        maxChars
-        minSize
-      }
-    }
-  }
-`
-
-const fragmentFields = `
-  id
-  created
-  status
-  teams {
-    role
-    members {
-      user {
-        id
-        created
-      }
-    }
-  }
-  ${fileFragment}
-  submission
-  meta {
-    source
-    comments
-    manuscriptId
-    previousVersions {
-      source
-      created
-      user {
-        id
-        userName
-      }
-    }
-  }
-  authorFeedback {
-    text
-    fileIds
-    edited
-    submitted
-    submitter {
-      username
-      defaultIdentity {
-        name
-      }
-      id
-    }
-    assignedAuthors {
-      authorName
-      assignedOnDate
-    }
-    previousSubmissions {
-      text
-      fileIds
-      edited
-      submitted
-      submitter {
-        username
-        id
-      }
-    }
-  }
-`
-
-const query = gql`
-  query($id: ID!, $groupId: ID!, $isCms: Boolean!) {
-    manuscript(id: $id) {
-      ${fragmentFields}
-      manuscriptVersions {
-        ${fragmentFields}
-      }
-    }
-
-    submissionForm: formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {
-      ${formFields}
-    }
-
-    articleTemplate(groupId: $groupId, isCms: $isCms) {
-      id
-      name
-      groupId
-      ${fileFragment}
-      article
-      css
-    }
-  }
-`
-
-const useChatGpt = gql`
-  query OpenAi(
-    $input: UserMessage!
-    $groupId: ID!
-    $history: [OpenAiMessage]
-    $system: SystemMessage
-    $format: String
-  ) {
-    openAi(
-      input: $input
-      groupId: $groupId
-      history: $history
-      format: $format
-      system: $system
-    )
-  }
-`
-
-export const updateMutation = gql`
-mutation($id: ID!, $input: String) {
-  updateManuscript(id: $id, input: $input) {
-    id
-    ${fragmentFields}
-  }
-}
-`
-
-const submitAuthorProofingFeedbackMutation = gql`
-  mutation($id: ID!, $input: String) {
-    submitAuthorProofingFeedback(id: $id, input: $input) {
-      id
-      ${fragmentFields}
-    }
-  }
-`
+import {
+  GET_SPECIFIC_FILES,
+  CHAT_GPT,
+  PRODUCTION_MANUSCRIPT,
+  PRODUCTION_MANUSCRIPT_UPDATE,
+  SUBMIT_AUTHOR_PROOFING_FEEDBACK,
+  UPDATE_TEMPLATE,
+} from '../../../../queries'
 
 const showAuthorProofingMode = (
   currentUserRole,
@@ -216,19 +48,6 @@ const showAuthorProofingMode = (
     currentUserRole.isAuthor
   )
 }
-
-export const updateTemplateMutation = gql`
-  mutation($id: ID!, $input: UpdateTemplateInput!) {
-    updateTemplate(id: $id, input: $input) {
-      id
-      name
-      groupId
-      ${fileFragment}
-      article
-      css
-    }
-  }
-`
 
 const ProductionPage = ({ currentUser }) => {
   const params = useParams()
@@ -282,7 +101,7 @@ const ProductionPage = ({ currentUser }) => {
   //   error: false,
   // })
 
-  const { refetch } = useQuery(useChatGpt, {
+  const { refetch } = useQuery(CHAT_GPT, {
     fetchPolicy: 'network-only',
     skip: true,
     // onError: err => {
@@ -299,13 +118,13 @@ const ProductionPage = ({ currentUser }) => {
     // },
   })
 
-  const [update] = useMutation(updateMutation)
+  const [update] = useMutation(PRODUCTION_MANUSCRIPT_UPDATE)
 
   const [submitAuthorProofingFeedback] = useMutation(
-    submitAuthorProofingFeedbackMutation,
+    SUBMIT_AUTHOR_PROOFING_FEEDBACK,
   )
 
-  const [updateTempl] = useMutation(updateTemplateMutation)
+  const [updateTempl] = useMutation(UPDATE_TEMPLATE)
 
   const updateManuscript = async (versionId, manuscriptDelta) => {
     const newQuery = await update({
@@ -321,7 +140,7 @@ const ProductionPage = ({ currentUser }) => {
   const updateTemplate = (id, input) =>
     updateTempl({ variables: { id, input } })
 
-  const { data, loading, error } = useQuery(query, {
+  const { data, loading, error } = useQuery(PRODUCTION_MANUSCRIPT, {
     variables: {
       id: params.version,
       groupId,

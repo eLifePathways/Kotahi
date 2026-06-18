@@ -8,7 +8,6 @@ import { useRef, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Wax } from 'wax-prosemirror-core'
 import { ThemeProvider } from 'styled-components'
-import { gql } from '@apollo/client'
 import waxTheme from './layout/waxTheme'
 import { JournalContext } from '../../xpub-journal'
 
@@ -21,91 +20,13 @@ import ProductionWaxEditorNoCommentsLayout from './layout/ProductionWaxEditorNoC
 import authorProofingWaxEditorConfig from './config/AuthorProofingWaxEditorConfig'
 import AuthorProofingWaxEditorLayout from './layout/AuthorProofingWaxEditorLayout'
 
-const getAnystyleCslQuery = gql`
-  query BuildCitationsCSL($textReferences: String!) {
-    buildCitationsCSL(textReferences: $textReferences) {
-      cslReferences
-      error
-    }
-  }
-`
-
-const getCrossRefQuery = gql`
-  query GetFormattedReferences($input: CitationSearchInput) {
-    getFormattedReferences(input: $input) {
-      success
-      message
-      matches {
-        doi
-        author {
-          given
-          family
-          sequence
-        }
-        issue
-        issued {
-          raw
-        }
-        page
-        title
-        volume
-        journalTitle
-        formattedCitation
-        citeHtml
-      }
-    }
-  }
-`
-
-const getDataciteQuery = gql`
-  query GetDataciteCslFromDOI($input: CitationSearchInput) {
-    getDataciteCslFromDOI(input: $input) {
-      success
-      message
-      matches {
-        doi
-        author {
-          given
-          family
-          sequence
-        }
-        issue
-        issued {
-          raw
-        }
-        page
-        title
-        volume
-        journalTitle
-        formattedCitation
-      }
-    }
-  }
-`
-
-const getCiteProcQuery = gql`
-  query FormatCitation($citation: String!) {
-    formatCitation(citation: $citation) {
-      formattedCitation
-      citeHtml
-      error
-    }
-  }
-`
-
-const getCalloutTextQuery = gql`
-  query FormatMultipleCitations($input: CitationData) {
-    formatMultipleCitations(input: $input) {
-      orderedCitations
-      calloutTexts {
-        id
-        text
-      }
-      orderedReferenceIds
-      error
-    }
-  }
-`
+import {
+  GET_ANYSTYLE_CSL,
+  GET_CROSSREF,
+  GET_DATACITE,
+  GET_CITE_PROC,
+  GET_CALLOUT_TEXT,
+} from '../../../queries'
 
 // TODO Save this image via the server
 const renderImage = file => {
@@ -172,7 +93,7 @@ const ProductionWaxEditor = ({
     // console.log('Coming in for Anystyle: ', content)
     return client
       .query({
-        query: getAnystyleCslQuery,
+        query: GET_ANYSTYLE_CSL,
         variables: {
           textReferences: content,
         },
@@ -206,7 +127,7 @@ const ProductionWaxEditor = ({
     return text
       ? client
           .query({
-            query: useDatacite ? getDataciteQuery : getCrossRefQuery,
+            query: useDatacite ? GET_DATACITE : GET_CROSSREF,
             variables: {
               input: {
                 text,
@@ -258,7 +179,7 @@ const ProductionWaxEditor = ({
     // console.log('Coming in for citeproc: ', csl)
     return client
       .query({
-        query: getCiteProcQuery,
+        query: GET_CITE_PROC,
         variables: {
           citation: JSON.stringify(csl),
         },
@@ -294,7 +215,7 @@ const ProductionWaxEditor = ({
     // )
     return client
       .query({
-        query: getCalloutTextQuery,
+        query: GET_CALLOUT_TEXT,
         variables: {
           input: {
             references: JSON.stringify(references),

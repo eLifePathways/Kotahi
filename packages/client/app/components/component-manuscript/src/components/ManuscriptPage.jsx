@@ -2,43 +2,13 @@
 
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
-import { gql } from '@apollo/client'
 import Manuscript from './Manuscript'
 import { Spinner, CommsErrorBanner } from '../../../shared'
-
-const fragmentFields = `
-  id
-  created
-  status
-  files {
-    id
-    tags
-    storedObjects {
-      mimetype
-    }
-  }
-  meta {
-    source
-		comments
-    manuscriptId
-  }
-  channels {
-    id
-    type
-  }
-`
-
-const query = gql`
-  query Manuscript($id: ID!) {
-    manuscript(id: $id) {
-      ${fragmentFields}
-    }
-  }
-`
+import { MANUSCRIPT_FOR_MANUSCRIPT_PAGE } from '../../../../queries'
 
 const ManuscriptPage = ({ currentUser }) => {
   const params = useParams()
-  const { data, loading, error } = useQuery(query, {
+  const { data, loading, error } = useQuery(MANUSCRIPT_FOR_MANUSCRIPT_PAGE, {
     variables: {
       id: params.version,
     },

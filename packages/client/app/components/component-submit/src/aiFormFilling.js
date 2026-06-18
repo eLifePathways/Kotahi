@@ -1,4 +1,7 @@
-import { gql } from '@apollo/client'
+import {
+  EXTRACT_USING_OPEN_AI_TEXT_MODEL,
+  GET_SUBMISSION_FORM_COMPONENTS,
+} from '../../../queries'
 
 /**
  * @typedef {Object} AiConfig
@@ -24,42 +27,6 @@ import { gql } from '@apollo/client'
  * @typedef {Object} GetSubmissionFormComponentsResponse
  * @property {GetSubmissionFormComponentsData} data
  */
-
-const GET_SUBMISSION_FORM_COMPONENTS_QUERY = gql`
-  query FormForPurposeAndCategory($groupId: ID!) {
-    formForPurposeAndCategory(
-      purpose: "submit"
-      category: "submission"
-      groupId: $groupId
-    ) {
-      structure {
-        children {
-          name
-          component
-          aiPrompt
-        }
-      }
-    }
-  }
-`
-
-const EXTRACT_USING_OPEN_AI_TEXT_MODEL = gql`
-  query OpenAi(
-    $input: UserMessage!
-    $groupId: ID!
-    $history: [OpenAiMessage]
-    $system: SystemMessage
-    $format: String
-  ) {
-    openAi(
-      input: $input
-      groupId: $groupId
-      history: $history
-      format: $format
-      system: $system
-    )
-  }
-`
 
 export const AUTHORS_INPUT_RESPONSE_SHAPE = [
   {
@@ -111,7 +78,7 @@ export const getAiEnabledSubmissionFormComponentsConfigPromise = async (
   groupId,
 ) => {
   const result = await client.query({
-    query: GET_SUBMISSION_FORM_COMPONENTS_QUERY,
+    query: GET_SUBMISSION_FORM_COMPONENTS,
     variables: { groupId },
     fetchPolicy: 'network-only',
   })
