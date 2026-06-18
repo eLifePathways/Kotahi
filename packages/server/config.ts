@@ -168,7 +168,8 @@ export default {
     min: env('POOL_MIN') || 2,
     max: env('POOL_MAX') || 10,
     idleTimeoutMillis: env('POOL_IDLE_TIMEOUT_MILLIS') || 300_000, // 5 min — close idle connections
-    maxConnectionLifetimeMillis: env('POOL_MAX_LIFETIME_SECONDS') || 600, // 10 min — recycle before proxy timeout
+    maxConnectionLifetimeMillis:
+      env('POOL_MAX_CONNECTION_LIFETIME_MILLIS') || 600_000, // 10 min — recycle before proxy timeout
   },
   'publishing-webhook': {
     publishingWebhookUrl: env('PUBLISHING_WEBHOOK_URL'),
