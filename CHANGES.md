@@ -1,5 +1,32 @@
 ## Changes
 
+### Next
+
+#### Features
+
+#### Bug fixes
+
+#### Deployment changes
+
+##### Job queue database connection
+We now allow the job queues to connect to a database independently from the main database connection. This is handled by `JOB_QUEUE_POSTGES_*` environment variables. The names are the same as the existing `POSTGRES_*` variables (ie. `JOB_QUEUE_POSTGRES_HOST`, `JOB_QUEUE_POSTGRES_PORT` etc.). As with the existing `SUBSCRIPTIONS_POSTGRES_*` variables, if a particular variable is not provided, it will fall back on the equivalent `POSTGRES_*` variable's value.
+
+If using fly.io's managed postgres clusters, the setup we recommend is setting up a transaction pool on your datatbase, letting the app connect to the transaction pool, while bypassing the pool for job queues and subscriptions. Transaction pools do not support advisory locks or `LISTEN/NOTIFY` in postgres, and these features are necessary for the job queue and subscriptions respectively. Your environment variables could look like the following:
+
+```sh
+POSTGRES_HOST=your_pool_host
+POSTGRES_PORT=5432
+POSTGRES_DB=your_db
+POSTGRES_USER=your_user
+POSTGRES_PASSWORD=your_password
+
+SUBSCRIPTIONS_POSTGRES_HOST=your_non_pool_host
+JOB_QUEUE_POSTGRES_HOST=your_non_pool_host
+```
+
+##### Typescript
+We switched to a typescript build for both the client and the server. If you are not using our provided docker containers, but you are building the app yourself, refer to the updated `Dockerfile-production` files in the `packages/client` and `packages/server` for instructions.
+
 ### Version 2025.06.02-0
 
 The following environment variables have been dropped:

@@ -72,10 +72,11 @@ const createNewTaskAlerts = async groupId => {
     })
   })
 
-  await TaskAlert.query()
-    .insert(alertsToInsert)
-    .onConflict(['taskId', 'userId'])
-    .ignore()
+  if (alertsToInsert.length > 0)
+    await TaskAlert.query()
+      .insert(alertsToInsert)
+      .onConflict(['taskId', 'userId'])
+      .ignore()
 }
 
 const createTaskEmailNotificationLog = async taskEmailNotificationLog => {

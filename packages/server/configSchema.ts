@@ -146,6 +146,12 @@ const schema = z.strictObject({
       publishingWebhookRef: z.string().optional(),
     })
     .partial(),
+  pool: z.strictObject({
+    min: z.number().int().min(0),
+    max: z.number().int().positive(),
+    idleTimeoutMillis: z.number().int().positive(),
+    maxConnectionLifetimeMillis: z.number().int().positive(),
+  }),
   review: z
     .object({
       shared: z.string().optional(),

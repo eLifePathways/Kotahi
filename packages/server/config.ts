@@ -163,6 +163,14 @@ export default {
     host: env('SERVICE_PAGEDJS_HOST'),
     port: env('SERVICE_PAGEDJS_PORT'),
   },
+  pool: {
+    // https://fly.io/docs/mpg/client-configuration/#language-specific-configuration
+    min: env('POOL_MIN') || 2,
+    max: env('POOL_MAX') || 10,
+    idleTimeoutMillis: env('POOL_IDLE_TIMEOUT_MILLIS') || 300_000, // 5 min — close idle connections
+    maxConnectionLifetimeMillis:
+      env('POOL_MAX_CONNECTION_LIFETIME_MILLIS') || 600_000, // 10 min — recycle before proxy timeout
+  },
   'publishing-webhook': {
     publishingWebhookUrl: env('PUBLISHING_WEBHOOK_URL'),
     publishingWebhookToken: env('PUBLISHING_WEBHOOK_TOKEN'),
@@ -245,15 +253,4 @@ export default {
     host: env('SERVICE_XSWEET_HOST'),
     port: env('SERVICE_XSWEET_PORT'),
   },
-
-  // pool: {
-  //   min: 0,
-  //   max: 10,
-  //   createTimeoutMillis: 3000,
-  //   acquireTimeoutMillis: 30000,
-  //   idleTimeoutMillis: 30000,
-  //   reapIntervalMillis: 1000,
-  //   createRetryIntervalMillis: 100,
-  //   propagateCreateError: false,
-  // },
 }
