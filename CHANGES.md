@@ -6,6 +6,8 @@
 
 #### Bug fixes
 
+* We fixed a bug where a user could see another user's profile without the necessary permissions. Only admins can do that now.
+
 #### Deployment changes
 
 ##### Job queue database connection
