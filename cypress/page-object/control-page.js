@@ -110,7 +110,8 @@ export const ControlPage = {
     return cy.get(DECISION_FIELD).eq(nth)
   },
   fillInDecision(decision) {
-    this.getDecisionTextInput().click().type(decision, { force: true })
+    this.getDecisionTextInput().click()
+    this.getDecisionTextInput().type(decision, { force: true })
   },
   getPublishButton() {
     return cy.get(PUBLISH_BUTTON)
@@ -177,7 +178,7 @@ export const ControlPage = {
   },
 
   getDecisionRadioGroup() {
-    return cy.get(DECISION_RADIO_BUTTON).should('be.visible')
+    return cy.get(DECISION_RADIO_BUTTON).scrollIntoView()
   },
   getAcceptRadioButton() {
     return this.getDecisionRadioGroup().find('input[value="accept"]')
@@ -367,7 +368,7 @@ export const ControlPage = {
     cy.wait(3000)
   },
   getSubmitDecisionButton() {
-    return cy.getByDataTestId(DECISION_SUBMIT_BUTTON)
+    return cy.getByDataTestId(DECISION_SUBMIT_BUTTON).scrollIntoView()
   },
   clickSubmitDecisionButton() {
     this.getSubmitDecisionButton().click()

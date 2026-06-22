@@ -8,13 +8,13 @@ import {
   useQueryParams,
 } from '../../../shared/urlParamUtils'
 import UsersTable from './UsersTable'
+import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 import {
   GET_USERS,
   DELETE_USER,
   SET_GROUP_ROLE,
   SET_GLOBAL_ROLE,
-  CURRENT_USER,
 } from '../../../queries'
 
 const defaultSortDirections = {
@@ -27,9 +27,7 @@ const defaultSortDirections = {
 const UsersPage = () => {
   const location = useLocation()
   const applyQueryParams = useQueryParams()
-
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
+  const currentUser = useCurrentUser()
 
   const params = new URLSearchParams(location.search)
   const page = params.get(URI_PAGENUM_PARAM) || 1

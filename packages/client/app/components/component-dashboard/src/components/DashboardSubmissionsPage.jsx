@@ -10,17 +10,17 @@ import {
   URI_PAGENUM_PARAM,
   useQueryParams,
 } from '../../../../shared/urlParamUtils'
-import { CURRENT_USER, UPDATE_TAB, DASHBOARD } from '../../../../queries'
+import { UPDATE_TAB, DASHBOARD } from '../../../../queries'
 import SubmissionsTable from './sections/SubmissionsTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 const DashboardSubmissionsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['author']
 
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
+  const currentUser = useCurrentUser()
 
   const applyQueryParams = useQueryParams()
 

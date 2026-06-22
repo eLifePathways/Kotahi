@@ -11,6 +11,7 @@ import { validateManuscriptSubmission } from '../../../../shared/manuscriptUtils
 import CommsErrorBanner from '../../../shared/CommsErrorBanner'
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 import useChat from '../../../../hooks/useChat'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 import {
   PUBLISH_MANUSCRIPT,
   SET_SHOULD_PUBLISH_FIELD,
@@ -26,7 +27,6 @@ import {
   CREATE_NEW_MANUSCRIPT_VERSION,
   CREATE_FILE,
   DELETE_FILE,
-  CURRENT_USER,
 } from '../../../../queries'
 
 let debouncers = {}
@@ -51,7 +51,7 @@ const SubmitPage = () => {
   const navigate = useNavigate()
   const params = useParams()
   const location = useLocation()
-
+  const currentUser = useCurrentUser()
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config
@@ -68,9 +68,6 @@ const SubmitPage = () => {
   const submitPurpose = 'submit'
   const decisionPurpose = 'decision'
   const reviewPurpose = 'review'
-
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
 
   const { data, loading, error } = useQuery(
     USER_MANUSCRIPT,

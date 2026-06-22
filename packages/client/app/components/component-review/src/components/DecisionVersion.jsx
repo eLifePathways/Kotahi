@@ -91,7 +91,7 @@ const DecisionVersion = ({
   selectedEmailIsBlacklisted,
   updateSharedStatusForInvitedReviewer,
   dois,
-  refetch,
+  // refetch,
   updateTask,
   updateTasks,
   // teams,
@@ -709,7 +709,6 @@ const DecisionVersion = ({
       defaultActiveKey={locationState}
       onChange={key => {
         navigate(`?tab=${key}`, { replace: true })
-        refetch()
       }}
       sections={sections}
     />

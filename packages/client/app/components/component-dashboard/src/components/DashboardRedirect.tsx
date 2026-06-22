@@ -1,15 +1,11 @@
 import { type ReactNode } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { useQuery } from '@apollo/client/react'
 
-import { CURRENT_USER } from '../../../../queries'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 const DashboardRedirect = (): ReactNode => {
   const { groupName } = useParams()
-
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  // @ts-ignore
-  const currentUser = currentUserData.currentUser
+  const currentUser = useCurrentUser()
 
   const invitationId = window.localStorage.getItem('invitationId') || ''
   const inviteAction = window.localStorage.getItem('inviteAction') || ''

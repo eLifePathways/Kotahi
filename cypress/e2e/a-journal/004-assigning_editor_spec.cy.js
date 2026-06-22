@@ -23,6 +23,7 @@ describe('Assigning editors and decision reject', () => {
 
         ManuscriptsPage.selectOptionWithText('Control')
 
+        cy.wait(1000)
         ControlPage.clickAssignSeniorEditorDropdown()
         ControlPage.selectDropdownOptionByName(name.role.seniorEditor)
 

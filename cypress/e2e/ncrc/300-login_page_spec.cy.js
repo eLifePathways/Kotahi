@@ -88,7 +88,7 @@ describe('Login page tests', () => {
       Menu.assertManuscriptsButtonDoesNotExist()
       Menu.getMyProfileButton().should('be.visible')
       cy.visit(manuscripts)
-      cy.contains('404 Page not found.').should('exist')
+      cy.contains('403').should('exist')
       cy.awaitDisappearSpinner()
       ManuscriptsPage.getTableHeader().should('not.exist')
       ManuscriptsPage.getLiveChatButton().should('not.exist')

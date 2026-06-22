@@ -1,12 +1,6 @@
 /* eslint-disable promise/always-return */
 
-import {
-  dashboard,
-  profile,
-  manuscripts,
-  users,
-  formBuilder,
-} from '../../support/routes1'
+import { dashboard, profile, manuscripts, users } from '../../support/routes1'
 import { ProfilePage } from '../../page-object/profile-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { DashboardPage } from '../../page-object/dashboard-page'
@@ -16,6 +10,7 @@ describe('profile page tests', () => {
     const restoreUrl = Cypress.config('restoreUrl')
     cy.request('POST', `${restoreUrl}/commons.colab_bootstrap`)
   })
+
   beforeEach(() => {
     // login and attempt to access the dashboard page
     cy.fixture('role_names').then(name => {
@@ -23,9 +18,11 @@ describe('profile page tests', () => {
     })
     cy.awaitDisappearSpinner()
   })
+
   it('first login - users should be asked to add their email', () => {
     ProfilePage.getPopupEmailField().should('exist').and('be.visible')
   })
+
   it('first login - users should not be able to switch pages before adding email', () => {
     ProfilePage.getPopupEmailField().should('exist').and('be.visible')
     cy.visit(dashboard)
@@ -40,11 +37,8 @@ describe('profile page tests', () => {
     cy.awaitDisappearSpinner()
     cy.url().should('not.contain', users).and('contain', profile)
     ProfilePage.getPopupEmailField().should('exist').and('be.visible')
-    cy.visit(formBuilder)
-    cy.awaitDisappearSpinner()
-    cy.url().should('not.contain', formBuilder).and('contain', profile)
-    ProfilePage.getPopupEmailField().should('exist').and('be.visible')
   })
+
   it('first login - validate email', () => {
     ProfilePage.updateEmailInPopup('test')
     ProfilePage.clickPopupNextButton()
@@ -59,6 +53,7 @@ describe('profile page tests', () => {
     ProfilePage.getPopupEmailError().should('be.visible')
     ProfilePage.getPopupEmailError().should('contain', 'invalid')
   })
+
   it('first login - after adding email user can navigate away', () => {
     ProfilePage.updateEmailInPopup('test@email.com')
     ProfilePage.clickPopupNextButton()

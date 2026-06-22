@@ -421,6 +421,7 @@ function sendNotification({
 
     ControlPage.getEmailNotificationDropdowns()
       .eq(1)
+      .click()
       .type(`${templateName}{enter}`)
   }
 

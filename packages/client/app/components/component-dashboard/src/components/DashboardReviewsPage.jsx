@@ -10,8 +10,8 @@ import {
   UPDATE_TAB,
   DASHBOARD,
   UPDATE_MANUSCRIPT,
-  CURRENT_USER,
 } from '../../../../queries'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 import {
   extractFilters,
   extractSortData,
@@ -25,9 +25,7 @@ import { CommsErrorBanner, Spinner } from '../../../shared'
 const DashboardReviewsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
-
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
+  const currentUser = useCurrentUser()
 
   const wantedRoles = [
     'reviewer',

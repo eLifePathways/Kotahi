@@ -18,8 +18,10 @@ const teamFields = `
     user {
       id
       username
+      email
       defaultIdentity {
         id
+        name
         identifier
       }
       profilePicture
@@ -169,6 +171,34 @@ export const NEW_TEAM_FRAGMENT = gql`
       id
       user {
         id
+      }
+    }
+  }
+`
+
+export const CREATED_TEAM_FRAGMENT = gql`
+  fragment CreatedTeam on Team {
+    id
+    displayName
+    role
+    objectId
+    objectType
+    members {
+      id
+      updated
+      status
+      isShared
+      user {
+        id
+        username
+        email
+        defaultIdentity {
+          id
+          name
+          identifier
+        }
+        profilePicture
+        isOnline
       }
     }
   }

@@ -10,6 +10,7 @@ import { Spinner } from '../components/shared'
 import { JournalContext } from '../components/xpub-journal'
 import { ConfigContext } from '../components/config/src'
 import { getLanguages } from '../i18n'
+import { CurrentUserContext } from './hooks/useCurrentUser'
 
 const AuthenticatedPage = (): ReactNode => {
   const { pathname } = useLocation()
@@ -74,7 +75,11 @@ const AuthenticatedPage = (): ReactNode => {
     return <Navigate replace to={`/${groupName}/profile`} />
   }
 
-  return <Outlet />
+  return (
+    <CurrentUserContext.Provider value={currentUser}>
+      <Outlet />
+    </CurrentUserContext.Provider>
+  )
 }
 
 export default AuthenticatedPage

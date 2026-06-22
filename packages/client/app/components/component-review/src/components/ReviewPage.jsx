@@ -19,21 +19,19 @@ import {
   MANUSCRIPT,
   EXPAND_CHAT,
   REVIEW_FORM_UPDATED,
-  CURRENT_USER,
 } from '../../../../queries'
 import useChat from '../../../../hooks/useChat'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 import { getCurrentUserReview } from './review/util'
 
 const ReviewPage = () => {
   const params = useParams()
   const { t } = useTranslation()
+  const currentUser = useCurrentUser()
+
   const config = useContext(ConfigContext)
-
   const { urlFrag } = config
-
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
 
   const [updateReviewMutation] = useMutation(UPDATE_REVIEW)
   const [updateReviewerStatus] = useMutation(UPDATE_REVIEWER_STATUS)

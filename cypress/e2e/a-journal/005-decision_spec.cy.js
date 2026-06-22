@@ -23,7 +23,7 @@ describe('Completing a decision', () => {
       /* Group Manager assigns Editor to manuscript */
       cy.login(name.role.admin, dashboard)
 
-      cy.wait(1000)
+      cy.wait(2000)
       DashboardPage.clickManuscriptNavButton()
       ManuscriptsPage.selectOptionWithText('Control')
       ControlPage.getAssignSeniorEditorDropdown().click({ force: true })

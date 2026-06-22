@@ -12,6 +12,7 @@ import { Spinner, CommsErrorBanner } from '../../shared'
 
 import packageJson from '../../../../package.json'
 import { ConfigContext } from '../../config/src'
+import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 import {
   GET_USER,
@@ -20,21 +21,15 @@ import {
   UPDATE_LANGUAGE,
   GET_GLOBAL_CHAT_NOTIFICATION_OPTION,
   UPDATE_GLOBAL_CHAT_NOTIFICATION_OPTION,
-  CURRENT_USER,
 } from '../../../queries'
 
 const { version: kotahiVersion } = packageJson
 
 const ProfilePage = () => {
   const { id } = useParams()
-
+  const currentUser = useCurrentUser()
   const { urlFrag } = useContext(ConfigContext)
   const [didLogout, setDidLogout] = useState(false)
-
-  const { data: currentUserData, loading: currentUserLoading } =
-    useQuery(CURRENT_USER)
-
-  const currentUser = currentUserData?.currentUser
 
   const {
     loading,
@@ -75,7 +70,7 @@ const ProfilePage = () => {
     })
   }
 
-  if (loading || currentUserLoading) return <Spinner />
+  if (loading) return <Spinner />
   if (error) return <CommsErrorBanner error={error} />
 
   if (didLogout) {

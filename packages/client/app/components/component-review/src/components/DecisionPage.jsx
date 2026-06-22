@@ -18,6 +18,7 @@ import { AccessErrorPage, CommsErrorBanner, Spinner } from '../../../shared'
 import DecisionVersions from './DecisionVersions'
 import { roles } from '../../../../globals'
 import { waxAiToolSystem } from '../../../component-production/helpers'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 import {
   ADD_REVIEWER,
@@ -57,8 +58,8 @@ import {
   REVIEW_FORM_UPDATED,
   NEW_REVIEW_FRAGMENT,
   NEW_TEAM_FRAGMENT,
+  CREATED_TEAM_FRAGMENT,
   UPDATE_ADA,
-  CURRENT_USER,
 } from '../../../../queries'
 
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
@@ -85,8 +86,7 @@ const DecisionPage = () => {
     skip: true,
   })
 
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
+  const currentUser = useCurrentUser()
 
   useEffect(() => {
     return () => {
@@ -107,7 +107,6 @@ const DecisionPage = () => {
   const {
     loading,
     data: currentData,
-    previousData,
     error,
     refetch: refetchManuscript,
   } = useQuery(MANUSCRIPT_FOR_REVIEW, {
@@ -116,7 +115,8 @@ const DecisionPage = () => {
       groupId: config.groupId,
     },
   })
-  const data = currentData ?? previousData
+
+  const data = currentData
 
   let editorialChannel, allChannel
 
@@ -192,7 +192,22 @@ const DecisionPage = () => {
   const [makeDecision] = useMutation(MAKE_DECISION)
   const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
   const [updateTeam] = useMutation(UPDATE_TEAM)
-  const [createTeam] = useMutation(CREATE_TEAM)
+  const [createTeam] = useMutation(CREATE_TEAM, {
+    update(cache, { data: { createTeam: newTeam } }) {
+      cache.modify({
+        id: cache.identify({ __typename: 'Manuscript', id: newTeam.objectId }),
+        fields: {
+          teams: existingRefs => {
+            const ref = cache.writeFragment({
+              data: newTeam,
+              fragment: CREATED_TEAM_FRAGMENT,
+            })
+            return [...existingRefs, ref]
+          },
+        },
+      })
+    },
+  })
   const [updateTeamMember] = useMutation(UPDATE_TEAM_MEMBER)
 
   const [updateCollaborativeTeamMember] = useMutation(
@@ -354,7 +369,9 @@ const DecisionPage = () => {
   const [refreshAdaStatus] = useMutation(REFRESH_ADA_STATUS)
 
   // Count In the Collaborative Reviews and choose the correct one.
-  const currentUserReview = getCurrentUserReview(data?.manuscript, currentUser)
+  const currentUserReview = currentUser
+    ? getCurrentUserReview(data?.manuscript, currentUser)
+    : {}
 
   useSubscription(REVIEW_FORM_UPDATED, {
     variables: {
@@ -422,7 +439,7 @@ const DecisionPage = () => {
     })
   }
 
-  if (loading && !data) return <Spinner />
+  if ((loading && !data) || !currentUser) return <Spinner />
 
   if (error) {
     if (error.graphQLErrors?.find(e => e.message === 'Not Authorised!')) {
@@ -554,10 +571,7 @@ const DecisionPage = () => {
   }
 
   const handleCreateTeam = async createTeamVariables => {
-    const createTeamResponse = await createTeam(createTeamVariables)
-    await refetchData()
-
-    return createTeamResponse
+    return await createTeam(createTeamVariables)
   }
 
   const sendChannelMessage = async messageData => {

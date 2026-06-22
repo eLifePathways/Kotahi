@@ -11,6 +11,7 @@ import ModalContext from '../../../asset-manager/src/ui/Modal/ModalContext'
 import DownloadPdfComponent from './DownloadPdf'
 import DownloadJatsComponent from './DownloadJats'
 import { waxAiToolSystem } from '../../helpers'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 import {
   GET_SPECIFIC_FILES,
@@ -19,7 +20,6 @@ import {
   PRODUCTION_MANUSCRIPT_UPDATE,
   SUBMIT_AUTHOR_PROOFING_FEEDBACK,
   UPDATE_TEMPLATE,
-  CURRENT_USER,
 } from '../../../../queries'
 
 const showAuthorProofingMode = (
@@ -51,6 +51,7 @@ const showAuthorProofingMode = (
 
 const ProductionPage = () => {
   const params = useParams()
+  const currentUser = useCurrentUser()
   const { groupId, controlPanel, submission } = useContext(ConfigContext)
   const client = useApolloClient()
   const {
@@ -117,9 +118,6 @@ const ProductionPage = () => {
     //   }
     // },
   })
-
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
 
   const [update] = useMutation(PRODUCTION_MANUSCRIPT_UPDATE)
 

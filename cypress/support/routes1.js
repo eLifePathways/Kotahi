@@ -1,7 +1,6 @@
 export const login = '/prc/login'
 export const dashboard = '/prc/dashboard'
 export const manuscripts = '/prc/admin/manuscripts'
-export const formBuilder = '/prc/admin/form-builder'
 export const reports = '/prc/admin/reports'
 export const users = '/prc/admin/users'
 export const profile = '/prc/profile'

@@ -29,7 +29,6 @@ import {
   PUBLISH_MANUSCRIPT,
   EXPAND_CHAT,
   UPDATE_MANUSCRIPT,
-  CURRENT_USER,
 } from '../../../queries'
 import Manuscripts from './Manuscripts'
 import {
@@ -41,17 +40,18 @@ import {
 } from '../../../shared/urlParamUtils'
 import { validateDoi, validateSuffix } from '../../../shared/commsUtils'
 import useChat from '../../../hooks/useChat'
+import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 const ManuscriptsPage = () => {
   const location = useLocation()
   const { t } = useTranslation()
-  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
+  const currentUser = useCurrentUser()
+
   const config = useContext(ConfigContext)
   const { urlFrag } = config
   const chatRoomId = fnv.hash(config.clientUrl).hex()
 
-  const { data: currentUserData } = useQuery(CURRENT_USER)
-  const currentUser = currentUserData.currentUser
+  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
 
   /** Returns an array of column names, e.g.
    *  ['shortId', 'created', 'titleAndAbstract', 'submission.topic', 'status'] */
