@@ -98,7 +98,7 @@ describe('Completing a decision', () => {
     cy.wait(1000)
     ControlPage.clickAccept()
 
-    cy.wait(1000)
+    cy.wait(2000)
     ControlPage.clickSubmitDecisionButton() // Submit the decision
     ControlPage.checkSvgExists()
     // The below should be fixed by #1872 !!!

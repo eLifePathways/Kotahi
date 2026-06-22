@@ -409,7 +409,9 @@ function sendNotification({
 
     ControlPage.getEmailNotificationDropdowns()
       .eq(2)
-      .type(`${templateName}{enter}`)
+      .click()
+      .find('input')
+      .type(`${templateName}{enter}`, { force: true })
   } else {
     cy.getByDataTestId('choose-receiver').click()
     cy.get('input[aria-label="Choose receiver"]').type(
@@ -422,7 +424,8 @@ function sendNotification({
     ControlPage.getEmailNotificationDropdowns()
       .eq(1)
       .click()
-      .type(`${templateName}{enter}`)
+      .find('input')
+      .type(`${templateName}{enter}`, { force: true })
   }
 
   cy.contains('Notify').click()
