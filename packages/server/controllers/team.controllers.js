@@ -160,7 +160,7 @@ const updateTeam = async (id, input, groupId) => {
   }
 
   return Team.query().upsertGraphAndFetch(
-    { id, ...input },
+    { id, ...input, role: existing?.role },
     {
       relate: ['members.user'],
       unrelate: ['members.user'],
