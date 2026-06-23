@@ -10,7 +10,7 @@ import Form from '@rjsf/core'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { isEqual } from 'lodash'
-import { grid } from '@coko/client'
+import { th, grid } from '@coko/client'
 import {
   generateSchemas,
   tabKeyBasedSchema,
@@ -26,7 +26,6 @@ import {
   HiddenTabs,
   Alert,
 } from '../../shared'
-import { color, space } from '../../../theme'
 import EmailTemplatesPage from '../../component-email-templates/src/EmailTemplatesPage'
 import emailTemplatesToSchema from './helpers'
 import { EmailTemplatesProvider } from '../../component-email-templates/hooks/EmailTemplatesContext'
@@ -45,7 +44,7 @@ const StyledContainer = styled(Container)`
 const StyledSectionContent = styled(SectionContent)`
   margin: 0;
   overflow-y: auto;
-  padding: ${space.g} ${space.g} 0 ${space.g};
+  padding: ${th('spacing.g')} ${th('spacing.g')} 0 ${th('spacing.g')};
   width: 100%;
 `
 
@@ -86,7 +85,7 @@ const Footer = styled.div`
   padding-top: 0.6rem;
 
   > div {
-    color: ${color.brand1.tint10};
+    color: ${th('color.brand1.tint10')};
     opacity: ${p => (p.$pending ? 1 : 0)};
     padding: 0 0.6rem;
     transition: opacity 0.2s;
@@ -139,7 +138,7 @@ const EmailsTabWrapper = styled(StyledSectionContent)`
     height: 100%;
 
     &:focus-within {
-      border-color: ${color.gray80};
+      border-color: ${th('color.gray80')};
     }
   }
 `

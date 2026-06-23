@@ -1,4 +1,8 @@
+/* eslint-disable new-cap */
+
 import { css } from 'styled-components'
+import Color from 'color'
+
 import {
   Action,
   ActionGroup,
@@ -12,9 +16,6 @@ import {
   Logo,
 } from './elements'
 import lightenBy from '../shared/lightenBy'
-import color, { setBrandColors as internalSetBrandColors } from './color'
-import spacing from './spacing'
-import typography from './typography'
 
 // Fonts
 import '@fontsource/roboto/400.css'
@@ -23,44 +24,189 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 import '@fontsource/roboto/400-italic.css'
 
-const cokoTheme = {
-  color,
-  spacing,
-  typography,
+export const validateColor = colorCode => {
+  try {
+    Color(colorCode)
+    return colorCode
+  } catch {
+    console.error(`${colorCode} is not a valid color code`)
+    return null
+  }
+}
+
+const defaultBrandColor1 = '#3aae2a'
+const defaultBrandColor2 = '#9e9e9e'
+
+export const makeTheme = (
+  colorBrand1 = defaultBrandColor1,
+  colorBrand2 = defaultBrandColor2,
+) => ({
+  color: {
+    black: '#000000',
+    gray0: '#000000',
+    gray5: '#111111', // 7%: colorText
+    gray10: '#191919', // 10%
+    gray20: '#323232', // 20%
+    gray30: '#4F4F4F', // 30%
+    // gray35: '#595959', // 35%: colorTextPlaceholder
+    gray40: '#666666', // 40%: colorIconPrimary
+    gray50: '#888888', // 53%
+    gray60: '#A5A5A5', // 65%: near colorBorder:#AAAAAA
+    gray70: '#BFBFBF', // 75%
+    gray80: '#DEDEDE', // 87%: colorContainerBorder
+    gray90: '#E8E8E8', // 91%: colorFurniture
+    gray95: '#EEEEEE', // 93%
+    gray97: '#F8F8F9', // 97%
+    gray99: '#FCFCFD', // 99%
+    gray100: '#FFFFFF',
+    white: '#FFFFFF',
+
+    text: '#111111',
+    textReverse: '#FFFFFF',
+    textPlaceholder: '#666666',
+
+    backgroundA: '#FFFFFF',
+    backgroundB: '#f9fafb',
+    backgroundC: '#f4f5f7',
+
+    brand1: {
+      shade50: Color(colorBrand1).darken(0.52),
+      shade25: Color(colorBrand1).darken(0.27),
+      shade15: Color(colorBrand1).darken(0.17),
+      shade10: Color(colorBrand1).darken(0.11),
+      base: colorBrand1,
+      tint10: lightenBy(colorBrand1, 0.1),
+      tint25: lightenBy(colorBrand1, 0.26),
+      tint50: lightenBy(colorBrand1, 0.53),
+      tint70: lightenBy(colorBrand1, 0.73),
+      tint90: lightenBy(colorBrand1, 0.93),
+    },
+    brand2: {
+      shade50: Color(colorBrand2).darken(0.52),
+      shade25: Color(colorBrand2).darken(0.27),
+      shade15: Color(colorBrand2).darken(0.17),
+      shade10: Color(colorBrand2).darken(0.11),
+      base: colorBrand2,
+      tint10: lightenBy(colorBrand2, 0.1),
+      tint25: lightenBy(colorBrand2, 0.26),
+      tint50: lightenBy(colorBrand2, 0.53),
+      tint70: lightenBy(colorBrand2, 0.73),
+      tint90: lightenBy(colorBrand2, 0.93),
+    },
+
+    success: {
+      shade50: '#133a0e',
+      shade25: '#1b5414',
+      shade15: '#25721c',
+      shade10: '#2c8a21',
+      base: '#329a25',
+      tint10: '#3bb32b',
+      tint25: '#4fcb3e',
+      tint50: '#8ddf83',
+      tint70: '#bcedb6',
+      tint90: '#e3f8e0',
+    },
+    warning: {
+      shade50: '#6f3f00',
+      shade25: '#8e5000',
+      shade15: '#ae6200',
+      shade10: '#c56f00',
+      base: '#e48100',
+      tint10: '#f69414',
+      tint25: '#f8ae4c',
+      tint50: '#f6c88d',
+      tint70: '#fadfbe',
+      tint90: '#fdf1df',
+    },
+    error: {
+      shade50: '#6f1919',
+      shade25: '#8a1e1e',
+      shade15: '#a52424',
+      shade10: '#bf2828',
+      base: '#d22b2b',
+      tint10: '#d94747',
+      tint25: '#e06969',
+      tint50: '#e88e8e',
+      tint70: '#f0b4b4',
+      tint90: '#f8dcdc',
+    },
+    additional: {
+      blue: '#71AED2',
+      purple: '#615CCF',
+      aqua: '#7ED3A6',
+      green: '#89D46C',
+      mustard: '#CCD66E',
+    },
+  },
+  spacing: {
+    /** 1px */
+    a: '1px',
+    /** 2px */
+    b: '2px',
+    /** 3px */
+    c: '3px',
+    /** 5px */
+    d: '5px',
+    /** 7.5px */
+    e: '7.5px',
+    /** 15px */
+    f: '15px',
+    /** 30px */
+    g: '30px',
+    /** 45px */
+    h: '45px',
+    /** 60px */
+    i: '60px',
+    /** 90px */
+    j: '90px',
+    /** 135px */
+    k: '135px',
+  },
+  typography: {
+    fonts: {
+      size: {
+        small: '12px',
+        small2: '14px',
+        regular: '16px',
+        large: '20px',
+        large2: '30px',
+      },
+    },
+  },
 
   /* Colors */
   // TODO Deprecate these in favour of definitions in color.js
   /** @deprecated in favor of color.backgroundA */
-  colorBackground: color.backgroundA,
+  colorBackground: '#FFFFFF',
   /** @deprecated in favor of color.backgroundB */
-  colorSecondaryBackground: color.backgroundB,
+  colorSecondaryBackground: '#f9fafb',
   /** @deprecated in favor of color.brand1.base */
-  colorPrimary: color.brand1.base(),
+  colorPrimary: colorBrand1,
   /** @deprecated in favor of color.brand2.base */
-  colorSecondary: color.brand2.base(),
+  colorSecondary: colorBrand2,
   /** @deprecated in favor of color.gray90 */
-  colorFurniture: color.gray90,
+  colorFurniture: '#E8E8E8',
   /** @deprecated in favor of color.gray60 */
-  colorBorder: color.gray60,
+  colorBorder: '#A5A5A5',
   /** @deprecated in favor of color.backgroundC */
-  colorBackgroundHue: color.backgroundC,
+  colorBackgroundHue: '#f4f5f7',
   colorSuccess: '#008800',
   colorError: '#FF2D1A',
   /** @deprecated in favor of color.text */
-  colorText: color.text,
+  colorText: '#111111',
   /** @deprecated in favor of color.textReverse */
-  colorTextReverse: color.textReverse,
+  colorTextReverse: '#FFFFFF',
   /** @deprecated in favor of color.textPlaceholder */
-  colorTextPlaceholder: color.textPlaceholder,
+  colorTextPlaceholder: '#666666',
   colorWarning: '#ffc107',
   colorWarningLight: '#fff9ed',
   colorWarningDark: '#503303',
   colorSuccessLight: '#d2ffcc',
   colorSuccessDark: '#17510F',
   /** @deprecated in favor of color.gray40 */
-  colorIconPrimary: color.gray40,
+  colorIconPrimary: '#666666',
   /** @deprecated in favor of color.gray80 */
-  colorContainerBorder: color.gray80,
+  colorContainerBorder: '#DEDEDE',
 
   /* Text variables */
 
@@ -197,21 +343,4 @@ const cokoTheme = {
       `,
     },
   },
-}
-
-export const colorPrimaryDefault = '#3aae2a'
-export const colorSecondaryDefault = '#9e9e9e'
-
-export const setBrandColors = (
-  color1 = colorPrimaryDefault,
-  color2 = colorSecondaryDefault,
-) => {
-  cokoTheme.colorPrimary = color1
-  cokoTheme.colorSecondary = color2
-  internalSetBrandColors(color1, color2)
-}
-
-export { color }
-export { spacing as space }
-
-export default cokoTheme
+})

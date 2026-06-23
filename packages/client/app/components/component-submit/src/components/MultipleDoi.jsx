@@ -9,15 +9,13 @@ import { DeleteControl, TextInput } from '../../../shared'
 import { Button } from '../../../pubsweet'
 import { fields, validateDoiField } from '../../../../shared/doiFieldDefinition'
 
-import theme from '../../../../theme'
-
 const Doi = styled.div`
   align-items: flex-start;
   display: grid;
   gap: 36px;
   grid-template-columns: 1fr 1fr;
-  margin-bottom: ${theme.spacing.f};
-  margin-top: ${theme.spacing.e};
+  margin-bottom: ${th('spacing.f')};
+  margin-top: ${th('spacing.e')};
   position: relative;
   width: 600px;
 

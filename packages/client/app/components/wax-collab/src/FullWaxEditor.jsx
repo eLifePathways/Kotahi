@@ -6,7 +6,7 @@
 
 import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider, useTheme } from 'styled-components'
 import { debounce } from 'lodash'
 import { Wax } from 'wax-prosemirror-core'
 import { JournalContext } from '../../xpub-journal'
@@ -53,6 +53,7 @@ const FullWaxEditor = ({
   ydoc,
   name,
 }) => {
+  const theme = useTheme()
   const handleAssetManager = () => onAssetManager(manuscriptId)
 
   const [config, setConfig] = useState(
@@ -112,7 +113,9 @@ const FullWaxEditor = ({
   }, [name, wsProvider?.roomname, ydoc?.guid])
 
   return (
-    <ThemeProvider theme={{ textStyles: journal.textStyles, ...waxTheme }}>
+    <ThemeProvider
+      theme={{ textStyles: journal.textStyles, ...theme, ...waxTheme }}
+    >
       <div className={validationStatus} style={{ width: '100%' }}>
         <Wax
           autoFocus={autoFocus}

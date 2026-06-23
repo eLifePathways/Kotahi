@@ -1,9 +1,9 @@
 /* stylelint-disable declaration-no-important */
 import { grid, th, theme } from '@coko/client'
 import styled from 'styled-components'
+
 import { FlexRow } from '../../component-cms-manager/src/style'
 import { StyledInput } from '../../shared'
-import { color } from '../../../theme'
 import { CleanButton } from '../../component-email-templates/misc/styleds'
 
 export const EventEditForm = styled.form`
@@ -65,11 +65,11 @@ export const EditSection = styled(Col)`
 
     /* stylelint-disable-next-line string-quotes */
     &[data-modified='true'] {
-      color: ${color.warning.base};
+      color: ${th('color.warning.base')};
     }
     /* stylelint-disable-next-line string-quotes */
     &[data-error='true'] {
-      color: ${color.error.base};
+      color: ${th('color.error.base')};
     }
   }
 
@@ -93,7 +93,7 @@ export const TextInput = styled(StyledInput)`
 export const Header = styled(Row)`
   align-items: center;
   border-bottom: 1px solid #ddd;
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   height: var(--header-height, 0);
   padding: 0 ${grid(4)};
 
@@ -109,7 +109,7 @@ export const Content = styled(FlexRow)`
 `
 
 export const ActionIcon = styled(CleanButton)`
-  border: 1px solid ${p => p.$color || color.brand1.base};
+  border: 1px solid ${p => p.$color || p.theme.color.brand1.base};
   border-radius: ${th('borderRadius')};
   filter: ${p => (p.$disabled ? 'grayscale(1)' : 'none')};
   padding: ${grid(1)};
@@ -118,12 +118,12 @@ export const ActionIcon = styled(CleanButton)`
     aspect-ratio: 1 / 1;
     height: 22px;
     pointer-events: none;
-    stroke: ${p => p.$color || color.brand1.base};
+    stroke: ${p => p.$color || p.theme.color.brand1.base};
   }
 `
 export const CounterInputWrapper = styled(Row)`
   align-items: center;
-  border: 1px solid ${p => (p.$changed ? color.warning.base : '#ddd')};
+  border: 1px solid ${p => (p.$changed ? p.theme.color.warning.base : '#ddd')};
   border-radius: 4px;
   padding: 7px 10px;
 
@@ -142,8 +142,8 @@ export const CounterInputWrapper = styled(Row)`
 
 export const InputWrapper = styled.div`
   align-items: center;
-  background: ${color.gray99};
-  border: 1px solid ${color.gray80};
+  background: ${th('color.gray99')};
+  border: 1px solid ${th('color.gray80')};
   border-color: ${p => p.$color || '#ddd'};
   border-radius: 4px;
   box-shadow: inset 0 0 4px #0001;
@@ -153,14 +153,14 @@ export const InputWrapper = styled.div`
   width: 100%;
 
   &:hover {
-    border: 1px solid ${color.gray70};
+    border: 1px solid ${th('color.gray70')};
     outline: none;
     transition: ${theme.transitionDuration};
   }
 
   &:active,
   &:focus-visible {
-    border: 1px solid ${color.brand1.base};
+    border: 1px solid ${th('color.brand1.base')};
     outline: none;
     transition: ${theme.transitionDuration};
   }

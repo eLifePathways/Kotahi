@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { TabsContainer } from './Tabs'
-import { color } from '../../theme'
 
 export const Section = styled.section.attrs({
   'data-testid': 'section',
@@ -10,7 +9,7 @@ export const Section = styled.section.attrs({
 `
 
 export const Content = styled.div`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${th('boxShadow')};
   clear: both;
@@ -24,7 +23,7 @@ export const ScrollableContent = styled(Content)`
 `
 
 export const SectionContent = styled(Section)`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
   margin-bottom: ${grid(2)};
@@ -59,7 +58,7 @@ export const PaddedContent = styled(Content)`
 `
 
 export const Container = styled.div`
-  background: ${color.backgroundC};
+  background: ${th('color.backgroundC')};
   overflow-y: auto;
   padding: ${grid(2)};
   width: 100%;
@@ -73,12 +72,12 @@ export const Title = styled.h2.attrs({
 `
 
 export const SectionHeader = styled.div`
-  border-bottom: 1px solid ${color.gray90};
+  border-bottom: 1px solid ${th('color.gray90')};
   padding: ${grid(2)} ${grid(3)};
 `
 
 export const SectionRow = styled.div`
-  border-bottom: 1px solid ${color.gray90};
+  border-bottom: 1px solid ${th('color.gray90')};
   padding: ${grid(2)} ${grid(3)};
 `
 
@@ -90,11 +89,11 @@ export const ClickableSectionRow = styled(SectionRow)`
   }
 
   &:hover {
-    background-color: ${color.backgroundC};
+    background-color: ${th('color.backgroundC')};
     cursor: pointer;
 
     svg {
-      stroke: ${color.brand1.base};
+      stroke: ${th('color.brand1.base')};
     }
   }
 `
@@ -123,7 +122,9 @@ const Heading = styled.div.attrs({
   'data-testid': 'general-heading',
 })`
   color: ${props =>
-    props.$warning ? color.warning.shade10 : color.brand1.base};
+    props.$warning
+      ? props.theme.color.warning.shade10
+      : props.theme.color.brand1.base};
   font-family: ${th('fontReading')};
   font-size: ${th('fontSizeHeading3')};
   line-height: ${th('lineHeightHeading3')};
@@ -156,7 +157,7 @@ export const Columns = styled.div`
 `
 
 export const Manuscript = styled.div`
-  background: ${color.gray97};
+  background: ${th('color.gray97')};
   grid-area: manuscript;
   height: 100vh;
   overflow: auto;
@@ -164,7 +165,7 @@ export const Manuscript = styled.div`
 `
 
 export const Chat = styled.div`
-  border-left: 1px solid ${color.gray90};
+  border-left: 1px solid ${th('color.gray90')};
   display: flex;
   grid-area: chat;
   height: 100vh;

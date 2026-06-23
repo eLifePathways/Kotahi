@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 
 import { Checkbox } from './Checkbox'
-/* import styled from 'styled-components' */
-/* import theme from '../../theme' */
 
 export const CheckboxGroup = ({
   options,

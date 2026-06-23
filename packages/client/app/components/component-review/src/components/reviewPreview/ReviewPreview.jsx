@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { grid } from '@coko/client'
+import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
+
 import ReadonlyFormTemplate from '../metadata/ReadonlyFormTemplate'
 import {
   Heading,
@@ -13,10 +14,9 @@ import {
   PlainOrRichText,
   WidthLimiter,
 } from '../../../../shared'
-import { color } from '../../../../../theme'
 
 const Page = styled.div`
-  background: ${color.backgroundC};
+  background: ${th('color.backgroundC')};
   height: 100vh;
   overflow-y: scroll;
   padding: ${grid(2)};
@@ -25,7 +25,7 @@ const Page = styled.div`
 
 const IconLink = styled.div`
   align-items: center;
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   cursor: pointer;
   display: flex;
   flex-direction: row;
@@ -38,6 +38,7 @@ const ReviewPreview = ({
   submissionForm,
   threadedDiscussionProps,
 }) => {
+  const theme = useTheme()
   const navigate = useNavigate()
   const { t } = useTranslation()
   return (
@@ -56,7 +57,7 @@ const ReviewPreview = ({
           threadedDiscussionProps={threadedDiscussionProps}
         />
         <IconLink onClick={() => navigate(-1)}>
-          <Icon color={color.brand1.base()} inline size={2}>
+          <Icon color={theme.color.brand1.base} inline size={2}>
             arrow-left
           </Icon>
           {t('reviewPreviewPage.Back')}

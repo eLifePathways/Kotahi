@@ -4,10 +4,10 @@ import { useQuery } from '@apollo/client/react'
 import { last } from 'lodash'
 import styled from 'styled-components'
 import { grid, th, uuid } from '@coko/client'
+
 import { Spinner } from '../../../shared'
 import { ConfigContext } from '../../../config/src'
 import { Button } from '../../../pubsweet'
-import { color } from '../../../../theme'
 import { SubNote } from '../style'
 import { SEARCH_LOCAL_CONTEXT } from '../../../../queries'
 
@@ -21,7 +21,7 @@ const Input = styled.input`
   width: 100%;
 
   &:focus {
-    border: 1px solid ${color.brand1.base};
+    border: 1px solid ${th('color.brand1.base')};
     outline: 0;
   }
 
@@ -44,7 +44,7 @@ const StyledButton = styled(Button)`
 `
 
 const TitleLabel = styled.div`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font-size: 24px;
   margin-bottom: ${grid(1)};
 `
@@ -55,7 +55,7 @@ const NoProjectFound = styled.span`
 `
 
 const LocalContextResultContainer = styled.div`
-  border: 1px solid ${color.brand1.base};
+  border: 1px solid ${th('color.brand1.base')};
   display: flex;
   flex-direction: column;
   margin-bottom: ${grid(2)};
@@ -69,7 +69,7 @@ const ItemContainer = styled.div`
 `
 
 const ItemTag = styled.span`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font-weight: 700;
   white-space: pre;
 `

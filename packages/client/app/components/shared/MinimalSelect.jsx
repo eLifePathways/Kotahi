@@ -3,9 +3,8 @@
 import { useContext } from 'react'
 import ReactSelect from 'react-select'
 import { ThemeContext } from 'styled-components'
-import { color } from '../../theme'
 
-const styles = th => ({
+const styles = theme => ({
   container: provided => ({
     ...provided,
     width: '100%',
@@ -28,7 +27,7 @@ const styles = th => ({
   }),
   menu: provided => ({
     ...provided,
-    borderRadius: th.borderRadius,
+    borderRadius: theme.borderRadius,
     zIndex: 9999,
     width: 250,
   }),
@@ -36,8 +35,10 @@ const styles = th => ({
     ...provided,
     background: 'none',
     border: 'none',
-    borderRadius: th.borderRadius,
-    boxShadow: state.isFocused ? `0 0 0 1px ${color.brand1.base()}` : 'none',
+    borderRadius: theme.borderRadius,
+    boxShadow: state.isFocused
+      ? `0 0 0 1px ${theme.color.brand1.base}`
+      : 'none',
     minHeight: '0',
   }),
 
@@ -51,8 +52,10 @@ const styles = th => ({
   option: (provided, state) => ({
     ...provided,
     backgroundColor:
-      state.isFocused || state.isSelected ? color.gray90 : color.backgroundA,
-    color: color.text,
+      state.isFocused || state.isSelected
+        ? theme.color.gray90
+        : theme.color.backgroundA,
+    color: theme.color.text,
   }),
   valueContainer: (provided, state) =>
     state.isMulti

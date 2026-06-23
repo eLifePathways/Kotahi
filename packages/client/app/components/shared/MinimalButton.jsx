@@ -1,14 +1,13 @@
 /* eslint-disable react/prop-types */
 
 import styled from 'styled-components'
-import { grid } from '@coko/client'
-import { color } from '../../theme'
+import { th, grid } from '@coko/client'
 
 const BareButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  color: ${color.gray40};
+  color: ${th('color.gray40')};
   display: flex;
   font-family: inherit;
   font-size: inherit;
@@ -20,15 +19,15 @@ const BareButton = styled.button`
   padding: 0 ${grid(0.5)};
 
   &:hover {
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
   }
 
   & svg {
-    stroke: ${color.gray40};
+    stroke: ${th('color.gray40')};
   }
 
   &:hover svg {
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
   }
 `
 

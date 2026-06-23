@@ -1,8 +1,7 @@
 /* stylelint-disable string-quotes */
 
 import styled, { css } from 'styled-components'
-import { grid } from '@coko/client'
-import { color } from '../../../../theme'
+import { th, grid } from '@coko/client'
 
 export const Info = styled.span`
   align-items: center;
@@ -29,7 +28,7 @@ export const PopUpTextContainer = styled.div`
   justify-content: center;
 
   & p.linkurl {
-    background-color: ${color.gray95};
+    background-color: ${th('color.gray95')};
     border-radius: 2px;
     max-width: 300px;
     overflow-x: scroll;
@@ -37,7 +36,7 @@ export const PopUpTextContainer = styled.div`
     white-space: nowrap;
 
     & a {
-      color: ${color.text};
+      color: ${th('color.text')};
     }
   }
 
@@ -50,10 +49,10 @@ export const PopUpTextContainer = styled.div`
   }
 
   & button.copybutton {
-    background-color: ${color.backgroundA};
-    border: ${color.brand1.base} solid 1px;
+    background-color: ${th('color.backgroundA')};
+    border: ${th('color.brand1.base')} solid 1px;
     border-radius: 4px;
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     cursor: pointer;
     margin-top: 24px;
     padding: 12px 16px;
@@ -62,17 +61,17 @@ export const PopUpTextContainer = styled.div`
     user-select: none;
 
     &:hover {
-      border-color: ${color.text};
-      color: ${color.text};
+      border-color: ${th('color.text')};
+      color: ${th('color.text')};
     }
   }
 `
 
 export const CloseButton = styled.span`
   align-items: center;
-  background-color: ${color.brand1.base};
+  background-color: ${th('color.brand1.base')};
   border-radius: 100%;
-  color: ${color.textReverse};
+  color: ${th('color.textReverse')};
   display: inline-flex;
   height: var(--size);
   justify-content: center;
@@ -119,8 +118,8 @@ export const HeadingCell = styled(Cell)`
 
 export const StyledFileRow = styled.div`
   align-items: center;
-  background-color: ${color.backgroundA};
-  border-top: 1px solid ${color.gray90};
+  background-color: ${th('color.backgroundA')};
+  border-top: 1px solid ${th('color.gray90')};
   column-gap: ${grid(2)};
   display: flex;
   flex-direction: row;

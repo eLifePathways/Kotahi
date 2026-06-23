@@ -4,30 +4,30 @@ import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import { color, space } from '../../../theme'
 import { Spinner, CommsErrorBanner, PlainOrRichText } from '../../shared'
 import { PUBLISHED_MANUSCRIPT_AND_FORMS } from '../../../queries'
 
 const Page = styled.div`
-  background: ${color.gray60};
+  background: ${th('color.gray60')};
   height: 100vh;
   overflow: hidden scroll;
   width: 100%;
 `
 
 const Container = styled.div`
-  background: ${color.gray97};
-  border: 1px solid ${color.brand1.shade25};
+  background: ${th('color.gray97')};
+  border: 1px solid ${th('color.brand1.shade25')};
   border-radius: ${th('borderRadius')};
-  margin: ${space.g} auto;
+  margin: ${th('spacing.g')} auto;
   max-width: 1000px;
-  padding: ${space.h} ${space.i} ${space.i} ${space.i};
+  padding: ${th('spacing.h')} ${th('spacing.i')} ${th('spacing.i')}
+    ${th('spacing.i')};
   width: 90%;
 
   & > h1 {
-    color: ${color.brand1.shade25};
+    color: ${th('color.brand1.shade25')};
     font-size: 180%;
-    margin: ${space.e} 0 ${space.f} 0;
+    margin: ${th('spacing.e')} 0 ${th('spacing.f')} 0;
   }
 `
 

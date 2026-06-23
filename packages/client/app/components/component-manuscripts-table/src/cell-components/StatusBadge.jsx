@@ -2,7 +2,6 @@
 
 import styled, { css } from 'styled-components'
 import { grid, th } from '@coko/client'
-import { color } from '../../../../theme'
 
 const Status = styled.span`
   border-radius: 8px;
@@ -32,7 +31,7 @@ const NormalStatus = styled(Status)`
   ${props =>
     props.minimal
       ? css`
-          color: ${color.brand1.base};
+          color: ${th('color.brand1.base')};
         `
       : css`
           background-color: ${th('colorWarning')};

@@ -5,11 +5,10 @@ import { useContext, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { th, override, uuid } from '@coko/client'
 import { ConfigContext } from '../config/src'
-import { color } from '../../theme'
 
 const Tab = styled.div`
   /* stylelint-disable custom-property-no-missing-var-function */
-  --bg-active: ${color.backgroundA};
+  --bg-active: ${th('color.backgroundA')};
   --bg-inactive: linear-gradient(
     180deg,
     #ececec 0%,
@@ -24,7 +23,7 @@ const Tab = styled.div`
     props.$active
       ? '-4px 0 7px -4px rgb(0 0 0 / 10%), 4px 0 7px -4px rgb(0 0 0 / 10%), 0 -4px 7px -4px rgb(0 0 0 / 10%)'
       : 'none'};
-  color: ${color.text};
+  color: ${th('color.text')};
   cursor: pointer;
   font-size: ${th('fontSizeBaseSmall')};
   font-weight: 500;
@@ -34,7 +33,7 @@ const Tab = styled.div`
 
   & > div {
     border-bottom: 3px solid
-      ${props => (props.$active ? color.brand1.base : 'none')};
+      ${props => (props.$active ? props.theme.color.brand1.base : 'none')};
     margin-bottom: -2px;
     padding-bottom: 4px;
   }
@@ -68,7 +67,8 @@ export const TabsContainer = styled.div.attrs({
       grid-area: ${props.gridArea};
     `};
 
-  ${props => props.sticky && `background-color: ${color.backgroundC};`}
+  ${props =>
+    props.sticky && `background-color: ${props.theme.color.backgroundC};`}
   ${props => props.sticky && 'position: sticky;'}
   ${props => props.sticky && 'top: -16px;'}
   ${props => props.sticky && 'z-index: 999;'}
@@ -88,16 +88,16 @@ const TabContainer = styled.div.attrs({
 const HideChatButton = styled.button`
   align-items: center;
   /* TODO: add a global style for this */
-  background-color: ${color.gray90};
+  background-color: ${th('color.gray90')};
   border-radius: ${th('borderRadius')};
-  color: ${color.text};
+  color: ${th('color.text')};
   display: flex;
   float: right;
   font-size: 16px;
   padding: 6px 12px;
 
   &:hover {
-    background-color: ${color.gray95};
+    background-color: ${th('color.gray95')};
   }
 `
 

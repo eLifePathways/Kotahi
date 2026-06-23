@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import { color } from '../../../../theme'
 
 const StyledSpinner = styled.svg`
   animation: rotate 1s linear infinite;
@@ -10,7 +9,7 @@ const StyledSpinner = styled.svg`
 
   & .path {
     animation: dash 1.5s ease-in-out infinite;
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
     stroke-linecap: round;
   }
 
@@ -48,7 +47,7 @@ const Wrapper = styled.div`
 `
 
 const Label = styled.div`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font-family: ${th('fontHeading')};
   font-size: ${th('fontSizeBase')};
   line-height: ${th('lineHeightBase')};

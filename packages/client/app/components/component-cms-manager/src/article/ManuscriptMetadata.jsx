@@ -1,16 +1,14 @@
 /* eslint-disable react/prop-types */
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import { Action, Icon, SectionContent } from '../../../shared'
-
 import { Legend } from '../../../component-submit/src/style'
 import {
   SectionRowGrid,
   Cell,
 } from '../../../component-review/src/components/style'
 import ReadonlyFormTemplate from '../../../component-review/src/components/metadata/ReadonlyFormTemplate'
-import { color } from '../../../../theme'
 
 const FormTemplateStyled = styled.div`
   max-height: calc(100vh - 150px);
@@ -59,6 +57,7 @@ const ManuscriptMetadata = ({
   displayShortIdAsIdentifier,
   formWithSubmissionFieldsOnly,
 }) => {
+  const theme = useTheme()
   return (
     <FormTemplateStyled>
       <LegendTitle>Submission metadata</LegendTitle>
@@ -77,7 +76,7 @@ const ManuscriptMetadata = ({
           <Cell>
             article.reviews
             <Action onClick={copyReviewsTemplate}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -89,7 +88,7 @@ const ManuscriptMetadata = ({
           <Cell>
             article.decision
             <Action onClick={copyDecisionTemplate}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -105,7 +104,7 @@ const ManuscriptMetadata = ({
           <Cell>
             cmsLayout.logo
             <Action onClick={() => copyIncludeFile('logo')}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -117,7 +116,7 @@ const ManuscriptMetadata = ({
           <Cell>
             cmsLayout.primaryColor
             <Action onClick={copyCmsLayout('primaryColor')}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -129,7 +128,7 @@ const ManuscriptMetadata = ({
           <Cell>
             cmsLayout.secondaryColor
             <Action onClick={copyCmsLayout('secondaryColor')}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -144,7 +143,7 @@ const ManuscriptMetadata = ({
           <Cell>
             top menu
             <Action onClick={() => copyIncludeFile('menu')}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -156,7 +155,7 @@ const ManuscriptMetadata = ({
           <Cell>
             Footer menu
             <Action onClick={() => copyIncludeFile('footer')}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>
@@ -168,7 +167,7 @@ const ManuscriptMetadata = ({
           <Cell>
             partners
             <Action onClick={() => copyIncludeFile('partners')}>
-              <Icon color={color.brand1.base()} inline>
+              <Icon color={theme.color.brand1.base} inline>
                 file-plus
               </Icon>
             </Action>

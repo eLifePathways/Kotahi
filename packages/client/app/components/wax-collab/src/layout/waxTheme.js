@@ -1,9 +1,6 @@
-import theme from '../../../../theme'
-
 // NOTE: this overrides the Kotahi default theme!
 
 const waxTheme = {
-  ...theme,
   gridUnit: '4px',
   borderRadius: '0',
   borderWidth: '1px',

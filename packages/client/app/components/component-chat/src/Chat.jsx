@@ -7,7 +7,6 @@ import { th } from '@coko/client'
 import ChatInput from './SuperChatInput/SuperChatInput'
 import Messages from './Messages/Messages'
 import UserActivityTracker from '../../shared/UserActivityTracker'
-import color from '../../../theme/color'
 
 const ChatInputContainer = styled.div`
   position: relative;
@@ -15,7 +14,7 @@ const ChatInputContainer = styled.div`
   span.mention-tag {
     background-color: ${th('colorPrimary')};
     border-radius: 4px;
-    color: ${color.white};
+    color: ${th('color.white')};
     padding: 2px 4px;
   }
 `

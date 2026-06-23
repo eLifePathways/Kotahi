@@ -1,11 +1,10 @@
 import styled from 'styled-components'
-import { grid } from '@coko/client'
+import { th, grid } from '@coko/client'
 import EditorElements from './EditorElements'
-import { color } from '../../../../theme'
 
 export const NotesAreaContainer = styled.div`
   /* stylelint-disable selector-class-pattern */
-  background: ${color.backgroundA};
+  background: ${th('color.backgroundA')};
   bottom: ${grid(-2)};
   box-shadow: 0 ${grid(-0.3)} ${grid(0.5)} ${grid(-0.2)} gray;
   display: flex; /* this is so that comments on notes appear beside the notes */
@@ -31,8 +30,8 @@ export const NotesAreaContainer = styled.div`
 `
 
 export const ReadOnlyNotesAreaContainer = styled.div`
-  background: ${color.backgroundA};
-  border-top: 1px solid ${color.gray90};
+  background: ${th('color.backgroundA')};
+  border-top: 1px solid ${th('color.gray90')};
   grid-column-start: editorCol;
   grid-row-start: notesRow;
   width: 100%;
@@ -59,7 +58,7 @@ export const NotesContainer = styled.div`
 `
 
 export const NotesHeading = styled.div`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   margin: 3px 7px 3px -25px;
   text-transform: uppercase;
 `

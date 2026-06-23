@@ -22,7 +22,6 @@ import { FormActionButton } from '../style'
 
 import UploadAsset from '../../../component-production/src/components/uploadManager/UploadAsset'
 import ManuscriptMetadata from './ManuscriptMetadata'
-import { color } from '../../../../theme'
 
 const FlexRow = styled.div`
   display: flex;
@@ -40,7 +39,7 @@ const StyledManuscript = styled(Manuscript)`
 `
 
 const ScrollableTabContent = styled.section`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
   height: calc(100vh - 108px);

@@ -2,7 +2,6 @@
 
 import { css, keyframes } from 'styled-components'
 import { th } from '@coko/client'
-import color from '../color'
 
 const checking = keyframes`
   0% {
@@ -26,13 +25,15 @@ export default {
   Root: css`
     &:hover {
       span {
-        color: ${props => (props.checked ? 'inherit' : color.brand1.base)};
+        color: ${props =>
+          props.checked ? 'inherit' : props.theme.color.brand1.base};
 
         &::before {
           animation-duration: ${th('transitionDuration')};
           animation-name: ${props => (props.checked ? 'none' : checking)};
           box-shadow: 0 0 0 ${th('borderWidth')}
-            ${props => (props.checked ? 'currentColor' : color.brand1.base)};
+            ${props =>
+              props.checked ? 'currentColor' : props.theme.color.brand1.base};
         }
       }
     }
@@ -48,7 +49,7 @@ export default {
       border-radius: 50%;
       box-shadow: 0 0 0 ${th('borderWidth')} currentColor;
 
-      color: ${props => (props.color ? props.color : color.text)};
+      color: ${props => (props.color ? props.color : props.theme.color.text)};
       content: ' ';
       display: inline-block;
       height: calc(${th('gridUnit')} * 2);

@@ -13,7 +13,8 @@ import {
 import { sanitize } from 'isomorphic-dompurify'
 import striptags from 'striptags'
 import { Loader, List, CheckCircle } from 'react-feather'
-import { color } from '../../../../../../theme'
+import { useTheme } from 'styled-components'
+
 import { Spinner } from '../../../../../shared'
 import Modal from '../../../../../component-modal/src/Modal'
 import CitationVersion from './CitationVersion'
@@ -67,6 +68,7 @@ const decideStatus = (needsReview, needsValidation) => {
 }
 
 const CitationComponent = ({ node, getPos }) => {
+  const theme = useTheme()
   const { pmViews, activeView } = useContext(WaxContext)
   const { app } = useContext(ApplicationContext)
 
@@ -800,13 +802,17 @@ const CitationComponent = ({ node, getPos }) => {
         <StatusContainer>
           {decideStatus(internalNeedsReview, internalNeedsValidation) ===
             'checked' && (
-            <CheckCircle alt="valid" color={color.success.base} title="valid" />
+            <CheckCircle
+              alt="valid"
+              color={theme.color.success.base}
+              title="valid"
+            />
           )}
           {decideStatus(internalNeedsReview, internalNeedsValidation) ===
             'needs validation' && (
             <Loader
               alt="needs validation"
-              color={color.gray70}
+              color={theme.color.gray70}
               title="needs validation"
             />
           )}
@@ -814,7 +820,7 @@ const CitationComponent = ({ node, getPos }) => {
             'needs review' && (
             <List
               alt="needs review"
-              color={color.brand1.base()}
+              color={theme.color.brand1.base}
               title="needs review"
             />
           )}

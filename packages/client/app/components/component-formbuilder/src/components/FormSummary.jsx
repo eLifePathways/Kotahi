@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
@@ -26,12 +26,13 @@ const RightLooseRow = styled(LooseRow)`
 `
 
 const FormSummary = ({ form, isActive, openFormSettingsDialog }) => {
+  const theme = useTheme()
   const { t } = useTranslation()
   return (
     <DetailPane>
       <RightLooseRow>
         {isActive && (
-          <LabelBadge color={th('colorPrimary')}>
+          <LabelBadge color={theme.colorPrimary}>
             {t('formBuilder.Active')}
           </LabelBadge>
         )}

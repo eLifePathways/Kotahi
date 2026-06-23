@@ -1,7 +1,5 @@
 import Modal from 'react-modal'
-import { ThemeProvider } from 'styled-components'
 
-import theme from './theme'
 import GlobalStyle from './theme/elements/GlobalStyle'
 
 import AssetManager from './components/asset-manager/src/AssetManagerPage'
@@ -23,10 +21,8 @@ const Pages = () => {
     <XpubProvider>
       <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
         <ModalProvider modals={modals}>
-          <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <Router />
-          </ThemeProvider>
+          <GlobalStyle />
+          <Router />
         </ModalProvider>
       </JournalProvider>
     </XpubProvider>

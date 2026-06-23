@@ -6,12 +6,12 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { th } from '@coko/client'
 import SelectEmailTemplate from '../../component-review/src/components/emailNotifications/SelectEmailTemplate'
 import { RoundIconButton, Select, TextInput } from '../../shared'
 import SecondaryActionButton from '../../shared/SecondaryActionButton'
 import CounterFieldWithOptions from '../../shared/CounterFieldWithOptions'
 import CounterField from '../../shared/CounterField'
-import theme, { color } from '../../../theme'
 import { ConfigContext } from '../../config/src'
 import { ifReviewInviteThenAssignRecipientsAsReviewers } from './notificationUtils'
 
@@ -20,9 +20,9 @@ import tasksJson from '../../../../config/journal/tasks.json' with { type: 'json
 const { emailNotifications } = tasksJson
 
 const TaskTitle = styled.div`
-  color: ${color.gray20};
+  color: ${th('color.gray20')};
   font-family: Roboto, sans-serif;
-  font-size: ${theme.fontSizeBase};
+  font-size: ${th('fontSizeBase')};
   font-style: normal;
   font-weight: 500;
   letter-spacing: 0.01em;
@@ -47,7 +47,7 @@ const EmailTemplateFieldContainer = styled(TaskFieldsContainer)`
   flex: 1 1 15em;
 
   div {
-    font-size: ${theme.fontSizeBase};
+    font-size: ${th('fontSizeBase')};
   }
 
   /* stylelint-disable-next-line no-descending-specificity */
@@ -90,7 +90,7 @@ const RoundIconButtonContainer = styled.div`
 
 const NotificationDeadlineCell = styled.div`
   align-items: center;
-  color: ${props => (props.disabled ? color.gray60 : 'inherit')};
+  color: ${props => (props.disabled ? props.theme.color.gray60 : 'inherit')};
   display: flex;
   height: 45px;
 
@@ -133,7 +133,7 @@ const AssigneeCell = styled.div`
 
   /* stylelint-disable-next-line no-descending-specificity */
   > div > div {
-    font-size: ${theme.fontSizeBase};
+    font-size: ${th('fontSizeBase')};
     line-height: 1.25;
 
     /* stylelint-disable-next-line no-descending-specificity */

@@ -2,18 +2,18 @@
 /* eslint-disable react-hooks/rules-of-hooks, react-hooks/purity */
 
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { forEach, map } from 'lodash'
 import { th, grid } from '@coko/client'
 import { Trans, useTranslation } from 'react-i18next'
 import i18next from 'i18next'
+
 import { Icon } from '../../pubsweet'
 import DateRangePicker from './DateRangePicker'
 import SummaryReport from './SummaryReport'
 import Table from './Table'
 import SparkBar from './SparkBar'
 import Tooltip from './Tooltip'
-import { color } from '../../../theme'
 
 const Page = styled.div`
   flex: 1 1 100%;
@@ -28,7 +28,7 @@ const Select = styled.select`
 `
 
 const Heading = styled.div`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font-family: ${th('fontReading')};
   font-size: ${th('fontSizeHeading3')};
   line-height: ${th('lineHeightHeading3')};
@@ -36,12 +36,12 @@ const Heading = styled.div`
 `
 
 const MinorNote = styled.span`
-  color: ${color.gray50};
+  color: ${th('color.gray50')};
   font-size: 80%;
 `
 
 export const Content = styled.div`
-  background-color: ${color.backgroundC};
+  background-color: ${th('color.backgroundC')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${th('boxShadow')};
 `
@@ -53,12 +53,12 @@ const SelectionLine = styled.div`
 `
 
 const ReviewNote = styled.div`
-  color: ${color.gray50};
+  color: ${th('color.gray50')};
   font-size: ${th('fontSizeBaseSmall')};
   line-height: ${th('lineHeightBaseSmall')};
 
   & strong {
-    color: ${color.text};
+    color: ${th('color.text')};
     font-weight: normal;
   }
 `
@@ -158,7 +158,7 @@ const InProgressIcon = () => {
   )
 }
 
-const getTableDataWithSparkBars = (rows, labelMapper) => {
+const getTableDataWithSparkBars = (rows, labelMapper, theme) => {
   if (rows.length < 1) return []
 
   // Find maximum values in each column (or 0 for non-numeric or negative data)
@@ -178,7 +178,7 @@ const getTableDataWithSparkBars = (rows, labelMapper) => {
         return labelMapper ? labelMapper(val, key) : val
       return (
         <SparkBar
-          color={color.brand2.tint70()}
+          color={theme.color.brand2.tint70}
           label={labelMapper && labelMapper(val, key)}
           onClick={undefined}
           rangeMax={columnMaxima[key]}
@@ -259,6 +259,7 @@ const getReport = (
   getAuthorsData,
 ) => {
   const { t } = useTranslation()
+  const theme = useTheme()
 
   if (reportType === 'Summary') {
     return (
@@ -284,15 +285,19 @@ const getReport = (
         : null,
     }))
 
-    const rows = getTableDataWithSparkBars(data, (val, key) => {
-      if (['editors', 'authors'].includes(key))
-        return val
-          .map(u => u.username || u.email || u.defaultIdentity.identifier)
-          .join(', ')
-      if (key === 'reviews') return renderReviewInfo(val)
+    const rows = getTableDataWithSparkBars(
+      data,
+      (val, key) => {
+        if (['editors', 'authors'].includes(key))
+          return val
+            .map(u => u.username || u.email || u.defaultIdentity.identifier)
+            .join(', ')
+        if (key === 'reviews') return renderReviewInfo(val)
 
-      return val
-    })
+        return val
+      },
+      theme,
+    )
 
     return (
       <Table
@@ -325,7 +330,11 @@ const getReport = (
           { heading: t('reportsPage.tables.editor.Accepted'), name: 'acceptedCount', width: '7em', flexGrow: 1 },
           { heading: t('reportsPage.tables.editor.Published'), name: 'publishedCount', width: '7em', flexGrow: 1 },
         ]}
-        rows={getTableDataWithSparkBars(getEditorsData(startDate, endDate))}
+        rows={getTableDataWithSparkBars(
+          getEditorsData(startDate, endDate),
+          undefined,
+          theme,
+        )}
       />
     )
   }
@@ -357,6 +366,7 @@ const getReport = (
               />
             )
           },
+          theme,
         )}
       />
     )
@@ -375,7 +385,11 @@ const getReport = (
           { heading: t('msStatus.accepted'), name: 'acceptedCount', width: '7em', flexGrow: 1 },
           { heading: t('msStatus.published'), name: 'publishedCount', width: '7em', flexGrow: 1 },
         ]}
-        rows={getTableDataWithSparkBars(getAuthorsData(startDate, endDate))}
+        rows={getTableDataWithSparkBars(
+          getAuthorsData(startDate, endDate),
+          undefined,
+          theme,
+        )}
       />
     )
   }

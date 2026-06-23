@@ -6,19 +6,19 @@ import { useState, useContext } from 'react'
 import { Mail } from 'react-feather'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+
 import { ConfigContext } from '../../../../config/src'
 import { isCurrentUserCollaborative } from '../review/util'
 import { convertTimestampToRelativeDateString } from '../../../../../shared/dateUtils'
 import { UserAvatar } from '../../../../component-avatar/src'
 import ReviewDetailsModal from '../../../../component-review-detail-modal/src'
-import { color } from '../../../../../theme'
 import { ColorBadge } from '../../../../shared'
 
 const Card = styled.div.attrs({
   'data-testid': 'kanban-card',
 })`
-  background-color: ${color.gray97};
-  border-bottom: 0.8px solid ${color.gray70};
+  background-color: ${th('color.gray97')};
+  border-bottom: 0.8px solid ${th('color.gray70')};
   border-radius: 8px;
   display: flex;
   flex-direction: row;
@@ -29,7 +29,7 @@ const Card = styled.div.attrs({
   width: 100%;
 
   &:hover {
-    box-shadow: 0 9px 5px -6px ${color.gray70};
+    box-shadow: 0 9px 5px -6px ${th('color.gray70')};
     cursor: pointer;
     transition: 0.3s ease;
     z-index: 1;
@@ -48,7 +48,7 @@ const NameDisplay = styled.div`
 `
 
 const DateDisplay = styled.div`
-  color: ${color.gray50};
+  color: ${th('color.gray50')};
   font-size: 12px;
   line-height: 1.2;
 `
@@ -63,8 +63,8 @@ const EmailDisplay = styled(DateDisplay)`
   align-items: center;
   color: ${props =>
     props.invitationStatus === 'rejected'
-      ? th('colorError')
-      : color.brand1.base};
+      ? props.theme.colorError
+      : props.theme.color.brand1.base};
   display: flex;
   margin-top: calc(${th('gridUnit')} / 2);
 `

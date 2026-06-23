@@ -10,7 +10,6 @@ import { th } from '@coko/client'
 import { TightRow } from './Containers'
 import MinimalButton from './MinimalButton'
 import ElasticTextInput from './ElasticTextInput'
-import { color } from '../../theme'
 
 const InputRow = styled(TightRow)`
   & svg {
@@ -38,7 +37,7 @@ const Input = styled(ElasticTextInput)`
 
   &:hover,
   &:focus {
-    outline: 1px solid ${color.brand1.base};
+    outline: 1px solid ${th('color.brand1.base')};
   }
 `
 

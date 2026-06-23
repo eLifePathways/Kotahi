@@ -1,12 +1,9 @@
 /* eslint-disable no-shadow */
 
-// @flow
-// import theme from 'shared/theme'
 import styled, { css } from 'styled-components'
 import { Img as ReactImage } from 'react-image'
 import { Link } from 'react-router-dom'
 import { th } from '@coko/client'
-import { color } from '../../../theme'
 
 // import { ProfileHeaderAction } from '../profile/style'
 import { MEDIA_BREAK } from '../../layout'
@@ -15,7 +12,7 @@ import { MEDIA_BREAK } from '../../layout'
 export const Container = styled.div`
   /* stylelint-disable media-query-no-invalid */
 
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border: none;
   border-radius: ${props =>
     props.type === 'community' ? `${props.size / 8}px` : '100%'};
@@ -57,7 +54,7 @@ export const AvatarLink = styled(Link)`
 // `
 
 export const Img = styled(ReactImage)`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border-radius: ${props =>
     props.type === 'community' ? `${props.size / 8}px` : '100%'};
   display: inline-block;
@@ -78,7 +75,7 @@ export const Img = styled(ReactImage)`
 `
 
 export const FallbackImg = styled.img`
-  background-color: ${color.brand2.base};
+  background-color: ${th('color.brand2.base')};
   border-radius: ${props =>
     props.type === 'community' ? `${props.size / 8}px` : '100%'};
   display: inline-block;
@@ -98,7 +95,7 @@ export const FallbackImg = styled.img`
 `
 
 export const LoadingImg = styled.div`
-  background: ${color.brand2.base};
+  background: ${th('color.brand2.base')};
   border-radius: ${props =>
     props.type === 'community' ? `${props.size / 8}px` : '100%'};
   display: inline-block;
@@ -122,7 +119,7 @@ export const OnlineIndicator = styled.span`
     ${props =>
       props.$onlineBorderColor
         ? props.$onlineBorderColor(props.theme)
-        : color.textReverse};
+        : props.theme.color.textReverse};
   border-radius: 5px;
   bottom: 0;
   height: 10px;

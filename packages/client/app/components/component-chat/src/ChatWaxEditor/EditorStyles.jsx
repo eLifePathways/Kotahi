@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 import { th } from '@coko/client'
 import waxDefaultStyles from './layout/waxDefaultStyles'
 import EditorElements from './layout/EditorElements'
-import { color } from '../../../../theme'
 
 // this grid goes around the menu and the editor area beneath it.
 export const Grid = styled.div`
@@ -22,9 +21,9 @@ export const Grid = styled.div`
 
 export const Menu = styled.div`
   align-items: center;
-  background: ${color.backgroundA};
-  border: 1px solid ${color.gray60};
-  border-bottom: 1px solid ${color.gray90};
+  background: ${th('color.backgroundA')};
+  border: 1px solid ${th('color.gray60')};
+  border-bottom: 1px solid ${th('color.gray90')};
   display: flex;
   flex-wrap: wrap;
   font-size: 80%;
@@ -81,8 +80,8 @@ export const FullWaxEditorGrid = styled.div`
 `
 
 export const EditorDiv = styled.div`
-  background-color: ${color.backgroundA};
-  border: 1px solid ${color.gray60};
+  background-color: ${th('color.backgroundA')};
+  border: 1px solid ${th('color.gray60')};
   border-radius: 0 0 ${th('borderRadius')} ${th('borderRadius')};
   border-top: none;
   grid-column-start: editorCol;
@@ -135,7 +134,7 @@ export const FullEditorContainer = styled.div`
 `
 
 export const ReadOnlyEditorDiv = styled.div`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   grid-column-start: editorCol;
   grid-row-start: editorRow;
   /* overflow: auto; */
@@ -182,7 +181,7 @@ export const SimpleGrid = styled.div`
 `
 
 export const SimpleMenu = styled.div`
-  border-top: 1px solid ${color.gray90};
+  border-top: 1px solid ${th('color.gray90')};
   display: flex;
   flex-wrap: wrap;
   left: -12px;
@@ -216,7 +215,7 @@ export const SimpleMenu = styled.div`
 `
 
 export const SimpleEditorDiv = styled.div`
-  border: 1px solid ${color.gray60};
+  border: 1px solid ${th('color.gray60')};
   border-radius: ${th('borderRadius')};
   grid-area: editor;
   margin-top: 8px;
@@ -242,7 +241,7 @@ export const SimpleEditorDiv = styled.div`
   }
 
   &:focus-within {
-    border: 1px solid ${color.brand1.base};
+    border: 1px solid ${th('color.brand1.base')};
   }
 
   .error & {
@@ -296,7 +295,7 @@ export const EditorArea = styled.div`
 
 export const SideMenu = styled.div`
   background: ${th('colorBackgroundToolBar')}; /* TODO is this color defined? */
-  border-right: ${th('borderWidth')} ${th('borderStyle')} ${color.gray60};
+  border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('color.gray60')};
   height: calc(100% - 16px);
   min-width: 250px;
 `

@@ -4,8 +4,8 @@
 import { useCallback, useState } from 'react'
 import { grid } from '@coko/client'
 import { useDropzone } from 'react-dropzone'
-import styled from 'styled-components'
-import { color } from '../../../../../theme'
+import styled, { useTheme } from 'styled-components'
+
 import { Icon, Spinner } from '../../../../shared'
 
 const Message = styled.div`
@@ -37,6 +37,7 @@ const DropZoneContainer = styled.div`
 `
 
 const UploadComponent = ({ uploadAssetsFn, label }) => {
+  const theme = useTheme()
   const [showSpinner, setShowSpinner] = useState(false)
 
   const onDrop = useCallback(async acceptedFiles => {
@@ -53,7 +54,7 @@ const UploadComponent = ({ uploadAssetsFn, label }) => {
       <Message>
         <>
           {label}
-          <Icon color={color.brand1.base()} inline>
+          <Icon color={theme.color.brand1.base} inline>
             file-plus
           </Icon>
         </>

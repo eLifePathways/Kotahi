@@ -2,13 +2,12 @@
 
 import styled from 'styled-components'
 import { th, darken } from '@coko/client'
-import { color } from '../../../../theme'
 
 const Button = styled.button`
   align-items: center;
-  background: ${({ type }) => {
+  background: ${({ theme, type }) => {
     if (type === 'primary') {
-      return color.brand1.base
+      return theme.color.brand1.base
     }
 
     if (type === 'delete') {
@@ -35,13 +34,13 @@ const Button = styled.button`
   }
 
   &:not(:disabled):hover {
-    background: ${({ type }) => {
+    background: ${({ theme, type }) => {
       if (type === 'primary') {
-        return color.brand1.tint25
+        return theme.color.brand1.tint25
       }
 
       if (type === 'delete') {
-        return th('colorError')
+        return theme.colorError
       }
 
       return 'none'

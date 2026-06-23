@@ -9,7 +9,6 @@ import { X } from 'react-feather'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { RoundIconButton } from '../../shared'
-import { color } from '../../../theme'
 
 const SearchContainer = styled.div`
   align-items: center;
@@ -24,10 +23,10 @@ const InlineTextField = styled.input`
     // eslint-disable-next-line no-nested-ternary
     props.isFilteringResults
       ? props.isShowingCurrentSearch
-        ? color.brand1.tint50 // Stronger color to indicate this is the current search filtering
-        : color.brand1.tint70 // Weaker, to indicate there is filtering but the string is no longer representative of it
-      : color.backgroundA};
-  border: 1px solid ${color.gray60};
+        ? props.theme.color.brand1.tint50 // Stronger color to indicate this is the current search filtering
+        : props.theme.color.brand1.tint70 // Weaker, to indicate there is filtering but the string is no longer representative of it
+      : props.theme.color.backgroundA};
+  border: 1px solid ${th('color.gray60')};
   border-radius: ${th('borderRadius')};
   display: inline;
   flex: 0 1 40em;
@@ -36,7 +35,7 @@ const InlineTextField = styled.input`
   transition: ${th('transitionDuration')} ${th('transitionTimingFunction')};
 
   &:focus {
-    border-color: ${color.brand1.base};
+    border-color: ${th('color.brand1.base')};
     box-shadow: ${th('boxShadow')};
   }
 `

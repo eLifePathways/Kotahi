@@ -12,7 +12,6 @@
 //   getReviewersConcentricBarChartData,
 // } from './mockReportingData'
 // import DesignEmbed from '../common/utils'
-// import { color } from '../../app/theme'
 
 // const Header = styled.div`
 //   color: ${color.brand1.base};

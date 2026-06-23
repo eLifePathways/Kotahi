@@ -11,15 +11,14 @@ import { ConfigContext } from '../../../config/src'
 import { XpubContext } from '../../../xpub-with-context/src'
 import upload from '../upload'
 import { Dropzone, Action, Spinner } from '../../../shared'
-import { color } from '../../../../theme'
 
-const StatusIcon = withTheme(({ children }) => (
-  <Icon color={color.brand1.base()}>{children}</Icon>
+const StatusIcon = withTheme(({ children, theme }) => (
+  <Icon color={theme.color.brand1.base}>{children}</Icon>
 ))
 
 const Status = styled.div`
   align-items: center;
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   display: inline-flex;
   margin-top: -2px;
 `
@@ -113,12 +112,12 @@ const Root = styled.div`
 
   &:hover ${StatusIdle} {
     circle {
-      fill: ${color.brand1.base};
-      stroke: ${color.brand1.base};
+      fill: ${th('color.brand1.base')};
+      stroke: ${th('color.brand1.base')};
     }
 
     line {
-      stroke: ${color.textReverse};
+      stroke: ${th('color.textReverse')};
     }
   }
 `
@@ -136,7 +135,7 @@ const Error = styled.div`
 `
 
 const Info = styled.div`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font-size: 2em;
   font-weight: 400;
 
@@ -148,7 +147,7 @@ const Info = styled.div`
 `
 
 const SubInfo = styled.div`
-  color: ${color.gray20};
+  color: ${th('color.gray20')};
   line-height: 32px;
   text-align: center;
 `

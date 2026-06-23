@@ -10,7 +10,6 @@ import { th, grid, serverUrl } from '@coko/client'
 import { Button } from '../../pubsweet'
 import { ConfigContext } from '../../config/src'
 import { getQueryStringByName } from '../../../shared/urlUtils'
-import { color } from '../../../theme'
 
 const getNextUrl = config => {
   const url = new URL(window.location.href)
@@ -54,8 +53,8 @@ const Container = styled.div.attrs({
 })`
   background: linear-gradient(
     134deg,
-    ${color.brand1.base},
-    ${color.brand1.tint25}
+    ${th('color.brand1.base')},
+    ${th('color.brand1.tint25')}
   );
   display: grid;
   height: 100vh;

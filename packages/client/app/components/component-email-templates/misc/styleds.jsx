@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { grid } from '@coko/client'
+import { th, grid } from '@coko/client'
 import {
   EditorForm,
   EditPageContainer,
@@ -9,7 +9,6 @@ import {
   RightArrow,
 } from '../../component-cms-manager/src/style'
 import { ActionButton, Page } from '../../shared'
-import { color } from '../../../theme'
 
 export const CleanButton = styled.button.attrs({ type: 'button' })`
   align-items: center;
@@ -68,7 +67,8 @@ export const Footer = styled(FlexRow)`
 // #region EmailTemplatesHeader -----------------------------------------------------------------------
 export const Action = styled(CleanButton)`
   align-items: center;
-  color: ${p => (p.disabled ? color.gray80 : color.brand1.base)};
+  color: ${p =>
+    p.disabled ? p.theme.color.gray80 : p.theme.color.brand1.base};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   gap: ${grid(1)};
   min-width: 0;
@@ -102,7 +102,7 @@ export const CreateButton = styled(ActionButton)`
 `
 
 export const Heading = styled.h3`
-  color: ${color.gray20};
+  color: ${th('color.gray20')};
   line-height: 1;
   margin: 0;
 `
@@ -118,7 +118,7 @@ export const DescriptionContainer = styled(FlexRow)`
 `
 
 export const EditedOnLabel = styled.small`
-  color: ${color.gray20};
+  color: ${th('color.gray20')};
   line-height: 1.2;
   padding: ${grid(0.25)} 0 0;
 `
@@ -189,7 +189,7 @@ export const OptionListItem = styled.li`
   width: 100%;
 
   svg {
-    fill: ${p => (p.$selected ? color.brand1.base : 'transparent')};
+    fill: ${p => (p.$selected ? p.theme.color.brand1.base : 'transparent')};
     opacity: 0;
     transition: opacity 0.3s;
   }
@@ -202,7 +202,7 @@ export const OptionListItem = styled.li`
 `
 
 export const OptionListItemButton = styled(CleanButton)`
-  color: ${p => (p.$warning ? color.warning.base : '#555')};
+  color: ${p => (p.$warning ? p.theme.color.warning.base : '#555')};
   gap: ${grid(1.5)};
   width: 100%;
 

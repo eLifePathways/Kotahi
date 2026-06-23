@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { icons } from 'wax-prosemirror-core'
-import { color } from '../../../../../theme'
+import { th } from '@coko/client'
 
 // Source: https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/components/icons/Icon.js
 // modified to allow more icons, which can be defined like this:  https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/components/icons/icons.js
@@ -11,14 +11,13 @@ const Svg = styled.svg.attrs(() => ({
   xmlns: 'http://www.w3.org/2000/svg',
   xmlnsXlink: 'http://www.w3.org/1999/xlink',
 }))`
-  fill: ${color.gray60};
+  fill: ${th('color.gray60')};
   height: 24px;
   vertical-align: top;
   width: 24px;
 
   &.active {
-    background: ${color.gray90};
-    /* fill: ${color.gray30}; */
+    background: ${th('color.gray90')};
   }
 `
 

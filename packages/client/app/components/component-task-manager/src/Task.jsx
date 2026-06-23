@@ -6,7 +6,7 @@
 import { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment-timezone'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Circle, CheckCircle, MoreVertical } from 'react-feather'
@@ -30,7 +30,6 @@ import DueDateField from './DueDateField'
 import StatusDropdown from './StatusDropdown'
 import TaskEditModal from './TaskEditModal'
 import CounterField from '../../shared/CounterField'
-import { color } from '../../../theme'
 
 const TaskRow = styled.div`
   align-items: flex-start;
@@ -96,12 +95,12 @@ const Handle = styled.div`
 
 const DragIcon = styled(DragVerticalIcon)`
   height: 20px;
-  stroke: ${color.gray40};
+  stroke: ${th('color.gray40')};
   stroke-width: 1.8;
   width: 20px;
 
   &:hover {
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
   }
 `
 
@@ -111,18 +110,18 @@ const Ellipsis = styled(MoreVertical)`
   width: 20px;
 
   &:hover path {
-    fill: ${color.brand1.base};
+    fill: ${th('color.brand1.base')};
   }
 `
 
 const ModalContainer = styled(LooseColumn)`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   padding: ${grid(2.5)} ${grid(3)};
   z-index: 10000;
 `
 
 const ActionDialog = styled.div`
-  background: ${color.backgroundA};
+  background: ${th('color.backgroundA')};
   border-radius: 6px;
   box-shadow: 0 0 8px rgb(0 0 0 / 25%);
   left: -80px;
@@ -147,7 +146,7 @@ const BaseLabel = styled.div`
 
   &:hover,
   &:focus {
-    background-color: ${color.gray95};
+    background-color: ${th('color.gray95')};
   }
 `
 
@@ -247,6 +246,7 @@ const Task = ({
 
   const dragStyle = { transform: CSS.Transform.toString(transform), transition }
 
+  const theme = useTheme()
   const config = useContext(ConfigContext)
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
   const [isEditTaskMetaModal, setIsEditTaskMetaModal] = useState(false)
@@ -437,9 +437,9 @@ const Task = ({
                   }
                 >
                   {isDone ? (
-                    <CheckCircle color={color.brand1.base()} />
+                    <CheckCircle color={theme.color.brand1.base} />
                   ) : (
-                    <Circle color={color.gray60} />
+                    <Circle color={theme.color.gray60} />
                   )}
                 </Handle>
               )}

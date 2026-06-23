@@ -2,7 +2,6 @@
 
 import { css } from 'styled-components'
 import { th } from '@coko/client'
-import color from '../color'
 
 const underlineFade = css`
   &::before {
@@ -36,7 +35,7 @@ const underlineAnimation = css`
   }
 
   &::before {
-    background-color: ${color.brand1.base};
+    background-color: ${th('color.brand1.base')};
     bottom: 0;
     content: '';
     height: 2px;

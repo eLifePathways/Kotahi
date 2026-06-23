@@ -11,7 +11,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import { grid } from '@coko/client'
 
 import { Checkbox, Dropdown } from '../../pubsweet'
-import { color } from '../../../theme'
 
 import { validateManuscriptSubmission } from '../../../shared/manuscriptUtils'
 import {
@@ -75,8 +74,12 @@ const DropdownContainer = styled.div.attrs({
   width: 100px;
 
   button {
-    background: ${props => (props.disabled ? color.gray90 : color.brand1.base)};
-    color: ${props => (props.disabled ? color.gray60 : color.white)};
+    background: ${props =>
+      props.disabled
+        ? props.theme.color.gray90
+        : props.theme.color.brand1.base};
+    color: ${props =>
+      props.disabled ? props.theme.color.gray60 : props.theme.color.white};
     line-height: calc(8px * 2);
     min-width: calc(8px * 10);
     padding: 5px 4px;
@@ -98,7 +101,8 @@ const DropdownContainer = styled.div.attrs({
   svg {
     height: calc(3 * 6px);
     margin-top: -5px;
-    stroke: ${props => (props.disabled ? color.gray60 : color.white)};
+    stroke: ${props =>
+      props.disabled ? props.theme.color.gray60 : props.theme.color.white};
     width: calc(3 * 6px);
   }
 `

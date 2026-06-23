@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled from 'styled-components'
-import { color, space } from '../../theme'
+import { th } from '@coko/client'
 
 const CheckboxContainer = styled.div`
   align-content: center;
@@ -9,27 +9,27 @@ const CheckboxContainer = styled.div`
   margin-bottom: 4px;
 
   input[type='checkbox'] {
-    accent-color: ${color.brand1.shade25};
-    background: ${color.gray97};
-    border: 1px solid ${color.gray80};
+    accent-color: ${th('color.brand1.shade25')};
+    background: ${th('color.gray97')};
+    border: 1px solid ${th('color.gray80')};
     border-radius: 5px;
     color: white;
     padding: 14px 9px;
 
     &:active,
     &:focus-visible {
-      /* border: 1px solid ${color.gray70}; */
+      /* border: 1px solid ${th('color.gray70')}; */
       outline: none;
     }
 
     &:hover {
-      accent-color: ${color.brand1.shade25};
+      accent-color: ${th('color.brand1.shade25')};
       border: none;
     }
   }
 
   label {
-    margin-left: ${space.e};
+    margin-left: ${th('spacing.e')};
   }
 `
 

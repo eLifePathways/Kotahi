@@ -3,30 +3,30 @@
 /* eslint-disable react/prop-types */
 
 import styled from 'styled-components'
-import theme, { color } from '../../theme'
+import { th } from '@coko/client'
 
 export const StyledInput = styled.input.attrs({
   'data-testid': 'text-input',
 })`
-  background: ${color.gray99};
-  border: 1px solid ${color.gray80};
-  border-radius: ${theme.borderRadius};
+  background: ${th('color.gray99')};
+  border: 1px solid ${th('color.gray80')};
+  border-radius: ${th('borderRadius')};
   box-shadow: inset 0 0 4px rgb(0 0 0 / 7%);
-  font-size: ${theme.fontSizeBaseSmall};
+  font-size: ${th('fontSizeBaseSmall')};
   padding: 14px 9px;
   width: 100%;
 
   &:hover {
-    border: 1px solid ${color.gray70};
+    border: 1px solid ${th('color.gray70')};
     outline: none;
-    transition: ${theme.transitionDuration};
+    transition: ${th('transitionDuration')};
   }
 
   &:active,
   &:focus-visible {
-    border: 1px solid ${color.brand1.base};
+    border: 1px solid ${th('color.brand1.base')};
     outline: none;
-    transition: ${theme.transitionDuration};
+    transition: ${th('transitionDuration')};
   }
 `
 

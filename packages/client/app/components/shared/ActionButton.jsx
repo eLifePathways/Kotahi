@@ -7,7 +7,6 @@ import PropTypes from 'prop-types'
 import Color from 'color'
 import { Check, AlertCircle } from 'react-feather'
 import { th, grid, rotate360 } from '@coko/client'
-import { color } from '../../theme'
 
 const BaseButton = styled.button`
   border: none;
@@ -28,17 +27,21 @@ const BaseButton = styled.button`
 `
 
 const DisabledButton = styled(BaseButton)`
-  background-color: ${color.gray90};
-  color: ${color.gray60};
+  background-color: ${th('color.gray90')};
+  color: ${th('color.gray60')};
 `
 
 const Button = styled(BaseButton)`
   background-color: ${props =>
-    props.$bgColor || (props.$primary ? color.brand1.base : color.gray90)};
+    props.$bgColor ||
+    (props.$primary
+      ? props.theme.color.brand1.base
+      : props.theme.color.gray90)};
   /* stylelint-disable-next-line color-function-notation, alpha-value-notation */
   box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
   color: ${props =>
-    props.$fgColor || (props.$primary ? color.text : color.textReverse)};
+    props.$fgColor ||
+    (props.$primary ? props.theme.color.text : props.theme.color.textReverse)};
 
   ${props =>
     props.onClick
@@ -110,7 +113,9 @@ const ActionButton = ({
     )
 
   const themeContext = useContext(ThemeContext)
-  let bgColor = primary ? color.brand1.base() : color.gray90
+  let bgColor = primary
+    ? themeContext.color.brand1.base
+    : themeContext.color.gray90
   if (status === 'failure') bgColor = themeContext.colorWarning
   else if (col) bgColor = col
 
@@ -119,10 +124,12 @@ const ActionButton = ({
   try {
     isLight = Color(bgColor).isLight()
   } catch {
-    bgColor = color.gray90
+    bgColor = themeContext.color.gray90
   }
 
-  const fgColor = isLight ? color.text : color.textReverse
+  const fgColor = isLight
+    ? themeContext.color.text
+    : themeContext.color.textReverse
 
   let statusIndicator = null
   if (status === 'pending') statusIndicator = <Spinner $fgColor={fgColor} />
@@ -172,7 +179,7 @@ const ActionButton = ({
 }
 
 ActionButton.propTypes = {
-  /** Primary buttons are styled with color.brand1.base, unless another color is specified */
+  /** Primary buttons are styled with th('color.brand1.base'), unless another color is specified */
   primary: PropTypes.bool,
   disabled: PropTypes.bool,
   onClick: PropTypes.func,

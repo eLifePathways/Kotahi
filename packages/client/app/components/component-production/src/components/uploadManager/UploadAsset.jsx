@@ -8,7 +8,6 @@ import styled from 'styled-components'
 
 import { grid, th, serverUrl } from '@coko/client'
 
-import { color } from '../../../../../theme'
 import { convertTimestampToRelativeDateString } from '../../../../../shared/dateUtils'
 import { Placeholder } from '../../../../component-dashboard/src/style'
 import { ConfirmationModal } from '../../../../component-modal/src/ConfirmationModal'
@@ -44,8 +43,8 @@ export const StyledSectionRow = styled(SectionRow)`
 
 export const FilesHeading = styled.div`
   align-items: center;
-  background-color: ${color.backgroundA};
-  border-top: 1px solid ${color.gray90};
+  background-color: ${th('color.backgroundA')};
+  border-top: 1px solid ${th('color.gray90')};
   column-gap: ${grid(2)};
   display: flex;
   flex-direction: row;

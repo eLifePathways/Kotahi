@@ -4,12 +4,12 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
+
 import { Action } from '../pubsweet'
-import { color } from '../../theme'
 import { ConfirmationModal } from '../component-modal/src/ConfirmationModal'
 
 const Icon = styled.div`
-  background: ${color.gray90};
+  background: ${th('color.gray90')};
   height: ${grid(10)};
   margin-bottom: ${th('gridUnit')};
   opacity: 0.5;
@@ -24,8 +24,8 @@ const Icon = styled.div`
 `
 
 const Extension = styled.div`
-  background: ${color.gray5};
-  color: ${color.textReverse};
+  background: ${th('color.gray5')};
+  color: ${th('color.textReverse')};
   font-size: ${th('fontSizeBaseSmall')};
   left: ${grid(2)};
   line-height: ${th('lineHeightBaseSmall')};
@@ -37,7 +37,7 @@ const Extension = styled.div`
 `
 
 const Filename = styled.div`
-  color: ${color.text};
+  color: ${th('color.text')};
   font-size: ${th('fontSizeBaseSmall')};
   font-style: italic;
   line-height: ${th('lineHeightBaseSmall')};
@@ -57,12 +57,12 @@ const Uploading = styled.div`
 
 const Uploaded = styled(Uploading)`
   &:hover ${Extension} {
-    background: ${color.backgroundA};
-    color: ${color.brand1.base};
+    background: ${th('color.backgroundA')};
+    color: ${th('color.brand1.base')};
   }
 
   &:hover ${Icon} {
-    background: ${color.brand1.base};
+    background: ${th('color.brand1.base')};
     opacity: 1;
   }
 
@@ -75,8 +75,8 @@ const Uploaded = styled(Uploading)`
 const ErrorWrapper = styled.div`
   background: ${th('colorError')};
   border: calc(${th('borderWidth')} * 2) ${th('borderStyle')}
-    ${color.textReverse};
-  color: ${color.textReverse};
+    ${th('color.textReverse')};
+  color: ${th('color.textReverse')};
   font-size: ${th('fontSizeBaseSmall')};
   letter-spacing: 0.01em;
   line-height: ${th('lineHeightBaseSmall')};

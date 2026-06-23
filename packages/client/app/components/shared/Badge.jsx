@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import { grid, theme } from '@coko/client'
+import styled, { useTheme } from 'styled-components'
+import { grid } from '@coko/client'
 import i18next from 'i18next'
 import { keys } from 'lodash'
-import { color } from '../../theme'
+
 import { FlexRow } from '../../globals'
 
 const bRadius = '8px'
@@ -38,24 +38,13 @@ export const Status = styled.span.attrs({
 
 export const ConfigurableStatus = styled(Status)`
   background-color: ${p => p.color};
-  color: ${p => (p.$lightText ? color.textReverse : color.text)};
+  color: ${p =>
+    p.$lightText ? p.theme.color.textReverse : p.theme.color.text};
 `
 
 export const safeLabel = status => {
   const unknownFallback = `${i18next.t('msStatus.unknown')} (${status})`
   return i18next.t(`msStatus.${status}`, unknownFallback)
-}
-
-const statusColorsMap = {
-  submitted: [theme.colorWarning, color.warning.shade50],
-  inProgress: [theme.colorWarning, color.warning.shade50],
-  underEmbargo: [theme.colorWarning, color.warning.shade50],
-  published: [theme.colorSuccess, color.textReverse],
-  completed: [theme.colorSuccess, color.textReverse],
-  embargoReleased: [theme.colorSuccess, color.textReverse],
-  unpublished: [theme.colorError, color.textReverse],
-  rejected: [theme.colorError, color.textReverse],
-  default: ['#ddd', '#333'],
 }
 
 // IDEA: This could be extended to be a prop: an array of objects where each: { [statuskey] : [...array of statuses to override] }
@@ -86,13 +75,30 @@ const statusesToOverride = ['evaluated']
 export const StatusBadge = ({
   status,
   published: publishedDate = '',
-  colorMap = statusColorsMap,
+  colorMap,
   clickable = false,
   ...rest
 }) => {
-  const safeStatusKey = keys(colorMap).includes(status) ? status : 'default'
-  const [bg, text] = colorMap[safeStatusKey]
-  const [publishedBg, publishedText] = colorMap.published
+  const themeValues = useTheme()
+
+  const defaultColorMap = {
+    submitted: [themeValues.colorWarning, themeValues.color.warning.shade50],
+    inProgress: [themeValues.colorWarning, themeValues.color.warning.shade50],
+    underEmbargo: [themeValues.colorWarning, themeValues.color.warning.shade50],
+    published: [themeValues.colorSuccess, themeValues.color.textReverse],
+    completed: [themeValues.colorSuccess, themeValues.color.textReverse],
+    embargoReleased: [themeValues.colorSuccess, themeValues.color.textReverse],
+    unpublished: [themeValues.colorError, themeValues.color.textReverse],
+    rejected: [themeValues.colorError, themeValues.color.textReverse],
+    default: ['#ddd', '#333'],
+  }
+
+  const resolvedColorMap = colorMap ?? defaultColorMap
+  const safeStatusKey = keys(resolvedColorMap).includes(status)
+    ? status
+    : 'default'
+  const [bg, text] = resolvedColorMap[safeStatusKey]
+  const [publishedBg, publishedText] = resolvedColorMap.published
 
   const publishedAndMore = !!publishedDate && status !== 'published'
   const forceToPublished = statusesToOverride.includes(status)
@@ -106,7 +112,7 @@ export const StatusBadge = ({
           $bRadius={`${bRadius} 0 0 ${bRadius}`}
           $pRight={!forceToPublished && grid(1)}
           $text={publishedText}
-          $textShadow={publishedText === color.textReverse}
+          $textShadow={publishedText === themeValues.color.textReverse}
         >
           {safeLabel('published')}
         </Status>
@@ -119,7 +125,7 @@ export const StatusBadge = ({
           }
           $pLeft={showPublishedStatus && grid(1)}
           $text={text}
-          $textShadow={text === color.textReverse}
+          $textShadow={text === themeValues.color.textReverse}
         >
           {safeLabel(status)}
         </Status>

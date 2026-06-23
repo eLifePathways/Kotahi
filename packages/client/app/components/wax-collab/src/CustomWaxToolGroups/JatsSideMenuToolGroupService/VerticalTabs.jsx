@@ -10,7 +10,6 @@ import { WaxContext } from 'wax-prosemirror-core'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import Icon from './Icon'
-import { color } from '../../../../../theme'
 
 // n.b. Henrik's current design is at https://www.figma.com/file/uDxsjgDWxjiof0qSNFLelr/Kotahi-storybook?node-id=6256%3A11486
 
@@ -45,8 +44,8 @@ const Tabs = styled.div`
 `
 
 const activeTab = css`
-  background: ${color.gray90};
-  /* box-shadow: 0 0 1px ${color.gray40}; */
+  background: ${th('color.gray90')};
+  /* box-shadow: 0 0 1px ${th('color.gray40')}; */
   margin-bottom: -1px;
   /* stylelint-disable-next-line declaration-no-important */
   opacity: 1 !important;
@@ -72,17 +71,17 @@ const Tab = styled.div`
   }
 
   &:hover {
-    background: ${color.gray90};
+    background: ${th('color.gray90')};
 
     & svg {
-      fill: ${color.gray30};
+      fill: ${th('color.gray30')};
     }
   }
 `
 
 const Content = styled.div`
-  border-right: 1px solid ${color.gray90};
-  border-top: 1px solid ${color.gray90};
+  border-right: 1px solid ${th('color.gray90')};
+  border-top: 1px solid ${th('color.gray90')};
   border-top-right-radius: 4px;
   height: 100%;
   width: 100%;
@@ -131,7 +130,7 @@ const BlockLevelToolsWrapper = styled.div`
 
 const ElementGroup = styled.details`
   & summary {
-    color: ${color.gray40};
+    color: ${th('color.gray40')};
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
@@ -167,8 +166,8 @@ const BlockElementWrapper = styled.div`
 
     &::before {
       --circle-width: 5px;
-      background-color: ${props => th(props.color) || 'transparent'};
-      border: 1px solid ${props => th(props.color) || 'transparent'};
+      background-color: ${props => props.color || 'transparent'};
+      border: 1px solid ${props => props.color || 'transparent'};
       border-radius: 100%;
       content: '';
       display: ${props => (props.color ? 'inline-block' : 'none')};
@@ -181,9 +180,9 @@ const BlockElementWrapper = styled.div`
 
     & span {
       border-bottom: 2px solid
-        ${props => (props.isActive ? color.gray40 : 'transparent')};
+        ${props => (props.isActive ? props.theme.color.gray40 : 'transparent')};
       border-top: 2px solid transparent;
-      color: ${color.gray40};
+      color: ${th('color.gray40')};
       font-size: 14px;
       font-weight: ${props => (props.isActive ? 'bold' : 'normal')};
       padding: 1px 0;
@@ -194,7 +193,7 @@ const BlockElementWrapper = styled.div`
       background: none !important;
 
       & span {
-        border-bottom-color: ${color.gray40};
+        border-bottom-color: ${th('color.gray40')};
         font-weight: bold;
       }
     }
