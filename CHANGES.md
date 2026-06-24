@@ -8,6 +8,13 @@
 
 #### Deployment changes
 
+### Version 2026.06.24-0
+
+#### Bug fixes
+We worked on fixing an issue where when kotahi was connected to a fly.io managed postgres cluster, the database connection to the app would crash after a while.
+
+#### Deployment changes
+
 ##### Job queue database connection
 We now allow the job queues to connect to a database independently from the main database connection. This is handled by `JOB_QUEUE_POSTGES_*` environment variables. The names are the same as the existing `POSTGRES_*` variables (ie. `JOB_QUEUE_POSTGRES_HOST`, `JOB_QUEUE_POSTGRES_PORT` etc.). As with the existing `SUBSCRIPTIONS_POSTGRES_*` variables, if a particular variable is not provided, it will fall back on the equivalent `POSTGRES_*` variable's value.
 
