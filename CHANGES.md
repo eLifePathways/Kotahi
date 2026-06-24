@@ -6,7 +6,12 @@
 
 #### Bug fixes
 
+#### Deployment changes
+
 ### Version 2026.06.24-0
+
+#### Bug fixes
+We worked on fixing an issue where when kotahi was connected to a fly.io managed postgres cluster, the database connection to the app would crash after a while.
 
 #### Deployment changes
 
