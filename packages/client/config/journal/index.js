@@ -1,7 +1,10 @@
-/* eslint-disable global-require */
+import recommendations from './recommendations'
+import roles from './roles'
 
-module.exports = {
-  recommendations: require('./recommendations'),
-  roles: require('./roles'),
-  tasks: require('./tasks.json'),
+import tasks from './tasks.json' with { type: 'json' }
+
+export default {
+  recommendations,
+  roles,
+  tasks,
 }

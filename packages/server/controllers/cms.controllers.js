@@ -1,6 +1,13 @@
 const { Readable } = require('stream')
 
-const { createFile, fileStorage, request, File } = require('@coko/server')
+const {
+  config,
+  createFile,
+  fileStorage,
+  request,
+  File,
+  logger,
+} = require('@coko/server')
 
 const {
   ArticleTemplate,
@@ -37,14 +44,10 @@ const addResourceToFolder = async (id, type) => {
   let fileId = null
 
   if (!type) {
-    const insertedFile = await createFile(
-      Readable.from(' '),
-      name,
-      null,
-      null,
-      ['cmsTemplateFile'],
-      insertedResource.id,
-    )
+    const insertedFile = await createFile(Readable.from(' '), name, {
+      tags: ['cmsTemplateFile'],
+      objectId: insertedResource.id,
+    })
 
     fileId = insertedFile.id
 
@@ -103,7 +106,14 @@ const cmsFileTree = async (groupId, folderId) => {
   )
 
   const files = await File.query().whereIn('id', fileIds)
-  const filesWithUrl = await getFilesWithUrl(files)
+  // Finiscky, works because the browser does not request the url field.
+  // Acceptable because of the plan to delete all cms related code.
+  // Use the internal S3 URL for signing so flax (inside Docker) can reach these URLs.
+  // S3_PUBLIC_URL is a browser-facing URL and won't resolve within the Docker network.
+  const fileStorageConfig = config.get('fileStorage')
+  const filesWithUrl = await getFilesWithUrl(files, {
+    s3: { ...fileStorageConfig, publicUrl: fileStorageConfig.url },
+  })
 
   const getChildren = children =>
     children.map(child => {
@@ -218,7 +228,7 @@ const deleteResource = async id => {
         await File.query().deleteById(id)
       }
     } catch (e) {
-      throw new Error('The was a problem deleting the file')
+      throw new Error(`The was a problem deleting the file: ${e.message}`)
     }
   } else {
     const hasChildren = await CmsFileTemplate.query().where({
@@ -359,13 +369,15 @@ const layoutFavicon = async layout => {
       active: true,
     })
 
-    const file = await File.findById(
-      activeConfig.formData.groupIdentity.favicon,
-    )
+    const faviconId = activeConfig?.formData?.groupIdentity?.favicon
+    if (!faviconId) return null
+
+    const file = await File.findById(faviconId)
 
     file.storedObjects = await setFileUrls(file.storedObjects)
     return file
   } catch (error) {
+    logger.error(error)
     return null
   }
 }
@@ -476,6 +488,7 @@ const storedPartnerFile = async storedPartner => {
     file.storedObjects = updatedStoredObjects
     return file
   } catch (err) {
+    logger.error(err)
     return null
   }
 }

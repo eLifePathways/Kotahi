@@ -38,7 +38,7 @@ const seed = async (dumpSql, opts) => {
   while (!ready) {
     // eslint-disable-next-line
     const result = await db.raw(`set search_path to 'public';`)
-    // eslint-disable-next-line global-require
+
     const User = require('../models/user/user.model')
 
     try {

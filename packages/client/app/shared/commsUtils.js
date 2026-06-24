@@ -1,12 +1,4 @@
-import gql from 'graphql-tag'
-
-const VALIDATE_DOI = gql`
-  query validateDOI($doiOrUrl: String) {
-    validateDOI(doiOrUrl: $doiOrUrl) {
-      isDOIValid
-    }
-  }
-`
+import { VALIDATE_DOI, VALIDATE_SUFFIX } from '../queries'
 
 /** 2nd-order function to get a validator for DOIs.
  * E.g. `const errorMessage = validateDoi(client)(value)`
@@ -14,7 +6,7 @@ const VALIDATE_DOI = gql`
  * Else return undefined. This contacts the server for the result,
  * which in turn attempts to retrieve the DOI.
  */
-// eslint-disable-next-line import/prefer-default-export
+
 export const validateDoi = client => async value => {
   return client
     .query({
@@ -28,14 +20,6 @@ export const validateDoi = client => async value => {
       return undefined
     })
 }
-
-const VALIDATE_SUFFIX = gql`
-  query validateSuffix($suffix: String, $groupId: ID!) {
-    validateSuffix(suffix: $suffix, groupId: $groupId) {
-      isDOIValid
-    }
-  }
-`
 
 // TODO: Test this changes refelect as expected in sandbox crossref
 export const validateSuffix = (client, groupId) => async value => {
@@ -53,9 +37,3 @@ export const validateSuffix = (client, groupId) => async value => {
 
   return 'Suffix is invalid or not available'
 }
-
-export const VALIDATE_ORCID = gql`
-  query ($input: String!) {
-    orcidValidate(input: $input)
-  }
-`

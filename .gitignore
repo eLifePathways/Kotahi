@@ -53,3 +53,5 @@ packages/server/scripts/local
 !**/.yarn/releases
 !**/.yarn/sdks
 !**/.yarn/versions
+
+.claude

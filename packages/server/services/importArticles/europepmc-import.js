@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, consistent-return */
+/* eslint-disable consistent-return */
 const axios = require('axios')
 
 const ArticleImportSources = require('../../models/articleImportSources/articleImportSources.model')

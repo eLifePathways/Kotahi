@@ -1,11 +1,11 @@
-const { useTransaction, logger } = require('@coko/server')
+const { useTransaction } = require('@coko/server')
 
 const { orderBy } = require('lodash')
 
 const Manuscript = require('../manuscript.model')
 const User = require('../../user/user.model')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const authorFeedbackSubmittedManuscripts = await Manuscript.query(
       trx,
@@ -13,13 +13,7 @@ exports.up = async knex => {
       "jsonb_extract_path_text(author_feedback::jsonb, 'submitted') IS NOT NULL",
     )
 
-    logger.info(
-      `Manuscripts with submitted authorFeedback count: ${authorFeedbackSubmittedManuscripts.length}`,
-    )
-
     if (authorFeedbackSubmittedManuscripts.length > 0) {
-      let updatedManuscriptsCount = 0
-
       await Promise.all(
         authorFeedbackSubmittedManuscripts.map(
           async authorFeedbackSubmittedManuscript => {
@@ -68,14 +62,9 @@ exports.up = async knex => {
                 ),
               },
             })
-
-            updatedManuscriptsCount += 1
           },
         ),
-      ).then(res => {
-        logger.info(`Total updated manuscripts: ${updatedManuscriptsCount}`)
-        logger.info(`Updated authorFeedback data prior to structure change.`)
-      })
+      )
     }
   })
 }

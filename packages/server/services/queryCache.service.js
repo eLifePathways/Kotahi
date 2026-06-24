@@ -1,6 +1,6 @@
-/* eslint-disable global-require */
-
 const { LRUCache } = require('lru-cache')
+
+const { logger } = require('@coko/server')
 
 const cache = new LRUCache({
   max: 500,
@@ -29,7 +29,7 @@ const queryFunctions = {
     const file = await File.query().findById(fileId)
 
     if (!file?.objectId) {
-      console.error('File without objectId encountered:', file)
+      logger.error('File without objectId encountered:', file)
       return null
     }
 
@@ -193,7 +193,6 @@ const evictFromCache = key => cache.delete(key)
 
 /** Evict all entries from the cache whose keys start with the supplied prefix */
 const evictFromCacheByPrefix = keyPrefix => {
-  // eslint-disable-next-line no-restricted-syntax
   for (const key of cache.keys())
     if (key.startsWith(keyPrefix)) cache.delete(key)
 }

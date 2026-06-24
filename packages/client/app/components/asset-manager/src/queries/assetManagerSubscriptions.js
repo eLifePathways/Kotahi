@@ -1,80 +1,25 @@
-import React from 'react'
-import { Subscription } from '@apollo/client/react/components'
-import { gql } from '@apollo/client'
+import { useSubscription } from '@apollo/client/react'
 
-const FILES_UPLOADED_SUBSCRIPTION = gql`
-  subscription FilesUploaded {
-    filesUploaded
-  }
-`
+import {
+  FILES_DELETED,
+  FILES_UPLOADED,
+  FILE_UPDATED,
+} from '../../../../queries'
 
-const FILES_DELETED_SUBSCRIPTION = gql`
-  subscription FilesDeleted {
-    filesDeleted
-  }
-`
-
-const FILE_UPDATED_SUBSCRIPTION = gql`
-  subscription FileUpdated {
-    fileUpdated {
-      id
-    }
-  }
-`
-
-const filesUploadedSubscription = props => {
-  const { render, getEntityFilesQuery } = props
-
-  const triggerRefetch = () => {
-    getEntityFilesQuery.refetch()
-  }
-
-  return (
-    <Subscription
-      onSubscriptionData={triggerRefetch}
-      subscription={FILES_UPLOADED_SUBSCRIPTION}
-    >
-      {render}
-    </Subscription>
-  )
+const useFilesUploadedSubscription = refetch => {
+  useSubscription(FILES_UPLOADED, { onData: () => refetch() })
 }
 
-const filesDeletedSubscription = props => {
-  const { render, getEntityFilesQuery } = props
-
-  const triggerRefetch = () => {
-    getEntityFilesQuery.refetch()
-  }
-
-  return (
-    <Subscription
-      onSubscriptionData={triggerRefetch}
-      subscription={FILES_DELETED_SUBSCRIPTION}
-    >
-      {render}
-    </Subscription>
-  )
+const useFilesDeletedSubscription = refetch => {
+  useSubscription(FILES_DELETED, { onData: () => refetch() })
 }
 
-const fileUpdatedSubscription = props => {
-  const { render, getEntityFilesQuery } = props
-
-  const triggerRefetch = () => {
-    getEntityFilesQuery.refetch()
-  }
-
-  return (
-    <Subscription
-      onSubscriptionData={triggerRefetch}
-      subscription={FILE_UPDATED_SUBSCRIPTION}
-    >
-      {render}
-    </Subscription>
-  )
+const useFileUpdatedSubscription = refetch => {
+  useSubscription(FILE_UPDATED, { onData: () => refetch() })
 }
 
 export {
-  filesUploadedSubscription,
-  filesDeletedSubscription,
-  fileUpdatedSubscription,
+  useFilesUploadedSubscription,
+  useFilesDeletedSubscription,
+  useFileUpdatedSubscription,
 }

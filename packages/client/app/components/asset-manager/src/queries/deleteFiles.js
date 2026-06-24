@@ -1,23 +1,7 @@
-import React from 'react'
-import { Mutation } from '@apollo/client/react/components'
-import { gql } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 
-const DELETE_FILES = gql`
-  mutation DeleteFiles($ids: [ID!]!) {
-    deleteFiles(ids: $ids)
-  }
-`
+import { DELETE_FILES } from '../../../../queries'
 
-const deleteFilesMutation = props => {
-  const { render } = props
+const useDeleteFiles = () => useMutation(DELETE_FILES)
 
-  return (
-    <Mutation mutation={DELETE_FILES}>
-      {(deleteFiles, deleteFilesResult) =>
-        render({ deleteFiles, deleteFilesResult })
-      }
-    </Mutation>
-  )
-}
-
-export default deleteFilesMutation
+export default useDeleteFiles

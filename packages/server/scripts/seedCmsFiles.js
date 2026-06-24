@@ -9,7 +9,6 @@ const CMSFileTemplate = require('../models/cmsFileTemplate/cmsFileTemplate.model
 const readDirectoryRecursively = async (directoryPath, parentId, callBack) => {
   const files = fs.readdirSync(directoryPath)
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const file of files) {
     const filePath = path.join(directoryPath, file)
     const stats = fs.statSync(filePath)
@@ -46,11 +45,11 @@ const seed = async (group, { trx }) => {
       const insertedFile = await createFile(
         fs.createReadStream(name),
         path.basename(name),
-        null,
-        null,
-        ['cmsTemplateFile'],
-        insertedResource.id,
-        { trx },
+        {
+          tags: ['cmsTemplateFile'],
+          objectId: insertedResource.id,
+          trx,
+        },
       )
 
       await CMSFileTemplate.query(trx)
@@ -82,7 +81,6 @@ const seed = async (group, { trx }) => {
     )
 
     await readDirectoryRecursively(
-      /* eslint-disable-next-line node/no-path-concat */
       `${__dirname}/../config/cmsTemplateFiles`,
       insertedFolderId,
       insertResource,

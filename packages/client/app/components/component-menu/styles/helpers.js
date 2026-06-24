@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { convertCamelCaseToTitleCase } from '../../../shared/textUtils'
 
 export const menuItemContainsCurrentPage = (item, location) =>

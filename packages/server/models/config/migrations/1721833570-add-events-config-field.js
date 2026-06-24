@@ -4,7 +4,7 @@ const Config = require('../config.model')
 
 const eventsSource = require('../../../services/notification/eventsSource')
 
-exports.up = async knex => {
+exports.up = async () => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)
 
@@ -25,7 +25,7 @@ exports.up = async knex => {
   })
 }
 
-exports.down = async knex => {
+exports.down = async () => {
   return useTransaction(async trx => {
     const configs = await Config.query(trx)
 

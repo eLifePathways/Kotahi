@@ -1,5 +1,6 @@
-FROM cokoapps/base:20
+FROM cokoapps/base:24
 
+RUN corepack enable
 WORKDIR /home/node/app
 
 COPY .yarnrc.yml .
@@ -12,5 +13,7 @@ USER node
 RUN yarn workspaces focus --production && yarn cache clean && rm -rf ~/.npm
 
 COPY --chown=node:node . .
+
+RUN yarn coko-server build
 
 CMD ["yarn", "coko-server", "start"]

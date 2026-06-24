@@ -101,7 +101,7 @@ const sanitizedDocument = input => {
   return doc
 }
 
-exports.up = async db => {
+exports.up = async () => {
   const manuscripts = await Manuscript.find({})
 
   // const start = performance.now()
@@ -116,7 +116,7 @@ exports.up = async db => {
         const commentNodes = root.querySelectorAll('[data-conversation]')
         const newCommentData = []
 
-        commentNodes.forEach((node, i) => {
+        commentNodes.forEach(node => {
           const id = node.getAttribute('data-id')
           const conversation = node.getAttribute('data-conversation')
           const viewId = node.getAttribute('data-viewId')
@@ -169,7 +169,7 @@ exports.up = async db => {
   // console.log('Finished in ', durationInSeconds)
 }
 
-exports.down = async db => {
+exports.down = async () => {
   /**
    * No rollback needed. We do not delete the original data from the HTML.
    * This means that reverting to the old version of wax will pick up the old

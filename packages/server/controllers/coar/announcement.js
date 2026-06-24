@@ -1,6 +1,6 @@
-const config = require('config')
+const { config } = require('@coko/server')
 
-const { clientUrl, serverUrl, request, uuid } = require('@coko/server')
+const { clientUrl, serverUrl, request, uuid, logger } = require('@coko/server')
 
 const {
   Config,
@@ -10,7 +10,7 @@ const {
   CoarNotification,
 } = require('../../models')
 
-const flaxConfig = config['flax-site']
+const flaxConfig = config.get('flax-site')
 
 // TODO: What is the purpose of this?
 const isReviewDoi = () => {
@@ -18,11 +18,7 @@ const isReviewDoi = () => {
 }
 
 const isFlaxSetup = () => {
-  return (
-    flaxConfig.port !== '' &&
-    flaxConfig.host !== '' &&
-    flaxConfig.protocol !== ''
-  )
+  return flaxConfig.clientFlaxSiteUrl !== ''
 }
 
 const getFlaxUrl = async (groupName, shortId) => {
@@ -30,16 +26,11 @@ const getFlaxUrl = async (groupName, shortId) => {
   let flaxUrl = ''
 
   if (!flaxConfig) return { flaxReviewUrl, flaxUrl }
-  const flaxHost = flaxConfig.host
-  const flaxPort = flaxConfig.port
-  const flaxProtocol = flaxConfig.protocol
 
-  const flaxServerUrl = `${flaxProtocol}://${flaxHost}${
-    flaxPort ? `:${flaxPort}` : ''
-  }`
+  const { clientFlaxSiteUrl } = flaxConfig
 
-  flaxReviewUrl = `${flaxServerUrl}/${groupName}/articles/${shortId}/index.html#reviews`
-  flaxUrl = `${flaxServerUrl}/${groupName}/articles/${shortId}/index.html`
+  flaxReviewUrl = `${clientFlaxSiteUrl}/${groupName}/articles/${shortId}/index.html#reviews`
+  flaxUrl = `${clientFlaxSiteUrl}/${groupName}/articles/${shortId}/index.html`
 
   return { flaxReviewUrl, flaxUrl }
 }
@@ -226,7 +217,7 @@ const makeAnnouncementOnCOAR = async (
 
     return response?.data || false
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     throw err
   }
 }

@@ -6,7 +6,6 @@ class NotificationUserOption extends BaseModel {
   }
 
   static get relationMappings() {
-    // eslint-disable-next-line global-require
     const User = require('../user/user.model')
 
     return {
@@ -46,7 +45,6 @@ class NotificationUserOption extends BaseModel {
   // eslint-disable-next-line class-methods-use-this
   $formatDatabaseJson(json) {
     if (json.path) {
-      // eslint-disable-next-line no-param-reassign
       json.path = `{${json.path.join(',')}}`
     }
 

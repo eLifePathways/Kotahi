@@ -43,7 +43,7 @@ const getIssueYear = manuscript => {
   return yearString
 }
 
-const getContributor = (author, isAdditional) => {
+const getContributor = author => {
   if (!author.firstName || !author.lastName)
     throw new Error(`Incomplete author record ${JSON.stringify(author)}`)
 

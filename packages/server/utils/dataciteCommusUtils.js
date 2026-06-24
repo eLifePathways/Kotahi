@@ -1,5 +1,6 @@
 const { default: axios } = require('axios')
 const he = require('he')
+const { logger } = require('@coko/server')
 
 const { createFormattedReference } = require('./reference')
 
@@ -33,19 +34,19 @@ const getFormattedReferencesFromDatacite = async (
         return [formatted]
       }
 
-      console.error('Datacite failure!', response)
+      logger.error('Datacite failure!', response)
       return []
     } catch (error) {
       if (error.response?.status === 404) {
-        console.error(`Datacite 404 error: DOI ${doi} not found at Datacite.`)
+        logger.error(`Datacite 404 error: DOI ${doi} not found at Datacite.`)
       }
 
       if (error.response?.status === 429) {
         // TODO Consider implementing a backoff
-        console.error('Datacite rate limit error!')
+        logger.error('Datacite rate limit error!')
       }
 
-      console.error('Datacite failure!', error.message)
+      logger.error('Datacite failure!', error.message)
       return []
     }
   } else {
@@ -68,19 +69,19 @@ const getFormattedReferencesFromDatacite = async (
         return [formatted]
       }
 
-      console.error('Datacite failure!', response)
+      logger.error('Datacite failure!', response)
       return []
     } catch (error) {
       if (error.response?.status === 404) {
-        console.error(`Datacite 404 error: DOI ${doi} not found at Datacite.`)
+        logger.error(`Datacite 404 error: DOI ${doi} not found at Datacite.`)
       }
 
       if (error.response?.status === 429) {
         // TODO Consider implementing a backoff
-        console.error('Datacite rate limit error!')
+        logger.error('Datacite rate limit error!')
       }
 
-      console.error('Datacite failure!', error.message)
+      logger.error('Datacite failure!', error.message)
       return []
     }
   }

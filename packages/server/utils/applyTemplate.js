@@ -48,10 +48,10 @@ const generateCss = async noPagedJs => {
       `${userTemplatePath}/textStyles.css`,
     )
 
-    logger.error('Using user-defined text styles.')
+    logger.info('Using user-defined text styles.')
     outputCss += userCssBuffer.toString()
   } catch {
-    logger.error('No user text stylesheet found')
+    logger.info('No user text stylesheet found')
   }
 
   if (!noPagedJs) {
@@ -60,10 +60,10 @@ const generateCss = async noPagedJs => {
         `${userTemplatePath}/pagedJsStyles.css`,
       )
 
-      logger.error('Using user-defined PagedJS styles.')
+      logger.info('Using user-defined PagedJS styles.')
       outputCss += userCssBuffer.toString()
     } catch {
-      logger.error('No user PagedJS stylesheet found')
+      logger.info('No user PagedJS stylesheet found')
 
       const pagedCssBuffer = await fs.readFile(
         `${defaultTemplatePath}/pagedJsStyles.css`,
@@ -117,6 +117,7 @@ const applyTemplate = async (
       template = userTemplateEnv.getTemplate('article.njk')
       env = userTemplateEnv
     }
+    /* eslint-disable-next-line  */
   } catch (e) {
     logger.error('No user template found, using default')
     template = defaultTemplateEnv.getTemplate('article.njk')

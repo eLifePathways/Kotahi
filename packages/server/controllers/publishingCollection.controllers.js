@@ -54,14 +54,10 @@ const createCollection = async (input, groupId) => {
   if (input.formData.image) {
     const { filename, createReadStream: stream } = await input.formData.image
 
-    const file = await createFile(
-      stream(),
-      filename,
-      null,
-      null,
-      ['publishingCollection'],
-      publishingCollection.id,
-    )
+    const file = await createFile(stream(), filename, {
+      tags: ['publishingCollection'],
+      objectId: publishingCollection.id,
+    })
 
     publishingCollection = await PublishingCollection.query()
       .patch({
@@ -88,6 +84,7 @@ const deleteCollection = async id => {
 
     await deleteFiles([collection.formData.image])
     return { success: true }
+    /* eslint-disable-next-line */
   } catch (e) {
     return { success: false }
   }
@@ -117,14 +114,10 @@ const updateCollection = async (id, input) => {
 
     const { filename, createReadStream: stream } = await input.formData.image
 
-    file = await createFile(
-      stream(),
-      filename,
-      null,
-      null,
-      ['publishingCollection'],
-      id,
-    )
+    file = await createFile(stream(), filename, {
+      tags: ['publishingCollection'],
+      objectId: id,
+    })
   } else if (collection.formData.image && input.formData.image === null) {
     await deleteFiles([collection.formData.image])
   }

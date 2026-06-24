@@ -1,4 +1,4 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
 
 import { dashboard, manuscripts } from '../../support/routes'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -16,7 +16,7 @@ describe.skip('manuscripts page assign editors tests', () => {
     cy.request('POST', seedFormsUrl)
 
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, manuscripts)
     })
@@ -36,7 +36,7 @@ describe.skip('manuscripts page assign editors tests', () => {
       'contain',
       'Assign Senior Editor…',
     )
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       SubmissionFormPage.getAssignEditor(0).click()
       SubmissionFormPage.selectDropdownOption(0)
@@ -60,7 +60,6 @@ describe.skip('manuscripts page assign editors tests', () => {
   })
 
   it('check all three editor names appears in the table', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       ManuscriptsPage.clickEvaluationAndVerifyUrl()
       cy.awaitDisappearSpinner()
@@ -87,7 +86,6 @@ describe.skip('manuscripts page assign editors tests', () => {
     })
   })
   it('assign senior editor only', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       ManuscriptsPage.clickEvaluationAndVerifyUrl()
       cy.awaitDisappearSpinner()
@@ -111,7 +109,6 @@ describe.skip('manuscripts page assign editors tests', () => {
     })
   })
   it('assign first handling editor only', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       ManuscriptsPage.clickEvaluationAndVerifyUrl()
       cy.awaitDisappearSpinner()
@@ -135,7 +132,6 @@ describe.skip('manuscripts page assign editors tests', () => {
     })
   })
   it('assign second handling editor only', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       ManuscriptsPage.clickEvaluationAndVerifyUrl()
       cy.awaitDisappearSpinner()
@@ -162,12 +158,10 @@ describe.skip('manuscripts page assign editors tests', () => {
     })
   })
   // to be implemented in #489
-  // eslint-disable-next-line jest/no-commented-out-tests
   it('editor should see article title in dashboard', () => {
     ManuscriptsPage.clickEvaluation()
     cy.url().should('contain', 'evaluation')
     cy.awaitDisappearSpinner()
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       SubmissionFormPage.getAssignEditor(0).click()
       SubmissionFormPage.selectDropdownOption(0)

@@ -1,39 +1,10 @@
-import React from 'react'
-import { ApolloConsumer, gql } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
 
-const GET_SPECIFIC_FILES = gql`
-  query GetSpecificFilesQuery($ids: [ID!]!) {
-    getSpecificFiles(ids: $ids) {
-      id
-      name
-      alt
-      objectId
-      updated
-      storedObjects {
-        type
-        key
-        mimetype
-        size
-        url
-        imageMetadata {
-          width
-          height
-          space
-          density
-        }
-      }
-    }
-  }
-`
+import { GET_SPECIFIC_FILES } from '../../../../queries'
 
-const getSpecificFilesQuery = props => {
-  const { render } = props
-  return (
-    <ApolloConsumer>
-      {client => render({ client, query: GET_SPECIFIC_FILES })}
-    </ApolloConsumer>
-  )
+const useGetSpecificFiles = () => {
+  const client = useApolloClient()
+  return { client, query: GET_SPECIFIC_FILES }
 }
 
-export { GET_SPECIFIC_FILES }
-export default getSpecificFilesQuery
+export default useGetSpecificFiles

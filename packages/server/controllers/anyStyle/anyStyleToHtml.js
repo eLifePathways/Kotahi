@@ -3,6 +3,8 @@
 const htmlparser2 = require('htmlparser2')
 const cheerio = require('cheerio')
 
+const { logger } = require('@coko/server')
+
 // const rawData = fs.readFileSync(
 //   path.resolve(__dirname, 'data/sampleReferences.xml'),
 //   'utf8',
@@ -96,7 +98,7 @@ const anystyleXmlToHtml = (anystyleXml, startCount = 0) => {
     // maybe prevent this? But it would be better if we didn't get garbage back from Anystyle.
 
     if (sequences.length > 1 && $(thisCitation).children().length === 1) {
-      console.error('Garbage data from Anystyle: ', $(thisCitation).text())
+      logger.error('Garbage data from Anystyle: ', $(thisCitation).text())
       isGarbage = true
     }
 

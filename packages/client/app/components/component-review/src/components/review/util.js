@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/prefer-default-export
-import { v4 as uuid } from 'uuid'
+import { uuid } from '@coko/client'
 
 export const stripHtml = htmlString => {
   const temp = document.createElement('span')
@@ -45,4 +44,5 @@ export const getCurrentUserReview = (manuscript, currentUser) => {
   )
 }
 
-export const updateReviewFormTitle = (reviewForm, isCollaborative) => {}
+// export const updateReviewFormTitle = (reviewForm, isCollaborative) => {}
+export const updateReviewFormTitle = () => {}

@@ -43,10 +43,8 @@ class Review extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const User = require('../user/user.model')
     const Manuscript = require('../manuscript/manuscript.model')
-    /* eslint-enable global-require */
 
     return {
       manuscript: {
@@ -69,9 +67,8 @@ class Review extends BaseModel {
   }
 
   static async orderReviewPerUsername(reviews) {
-    // eslint-disable-next-line global-require
     const User = require('../user/user.model')
-    // eslint-disable-next-line global-require
+
     const Manuscript = require('../manuscript/manuscript.model')
 
     const reviewWithUsers = await Promise.all(
@@ -88,7 +85,6 @@ class Review extends BaseModel {
             .where('role', 'collaborativeReviewer')
             .first()
 
-          // eslint-disable-next-line no-param-reassign
           users = await existingTeam.$relatedQuery('users')
         } else {
           users = await User.query().where({ id: review.userId })

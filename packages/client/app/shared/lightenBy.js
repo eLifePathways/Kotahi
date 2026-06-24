@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 /*
   Lighten the shade of a color. Unlike @coko/client's lighten, which applies a simple factor to a color's brightness,
   this lightens the colour relative to its distance from pure white, so that e.g. lightening by 50% will take it half
@@ -22,6 +24,7 @@ const getColor = (original, props) => {
 
   try {
     return Color(color)
+    /* eslint-disable-next-line */
   } catch (_) {
     return Color('black')
   }

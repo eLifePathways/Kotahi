@@ -3,17 +3,15 @@
  * Page object representing the third option in the left side menu,
  * where the list of users is displayed & the admin is able to delete users.
  */
-const TITLE = 'General__Heading'
 const USER_TABLE_ROW_LIST = 'Table__Row'
 const ADMIN_COLUMN = 'td:nth-child(3)'
 const DELETE_USER_BUTTON = 'button:nth-child(1)'
 const ADD_GROUP_MANAGER_ROLE_BUTTON = 'button:nth-child(3)'
 const REMOVE_GROUP_MANAGER_ROLE_BUTTON = 'button:nth-child(3)'
 
-// eslint-disable-next-line import/prefer-default-export
 export const UsersPage = {
   getTitle() {
-    return cy.getByContainsClass(TITLE)
+    return cy.getByDataTestId('general-heading')
   },
   getUserTableRowList() {
     return cy.getByContainsClass(USER_TABLE_ROW_LIST)

@@ -1,6 +1,8 @@
 /* eslint-disable camelcase, consistent-return */
 const axios = require('axios')
 
+const { logger } = require('@coko/server')
+
 const ArticleImportHistory = require('../../models/articleImportHistory/articleImportHistory.model')
 const ArticleImportSources = require('../../models/articleImportSources/articleImportSources.model')
 const Manuscript = require('../../models/manuscript/manuscript.model')
@@ -129,6 +131,7 @@ const getData = async (groupId, ctx) => {
         rel_authors,
       }) => {
         const manuscriptTopics = Object.entries(articleTopics)
+          /* eslint-disable-next-line */
           .filter(([topicName, topicKeywords]) => {
             return (
               !!topicKeywords[0].filter(keyword => rel_abs.includes(keyword))
@@ -220,7 +223,7 @@ const getData = async (groupId, ctx) => {
 
     return inserted
   } catch (e) {
-    console.error(e.message)
+    logger.error(e.message)
   }
 }
 

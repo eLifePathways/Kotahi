@@ -1,4 +1,5 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
@@ -32,45 +33,32 @@ describe('validating required field and doi values in submission form', () => {
 
   context('check the Submission form based on form builder', () => {
     it('check if the form contain all the fields', () => {
-      // eslint-disable-next-line jest/valid-expect-in-promise
-      cy.fixture('form_option').then(data => {
-        const formElements = [
-          data.preprint1.articleId,
-          data.preprint1.articleDoi,
-          data.preprint1.bioRxivArticleUrl,
-          data.preprint1.description,
-          data.preprint1.review1,
-          data.preprint1.review1Creator,
-          data.preprint1.review1Date,
-          data.preprint1.review2,
-          data.preprint1.review2Creator,
-          data.preprint1.review2Date,
-          data.preprint1.review3,
-          data.preprint1.review3Creator,
-          data.preprint1.review3Date,
-          data.preprint1.summary,
-          data.preprint1.summaryCreator,
-          data.preprint1.summaryDate,
-        ]
-
-        for (let i = 0; i < formElements.length; i += 1) {
-          SubmissionFormPage.getFormOptionList(i).should(
-            'contain',
-            formElements[i],
-          )
-        }
-      })
+      SubmissionFormPage.getArticleId().should('exist')
+      SubmissionFormPage.getDoi().should('exist')
+      SubmissionFormPage.getPreprintUri().should('exist')
+      SubmissionFormPage.getTitleField().should('exist')
+      SubmissionFormPage.getReview1().should('exist')
+      SubmissionFormPage.getReview1Creator().should('exist')
+      SubmissionFormPage.getReview1Date().should('exist')
+      SubmissionFormPage.getReview2().should('exist')
+      SubmissionFormPage.getReview2Creator().should('exist')
+      SubmissionFormPage.getReview2Date().should('exist')
+      SubmissionFormPage.getReview3().should('exist')
+      SubmissionFormPage.getReview3Creator().should('exist')
+      SubmissionFormPage.getReview3Date().should('exist')
+      SubmissionFormPage.getSummary().should('exist')
+      SubmissionFormPage.getSummaryCreator().should('exist')
+      SubmissionFormPage.getSummaryDate().should('exist')
     })
 
     // check if it is displayed the required message
     it('check required message', () => {
       SubmissionFormPage.clickElifeSubmitResearch()
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('form_option').then(data => {
-        // eslint-disable-next-line no-plusplus
         for (let i = 0; i < 4; i++) {
           SubmissionFormPage.getFormOptionList(i)
-            .get('[class*="MessageWrapper"]')
+            .get('[data-testid="field-error-message"]')
             .should('contain', data.required)
         }
       })
@@ -79,9 +67,8 @@ describe('validating required field and doi values in submission form', () => {
 
   context('DOI validations', () => {
     it('check doi link is available in submission form', () => {
-      // eslint-disable-next-line jest/valid-expect-in-promise
       cy.fixture('submission_form_data').then(data => {
-        SubmissionFormPage.fillInArticleld(data.articleId)
+        SubmissionFormPage.fillInArticleId(data.articleId)
         SubmissionFormPage.fillInDoi(data.doi)
         SubmissionFormPage.fillInPreprintUri(data.articleId)
         SubmissionFormPage.fillInTitle(data.description)

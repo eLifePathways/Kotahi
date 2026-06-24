@@ -8,7 +8,7 @@ const fieldCanBeSorted = field => {
 /**
  * buildColumnDefinition: Takes in a column key and information to build out a standardized object of properties
  * @param {string} columnName The column key
- * @param {object} fieldDefinitions Field definitions returned from the GQL GET_MANUSCRIPTS_AND_FORM query
+ * @param {object} fieldDefinitions Field definitions returned from the GET_MANUSCRIPTS_AND_FORM query
  * @param {object} specialColumnProperties Special component definitions for columns
  * @param {object} customDisplayProps Props for display
  */

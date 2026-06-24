@@ -9,7 +9,6 @@ const prune = current => {
       (_.isString(value) && _.isEmpty(value)) ||
       (_.isObject(value) && _.isEmpty(prune(value)) && !_.isArray(value))
     ) {
-      // eslint-disable-next-line no-param-reassign
       delete current[key]
     }
   })

@@ -4,12 +4,12 @@ const { getXsweet } = require('../../../controllers/xsweet.controllers')
 
 module.exports = {
   Query: {
-    docxToHtml: async (_, { url }) => {
+    docxToHtml: async (_, { key }) => {
       let outHtml = ''
       let error = ''
 
       try {
-        outHtml = await getXsweet(url)
+        outHtml = await getXsweet(key)
       } catch (e) {
         error = e.message
         logger.error(e)

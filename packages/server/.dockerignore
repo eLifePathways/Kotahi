@@ -35,6 +35,7 @@ logs/
 minio/
 stories/
 tmp/
+dist/
 uploads/*
 CONTRIBUTING.md
 

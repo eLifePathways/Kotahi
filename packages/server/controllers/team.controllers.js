@@ -104,7 +104,9 @@ const updateTeam = async (id, input, groupId) => {
       seekEvent('team-editor-assigned', eventData)
     }
 
-    membersRemoved.length && seekEvent('team-editor-unassigned', eventData)
+    if (membersRemoved.length) {
+      seekEvent('team-editor-unassigned', eventData)
+    }
 
     await updateAlertsUponTeamUpdate(objectId, membersAdded, membersRemoved)
 
@@ -158,7 +160,7 @@ const updateTeam = async (id, input, groupId) => {
   }
 
   return Team.query().upsertGraphAndFetch(
-    { id, ...input },
+    { id, ...input, role: existing?.role },
     {
       relate: ['members.user'],
       unrelate: ['members.user'],

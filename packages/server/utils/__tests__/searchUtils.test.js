@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { formatSearchQueryForPostgres, segmentQuery } = require('../searchUtils')
 
 describe('segmentQuery', () => {

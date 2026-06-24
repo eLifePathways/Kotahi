@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect, cypress/unsafe-to-chain-command */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { dashboard } from '../../support/routes1'
@@ -13,7 +15,7 @@ describe('Form builder and Submission pages', () => {
 
   it('viewing and adding fields in Submission, Review and Decision forms', () => {
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
@@ -100,7 +102,6 @@ describe('Form builder and Submission pages', () => {
     it('word count button should be visible & display info', () => {
       SubmissionFormPage.getWordCountInfo().its('length').should('eq', 5)
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0; i < 5; i++) {
         SubmissionFormPage.getWordCountInfo()
           .eq(i)
@@ -121,15 +122,15 @@ describe('Form builder and Submission pages', () => {
     })
 
     it('author can NOT upload manuscript without filling in all the required fields', () => {
-      cy.get('[data-testid="submission.$title"]').clear()
-      cy.get('[data-testid="submission.$title"]').should('have.length', 1)
+      cy.get('[data-testid="submission.$title"] input').clear()
+      cy.get('[data-testid="submission.$title"] input').should('have.length', 1)
       SubmissionFormPage.clickSubmitResearch()
       cy.contains('Required').should('exist')
     })
 
     it('author uploads manuscript after filling in all the required fields', () => {
       // Change the title so that we can look for it
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInTitle(data.newTitle)
         SubmissionFormPage.fillInDoi(data.doi)
@@ -147,7 +148,7 @@ describe('Form builder and Submission pages', () => {
         // Submit the form
         SubmissionFormPage.clickSubmitYourManuscript()
 
-        cy.get('[data-test-id="tab-container"]:nth(0)')
+        cy.get('[data-testid="tab-container"]:nth(0)')
           .should('contain', 'My Submissions')
           .should('exist')
         // Contains new title

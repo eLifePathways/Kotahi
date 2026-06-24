@@ -1,6 +1,7 @@
-import { useQuery } from '@apollo/client'
-import { SEARCH_ROR } from '../../userManuscriptFormQuery'
-import { VALIDATE_ORCID } from '../../../../../shared/commsUtils'
+/* eslint-disable promise/always-return, promise/no-callback-in-promise */
+
+import { useQuery } from '@apollo/client/react'
+import { VALIDATE_ORCID, SEARCH_ROR } from '../../../../../queries'
 
 // TODO: refactor and move to Pages
 const useAuthorsFieldQueries = () => {

@@ -3,6 +3,8 @@ const cheerio = require('cheerio')
 const mjAPI = require('mathjax-node')
 const he = require('he')
 
+const { logger } = require('@coko/server')
+
 mjAPI.config({
   MathJax: {
     // traditional MathJax configuration
@@ -45,7 +47,7 @@ const mathJaxWrapper = latex =>
       return data
     })
     .catch(err => {
-      console.error('MathJax error:', err)
+      logger.error('MathJax error:', err)
       return { errors: err }
     })
 
@@ -80,7 +82,7 @@ const makeSvgsFromLatex = async (source, replaceHtml = false) => {
 
     const decodedLatex = he.decode(latex)
 
-    console.error('Converting disp-formula: ', decodedLatex)
+    logger.error('Converting disp-formula: ', decodedLatex)
     // eslint-disable-next-line no-await-in-loop
     const data = await convertMathJax(decodedLatex)
 
@@ -111,7 +113,7 @@ const makeSvgsFromLatex = async (source, replaceHtml = false) => {
       ? internal
       : internal.split('[CDATA[')[1].split(']]')[0]
 
-    console.error('Converting inline-formula: ', latex)
+    logger.error('Converting inline-formula: ', latex)
     // eslint-disable-next-line no-await-in-loop
     const data = await convertMathJax(latex)
 

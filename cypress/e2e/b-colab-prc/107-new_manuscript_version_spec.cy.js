@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return, promise/no-nesting */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
@@ -18,12 +20,13 @@ describe('checking manuscript version', () => {
   })
 
   it('editor checks for new manuscript version', () => {
-    // eslint-disable-next-line jest/valid-expect-in-promise
     cy.fixture('role_names').then(name => {
       /* Editor  Submits a decision */
       cy.login(name.role.seniorEditor, dashboard)
+      cy.wait(500)
       DashboardPage.clickDashboardTab(2)
       DashboardPage.clickControl() // Navigate to Control Page
+      cy.wait(500)
       ControlPage.clickDecisionTab(1)
       /* Verify publish button is disabled */
       ControlPage.getPublishButton().should('be.disabled')
@@ -36,16 +39,20 @@ describe('checking manuscript version', () => {
       cy.contains('test-pdf.pdf').should('exist')
       cy.contains('Decision Status').scrollIntoView()
       // ReviewPage.clickRevise()
-      cy.get('[class*=FormTemplate__SafeRadioGroup]').eq(1).click()
+      cy.get('[data-testid=safe-radio-group] input[value=revise]').click({
+        force: true,
+      })
       /* Submit the decision */
       ControlPage.clickSubmitDecisionButton()
       /* Check appears in front of button */
       ControlPage.checkSvgExists()
 
       /* View Decision as an Author */
+      cy.wait(1000)
       cy.login(name.role.author, dashboard)
       /* Click on first MySubmission */
       DashboardPage.getSubmittedManuscript().click()
+
       /* Verify Decision Content */
       DashboardPage.getDecisionField(0).should('contain', decisionTextContent)
       DashboardPage.getDecisionField(1).should('contain', decisionFileName)
@@ -53,7 +60,7 @@ describe('checking manuscript version', () => {
       /* Create new manuscript version */
       DashboardPage.clickCreateNewVersionButton()
       cy.contains('Edit submission info').should('exist')
-      // eslint-disable-next-line jest/valid-expect-in-promise
+
       cy.fixture('submission_form_data').then(data => {
         SubmissionFormPage.fillInAbstractColab(data.abstract)
         SubmissionFormPage.getWaxInputBox(0).fillInput(data.abstract)

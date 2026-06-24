@@ -1,7 +1,6 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
-/* eslint-disable no-underscore-dangle */
-const fs = require('fs')
+
+const fs = require('fs').promises
 const axios = require('axios')
 
 axios
@@ -34,15 +33,12 @@ axios
     )
 
     result.data.__schema.types = filteredData
-    fs.writeFile(
-      './app/fragmentTypes.json',
-      JSON.stringify(result.data),
-      err => {
-        if (err) {
-          console.error('Error writing fragmentTypes file', err)
-        } else {
-          console.log('Fragment types successfully extracted!')
-        }
-      },
-    )
+    return fs.writeFile('./app/fragmentTypes.json', JSON.stringify(result.data))
+  })
+  .then(() => {
+    console.log('Fragment types successfully extracted!')
+    return null
+  })
+  .catch(error => {
+    console.error('Error writing fragmentTypes file', error.message)
   })

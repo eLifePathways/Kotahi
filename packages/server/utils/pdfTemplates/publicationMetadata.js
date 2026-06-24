@@ -1,3 +1,9 @@
+/* eslint-disable */
+
+/**
+ * This file doesn't look right. It imports a file that doesn't exist and publisherLogo starts with '' || which will always be the right hand side.
+ */
+
 // This should return an object with front matter for the publication that should be sent to the PDF or to JATS.
 //
 // this should pull (and be supplanted by) in a user version from config/journal/exportsettings/publicationMetadata.js
@@ -5,8 +11,7 @@
 let userPublicationMetadata = {}
 
 try {
-  // eslint-disable-next-line global-require, import/no-unresolved
-  userPublicationMetadata = require('../../../config/journal/export/journalMetadata.json')
+  userPublicationMetadata = require('../../config/journal/export/journalMetadata.json')
 } catch {
   // console.error("userPublicationMetadata doesn't exist.")
 }

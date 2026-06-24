@@ -506,7 +506,7 @@ const propertiesOrder = [
  * The properties for each of these component types override or extend those
  * given in {@link prototypeComponent}. Overriding with null removes the field.
  */
-const getBaseComponentProperties = category => ({
+const getBaseComponentProperties = () => ({
   ManuscriptFile: {
     label: 'Attached manuscript',
     validate: null,

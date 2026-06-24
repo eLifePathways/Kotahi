@@ -229,13 +229,10 @@ const getMatchingReferencesFromCrossRef = async (
       },
     })
     .then(response => {
-      return response.data.message.items.reduce(
-        (accumulator, current, index) => {
-          accumulator.push(createReference(current))
-          return accumulator
-        },
-        [],
-      )
+      return response.data.message.items.reduce((accumulator, current) => {
+        accumulator.push(createReference(current))
+        return accumulator
+      }, [])
     })
     .catch(e => {
       logger.error('Crossref failure!', e.message)

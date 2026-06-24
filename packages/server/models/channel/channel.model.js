@@ -6,7 +6,6 @@ class Channel extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const Team = require('../team/team.model')
     const ChannelMember = require('../channelMember/channelMember.model')
     const User = require('../user/user.model')

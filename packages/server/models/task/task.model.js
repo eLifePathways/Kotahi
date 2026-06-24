@@ -15,13 +15,11 @@ class Task extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const User = require('../user/user.model')
     const TaskEmailNotification = require('../taskEmailNotification/taskEmailNotification.model')
     const TaskEmailNotificationLog = require('../taskEmailNotificationLog/taskEmailNotificationLog.model')
     const Manuscript = require('../manuscript/manuscript.model')
     const Group = require('../group/group.model')
-    /* eslint-enable global-require */
 
     return {
       assignee: {

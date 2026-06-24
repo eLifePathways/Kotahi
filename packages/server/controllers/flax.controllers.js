@@ -1,13 +1,16 @@
-const axios = require('axios')
-const config = require('config')
+/* eslint-disable promise/always-return */
 
-const { port, protocol, host } = config['flax-site']
+const axios = require('axios')
+
+const { config } = require('@coko/server')
+
+const { port, protocol, host } = config.get('flax-site')
 
 const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
 
-const { clientId, clientSecret } = config['flax-site']
+const { clientId, clientSecret } = config.get('flax-site')
 
-const currentApiUrl = config['flax-site'].clientAPIURL
+const currentApiUrl = config.get('flax-site').clientAPIURL
 
 const buff = Buffer.from(`${clientId}:${clientSecret}`, 'utf8')
 const base64data = buff.toString('base64')

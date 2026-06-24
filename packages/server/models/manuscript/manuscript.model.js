@@ -58,7 +58,6 @@ class Manuscript extends BaseModel {
   }
 
   static async getDecisions(manuscriptId, options = {}) {
-    /* eslint-disable-next-line global-require */
     const Review = require('../review/review.model')
 
     return Review.query(options.trx).where({
@@ -68,7 +67,6 @@ class Manuscript extends BaseModel {
   }
 
   static async getReviews(manuscriptId, statuses = [], options = {}) {
-    /* eslint-disable-next-line global-require */
     const Review = require('../review/review.model')
 
     const appliedStatuses = [].concat(statuses || [])
@@ -79,27 +77,25 @@ class Manuscript extends BaseModel {
 
     if (appliedStatuses.length === 0) return query
 
-    return (
-      query
-        .leftJoin('teams', 'teams.object_id', 'reviews.manuscript_id')
-        /* eslint-disable-next-line func-names */
-        .leftJoin('team_members', function () {
-          this.on('team_members.team_id', '=', 'teams.id').andOn(
-            'team_members.user_id',
-            '=',
-            'reviews.user_id',
+    return query
+      .leftJoin('teams', 'teams.object_id', 'reviews.manuscript_id')
+
+      .leftJoin('team_members', function () {
+        this.on('team_members.team_id', '=', 'teams.id').andOn(
+          'team_members.user_id',
+          '=',
+          'reviews.user_id',
+        )
+      })
+      .where(outerBuilder => {
+        outerBuilder
+          .where(innerBuilder =>
+            innerBuilder
+              .where({ role: 'reviewer' })
+              .whereIn('status', appliedStatuses),
           )
-        })
-        .where(outerBuilder => {
-          outerBuilder
-            .where(innerBuilder =>
-              innerBuilder
-                .where({ role: 'reviewer' })
-                .whereIn('status', appliedStatuses),
-            )
-            .orWhere({ isImported: true })
-        })
-    )
+          .orWhere({ isImported: true })
+      })
   }
 
   async getReviews(statuses = [], options = {}) {
@@ -160,7 +156,6 @@ class Manuscript extends BaseModel {
 
   /** Returns a list of user IDs for editors, handlingEditors and seniorEditors. */
   static async getEditorIds(manuscriptId, options = {}) {
-    /* eslint-disable-next-line global-require */
     const Team = require('../team/team.model')
 
     const { trx } = options
@@ -182,12 +177,10 @@ class Manuscript extends BaseModel {
   }
 
   async createNewVersion() {
-    /* eslint-disable global-require */
     const Config = require('../config/config.model')
     const Form = require('../form/form.model')
     const Task = require('../task/task.model')
     const TaskAlert = require('../taskAlert/taskAlert.model')
-    /* eslint-enable global-require */
 
     // Copy authors and editors to the new version
     const teams = await this.$relatedQuery('teams')
@@ -195,15 +188,14 @@ class Manuscript extends BaseModel {
       .withGraphFetched('members')
 
     teams.forEach(t => {
-      // eslint-disable-next-line
       delete t.id
-      // eslint-disable-next-line
+
       t.members.forEach(tm => delete tm.id)
     })
 
     // Copy files as well
     const files = await this.$relatedQuery('files')
-    // eslint-disable-next-line
+
     files.forEach(f => delete f.id)
 
     const decisions = await this.$relatedQuery('reviews').where({
@@ -238,7 +230,7 @@ class Manuscript extends BaseModel {
 
     const newVersion = cloneDeep(this)
     newVersion.teams = teams
-    // eslint-disable-next-line
+
     newVersion.reviews = clonedDecisions
     newVersion.files = files
 
@@ -338,11 +330,9 @@ class Manuscript extends BaseModel {
     isCollaborative,
     options = {},
   ) {
-    /* eslint-disable global-require */
     const Invitation = require('../invitation/invitation.model')
     const TeamMember = require('../teamMember/teamMember.model')
     const Team = require('../team/team.model')
-    /* eslint-enable global-require */
 
     return useTransaction(async trx => {
       const manuscript = await Manuscript.query(trx).findById(manuscriptId)
@@ -406,7 +396,6 @@ class Manuscript extends BaseModel {
   }
 
   static get relationMappings() {
-    /* eslint-disable global-require */
     const { File } = require('@coko/server')
 
     const Channel = require('../channel/channel.model')
@@ -418,7 +407,6 @@ class Manuscript extends BaseModel {
     const PublishedArtifact = require('../publishedArtifact/publishedArtifact.model')
     const ThreadedDiscussion = require('../threadedDiscussion/threadedDiscussion.model')
     const Group = require('../group/group.model')
-    /* eslint-enable global-require */
 
     return {
       submitter: {

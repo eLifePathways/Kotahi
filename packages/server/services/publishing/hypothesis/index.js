@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax, no-await-in-loop */
+/* eslint-disable no-await-in-loop */
 const TurndownService = require('turndown')
 const axios = require('axios')
 
@@ -25,6 +25,7 @@ const deletePublication = async (publicationId, headers) => {
     })
 
     return response
+    /* eslint-disable-next-line */
   } catch (e) {
     return null
   }
@@ -37,6 +38,7 @@ const annotationActuallyExists = async (data, headers) => {
       ...headers,
     })
     return true
+    /* eslint-disable-next-line */
   } catch (e) {
     return false
   }

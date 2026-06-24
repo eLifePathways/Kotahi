@@ -42,16 +42,15 @@ class Config extends BaseModel {
     return config
   }
 
-  static async beforeUpdate(opt, queryContext) {
+  static async beforeUpdate() {
     this.cachedConfigsByGroupId = {}
   }
 
-  static async beforeDelete(queryContext) {
+  static async beforeDelete() {
     this.cachedConfigsByGroupId = {}
   }
 
   static get relationMappings() {
-    /* eslint-disable-next-line global-require */
     const Group = require('../group/group.model')
 
     return {

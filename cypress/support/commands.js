@@ -1,6 +1,5 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-console */
-/* eslint-disable no-undef */
+/* eslint-disable promise/always-return */
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -36,8 +35,11 @@ Cypress.Commands.add('login', (name, page) => {
 
   cy.request('POST', `${createTokenUrl}/${name}`).then(response => {
     const { token } = response.body
-    cy.setToken(token)
-    cy.visit(page)
+    cy.visit(page, {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('token', token)
+      },
+    })
   })
 })
 
@@ -94,12 +96,11 @@ Cypress.Commands.add('getByTitle', title => {
 })
 
 Cypress.Commands.add('awaitDisappearSpinner', () => {
-  cy.get('[class*=Spinner__LoadingPage]', { timeout: 50000 }).should(
+  cy.getByDataTestId('spinner-loading-page', { timeout: 50000 }).should(
     'not.exist',
   )
 })
 
-/* eslint-disable-next-line node/handle-callback-err */
 Cypress.on('uncaught:exception', (err, runnable, promise) => {
   if (promise) {
     return false

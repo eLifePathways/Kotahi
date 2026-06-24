@@ -1,4 +1,6 @@
-/* eslint-disable jest/expect-expect */
+/* eslint-disable promise/always-return */
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
@@ -14,13 +16,15 @@ describe('Update the submission form field', () => {
     cy.request('POST', `${restoreUrl}/commons.elife_bootstrap`)
 
     // login as admin
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('role_names').then(name => {
       cy.login(name.role.admin, dashboard)
     })
 
     // enter the from page and assert the fileds()
+    cy.wait(1000)
     Menu.clickSettings()
+    cy.wait(1000)
     Menu.clickForms()
     cy.contains('Submission').click()
 
@@ -33,14 +37,15 @@ describe('Update the submission form field', () => {
     cy.get('[data-testid="publishingTag"]').type('test_tag')
     // cy.contains('Update Field').click({ force: true })
     cy.contains('Save').click({ force: true })
+    cy.wait(1000)
     Menu.clickManuscripts()
     ManuscriptsPage.clickSubmit()
     // Upload manuscript
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.get('button').contains('Submit a URL instead').click()
-    // eslint-disable-next-line jest/valid-expect-in-promise
+
     cy.fixture('submission_form_data').then(data => {
-      SubmissionFormPage.fillInArticleld(data.articleId)
+      SubmissionFormPage.fillInArticleId(data.articleId)
       SubmissionFormPage.fillInDoi(data.doi)
       SubmissionFormPage.fillInPreprintUri(bioRxivArticleUrl)
       SubmissionFormPage.fillInTitle(data.description)

@@ -1,28 +1,7 @@
-import React from 'react'
-import { Mutation } from '@apollo/client/react/components'
-import { gql } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 
-const UPDATE_FILE = gql`
-  mutation UpdateFile($input: UpdateFileInput!) {
-    updateFile(input: $input) {
-      id
-    }
-  }
-`
+import { UPDATE_FILE } from '../../../../queries'
 
-const updateFileMutation = props => {
-  const { render } = props
+const useUpdateFile = () => useMutation(UPDATE_FILE)
 
-  return (
-    <Mutation mutation={UPDATE_FILE}>
-      {(updateFile, updateFileResult) =>
-        render({
-          updateFile,
-          updateFileResult,
-        })
-      }
-    </Mutation>
-  )
-}
-
-export default updateFileMutation
+export default useUpdateFile
