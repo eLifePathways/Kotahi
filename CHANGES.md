@@ -6,6 +6,8 @@
 
 #### Bug fixes
 
+### Version 2026.06.24-0
+
 #### Deployment changes
 
 ##### Job queue database connection
