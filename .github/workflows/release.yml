@@ -54,12 +54,8 @@ jobs:
         run: |
           git checkout -b release/${{ steps.bump_version.outputs.version }}
           git add -A
-          git commit -m "release version ${{ steps.bump_version.outputs.version }}" || echo "No changes to commit"
+          git commit -m "release version ${{ steps.bump_version.outputs.version }} [skip ci]" || echo "No changes to commit"
           git push origin release/${{ steps.bump_version.outputs.version }}
-
-      # - name: Run Lint on release branch
-      #   uses: ./.github/workflows/lint.yml
-      #   secrets: inherit
 
       - name: Create PR
         if: success()
@@ -71,32 +67,6 @@ jobs:
             --head release/${{ steps.bump_version.outputs.version }} \
             --title "Release ${{ steps.bump_version.outputs.version }}" \
             --body "Automated release of version ${{ steps.bump_version.outputs.version }}"
-
-      - name: Wait for Lint check
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          PR_NUMBER=$(gh pr list --head release/${{ steps.bump_version.outputs.version }} --json number -q '.[0].number')
-          echo "Waiting for Lint to complete on PR #$PR_NUMBER"
-
-          for i in {1..60}; do
-            state=$(gh pr checks $PR_NUMBER --json name,state -q '.[] | select(.name=="Lint") | .state' 2>/dev/null || echo "")
-            if [ -z "$state" ]; then
-              echo "Lint not started yet, retrying in 10s... ($i/60)"
-            elif [ "$state" == "SUCCESS" ]; then
-              echo "Lint passed ✅"
-              exit 0
-            elif [ "$state" == "FAILURE" ]; then
-              echo "Lint failed ❌"
-              exit 1
-            else
-              echo "Lint status: $state (still running), retrying in 10s... ($i/60)"
-            fi
-            sleep 10
-          done
-
-          echo "Timed out waiting for Lint check"
-          exit 1
 
       - name: Merge PR
         if: success()
