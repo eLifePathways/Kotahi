@@ -158,10 +158,10 @@ const ActionButton = ({
       type={type || 'button'}
     >
       {statusIndicator ? (
-        <>
+        <LabelOnlySpan>
           {children}
           {statusIndicator}
-        </>
+        </LabelOnlySpan>
       ) : (
         <LabelOnlySpan>{children}</LabelOnlySpan>
       )}
