@@ -260,7 +260,10 @@ const getActiveCmsFilesTree = async groupId => {
 const getCmsFileContent = async id => {
   const file = await File.query().findById(id)
 
-  const { storedObjects } = await getFileWithUrl(file)
+  const fileStorageConfig = config.get('fileStorage')
+  const { storedObjects } = await getFileWithUrl(file, {
+    s3: { ...fileStorageConfig, publicUrl: fileStorageConfig.url },
+  })
 
   const fileUrl = storedObjects.find(f => f.type === 'original')
 
@@ -269,6 +272,8 @@ const getCmsFileContent = async id => {
     url: fileUrl.url,
   })
 
+  const publicUrl = await fileStorage.getURL(fileUrl.key)
+
   return {
     id,
     content:
@@ -276,7 +281,7 @@ const getCmsFileContent = async id => {
         ? JSON.stringify(response.data)
         : response.data.toString(),
     name: file.name,
-    url: fileUrl.url,
+    url: publicUrl,
   }
 }
 
