@@ -1,9 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { useTranslation } from 'react-i18next'
 import Moment from 'react-moment'
+import { useTranslation } from 'react-i18next'
+import { values } from 'lodash'
 import { grid, th } from '@coko/client'
-import { Collapse, Spinner, Tag } from '../../../../shared'
+import { useHistory } from 'react-router-dom'
+import {
+  ActionButton,
+  Collapse,
+  FlexRow,
+  Spinner,
+  Tag,
+} from '../../../../shared'
+import { articleStatuses } from '../../../../../globals'
+import EditPayloadModal from './EditPayloadModal'
 
 const Container = styled.div`
   align-items: center;
@@ -25,6 +35,8 @@ const CodeWrapper = styled.div`
   border-radius: ${th('borderRadius')};
   padding: ${grid(2)};
 `
+
+const FlexRowItem = styled.div``
 
 const patterns = [
   'Offer',
@@ -50,11 +62,17 @@ const getActivityType = rawType =>
         ?.replace('coar-notify:', '')
     : undefined
 
-const CoarLabel = ({ message }) => {
+const CoarLabel = ({
+  allowPayloadEdit,
+  config,
+  message,
+  onSetSelectedMessage,
+}) => {
   const { t } = useTranslation()
+  const history = useHistory()
 
-  const { created, payload } = message
-
+  const { instanceName, urlFrag } = config
+  const { created, manuscript, payload } = message
   const { type: rawType } = payload
 
   const activityType = getActivityType(rawType)
@@ -71,13 +89,59 @@ const CoarLabel = ({ message }) => {
     color = 'error'
   }
 
+  const handleEditPayload = () => {
+    onSetSelectedMessage(message)
+  }
+
   return (
     <div>
-      <Tag color={color} fontSize="base">
-        {t(`decisionPage.coarTab.${type}`)}
-        {activityType && `: ${t(`decisionPage.coarTab.${activityType}`)}`}
-      </Tag>
-      <Moment format="DD MMM YYYY, HH:mm:ss">{created}</Moment>
+      <FlexRow>
+        <FlexRowItem>
+          <Tag color={color} fontSize="base">
+            {t(`decisionPage.coarTab.${type}`)}
+            {activityType && `: ${t(`decisionPage.coarTab.${activityType}`)}`}
+          </Tag>
+          <Moment format="DD MMM YYYY, HH:mm:ss">{created}</Moment>
+        </FlexRowItem>
+        {allowPayloadEdit && activityType !== 'UnprocessableNotification' && (
+          <FlexRowItem>
+            {manuscript && (
+              <>
+                {['preprint1', 'preprint2'].includes(instanceName) &&
+                  values(articleStatuses).includes(manuscript.status) && (
+                    <ActionButton
+                      onClick={() =>
+                        history.push(
+                          `${urlFrag}/versions/${manuscript.id}/evaluation`,
+                        )
+                      }
+                      primary
+                    >
+                      {t('coarNotifyInboxPage.evaluateManuscript')}
+                    </ActionButton>
+                  )}
+                {['journal', 'prc'].includes(instanceName) && (
+                  <ActionButton
+                    onClick={() =>
+                      history.push(
+                        `${urlFrag}/versions/${manuscript.id}/decision`,
+                      )
+                    }
+                    primary
+                  >
+                    {t('coarNotifyInboxPage.controlManuscript')}
+                  </ActionButton>
+                )}
+              </>
+            )}
+            {!manuscript && (
+              <ActionButton onClick={handleEditPayload} status="failure">
+                {t('coarNotifyInboxPage.editPayload')}
+              </ActionButton>
+            )}
+          </FlexRowItem>
+        )}
+      </FlexRow>
     </div>
   )
 }
@@ -95,7 +159,7 @@ const CoarMessage = ({ payload }) => {
     ? object['ietf:cite-as'].split('org/')[1]
     : object['ietf:cite-as']
 
-  const objectUrl = object.id
+  const objectUrl = object.object?.id ?? object.id
 
   const originId = origin.id
 
@@ -140,8 +204,17 @@ const CoarMessage = ({ payload }) => {
   )
 }
 
-const CoarMessages = ({ loading, messages }) => {
+const CoarMessages = ({
+  collapsible = false,
+  config = {},
+  loading,
+  messages,
+  onResendCoarNotifyPayload = null,
+}) => {
   const { t } = useTranslation()
+
+  const [isEditPayloadModalOpen, setIsEditingPayload] = useState(false)
+  const [currentMessage, setCurrentMessage] = useState(null)
 
   if (loading) {
     return <Spinner />
@@ -156,17 +229,42 @@ const CoarMessages = ({ loading, messages }) => {
     payload: JSON.parse(m.payload),
   }))
 
+  const handleSelectPayload = message => {
+    setCurrentMessage(message)
+    setIsEditingPayload(true)
+  }
+
+  const handleSubmitEditedPayload = async editPayload => {
+    return onResendCoarNotifyPayload(editPayload)
+  }
+
   return (
-    <Container>
-      <Collapse
-        accordion
-        items={parsedMessages.map(m => ({
-          key: m.id,
-          label: <CoarLabel message={m} />,
-          children: <CoarMessage payload={m.payload} />,
-        }))}
+    <>
+      <Container>
+        <Collapse
+          accordion
+          collapsible={collapsible ? 'icon' : 'disabled'}
+          items={parsedMessages.map(m => ({
+            key: m.id,
+            label: (
+              <CoarLabel
+                allowPayloadEdit={!!onResendCoarNotifyPayload}
+                config={config}
+                message={m}
+                onSetSelectedMessage={handleSelectPayload}
+              />
+            ),
+            children: <CoarMessage payload={m.payload} />,
+          }))}
+        />
+      </Container>
+      <EditPayloadModal
+        isOpen={isEditPayloadModalOpen}
+        onClose={() => setIsEditingPayload(false)}
+        onSubmit={handleSubmitEditedPayload}
+        originalMessage={currentMessage}
       />
-    </Container>
+    </>
   )
 }
 

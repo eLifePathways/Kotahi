@@ -8,6 +8,9 @@ import PropTypes from 'prop-types'
 import { th, override } from '@coko/client'
 
 import Colorize from './Colorize'
+import { CoarIcon } from '../shared/Icons'
+
+const StyledCoarIcon = styled(CoarIcon)``
 
 const Container = styled.span`
   display: inline-flex;
@@ -26,18 +29,20 @@ const Container = styled.span`
 const Icon = ({ children, color, size = 3, theme, ...props }) => {
   // convert `arrow_left` to `ArrowLeft`
   const name = _.upperFirst(_.camelCase(children))
+  const isCoarIcon = name === 'CoarNotify'
 
   // select the icon, checking for override in theme, otherwise defaulting
   // to the react feather icon set
   const icon = _.get(theme.icons, name, icons[name])
 
-  if (!icon) {
+  if (!icon && !isCoarIcon) {
     console.warn("Icon '%s' not found", name)
   }
 
   return (
     <Container color={color} role="img" size={size} {...props}>
-      {icon ? icon({}) : ''}
+      {icon && !isCoarIcon ? icon({}) : ''}
+      {isCoarIcon ? <StyledCoarIcon /> : ''}
     </Container>
   )
 }

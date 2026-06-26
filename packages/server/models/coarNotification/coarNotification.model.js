@@ -1,4 +1,6 @@
 const { BaseModel } = require('@coko/server')
+const Group = require('../group/group.model')
+const Manuscript = require('../manuscript/manuscript.model')
 
 class CoarNotification extends BaseModel {
   static get tableName() {
@@ -16,10 +18,44 @@ class CoarNotification extends BaseModel {
     }
   }
 
+  static get relationMappings() {
+    return {
+      group: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: Group,
+        join: {
+          from: 'coar_notifications.groupId',
+          to: 'groups.id',
+        },
+      },
+      manuscript: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: Manuscript,
+        join: {
+          from: 'coar_notifications.manuscriptId',
+          to: 'manuscripts.id',
+        },
+      },
+    }
+  }
+
   static async getNotificationsForManuscript(manuscriptId, options = {}) {
     const { trx } = options
 
-    return this.query(trx).where({ manuscriptId })
+    return this.query(trx).where({ manuscriptId }).orderBy('created', 'desc')
+  }
+
+  static async getNotificationsAndManuscriptsByGroupOrNone(
+    groupId,
+    options = {},
+  ) {
+    const { trx } = options
+
+    return this.query(trx)
+      .withGraphFetched('manuscript')
+      .where({ groupId })
+      .orWhere({ groupId: null })
+      .orderBy('created', 'desc')
   }
 
   static async getOfferNotificationForManuscript(manuscriptId, options = {}) {

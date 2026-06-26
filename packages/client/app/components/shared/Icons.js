@@ -77,9 +77,9 @@ export const SendIcon = ({ className, height, width, stroke }) => {
   )
 }
 
-export const CoarIcon = ({ className, height, width }) => {
+export const CoarIcon = ({ className }) => {
   return (
-    <svg className={className} height={height} width={width}>
+    <svg className={className} viewBox="0 0 21 21">
       <path
         clipRule="evenodd"
         d="M14.8334 1.48492C18.1727 1.55797 19.6727 3.19804 19.3334 6.40514C18.0017 8.62002 16.1684 9.16669 13.8334 8.04521C11.4017 5.46551 11.735 3.27877 14.8334 1.48492Z"

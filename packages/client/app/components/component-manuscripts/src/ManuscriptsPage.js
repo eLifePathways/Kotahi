@@ -293,7 +293,6 @@ const ManuscriptsPage = ({ currentUser, history }) => {
       deleteManuscriptMutations={deleteManuscriptMutations}
       doUpdateManuscript={doUpdateManuscript}
       exportManuscriptsToJson={exportManuscriptsToJson}
-      getManuscriptsData={getManuscriptsData}
       groupManagerDiscussionChannel={groupManagerDiscussionChannel}
       hideManuscriptsChat={hideDiscussionFromGroupAdminsManagers}
       history={history}
