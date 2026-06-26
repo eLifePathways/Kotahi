@@ -646,7 +646,13 @@ const DecisionVersion = ({
   }
 
   const coarMessagesSection = () => ({
-    content: <CoarMessages loading={isCoarLoading} messages={coarMessages} />,
+    content: (
+      <CoarMessages
+        collapsible
+        loading={isCoarLoading}
+        messages={coarMessages}
+      />
+    ),
     key: 'coarMessages',
     label: t('decisionPage.COAR Notify Metadata'),
   })

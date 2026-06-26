@@ -1,10 +1,26 @@
 extend type Query {
   coarNotificationsForManuscript(manuscriptId: ID!): [CoarNotification!]!
+  coarNotificationsForGroupOrNone(groupId: ID!): [CoarNotification!]!
+}
+
+extend type Mutation {
+  resendCoarNotifyPayload(
+    groupId: ID!
+    notificationId: ID!
+    payload: String!
+  ): ResendCoarNotifyPayloadResponse!
 }
 
 type CoarNotification {
   id: ID!
-  manuscriptId: ID!
+  manuscriptId: ID
+  manuscript: Manuscript
   payload: String!
+  groupId: ID
   created: DateTime!
+}
+
+type ResendCoarNotifyPayloadResponse {
+  success: Boolean!
+  reason: String
 }

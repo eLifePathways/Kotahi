@@ -299,7 +299,6 @@ const ManuscriptsPage = ({ currentUser }) => {
       deleteManuscriptMutations={deleteManuscriptMutations}
       doUpdateManuscript={doUpdateManuscript}
       exportManuscriptsToJson={exportManuscriptsToJson}
-      getManuscriptsData={getManuscriptsData}
       groupManagerDiscussionChannel={groupManagerDiscussionChannel}
       hideManuscriptsChat={hideDiscussionFromGroupAdminsManagers}
       importManuscripts={importManuscriptsAndRefetch}

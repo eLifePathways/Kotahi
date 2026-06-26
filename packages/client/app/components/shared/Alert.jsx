@@ -1,12 +1,19 @@
 import { Alert as AntAlert } from 'antd'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+import { grid } from '@coko/client'
 
-const Alert = ({ description, message, showIcon = false, type = 'info' }) => {
+const StyledAntAlert = styled(AntAlert)`
+  margin-bottom: ${({ $marginBottom }) => grid($marginBottom) ?? 0};
+`
+
+const Alert = ({ bottomMargin = 0, description, message, showIcon = false, type = 'info' }) => {
   const { t } = useTranslation()
 
   return (
-    <AntAlert
+    <StyledAntAlert
+      $marginBottom={bottomMargin}
       description={description}
       showIcon={showIcon}
       title={message ?? t(`common.statuses.${type}`)}
@@ -16,6 +23,7 @@ const Alert = ({ description, message, showIcon = false, type = 'info' }) => {
 }
 
 Alert.propTypes = {
+  bottomMargin: PropTypes.number,
   description: PropTypes.node,
   message: PropTypes.node,
   showIcon: PropTypes.bool,

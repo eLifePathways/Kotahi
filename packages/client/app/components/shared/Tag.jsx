@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { capitalize } from 'lodash'
 import { grid, theme } from '@coko/client'
 
-const Tag = ({ children, color, fontSize = 'baseSmall' }) => {
+const Tag = ({ children, color, fontSize = 'baseSmall', variant }) => {
   const colorLabel = color ? `color${capitalize(color)}` : undefined
   const fontSizeLabel = `fontSize${capitalize(fontSize)}`
 
@@ -16,6 +16,7 @@ const Tag = ({ children, color, fontSize = 'baseSmall' }) => {
         fontSize: theme[fontSizeLabel],
         padding: `${grid(2)} ${grid(4)}`,
       }}
+	  variant={variant}
     >
       {children}
     </AntTag>
