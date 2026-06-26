@@ -1,0 +1,20 @@
+<style>
+  /* Storybook's Docs page applies a class of '.sb-show-main' 
+    or renders inside a specific container layout. 
+    This target breaks your app's restrictions ONLY inside Storybook.
+  */
+  html,
+  body {
+    overflow: auto !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  /* Ensures the root wrapper can grow naturally with the docs content */
+  #root {
+    height: auto !important;
+    min-height: 100% !important;
+  }
+</style>
