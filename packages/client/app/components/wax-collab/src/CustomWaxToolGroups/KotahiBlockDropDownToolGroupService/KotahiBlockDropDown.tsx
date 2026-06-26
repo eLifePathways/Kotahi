@@ -45,8 +45,6 @@ const DropdownStyled = styled(Dropdown)`
 `
 
 class KotahiBlockDropDown extends ToolGroup {
-  tools = []
-
   constructor(
     @inject('Title') title,
     @inject('Heading2') heading2,
@@ -58,7 +56,7 @@ class KotahiBlockDropDown extends ToolGroup {
   ) {
     super()
 
-    this.tools = [
+    this._tools = [
       title,
       heading2,
       heading3,
@@ -77,13 +75,13 @@ class KotahiBlockDropDown extends ToolGroup {
     const { dispatch, state } = view
 
     const dropDownOptions = [
-      { label: 'Title', value: 0, item: this.tools[0] },
-      { label: 'Heading 2', value: 1, item: this.tools[1] },
-      { label: 'Heading 3', value: 2, item: this.tools[2] },
-      { label: 'Heading 4', value: 3, item: this.tools[3] },
-      { label: 'Heading 5', value: 4, item: this.tools[4] },
-      { label: 'Heading 6', value: 5, item: this.tools[5] },
-      { label: 'Paragraph', value: 6, item: this.tools[6] },
+      { label: 'Title', value: 0, item: this._tools[0] },
+      { label: 'Heading 2', value: 1, item: this._tools[1] },
+      { label: 'Heading 3', value: 2, item: this._tools[2] },
+      { label: 'Heading 4', value: 3, item: this._tools[3] },
+      { label: 'Heading 5', value: 4, item: this._tools[4] },
+      { label: 'Heading 6', value: 5, item: this._tools[5] },
+      { label: 'Paragraph', value: 6, item: this._tools[6] },
     ]
 
     const isEditable = pmViews.main.props.editable(editable => {

@@ -5,7 +5,6 @@ import { ToolGroup, LeftMenuTitle } from 'wax-prosemirror-core'
 import i18next from 'i18next'
 
 class GlossaryGroup extends ToolGroup {
-  tools = []
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Glossary')} />)
 
   constructor(
@@ -13,7 +12,7 @@ class GlossaryGroup extends ToolGroup {
     @inject('GlossaryTerm') glossaryTerm,
   ) {
     super()
-    this.tools = [glossarySection, glossaryTerm]
+    this._tools = [glossarySection, glossaryTerm]
   }
 }
 
