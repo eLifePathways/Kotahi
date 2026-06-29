@@ -128,6 +128,7 @@ const ru = {
       FileBrowser: 'Файловый браузер',
       Metadata: 'Metadannye publikatsii',
       Collections: 'Коллекции',
+      CoarNotifyInbox: 'Входящие COAR Notify',
     },
     menuSettings: {
       KeepMenuVisible: 'оставить меню видимым',
@@ -251,6 +252,19 @@ const ru = {
         'Пожалуйста, подтвердите, что вы хотите восстановить выбранные манускрипты из архива.',
       takeAction: 'действие',
       exportAsJson: 'Скачать JSON',
+    },
+    coarNotifyInboxPage: {
+      controlManuscript: 'Контрольная рукопись',
+      correctPayload:
+        'Недопустимое содержимое полезной нагрузки. Пожалуйста, исправьте полезную нагрузку.',
+      editCoarPayloadTitle: 'Редактировать полезную нагрузку COAR Notify',
+      editPayload: 'Редактировать полезную нагрузку',
+      evaluateManuscript: 'Оценить рукопись',
+      modalDescription:
+        'Произошла ошибка при обработке этой полезной нагрузки COAR Notify. Пожалуйста, исправьте недопустимые данные и повторите попытку.',
+      payload: 'Объект JSON полезной нагрузки',
+      resendPayload: 'Повторно отправить полезную нагрузку',
+      title: 'Входящие COAR Notify',
     },
     decisionPage: {
       'Current version': 'Текущая версия',
