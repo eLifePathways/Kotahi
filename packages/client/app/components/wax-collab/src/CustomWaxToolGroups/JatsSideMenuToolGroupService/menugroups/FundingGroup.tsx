@@ -5,7 +5,6 @@ import { ToolGroup, LeftMenuTitle } from 'wax-prosemirror-core'
 import i18next from 'i18next'
 
 class FundingGroup extends ToolGroup {
-  tools = []
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Funding Group')} />)
 
   constructor(
@@ -14,7 +13,7 @@ class FundingGroup extends ToolGroup {
     @inject('FundingStatement') fundingStatement,
   ) {
     super()
-    this.tools = [fundingSource, awardId, fundingStatement]
+    this._tools = [fundingSource, awardId, fundingStatement]
   }
 }
 

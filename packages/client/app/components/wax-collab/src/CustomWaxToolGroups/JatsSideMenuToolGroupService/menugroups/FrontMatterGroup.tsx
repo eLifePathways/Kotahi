@@ -6,7 +6,6 @@ import i18next from 'i18next'
 /* stylelint-disable */
 
 class FrontMatterGroup extends ToolGroup {
-  tools = []
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Front matter')} />)
 
   constructor(
@@ -15,7 +14,7 @@ class FrontMatterGroup extends ToolGroup {
     @inject('Abstract') abstractSection,
   ) {
     super()
-    this.tools = [frontMatter, title, abstractSection]
+    this._tools = [frontMatter, title, abstractSection]
   }
 }
 
