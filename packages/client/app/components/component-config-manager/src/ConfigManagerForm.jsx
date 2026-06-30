@@ -17,15 +17,8 @@ import {
   configTabLabels,
 } from './ui/schema' // Import the function that generates the schema and uiSchema
 
-import {
-  ActionButton,
-  Container,
-  HeadingWithAction,
-  Heading,
-  SectionContent,
-  HiddenTabs,
-  Alert,
-} from '../../shared'
+import { ActionButton, SectionContent, HiddenTabs, Alert } from '../../shared'
+import Page from '../../../ui/shared/Page'
 import EmailTemplatesPage from '../../component-email-templates/src/EmailTemplatesPage'
 import emailTemplatesToSchema from './helpers'
 import { EmailTemplatesProvider } from '../../component-email-templates/hooks/EmailTemplatesContext'
@@ -34,11 +27,18 @@ import { T } from '../../component-notification-event/misc/constants'
 import { getFormBadgeBg } from '../../component-email-templates/src/handlebarsAutocomplete/helpers'
 import DescriptionField from './ui/DescriptionField'
 
-const StyledContainer = styled(Container)`
+const StyledContainer = styled.div`
   --tabs-border: 1px solid #ddd;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  /* stylelint-disable-next-line declaration-no-important */
+  font-family: ${th('fontInterface')} !important;
+  /* stylelint-disable-next-line declaration-no-important */
+  font-size: ${th('fontSizeBase')} !important;
+  /* stylelint-disable-next-line declaration-no-important */
+  line-height: ${th('lineHeightBase')} !important;
 `
 
 const StyledSectionContent = styled(SectionContent)`
@@ -46,10 +46,6 @@ const StyledSectionContent = styled(SectionContent)`
   overflow-y: auto;
   padding: ${th('spacing.g')} ${th('spacing.g')} 0 ${th('spacing.g')};
   width: 100%;
-`
-
-const StyledHeading = styled(Heading)`
-  padding: 0.5rem 0 1.5rem;
 `
 
 const InstanceTypeLegend = styled.legend`
@@ -392,31 +388,32 @@ const ConfigManagerForm = ({
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
         rel="stylesheet"
       />
-      <StyledContainer>
-        <HeadingWithAction>
-          <StyledHeading>{t('configPage.Configuration')}</StyledHeading>
-        </HeadingWithAction>
-        <HiddenTabs
-          defaultActiveKey="general"
-          onChange={setActiveTab}
-          sections={[...tabSections, emailTab, eventTab]}
-          shouldFillFlex
-        />
-        {!['emails', 'events'].includes(activeTab) && (
-          <Footer $pending={!noPendingChanges}>
-            <div>You have unsaved changes.</div>
-            <StyledActionButton
-              disabled={disabled}
-              onClick={handlers.form.onSubmit}
-              primary
-              status={updateConfigStatus}
-              type="submit"
-            >
-              {t('common.Save')}
-            </StyledActionButton>
-          </Footer>
-        )}
-      </StyledContainer>
+      {/* Reset Bootstrap 3's html { font-size: 10px } which bleeds into the rest of the app */}
+      <style>{`html { font-size: 16px; }`}</style>
+      <Page title={t('configPage.Configuration')}>
+        <StyledContainer>
+          <HiddenTabs
+            defaultActiveKey="general"
+            onChange={setActiveTab}
+            sections={[...tabSections, emailTab, eventTab]}
+            shouldFillFlex
+          />
+          {!['emails', 'events'].includes(activeTab) && (
+            <Footer $pending={!noPendingChanges}>
+              <div>You have unsaved changes.</div>
+              <StyledActionButton
+                disabled={disabled}
+                onClick={handlers.form.onSubmit}
+                primary
+                status={updateConfigStatus}
+                type="submit"
+              >
+                {t('common.Save')}
+              </StyledActionButton>
+            </Footer>
+          )}
+        </StyledContainer>
+      </Page>
     </>
   )
 }

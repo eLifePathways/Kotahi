@@ -12,15 +12,19 @@ import { HeadingCell } from '../../../component-production/src/components/styles
 import {
   Action,
   ActionButton,
-  Container,
-  HeadingWithAction,
-  Heading,
   PaddedContent,
   SectionContent,
   WidthLimiter,
   LabelBadge,
 } from '../../../shared'
+import Page from '../../../../ui/shared/Page'
 import CollectionModalForm from './CollectionModalForm'
+
+const StyledContent = styled.div`
+  font-family: ${th('fontInterface')};
+  font-size: ${th('fontSizeBase')};
+  line-height: ${th('lineHeightBase')};
+`
 
 const CmsHeadStyled = styled.div`
   button {
@@ -216,55 +220,56 @@ const CollectionList = ({
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
         rel="stylesheet"
       />
-      <Container>
-        <HeadingWithAction>
-          <Heading>{t('leftMenu.Collections')}</Heading>
-        </HeadingWithAction>
-        <WidthLimiter>
-          <SectionContent>
-            <PaddedContent>
-              <CmsHeadStyled>
-                <Action onClick={addUiCollection}>
-                  + {t('cmsPage.metadata.addCollection')}
-                </Action>
-              </CmsHeadStyled>
-              <CollectionsHeading>
-                {columnsProps.map(info => (
-                  <HeadingCell key={info.name}>{info.title}</HeadingCell>
-                ))}
-              </CollectionsHeading>
-              {}
-              <>
-                {publishCollection.length === 0 ? (
-                  <NoCollectionSpan>
-                    {t('cmsPage.metadata.noCollections')}
-                  </NoCollectionSpan>
-                ) : (
-                  publishCollection.map(collection => (
-                    <CollectionTable
-                      collection={collection}
-                      columnDefinitions={columnsProps}
-                      key={collection.id}
-                    />
-                  ))
+      {/* Reset Bootstrap 3's html { font-size: 10px } which bleeds into the rest of the app */}
+      <style>{`html { font-size: 16px; }`}</style>
+      <Page title={t('leftMenu.Collections')}>
+        <StyledContent>
+          <WidthLimiter>
+            <SectionContent>
+              <PaddedContent>
+                <CmsHeadStyled>
+                  <Action onClick={addUiCollection}>
+                    + {t('cmsPage.metadata.addCollection')}
+                  </Action>
+                </CmsHeadStyled>
+                <CollectionsHeading>
+                  {columnsProps.map(info => (
+                    <HeadingCell key={info.name}>{info.title}</HeadingCell>
+                  ))}
+                </CollectionsHeading>
+                {}
+                <>
+                  {publishCollection.length === 0 ? (
+                    <NoCollectionSpan>
+                      {t('cmsPage.metadata.noCollections')}
+                    </NoCollectionSpan>
+                  ) : (
+                    publishCollection.map(collection => (
+                      <CollectionTable
+                        collection={collection}
+                        columnDefinitions={columnsProps}
+                        key={collection.id}
+                      />
+                    ))
+                  )}
+                </>
+                {activeCollection && (
+                  <CollectionModalForm
+                    collection={activeCollection}
+                    deleteCollection={deleteCollectionFn}
+                    manuscriptLoadOptions={manuscriptLoadOptions}
+                    onChange={onChange}
+                    onClose={() => {
+                      setActiveCollection(null)
+                    }}
+                    submitCollection={submitCollection}
+                  />
                 )}
-              </>
-              {activeCollection && (
-                <CollectionModalForm
-                  collection={activeCollection}
-                  deleteCollection={deleteCollectionFn}
-                  manuscriptLoadOptions={manuscriptLoadOptions}
-                  onChange={onChange}
-                  onClose={() => {
-                    setActiveCollection(null)
-                  }}
-                  submitCollection={submitCollection}
-                />
-              )}
-            </PaddedContent>
-          </SectionContent>
-        </WidthLimiter>
-      </Container>
+              </PaddedContent>
+            </SectionContent>
+          </WidthLimiter>
+        </StyledContent>
+      </Page>
     </>
   )
 }

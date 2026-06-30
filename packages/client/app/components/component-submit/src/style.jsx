@@ -125,7 +125,6 @@ export const SubNote = styled.span`
 `
 
 export const UploadContainer = styled.div`
-  margin-top: ${grid(2)};
   padding: ${grid(3)};
   text-align: center;
 `

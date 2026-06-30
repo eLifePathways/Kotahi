@@ -29,9 +29,8 @@ export const Base = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -52,9 +51,8 @@ export const Admin = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -75,9 +73,8 @@ export const GroupAdmin = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -98,9 +95,8 @@ export const GroupManager = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -121,9 +117,8 @@ export const NoRoles = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -144,9 +139,8 @@ export const ManyRoles = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -167,9 +161,8 @@ export const StartCollapsed = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane"
+          userDisplayName="Jane Green"
           userProfileImage={avatarImg}
-          userSurname="Green"
         />
       </Wrapper>
     )
@@ -190,9 +183,8 @@ export const MediumNames = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane Margaret"
+          userDisplayName="Jane Margaret Wilkinson"
           userProfileImage={avatarImg}
-          userSurname="Wilkinson"
         />
       </Wrapper>
     )
@@ -213,9 +205,8 @@ export const LongNames = meta.story({
           onMenuCollapseChange={() => {}}
           showDashboard={true}
           showReports={true}
-          userGivenNames="Jane Margaret Samantha"
+          userDisplayName="Jane Margaret Samantha Green Wilkinson Henderson"
           userProfileImage={avatarImg}
-          userSurname="Green Wilkinson Henderson"
         />
       </Wrapper>
     )

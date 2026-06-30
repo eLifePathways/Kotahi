@@ -4,8 +4,8 @@ import { useMutation, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../config/src'
 import LayoutForm from './layout/LayoutForm'
-import { Container, Spinner, CommsErrorBanner } from '../../shared'
-import PageHeader from './components/PageHeader'
+import { Spinner, CommsErrorBanner } from '../../shared'
+import Page from '../../../ui/shared/Page'
 
 import {
   GET_CMS_LAYOUT,
@@ -125,9 +125,7 @@ const CMSLayoutPage = () => {
   const { cmsLayout } = data
 
   return (
-    <Container>
-      <PageHeader leftSideOnly mainHeading={t('cmsPage.layout.Layout')} />
-
+    <Page title={t('cmsPage.layout.Layout')}>
       <Formik
         initialValues={setInitialData(cmsLayout)}
         onSubmit={async values => publish(values)}
@@ -148,7 +146,7 @@ const CMSLayoutPage = () => {
           )
         }}
       </Formik>
-    </Container>
+    </Page>
   )
 }
 

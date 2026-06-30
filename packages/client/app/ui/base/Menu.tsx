@@ -17,10 +17,17 @@ import {
 import Avatar from '../shared/Avatar'
 
 // #region styled
-const fullWidth = '250px'
+const fullWidth = '272px'
 const collapsedWidth = '64px'
 const collapseTime = '0.3s'
 const collapseTransition = `${collapseTime} ease`
+
+/**
+ * If you notice redundant font-family, font-size and line-height values all
+ * over this file, it's because bootstrap's (!) css is interfering when it's
+ * loaded. Once bootstrap has been cleared out from the client, these can be
+ * removed.
+ */
 
 const Wrapper = styled.div<{ $menuCollapsed: boolean }>`
   background-color: ${th('colorPrimary')};
@@ -29,6 +36,7 @@ const Wrapper = styled.div<{ $menuCollapsed: boolean }>`
   height: 100%;
   width: ${(props): string =>
     props.$menuCollapsed ? collapsedWidth : fullWidth};
+  flex-shrink: 0;
   transition: width ${collapseTransition};
 
   padding: ${grid(1)} 0;
@@ -42,6 +50,8 @@ const GroupSection = styled.div`
   margin: ${grid(1)} ${grid(1)} 0 ${grid(1)};
   display: flex;
   align-items: center;
+  font-family: ${th('fontInterface')};
+  line-height: ${th('lineHeightBase')};
 `
 
 const GroupLetter = styled.div<{ $menuCollapsed: boolean }>`
@@ -80,12 +90,12 @@ const GroupName = styled.div<{ $labelsWrap: boolean }>`
   color: ${th('colorTextReverse')};
   font-size: ${th('fontSizeHeading5')};
   font-weight: 500;
-  vertical-align: center;
   white-space: ${(props): string => (props.$labelsWrap ? 'wrap' : 'nowrap')};
 `
 
 const GroupType = styled.div`
   font-size: ${th('fontSizeBaseSmall')};
+  text-transform: capitalize;
 `
 
 const Separator = styled.div`
@@ -101,6 +111,8 @@ const LinkSection = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  font-family: ${th('fontInterface')};
+  line-height: ${th('lineHeightBase')};
 `
 
 const LinkItems = styled.div`
@@ -117,6 +129,7 @@ const active = css`
 const LinkItem = styled.div<{ $active: boolean }>`
   color: ${th('colorTextReverse')};
   cursor: pointer;
+  font-size: ${th('fontSizeBase')};
   margin-bottom: ${grid(0.5)};
   padding: ${grid(1)} ${grid(2)};
   display: flex;
@@ -141,6 +154,8 @@ const UserSection = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 ${grid(1)} ${grid(1)} ${grid(1)};
+  font-family: ${th('fontInterface')};
+  line-height: ${th('lineHeightBase')};
 `
 
 const UserTop = styled.div<{ $menuCollapsed: boolean }>`
@@ -183,6 +198,7 @@ const UserBottom = styled.div<{ $menuCollapsed: boolean }>`
 
 const UserName = styled.div<{ $labelsWrap: boolean }>`
   color: ${th('colorTextReverse')};
+  font-size: ${th('fontSizeBase')};
   font-weight: 500;
   flex-grow: 1;
   white-space: ${(props): string => (props.$labelsWrap ? 'wrap' : 'nowrap')};
@@ -274,8 +290,7 @@ type MenuProps = {
   isUserAdmin: boolean
   isUserGroupAdmin: boolean
   isUserGroupManager: boolean
-  userGivenNames: string
-  userSurname: string
+  userDisplayName: string
   userProfileImage?: string
   /** Whether to start the menu from collapsed state (eg. stored value in localstorage) */
   initialMenuCollapsed: boolean
@@ -299,8 +314,7 @@ const Menu = (props: MenuProps): ReactNode => {
     isUserAdmin,
     isUserGroupAdmin,
     isUserGroupManager,
-    userGivenNames,
-    userSurname,
+    userDisplayName,
     userProfileImage,
     initialMenuCollapsed,
     onMenuCollapseChange,
@@ -453,11 +467,9 @@ const Menu = (props: MenuProps): ReactNode => {
 
       <UserSection>
         <UserTop $menuCollapsed={menuCollapsed}>
-          <Link to="/profile">
+          <Link to={`/${groupName}/profile`}>
             <Avatar src={userProfileImage} />
-            <UserName $labelsWrap={labelsWrap}>
-              {userGivenNames} {userSurname}
-            </UserName>
+            <UserName $labelsWrap={labelsWrap}>{userDisplayName}</UserName>
           </Link>
 
           <UserCollapseIconWrapper $menuCollapsed={menuCollapsed}>

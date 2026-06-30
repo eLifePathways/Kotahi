@@ -11,8 +11,6 @@ import FormSettingsModal from './FormSettingsModal'
 import FieldSettingsModal from './FieldSettingsModal'
 import FormBuilder from './FormBuilder'
 import {
-  Container,
-  Heading,
   HiddenTabs,
   SectionContent,
   SectionRow,
@@ -20,6 +18,7 @@ import {
   ActionButton,
   RoundIconButton,
 } from '../../../shared'
+import Page from '../../../../ui/shared/Page'
 import { ConfirmationModal } from '../../../component-modal/src/ConfirmationModal'
 import FormSummary from './FormSummary'
 import { ConfigContext } from '../../../config/src'
@@ -228,48 +227,49 @@ const FormBuilderLayout = ({
 
   return (
     <>
-      <Container
-        style={{
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          overflowY: 'hidden',
-        }}
-      >
-        <WidthLimiter>
-          <Heading>{t(`formBuilder.${category}.title`)}</Heading>
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '0',
-              overflow: 'hidden',
-              flex: '1',
-            }}
-          >
-            <AddFormButton
-              isCompact
-              onClick={() => {
-                setSelectedFormId(null)
-                setIsEditingFormSettings(true)
+      <Page title={t(`formBuilder.${category}.title`)}>
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            overflowY: 'hidden',
+          }}
+        >
+          <WidthLimiter>
+            <div
+              style={{
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '0',
+                overflow: 'hidden',
+                flex: '1',
               }}
             >
-              {t('formBuilder.Add new form')}
-            </AddFormButton>
-            <HiddenTabs
-              defaultActiveKey={selectedFormId ?? null}
-              onChange={tab => {
-                setSelectedFormId(tab)
-                setSelectedFieldId(null)
-              }}
-              sections={sections}
-              shouldFillFlex
-            />
-          </div>
-        </WidthLimiter>
-      </Container>
+              <AddFormButton
+                isCompact
+                onClick={() => {
+                  setSelectedFormId(null)
+                  setIsEditingFormSettings(true)
+                }}
+              >
+                {t('formBuilder.Add new form')}
+              </AddFormButton>
+              <HiddenTabs
+                defaultActiveKey={selectedFormId ?? null}
+                onChange={tab => {
+                  setSelectedFormId(tab)
+                  setSelectedFieldId(null)
+                }}
+                sections={sections}
+                shouldFillFlex
+              />
+            </div>
+          </WidthLimiter>
+        </div>
+      </Page>
 
       <FormSettingsModal
         form={selectedForm}

@@ -2,18 +2,17 @@ import { type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { ArrowRightOutlined } from '@ant-design/icons'
-import { grid, th, H1 } from '@coko/client'
+import { grid, th, H3 } from '@coko/client'
 
 // #region styled
-const Title = styled(H1)`
-  font-size: ${th('fontSizeHeading1')};
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.3s ease;
+const Title = styled(H3)`
+  border-bottom: 2px solid ${th('colorPrimary')};
 `
 
 const Description = styled.div`
   flex-grow: 1;
   color: ${th('colorText')};
+  padding-top: ${grid(2)};
 `
 
 const IconWrapper = styled.div`
@@ -29,7 +28,7 @@ const IconWrapper = styled.div`
 `
 
 const Card = styled.div`
-  min-height: ${grid(40)};
+  min-height: ${grid(38)};
   border: 2px solid ${th('colorBorder')};
   border-radius: 3px;
   padding: ${grid(6)} ${grid(4)} 0;
@@ -38,7 +37,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
 
-  &:hover ${Title} {
+  ${Title} {
     border-color: ${th('colorPrimary')};
   }
 
@@ -49,9 +48,8 @@ const Card = styled.div`
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(${grid(50)}, 1fr));
+  grid-template-columns: repeat(auto-fill, ${grid(55)});
   gap: ${grid(4)};
-  max-width: ${grid(120)};
   margin: 0 auto;
 `
 // #endregion styled
