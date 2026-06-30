@@ -5,12 +5,11 @@ import { ToolGroup } from 'wax-prosemirror-core'
 
 @injectable()
 class BlockQuoteTool extends ToolGroup {
-  tools = []
   title = ''
 
   constructor(@inject('BlockQuote') blockQuote, @inject('Lift') lift) {
     super()
-    this.tools = [blockQuote, lift]
+    this._tools = [blockQuote, lift]
   }
 }
 

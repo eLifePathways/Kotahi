@@ -5,12 +5,11 @@ import { ToolGroup, LeftMenuTitle } from 'wax-prosemirror-core'
 import i18next from 'i18next'
 
 class AppendixGroup extends ToolGroup {
-  tools = []
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Appendices')} />)
 
   constructor(@inject('Appendix') appendix) {
     super()
-    this.tools = [appendix]
+    this._tools = [appendix]
   }
 }
 
