@@ -2,6 +2,8 @@
 
 import { useContext, useEffect } from 'react'
 import styled from 'styled-components'
+import { th } from '@coko/client'
+
 import { CssAssistantContext } from './hooks/CssAssistantContext'
 import {
   cssStringToObject,
@@ -9,7 +11,6 @@ import {
   removeStyleAttribute,
   setInlineStyle,
 } from './utils'
-import { color } from '../../theme'
 
 const backgrounds = {
   dark: '#0001',
@@ -52,7 +53,7 @@ const RelativeContainer = styled.div`
   z-index: 999;
 
   > button {
-    background: ${color.brand1.shade25};
+    background: ${th('color.brand1.shade25')};
     border: 1px solid currentcolor;
     border-radius: 50%;
     box-shadow:
@@ -72,7 +73,7 @@ const RelativeContainer = styled.div`
 
   > small {
     /* background: #00495cb9; */
-    background: ${color.brand1.shade25};
+    background: ${th('color.brand1.shade25')};
     border: 1px solid currentcolor;
     border-radius: 5px;
     color: #eee;

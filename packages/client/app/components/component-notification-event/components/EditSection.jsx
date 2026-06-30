@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
+
 import { createDefaultOptions, createOptions } from '../misc/helpers'
 import {
   Col,
@@ -11,7 +12,6 @@ import {
   Row,
   TextInput,
 } from '../misc/styleds'
-import { color } from '../../../theme'
 import SimpleWaxEditor from '../../wax-collab/src/SimpleWaxEditor'
 import { objIf } from '../../../shared/generalUtils'
 import { T } from '../misc/constants'
@@ -78,6 +78,7 @@ const EditSection = ({
   fieldsStatus,
   emailTemplates,
 }) => {
+  const theme = useTheme()
   const { t } = useTranslation()
   const { hasChanged, isValid } = fieldsStatus.state
   const options = createOptions(recipients, emailTemplates, selected?.ccEmails)
@@ -109,8 +110,8 @@ const EditSection = ({
   )
 
   const getFieldStatusColor = field => {
-    if (!isValid[field]) return color.error.base
-    if (hasChanged[field]) return color.warning.base
+    if (!isValid[field]) return theme.color.error.base
+    if (hasChanged[field]) return theme.color.warning.base
     return ''
   }
 

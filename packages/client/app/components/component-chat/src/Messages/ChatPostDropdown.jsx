@@ -7,16 +7,16 @@ import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
+import { th } from '@coko/client'
 import EditMessageModal from './EditMessageModal'
 import { ConfirmationModal } from '../../../component-modal/src/ConfirmationModal'
 import { DELETE_MESSAGE, UPDATE_MESSAGE } from '../../../../queries'
 import { Ellipsis } from './style'
-import color from '../../../../theme/color'
 import IsolatedMessageWithDetails from './IsolatedMessageWithDetails'
 import { LooseColumn } from '../../../shared'
 
 const DropdownContainer = styled.div`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
   position: absolute;
   right: 0;
@@ -26,7 +26,7 @@ const DropdownContainer = styled.div`
 `
 
 const DropdownItem = styled.div`
-  color: ${color.text};
+  color: ${th('color.text')};
   cursor: pointer;
   font-size: 16px;
   font-weight: 400;
@@ -34,7 +34,7 @@ const DropdownItem = styled.div`
   padding: 6px 14px;
 
   &:hover {
-    background-color: ${color.gray97};
+    background-color: ${th('color.gray97')};
   }
 `
 

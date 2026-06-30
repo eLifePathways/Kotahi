@@ -6,7 +6,6 @@ import ContentEditable from 'react-contenteditable'
 import { escape } from 'lodash'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import { color } from '../../theme'
 
 const stripTags = html => {
   const tempDiv = document.createElement('DIV')
@@ -21,7 +20,7 @@ const InputBlock = styled(ContentEditable)`
 
   &:focus,
   &:hover {
-    outline: 1px solid ${color.brand1.base};
+    outline: 1px solid ${th('color.brand1.base')};
   }
 `
 

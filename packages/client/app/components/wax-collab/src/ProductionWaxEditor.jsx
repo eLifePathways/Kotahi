@@ -7,7 +7,7 @@
 import { useRef, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Wax } from 'wax-prosemirror-core'
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider, useTheme } from 'styled-components'
 import waxTheme from './layout/waxTheme'
 import { JournalContext } from '../../xpub-journal'
 
@@ -65,6 +65,7 @@ const ProductionWaxEditor = ({
   ydoc,
   name,
 }) => {
+  const theme = useTheme()
   const handleAssetManager = () => onAssetManager(manuscriptId)
   const journal = useContext(JournalContext)
 
@@ -284,7 +285,9 @@ const ProductionWaxEditor = ({
   config = yjsConfig(config, { wsProvider, ydoc, yjsType: name })
 
   return (
-    <ThemeProvider theme={{ textStyles: journal.textStyles, ...waxTheme }}>
+    <ThemeProvider
+      theme={{ textStyles: journal.textStyles, ...theme, ...waxTheme }}
+    >
       <div className={validationStatus}>
         <Wax
           autoFocus={autoFocus}

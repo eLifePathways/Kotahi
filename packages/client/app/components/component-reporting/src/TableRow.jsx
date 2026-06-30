@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components'
 import PropTypes from 'prop-types'
-import { color } from '../../../theme'
+import { th } from '@coko/client'
 
 const Row = styled.div`
   align-content: stretch;
   align-items: stretch;
-  border: 1px solid ${color.gray80};
+  border: 1px solid ${th('color.gray80')};
   border-bottom: none;
   display: flex;
   flex-direction: row;
@@ -19,25 +19,25 @@ const Row = styled.div`
         `
       : css`
           &:hover {
-            box-shadow: inset 0 0 4px ${color.brand1.base};
+            box-shadow: inset 0 0 4px ${th('color.brand1.base')};
           }
         `}
 
   width: 100%;
 
   &:last-of-type {
-    border-bottom: 1px solid ${color.gray80};
+    border-bottom: 1px solid ${th('color.gray80')};
   }
 `
 
 const Cell = styled.div`
-  border-right: 1px solid ${color.gray80};
+  border-right: 1px solid ${th('color.gray80')};
   flex: ${props => props.flexGrow} 1 ${props => props.width};
 
   ${props =>
     props.isHeading &&
     css`
-      background-color: ${color.brand1.tint70};
+      background-color: ${th('color.brand1.tint70')};
       line-height: 120%;
     `}
 

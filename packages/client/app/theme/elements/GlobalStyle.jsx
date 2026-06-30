@@ -1,6 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
 import { th } from '@coko/client'
-import color from '../color'
 
 export default createGlobalStyle`
   html {
@@ -12,9 +11,9 @@ export default createGlobalStyle`
   }
 
   body {
-    background-color: ${color.backgroundA};
+    background-color: ${th('color.backgroundA')};
     box-sizing: border-box;
-    color: ${color.text};
+    color: ${th('color.text')};
     font-family: ${th('fontInterface')}, sans-serif;
     font-size: ${th('fontSizeBase')};
     height: 100%;
@@ -46,7 +45,7 @@ export default createGlobalStyle`
   }
 
   a {
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
   }
 
   strong,

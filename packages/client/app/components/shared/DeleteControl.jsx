@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
 
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
+import { th } from '@coko/client'
 import { Icon } from '../pubsweet'
-import { color } from '../../theme'
 
 const DeleteButton = styled.button`
   align-items: center;
-  background: ${color.brand1.base};
+  background: ${th('color.brand1.base')};
   border: none;
   border-radius: 500px;
   display: inline-flex;
@@ -18,18 +18,21 @@ const DeleteButton = styled.button`
   width: 30px;
 
   &:hover {
-    background-color: ${color.brand1.tint10};
+    background-color: ${th('color.brand1.tint10')};
     cursor: pointer;
   }
 `
 
-const DeleteControl = ({ onClick, tooltip, iconProps, ...rest }) => (
-  <DeleteButton onClick={onClick} title={tooltip} type="button" {...rest}>
-    <Icon color={color.textReverse} {...iconProps}>
-      x
-    </Icon>
-  </DeleteButton>
-)
+const DeleteControl = ({ onClick, tooltip, iconProps, ...rest }) => {
+  const theme = useTheme()
+  return (
+    <DeleteButton onClick={onClick} title={tooltip} type="button" {...rest}>
+      <Icon color={theme.color.textReverse} {...iconProps}>
+        x
+      </Icon>
+    </DeleteButton>
+  )
+}
 
 DeleteControl.propTypes = {
   onClick: PropTypes.func.isRequired,

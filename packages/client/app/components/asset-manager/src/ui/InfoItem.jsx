@@ -8,7 +8,6 @@ import styled from 'styled-components'
 import { th } from '@coko/client'
 
 import { Button, Icons } from './Modal'
-import { color } from '../../../../theme'
 
 const { saveIcon, editIcon, exitIcon } = Icons
 
@@ -22,7 +21,7 @@ const Input = styled.input`
   width: 78.2%;
 
   &:focus {
-    border-bottom: 1px dashed ${color.brand1.base};
+    border-bottom: 1px dashed ${th('color.brand1.base')};
     outline: 0;
   }
 

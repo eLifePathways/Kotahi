@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import { grid, uuid } from '@coko/client'
+import { th, grid, uuid } from '@coko/client'
 import { ActionButton, TextInput } from '../../shared'
 import FormWaxEditor from '../../component-formbuilder/src/components/FormWaxEditor'
 import TaskNotificationDetails from './TaskNotificationDetails'
@@ -16,7 +16,6 @@ import DueDateField from './DueDateField'
 import Modal from '../../component-modal/src/Modal'
 import SecondaryActionButton from '../../shared/SecondaryActionButton'
 import CounterField from '../../shared/CounterField'
-import theme, { color } from '../../../theme'
 import { convertTimestampToDateString } from '../../../shared/dateUtils'
 
 const TitleCell = styled.div`
@@ -57,9 +56,9 @@ const TaskSectionContainer = styled.div`
 `
 
 const TaskTitle = styled.div`
-  color: ${color.gray20};
-  font-family: ${theme.fontInterface};
-  font-size: ${theme.fontSizeBase};
+  color: ${th('color.gray20')};
+  font-family: ${th('fontInterface')};
+  font-size: ${th('fontSizeBase')};
   font-style: normal;
   font-weight: 500;
   letter-spacing: 0.01em;
@@ -106,15 +105,15 @@ const TaskNotificationLogsContainer = styled.div`
 const NotificationLogsToggle = styled.button`
   background-color: transparent;
   border: none;
-  color: ${color.brand1.base};
-  font-size: ${theme.fontSizeBaseSmall};
+  color: ${th('color.brand1.base')};
+  font-size: ${th('fontSizeBaseSmall')};
   padding: 20px 10px;
   text-decoration: underline;
 `
 
 const NotificationLogs = styled.div`
-  color: ${color.brand1.base};
-  font-size: ${theme.fontSizeBaseSmall};
+  color: ${th('color.brand1.base')};
+  font-size: ${th('fontSizeBaseSmall')};
   margin: 10px 0;
   text-align: left;
 `

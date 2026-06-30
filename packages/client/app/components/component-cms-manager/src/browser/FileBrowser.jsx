@@ -4,22 +4,17 @@
 
 import { useState, useContext } from 'react'
 import styled from 'styled-components'
-
 import { useTranslation } from 'react-i18next'
-
 import FolderTree from 'react-folder-tree'
 import 'react-folder-tree/dist/style.css'
+import { th } from '@coko/client'
 
 import { Link } from '../../../pubsweet'
-
 import ModalMetadataReadOnly from './ModalMetadataReadOnly'
-
 import DeleteIcon from './DeleteIcon'
 import { Select } from '../../../shared'
 import { ConfigContext } from '../../../config/src'
-
 import { FormActionButton } from '../style'
-import { color } from '../../../../theme'
 
 const FolderTreeContainer = styled.div`
   /* stylelint-disable selector-class-pattern */
@@ -43,25 +38,25 @@ const FolderTreeContainer = styled.div`
     position: relative;
 
     .typeIconContainer svg {
-      color: ${color.gray60};
-      stroke: ${color.gray60};
+      color: ${th('color.gray60')};
+      stroke: ${th('color.gray60')};
     }
 
     .displayName {
-      color: ${color.text};
+      color: ${th('color.text')};
 
       &:hover {
-        color: ${color.brand1.base};
+        color: ${th('color.brand1.base')};
       }
     }
 
     .caretContainer svg {
-      color: ${color.gray40};
-      stroke: ${color.gray40};
+      color: ${th('color.gray40')};
+      stroke: ${th('color.gray40')};
 
       &:hover {
-        color: ${color.brand1.base};
-        stroke: ${color.brand1.base};
+        color: ${th('color.brand1.base')};
+        stroke: ${th('color.brand1.base')};
       }
     }
 
@@ -73,9 +68,9 @@ const FolderTreeContainer = styled.div`
       right: 0;
 
       svg {
-        color: ${color.brand1.base};
+        color: ${th('color.brand1.base')};
         height: 1em;
-        stroke: ${color.brand1.base};
+        stroke: ${th('color.brand1.base')};
         width: 1em;
       }
 
@@ -95,7 +90,7 @@ const FolderTreeContainer = styled.div`
 
     .editingName {
       input {
-        background-color: ${color.brand1.tint70};
+        background-color: ${th('color.brand1.tint70')};
         font-size: inherit;
       }
 
@@ -107,8 +102,8 @@ const FolderTreeContainer = styled.div`
         transform: translate(0, -15%);
 
         svg:not(:hover) {
-          color: ${color.gray40};
-          stroke: ${color.gray40};
+          color: ${th('color.gray40')};
+          stroke: ${th('color.gray40')};
         }
       }
     }

@@ -17,7 +17,6 @@ import { Page } from './style'
 import { DragVerticalIcon } from '../../../shared/Icons'
 import { ConfirmationModal } from '../../../component-modal/src/ConfirmationModal'
 import { determineFieldAndComponent } from './config/Elements'
-import { color } from '../../../../theme'
 
 const FeildWrapper = styled.div`
   align-items: center;
@@ -26,25 +25,25 @@ const FeildWrapper = styled.div`
   padding: ${grid(0.5)};
 
   &.active {
-    background-color: ${color.brand1.tint70};
+    background-color: ${th('color.brand1.tint70')};
   }
 
   &:hover svg {
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
   }
 `
 
 const Element = styled.div.attrs({
   'data-testid': 'formbuilder-element',
 })`
-  background-color: ${color.backgroundB};
+  background-color: ${th('color.backgroundB')};
   border-radius: ${th('borderRadius')};
   display: flex;
   justify-content: space-between;
   width: 100%;
 
   &.active {
-    background-color: ${color.brand1.tint70};
+    background-color: ${th('color.brand1.tint70')};
   }
 `
 
@@ -77,7 +76,7 @@ const SmallIcon = withTheme(({ children }) => (
 ))
 
 const FieldTypeLabel = styled.span`
-  color: ${color.brand1.tint50};
+  color: ${th('color.brand1.tint50')};
   font-size: ${th('fontSizeBaseSmall')};
   margin-left: 0.5em;
 `

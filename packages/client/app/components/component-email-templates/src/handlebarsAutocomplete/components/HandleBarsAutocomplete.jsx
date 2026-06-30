@@ -6,7 +6,6 @@ import { grid, th } from '@coko/client'
 import { WaxContext } from 'wax-prosemirror-core'
 import { FlexRow } from '../../../../component-cms-manager/src/style'
 import { getUpdatedPosition, normalize } from '../helpers'
-import { color } from '../../../../../theme'
 import { DROPDOWN_ID, handlebars } from '../constants'
 import Option from './Option'
 import useHandlebarsAutoComplete from '../hooks/useHandlebarsAutoComplete'
@@ -17,7 +16,7 @@ const OptionsDropdown = styled(FlexRow)`
 
   align-items: flex-start;
   background-color: #ddd;
-  border: 2px solid ${color.brand1.base};
+  border: 2px solid ${th('color.brand1.base')};
   border-radius: ${th('borderRadius')};
   flex-direction: column;
   font-size: ${th('fontSizeBaseSmall')};
@@ -32,7 +31,7 @@ const OptionsDropdown = styled(FlexRow)`
 `
 
 const Heading = styled(FlexRow)`
-  background-color: ${color.brand1.shade25};
+  background-color: ${th('color.brand1.shade25')};
   color: #fff;
   padding: ${grid(0.5)} ${grid(1.2)};
   width: 100%;
@@ -69,7 +68,7 @@ const Options = styled.ul`
   }
 
   > button:not(:last-child) {
-    border-bottom: 1px solid ${color.brand1.tint70};
+    border-bottom: 1px solid ${th('color.brand1.tint70')};
   }
 `
 

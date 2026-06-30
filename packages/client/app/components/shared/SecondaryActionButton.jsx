@@ -5,10 +5,9 @@ import PropTypes from 'prop-types'
 import styled, { ThemeContext } from 'styled-components'
 import { Check, AlertCircle } from 'react-feather'
 import { th, grid, rotate360 } from '@coko/client'
-import { color } from '../../theme'
 
 const BaseButton = styled.button`
-  border: 2px solid ${color.brand1.base};
+  border: 2px solid ${th('color.brand1.base')};
   border-radius: ${th('borderRadius')};
   font-family: ${th('fontInterface')};
   font-size: ${th('fontSizeBase')};
@@ -26,15 +25,15 @@ const BaseButton = styled.button`
 `
 
 const DisabledButton = styled(BaseButton)`
-  background-color: ${color.gray90};
-  border: 2px solid ${color.gray90};
-  color: ${color.gray60};
+  background-color: ${th('color.gray90')};
+  border: 2px solid ${th('color.gray90')};
+  color: ${th('color.gray60')};
 `
 
 const Button = styled(BaseButton)`
   background-color: white;
   box-shadow: 0 3px 5px 1px rgb(0 0 0 / 20%);
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
 
   &:hover,
   &:active,
@@ -91,7 +90,7 @@ const SecondaryActionButton = ({
 
   const fgColor =
     status === 'pending' || status === 'success'
-      ? color.brand1.base()
+      ? themeContext.color.brand1.base
       : themeContext.colorError
 
   let statusIndicator = null
@@ -147,7 +146,7 @@ const SecondaryActionButton = ({
 }
 
 SecondaryActionButton.propTypes = {
-  /** Primary buttons are styled with color.brand1.base, unless another color is specified */
+  /** Primary buttons are styled with th('color.brand1.base'), unless another color is specified */
   disabled: PropTypes.bool,
   onClick: PropTypes.func,
   /** 'pending' will show a spinner; 'success' will show a tick; 'failure' will show a warning icon and change the color to colorWarning */

@@ -1,5 +1,5 @@
 import { css, keyframes } from 'styled-components'
-import color from '../color'
+import { th } from '@coko/client'
 
 const checking = keyframes`
   0% {
@@ -25,11 +25,11 @@ const localBorderTwoSize = '1px'
 export default {
   Root: css`
     &:hover span {
-      color: ${color.brand1.base};
+      color: ${th('color.brand1.base')};
 
       &::before {
         animation: ${checking} 0.5s;
-        box-shadow: 0 0 0 ${localBorderTwoSize} ${color.brand1.base};
+        box-shadow: 0 0 0 ${localBorderTwoSize} ${th('color.brand1.base')};
       }
     }
   `,

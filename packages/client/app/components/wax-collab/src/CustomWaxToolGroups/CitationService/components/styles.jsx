@@ -1,9 +1,9 @@
 import styled from 'styled-components'
+import { th } from '@coko/client'
 import {
   Button as OriginalButton,
   Checkbox as OriginalCheckbox,
 } from '../../../../../pubsweet'
-import { color } from '../../../../../../theme'
 
 export const Wrapper = styled.div`
   display: flex;
@@ -12,14 +12,14 @@ export const Wrapper = styled.div`
   width: 100%;
 
   &:hover {
-    background-color: ${color.gray95};
+    background-color: ${th('color.gray95')};
   }
 `
 
 export const StatusContainer = styled.span`
   align-items: center;
   align-self: flex-start;
-  border: 1px solid ${color.gray80};
+  border: 1px solid ${th('color.gray80')};
   border-radius: 100%;
   display: inline-flex;
   justify-content: center;
@@ -88,7 +88,7 @@ export const PopUpWrapper = styled.div`
   }
 
   & > div > h4 {
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     font-size: 30px;
     margin: 0;
     padding: 15px;
@@ -102,7 +102,7 @@ export const PopUpWrapper = styled.div`
 `
 
 export const Button = styled(OriginalButton)`
-  border: 2px solid ${color.brand1.base};
+  border: 2px solid ${th('color.brand1.base')};
   border-radius: 4px;
   cursor: pointer;
   padding: 4px 8px;
@@ -111,7 +111,7 @@ export const Button = styled(OriginalButton)`
   user-select: none;
 
   &[type='primary'] {
-    background-color: ${color.brand1.base};
+    background-color: ${th('color.brand1.base')};
     color: white;
 
     &:hover {
@@ -128,20 +128,20 @@ export const Button = styled(OriginalButton)`
   }
 
   &:disabled:hover {
-    border-color: ${color.brand1.base};
+    border-color: ${th('color.brand1.base')};
   }
 `
 
 export const Checkbox = styled(OriginalCheckbox)`
-  accent-color: ${color.brand1.base};
+  accent-color: ${th('color.brand1.base')};
 `
 
 export const CitationVersionWrapper = styled.label`
   align-items: center;
   background-color: white;
-  border-bottom: 1px solid ${color.gray80};
+  border-bottom: 1px solid ${th('color.gray80')};
   border-radius: 3px;
-  border-top: 1px solid ${color.gray80};
+  border-top: 1px solid ${th('color.gray80')};
   cursor: pointer;
   display: flex;
   flex-direction: row;
@@ -149,15 +149,15 @@ export const CitationVersionWrapper = styled.label`
   padding: 10px 16px;
 
   & input {
-    accent-color: ${color.brand1.base};
+    accent-color: ${th('color.brand1.base')};
   }
 
   &.selected {
-    background-color: ${color.gray95};
+    background-color: ${th('color.gray95')};
   }
 
   &.static {
-    color: ${color.gray40};
+    color: ${th('color.gray40')};
   }
 
   & > button {
@@ -172,7 +172,7 @@ export const CitationVersionWrapper = styled.label`
   }
 
   & > p > span.tag {
-    color: ${color.gray40};
+    color: ${th('color.gray40')};
   }
 
   & > div {
@@ -214,8 +214,8 @@ export const InputP = styled.p`
     width: 100%;
 
     & > input {
-      background-color: ${color.gray97};
-      border: 1px solid ${color.gray80};
+      background-color: ${th('color.gray97')};
+      border: 1px solid ${th('color.gray80')};
       border-radius: 5px;
       display: block;
       padding: 8px 10px;
@@ -230,7 +230,7 @@ export const InputP = styled.p`
 
 export const CloseButton = styled.span`
   align-items: center;
-  background-color: ${color.brand1.base};
+  background-color: ${th('color.brand1.base')};
   border-radius: 100%;
   color: white;
   cursor: pointer;

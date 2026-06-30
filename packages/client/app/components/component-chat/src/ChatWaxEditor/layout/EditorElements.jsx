@@ -1,5 +1,5 @@
 import { css } from 'styled-components'
-import { color } from '../../../../../theme'
+import { th } from '@coko/client'
 
 /* All styles regarding ProseMirror surface and elements */
 
@@ -144,14 +144,14 @@ export default css`
   /* added for figure weirdness */
 
   figure {
-    border: 1px solid ${color.brand1.base};
+    border: 1px solid ${th('color.brand1.base')};
     margin-bottom: 1rem;
     padding: 1rem;
     position: relative;
   }
 
   figure::before {
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     content: 'Figure:';
     font-size: 75%;
     left: 0;
@@ -166,14 +166,14 @@ export default css`
   }
 
   figcaption {
-    border: 1px solid ${color.brand1.base};
+    border: 1px solid ${th('color.brand1.base')};
     margin-top: 1rem;
     padding: 1rem;
     position: relative;
   }
 
   figcaption::before {
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     content: 'Caption:';
     font-size: 75%;
     left: 0;

@@ -14,10 +14,9 @@
 
 import styled, { css } from 'styled-components'
 import { th } from '@coko/client'
-import { color } from '../../../theme'
 
 const common = css`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font: ${th('fontInterface')};
   font-size: ${th('fontSizeBase')};
   font-weight: ${props => (props.active ? 'bold' : 'normal')};
@@ -28,7 +27,7 @@ const common = css`
   &:hover,
   &:active {
     background: none;
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     text-decoration: underline;
   }
 `

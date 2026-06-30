@@ -4,12 +4,13 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import { th } from '@coko/client'
+
 import { Icon } from '../../../../pubsweet'
 import ReadonlyFormTemplate from '../metadata/ReadonlyFormTemplate'
 import { ensureJsonIsParsed } from '../../../../../shared/objectUtils'
 import { SectionHeader, Title } from '../style'
 import { LooseRow, SectionContent } from '../../../../shared'
-import theme, { color } from '../../../../../theme'
 
 const Heading = styled.h4``
 
@@ -20,16 +21,16 @@ const Container = styled.div`
 `
 
 const StyledStrong = styled.strong`
-  color: ${color.gray40};
+  color: ${th('color.gray40')};
 `
 
 const UnsubmittedBannerBlock = styled.div`
-  background: ${color.warning.tint50};
+  background: ${th('color.warning.tint50')};
   border-radius: 8px;
-  color: ${color.warning.shade50};
-  font-size: ${theme.fontSizeBaseSmall};
+  color: ${th('color.warning.shade50')};
+  font-size: ${th('fontSizeBaseSmall')};
   font-style: italic;
-  line-height: ${theme.lineHeightBaseSmall};
+  line-height: ${th('lineHeightBaseSmall')};
   padding: 2px 20px;
   width: fit-content;
 `

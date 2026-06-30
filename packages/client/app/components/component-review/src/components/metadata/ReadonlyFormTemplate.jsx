@@ -2,9 +2,9 @@
 
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
+
 import ReadonlyFieldData from './ReadonlyFieldData'
-import { color } from '../../../../../theme'
 import {
   Title,
   SectionHeader,
@@ -31,6 +31,7 @@ const ReadonlyFormTemplate = ({
   copyHandleBarsCode = false,
   isCollaborativeForm = false,
 }) => {
+  const theme = useTheme()
   const { t } = useTranslation()
 
   const isChildrenEmpty = form.children.length === 0
@@ -102,7 +103,7 @@ const ReadonlyFormTemplate = ({
                 {element.name}
                 <Action onClick={onCopyHandleBarsCode(element.name)}>
                   {' '}
-                  <Icon color={color.brand1.base()} inline>
+                  <Icon color={theme.color.brand1.base} inline>
                     file-plus
                   </Icon>
                 </Action>

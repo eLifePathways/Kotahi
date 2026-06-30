@@ -3,7 +3,7 @@
 import styled from 'styled-components'
 import Popup from 'reactjs-popup'
 import { Calendar as FeatherCalendar } from 'react-feather'
-import { grid } from '@coko/client'
+import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Cell, HeadingCell } from './style'
 import { Select, DateRangeCalendar, SortUp, SortDown } from '../../shared'
@@ -11,18 +11,18 @@ import {
   dateToCompactStringLocal,
   compactStringToDateLocal,
 } from '../../../shared/dateUtils'
-import { color } from '../../../theme'
 
 /* eslint-disable-next-line no-unused-vars */
 const CalendarIcon = styled(({ isActive, ...props }) => (
   <FeatherCalendar {...props} />
 ))`
   height: ${grid(2)};
-  stroke: ${props => (props.isActive ? color.brand1.base : color.gray60)};
+  stroke: ${props =>
+    props.isActive ? props.theme.color.brand1.base : props.theme.color.gray60};
   width: ${grid(2)};
 
   &:hover {
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
   }
 `
 

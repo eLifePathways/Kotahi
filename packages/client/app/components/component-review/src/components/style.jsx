@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Button } from '../../../pubsweet'
-import theme, { color } from '../../../../theme'
 import { RoundIconButton } from '../../../shared'
 
 export const AdminSection = styled.div`
@@ -45,7 +44,7 @@ export const EditorWrapper = styled.div`
 `
 
 export const FormStatus = styled.div`
-  color: ${color.brand2.base};
+  color: ${th('color.brand2.base')};
   line-height: ${grid(5)};
   text-align: center;
 `
@@ -99,12 +98,12 @@ export const Cell = styled.span`
 `
 
 export const Affiliation = styled.span`
-  color: ${color.gray40};
+  color: ${th('color.gray40')};
   margin-left: 0.5em;
 `
 
 export const Email = styled.span`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   margin-left: 1em;
 `
 
@@ -138,22 +137,22 @@ export const AssignedAuthorForProofingLogsContainer = styled.div`
 export const AssignedAuthorForProofingLogsToggle = styled.button`
   background-color: transparent;
   border: none;
-  color: ${color.brand1.base};
-  font-size: ${theme.fontSizeBaseSmall};
+  color: ${th('color.brand1.base')};
+  font-size: ${th('fontSizeBaseSmall')};
   padding: 10px;
   text-decoration: underline;
 `
 
 export const AssignedAuthorForProofingLogs = styled.div`
-  color: ${color.text};
-  font-size: ${theme.fontSizeBaseSmall};
+  color: ${th('color.text')};
+  font-size: ${th('fontSizeBaseSmall')};
   margin: 10px;
   text-align: right;
 `
 
 export const AssignedAuthorForProofingInfo = styled.div`
-  color: ${color.text};
-  font-size: ${theme.fontSizeBaseSmall};
+  color: ${th('color.text')};
+  font-size: ${th('fontSizeBaseSmall')};
   margin: 8px 0;
 `
 

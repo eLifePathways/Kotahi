@@ -5,22 +5,12 @@ import { ThemeProvider } from 'styled-components'
 
 import { GET_GROUPS } from '../queries'
 import { reloadTranslationsForGroup } from '../i18n'
-import {
-  setBrandColors,
-  colorPrimaryDefault,
-  colorSecondaryDefault,
-} from '../theme'
+import { validateColor, makeTheme } from '../theme'
 import { Spinner, PageError } from '../components/shared'
 import ErrorPageFallback from '../ui/base/ErrorPageFallback'
 import { ConfigProvider } from '../components/config/src'
 import { YjsProvider } from '../components/provider-yjs/YjsProvider'
 import DynamicFavicon from '../dynamicFavicon'
-import { validateColor } from '../theme/color'
-
-type ThemeOverrides = {
-  colorPrimary?: string
-  colorSecondary?: string
-}
 
 const GroupPage = (): ReactNode => {
   const { groupName } = useParams()
@@ -78,17 +68,20 @@ const GroupPage = (): ReactNode => {
     activeConfig?.flaxSiteUrl,
   ])
 
-  const groupThemeOverrides: ThemeOverrides = useMemo(() => {
-    if (!config?.groupIdentity) return {}
+  const theme = useMemo(() => {
+    const defaultTheme = makeTheme()
+    if (!config?.groupIdentity) return defaultTheme
 
     const { primaryColor, secondaryColor } = config.groupIdentity
     const isPrimaryValid = validateColor(primaryColor)
     const isSecondaryValid = validateColor(secondaryColor)
 
-    return {
-      colorPrimary: isPrimaryValid ? primaryColor : colorPrimaryDefault,
-      colorSecondary: isSecondaryValid ? secondaryColor : colorSecondaryDefault,
+    if (!isPrimaryValid || !isSecondaryValid) {
+      console.error('Primary or secondary is not a valid color value.')
+      return defaultTheme
     }
+
+    return makeTheme(primaryColor, secondaryColor)
   }, [config])
 
   if (loading) return <Spinner />
@@ -103,15 +96,9 @@ const GroupPage = (): ReactNode => {
 
   window.localStorage.setItem('groupId', currentGroup.id)
 
-  // TO DO - refactor colors so that the theme is not bypassed
-  setBrandColors(
-    config?.groupIdentity?.primaryColor,
-    config?.groupIdentity?.secondaryColor,
-  )
-
   // TO DO - should yjs provider wrap the whole group?
   return (
-    <ThemeProvider theme={groupThemeOverrides}>
+    <ThemeProvider theme={theme}>
       <ConfigProvider config={config}>
         <YjsProvider>
           <DynamicFavicon config={config} />

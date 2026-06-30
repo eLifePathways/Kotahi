@@ -11,7 +11,6 @@ import { Primary, Secondary } from '../../../shared'
 import { convertTimestampToRelativeDateString } from '../../../../shared/dateUtils'
 import { UserAction } from '../../../component-manuscripts-table/src/style'
 import InviteDeclineModal from './InviteDeclineModal'
-import { color } from '../../../../theme'
 
 const DeclinedReviewerContainer = styled.div`
   display: flex;
@@ -34,12 +33,12 @@ const Date = styled.div`
 `
 
 const TextChange = styled.div`
-  color: ${color.brand2.base};
+  color: ${th('color.brand2.base')};
 `
 
 const EmailDisplay = styled(Secondary)`
   align-items: center;
-  color: ${color.brand2.base};
+  color: ${th('color.brand2.base')};
   display: flex;
   margin-left: calc(${th('gridUnit')} * 2);
 `

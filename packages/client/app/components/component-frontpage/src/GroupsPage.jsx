@@ -7,10 +7,9 @@ import { th, grid } from '@coko/client'
 import styled from 'styled-components'
 import { Spinner, CommsErrorBanner, Select } from '../../shared'
 import { GET_GROUPS } from '../../../queries'
-import { color } from '../../../theme'
 
 const Container = styled.div`
-  background: ${color.gray97};
+  background: ${th('color.gray97')};
   display: grid;
   height: 100vh;
   place-items: center;

@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import Color from 'color'
 import { th } from '@coko/client'
 import { Trans, useTranslation } from 'react-i18next'
+
 import CardCollection, { Card } from './CardCollection'
 import ConcentricStepsChart from './ConcentricStepsChart'
 import DurationsChart from './DurationsChart'
 import Tooltip from './Tooltip'
-import { color } from '../../../theme'
 
 const ChartCard = styled(Card)`
   align-items: center;
@@ -23,7 +23,7 @@ const BigNumbersCard = styled(ChartCard)`
 `
 
 const CardHeader = styled.div`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   font-size: 120%;
   margin-top: 1em;
   text-align: center;
@@ -44,7 +44,7 @@ const NoteCenter = styled.div`
 `
 
 const Note = styled.div`
-  color: ${color.gray50};
+  color: ${th('color.gray50')};
   font-size: ${th('fontSizeBaseSmall')};
   line-height: ${th('lineHeightBaseSmall')};
 `

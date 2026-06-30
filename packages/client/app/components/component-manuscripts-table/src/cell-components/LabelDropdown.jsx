@@ -8,8 +8,9 @@ import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { ChevronUp, ChevronDown, X } from 'react-feather'
 import Color from 'color'
+import { th } from '@coko/client'
+
 import { LabelBadge } from '../../../shared'
-import { color } from '../../../../theme'
 
 const BaseDropdown = styled.div.attrs({
   'data-testid': 'label-dropdown-base-dropdown',
@@ -32,7 +33,7 @@ const DropdownElement = styled.div.attrs({
 const DropdownMenu = styled.div.attrs({
   'data-testid': 'label-dropdown-menu',
 })`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
@@ -71,12 +72,12 @@ const StyledButton = styled.button.attrs({
 
 const DropdownMenuItem = styled.div`
   background-color: ${({ isSelected }) =>
-    isSelected ? `${color.gray95}` : 'white'};
+    isSelected ? `${th('color.gray95')}` : 'white'};
   cursor: pointer;
   padding: 8px;
 
   &:hover {
-    background-color: ${color.gray95};
+    background-color: ${th('color.gray95')};
   }
 `
 
@@ -151,8 +152,8 @@ const LabelDropdown = ({
                 <X
                   color={
                     values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${color.textReverse}`
-                      : `${color.text}`
+                      ? `${th('color.textReverse')}`
+                      : `${th('color.text')}`
                   }
                   size={18}
                 />
@@ -161,8 +162,8 @@ const LabelDropdown = ({
                 <ChevronUp
                   color={
                     values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${color.textReverse}`
-                      : `${color.text}`
+                      ? `${th('color.textReverse')}`
+                      : `${th('color.text')}`
                   }
                   size={18}
                 />
@@ -174,8 +175,8 @@ const LabelDropdown = ({
                 <X
                   color={
                     values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${color.textReverse}`
-                      : `${color.text}`
+                      ? `${th('color.textReverse')}`
+                      : `${th('color.text')}`
                   }
                   size={18}
                 />
@@ -184,8 +185,8 @@ const LabelDropdown = ({
                 <ChevronDown
                   color={
                     values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${color.textReverse}`
-                      : `${color.text}`
+                      ? `${th('color.textReverse')}`
+                      : `${th('color.text')}`
                   }
                   size={18}
                 />

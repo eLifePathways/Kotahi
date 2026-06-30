@@ -1,12 +1,13 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
-import { color } from '../../../../../theme'
 
 const activeStyles = css`
-  color: ${({ danger }) => (danger ? th('colorError') : color.brand1.base)};
+  color: ${({ danger, theme }) =>
+    danger ? theme.colorError : theme.color.brand1.base};
 
   > i svg {
-    fill: ${({ danger }) => (danger ? th('colorError') : color.brand1.base)};
+    fill: ${({ danger, theme }) =>
+      danger ? theme.colorError : theme.color.brand1.base};
   }
 `
 
@@ -43,10 +44,12 @@ const RootButton = styled.button.attrs(({ title, type }) => ({
 
   &:hover {
     background: ${th('colorBackgroundHue')};
-    color: ${({ danger }) => (danger ? th('colorError') : color.brand1.base)};
+    color: ${({ danger, theme }) =>
+      danger ? theme.colorError : theme.color.brand1.base};
 
     > i svg {
-      fill: ${({ danger }) => (danger ? th('colorError') : color.brand1.base)};
+      fill: ${({ danger, theme }) =>
+        danger ? theme.colorError : theme.color.brand1.base};
       transition: all 0.1s ease-in;
     }
   }

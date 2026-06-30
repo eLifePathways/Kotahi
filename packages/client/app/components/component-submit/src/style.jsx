@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
-import theme from '../../../theme'
 
 export { Container, Content, Heading } from '../../shared'
 
@@ -27,7 +26,7 @@ export const Section = styled.section.attrs(props => ({
 export const Legend = styled.div`
   font-size: ${th('fontSizeBase')};
   font-weight: 500;
-  margin-bottom: ${theme.spacing.e};
+  margin-bottom: ${th('spacing.e')};
 `
 
 export const SubNote = styled.span`

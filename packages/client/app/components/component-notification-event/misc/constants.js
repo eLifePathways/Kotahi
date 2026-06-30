@@ -1,5 +1,3 @@
-import { color } from '../../../theme'
-
 export const COLLAPSED_STATE_INIT = false
 
 export const DRAFT_NOTIFICATION_SHAPE = {
@@ -14,13 +12,6 @@ export const DRAFT_NOTIFICATION_SHAPE = {
   subject: '',
   isDefault: false, // means not recipient settable and not deletable
   delay: 0,
-}
-
-export const EVENT_TYPE_COLORS = {
-  colors: {
-    email: color.brand1.base(),
-    default: '#aaa',
-  },
 }
 
 export const FILTERS_LIST = [

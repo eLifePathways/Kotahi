@@ -5,17 +5,17 @@
 import { useContext } from 'react'
 import styled from 'styled-components'
 import moment from 'moment-timezone'
+import { th } from '@coko/client'
 import { CompactDetailLabel, MinimalDatePicker } from '../../shared'
 import { ConfigContext } from '../../config/src'
 import { transposeFromLocalToTimezone } from '../../../shared/dateUtils'
-import theme, { color } from '../../../theme'
 
 const BaseDueDateCell = styled.div`
   align-items: center;
   /* stylelint-disable-next-line declaration-no-important */
-  background: ${color.gray99} !important;
-  border: 1px solid ${color.gray80};
-  border-radius: ${theme.borderRadius};
+  background: ${th('color.gray99')} !important;
+  border: 1px solid ${th('color.gray80')};
+  border-radius: ${th('borderRadius')};
   box-shadow: inset 0 0 4px rgb(0 0 0 / 7%);
   display: flex;
   justify-content: flex-start;
@@ -30,13 +30,13 @@ const BaseDueDateCell = styled.div`
   }
 
   button {
-    color: ${color.gray20};
+    color: ${th('color.gray20')};
     display: flex;
     flex-direction: row-reverse;
-    font-size: ${theme.fontSizeBase};
+    font-size: ${th('fontSizeBase')};
     justify-content: space-around;
     letter-spacing: 0.01em;
-    line-height: ${theme.lineHeightBase};
+    line-height: ${th('lineHeightBase')};
     width: 100%;
 
     svg {

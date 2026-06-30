@@ -22,7 +22,6 @@ import {
 } from '../../../shared'
 import { ConfirmationModal } from '../../../component-modal/src/ConfirmationModal'
 import FormSummary from './FormSummary'
-import { color } from '../../../../theme'
 import { ConfigContext } from '../../../config/src'
 
 const AddFieldButton = styled(RoundIconButton)`
@@ -41,8 +40,8 @@ const UnpaddedIcon = styled(Icon)`
   vertical-align: text-top;
 `
 
-const ControlIcon = withTheme(({ children }) => (
-  <UnpaddedIcon color={color.brand1.base()}>{children}</UnpaddedIcon>
+const ControlIcon = withTheme(({ children, theme }) => (
+  <UnpaddedIcon color={theme.color.brand1.base}>{children}</UnpaddedIcon>
 ))
 
 const AddFormButton = styled(ActionButton)`

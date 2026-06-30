@@ -17,6 +17,8 @@ import {
 } from 'react-feather'
 import { takeRight } from 'lodash'
 import { useLazyQuery } from '@apollo/client/react'
+import { th } from '@coko/client'
+
 import Editor from './components/Editor'
 import PromptsInput from './PromptsInput'
 import {
@@ -39,7 +41,6 @@ import ChatBubble from './ChatBubble'
 import ChatHistory from './ChatHistory'
 import Checkbox from './components/Checkbox'
 // import useChatGpt from './hooks/useChatGpt'
-import { color } from '../../theme'
 import { ConfigContext } from '../config/src'
 import { CHAT_GPT } from '../../queries'
 
@@ -79,10 +80,10 @@ const CssAssistantUi = styled.div`
       padding: 0;
 
       > svg {
-        stroke: ${color.brand1.base};
+        stroke: ${th('color.brand1.base')};
       }
     }
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     display: flex;
     gap: 5px;
   }
@@ -97,7 +98,7 @@ const StyledHeading = styled.div`
   height: fit-content;
   justify-content: space-between;
   padding: 0 0 0 10px;
-  scrollbar-color: ${color.brand1.base};
+  scrollbar-color: ${th('color.brand1.base')};
   scrollbar-width: thin;
   width: 100%;
 `
@@ -131,7 +132,7 @@ const EditorContainer = styled.div`
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${color.brand1.base};
+    background: ${th('color.brand1.base')};
     border-radius: 5px;
     width: 5px;
   }
@@ -197,7 +198,7 @@ const WindowHeading = styled.div`
   z-index: 99;
 
   svg {
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
   }
 
   > :first-child {
@@ -241,7 +242,7 @@ const WindowHeadingControls = styled.span`
     width: 15px;
 
     &:hover {
-      stroke: ${color.brand1.base};
+      stroke: ${th('color.brand1.base')};
     }
   }
 `
@@ -264,7 +265,7 @@ const OverlayAnimated = styled(LoadingOverlay)`
 
   > span {
     animation: ${p => (p.$loading ? editorLoadingAnim : 'none')} 1.5s infinite;
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
     font-size: 40px;
   }
 `

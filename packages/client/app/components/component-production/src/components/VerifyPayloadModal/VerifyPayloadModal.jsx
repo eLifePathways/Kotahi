@@ -12,10 +12,10 @@ import ReactCodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { grid, th } from '@coko/client'
 import { isFunction } from 'lodash'
+
 import { Spinner } from '../../../../shared'
 import { CloseButton, PopUpH2 } from '../styles'
 import { FlexRow } from '../../../../../globals'
-import { color } from '../../../../../theme'
 import dataciteLogo from '../../../../../../public/datacite-logo-vector.svg'
 import { Button } from '../../../../pubsweet'
 import { CHECK_API_PAYLOAD } from '../../../../../queries'
@@ -106,7 +106,7 @@ const Root = styled(FlexRow)`
 
 const Header = styled(FlexRow)`
   align-items: center;
-  background: ${color.brand1.base};
+  background: ${th('color.brand1.base')};
   justify-content: space-between;
   padding: ${grid(0.6)} ${grid(1)};
   text-transform: uppercase;
@@ -185,7 +185,8 @@ const ResultHeader = styled(FlexRow)`
   width: 100%;
 
   p {
-    color: ${p => (!p.$failure ? color.success.base : color.error.base)};
+    color: ${p =>
+      !p.$failure ? p.theme.color.success.base : p.theme.color.error.base};
   }
 `
 
@@ -227,7 +228,7 @@ const ErrorsList = styled.ul`
   > li {
     background: ${th('colorBackground')};
     border: 1px solid #ddd;
-    border-left: ${color.error.base} 5px solid;
+    border-left: ${th('color.error.base')} 5px solid;
     padding: ${grid(0.6)} ${grid(1.2)};
   }
 `

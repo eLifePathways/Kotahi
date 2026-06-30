@@ -8,15 +8,15 @@
 
 import { useState } from 'react'
 import styled from 'styled-components'
+import { th } from '@coko/client'
 import ChatWaxEditor from '../ChatWaxEditor'
-import color from '../../../../theme/color'
 
 const EditorWrapper = styled.div`
   position: relative;
 `
 
 const Suggestions = styled.div`
-  background-color: ${color.white};
+  background-color: ${th('color.white')};
   bottom: 34px;
   margin-top: -74px;
   min-width: 100px;
@@ -35,14 +35,14 @@ const List = styled.ul`
   /* stylelint-disable-next-line selector-class-pattern */
   .mentions__suggestions__item {
     border-bottom: 1px solid rgb(0 0 0 / 15%);
-    color: ${color.text};
+    color: ${th('color.text')};
     cursor: pointer;
     padding: 5px 15px;
   }
 
   /* stylelint-disable-next-line selector-class-pattern */
   .mentions__suggestions__item--focused {
-    background-color: ${color.gray97};
+    background-color: ${th('color.gray97')};
   }
 `
 

@@ -2,8 +2,8 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { th, grid } from '@coko/client'
+
 import { Icon } from '../../pubsweet'
-import { color } from '../../../theme'
 import { menuStyles } from './styleGlobals'
 import PinButton from './PinButton'
 
@@ -17,8 +17,8 @@ export const MainNavWrapper = styled.div.attrs({
   align-items: center;
   background: linear-gradient(
     134deg,
-    ${color.brand1.base},
-    ${color.brand1.tint25}
+    ${th('color.brand1.base')},
+    ${th('color.brand1.tint25')}
   );
   display: flex;
   flex-direction: column;
@@ -37,7 +37,7 @@ export const ScrollWrapper = styled.div`
   height: 100%;
   overflow: hidden auto;
   position: relative;
-  scrollbar-color: ${color.brand1.tint50} #fff0;
+  scrollbar-color: ${th('color.brand1.tint50')} #fff0;
   scrollbar-width: thin;
   transition: all var(transition-time);
   width: 100%;
@@ -48,7 +48,7 @@ export const ScrollWrapper = styled.div`
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${color.brand1.tint50};
+    background: ${th('color.brand1.tint50')};
     border-radius: 0.3rem;
   }
 
@@ -69,7 +69,7 @@ export const NavLinks = styled.div`
 
 // #region PinNav
 export const SectionNavLayoutSettings = styled.div`
-  background: ${color.brand1.shade10};
+  background: ${th('color.brand1.shade10')};
   border: none;
   border-bottom: 1px solid #fff2;
   height: ${p => (p.$pinned ? '0' : '22px')};
@@ -82,10 +82,10 @@ export const SectionNavLayoutSettings = styled.div`
   width: 100%;
 
   &:hover {
-    background-color: ${color.brand1.shade15};
+    background-color: ${th('color.brand1.shade15')};
 
     * {
-      color: ${color.brand1.tint70};
+      color: ${th('color.brand1.tint70')};
     }
   }
 `
@@ -93,7 +93,8 @@ export const SectionNavLayoutSettings = styled.div`
 export const StyledPinButton = styled(PinButton)`
   background: ${p => (p.$pinned ? '#fff4' : 'transparent')};
   border-radius: 4px;
-  color: ${p => (p.$pinned ? color.brand1.tint90 : color.brand1.tint25)};
+  color: ${p =>
+    p.$pinned ? p.theme.color.brand1.tint90 : p.theme.color.brand1.tint25};
   max-width: ${p => (p.$menuIsMinimal ? '0' : '100%')};
   opacity: ${p => (p.$menuIsMinimal ? '0' : '1')};
   overflow: hidden;
@@ -115,9 +116,10 @@ export const StyledPinButton = styled(PinButton)`
 
 // #region Link
 export const StyledLink = styled(Link)`
-  background-color: ${p => (p.$active ? color.brand1.tint70 : 'unset')};
+  background-color: ${p => (p.$active ? p.theme.color.brand1.tint70 : 'unset')};
   border-radius: 10px;
-  color: ${p => (p.$active ? color.text : color.textReverse)} !important;
+  color: ${p =>
+    p.$active ? p.theme.color.text : p.theme.color.textReverse} !important;
   cursor: pointer;
   display: flex;
   font-size: ${th('fontSizeBase')} !important;
@@ -145,18 +147,19 @@ export const StyledLink = styled(Link)`
   }
 
   svg {
-    stroke: ${p => (p.$active ? color.text : color.textReverse)};
+    stroke: ${p =>
+      p.$active ? p.theme.color.text : p.theme.color.textReverse};
     transition: stroke var(--transition-link-colors);
     width: 1em;
   }
 
   &:hover {
-    background-color: ${color.brand1.tint70};
-    color: ${color.text} !important;
-    stroke: ${color.text};
+    background-color: ${th('color.brand1.tint70')};
+    color: ${th('color.text')} !important;
+    stroke: ${th('color.text')};
 
     svg {
-      stroke: ${color.text};
+      stroke: ${th('color.text')};
     }
   }
 `
@@ -183,7 +186,7 @@ export const LinkLabel = styled.span`
 export const StyledIcon = styled(Icon)``
 
 export const AlertIndicator = styled.div`
-  background: ${color.error.base};
+  background: ${th('color.error.base')};
   border-radius: 50%;
   display: flex;
   height: 10px;
@@ -219,7 +222,7 @@ export const SubMenuContainer = styled(NavLinks)`
 
 // #region UserNav
 export const RolesLabel = styled.div`
-  color: ${color.brand1.tint50};
+  color: ${th('color.brand1.tint50')};
   font-size: ${th('fontSizeBaseSmaller')};
   font-weight: normal;
   line-height: 1;
@@ -231,7 +234,7 @@ export const UserItem = styled(Link).attrs({
 })`
   align-items: end;
   border-bottom: 1px solid #fff2;
-  color: ${color.textReverse};
+  color: ${th('color.textReverse')};
   display: flex;
   gap: ${p => (p.$expanded ? '16px' : '0')};
   overflow: hidden;
@@ -241,7 +244,7 @@ export const UserItem = styled(Link).attrs({
   width: 100%;
 
   &:hover {
-    color: ${color.textReverse} !important;
+    color: ${th('color.textReverse')} !important;
   }
 `
 
@@ -273,7 +276,7 @@ export const UserMenuContainer = styled.div`
   width: 100%;
 
   & img {
-    outline: 4px solid ${color.brand1.base};
+    outline: 4px solid ${th('color.brand1.base')};
   }
 `
 // #endregion UserNav
@@ -285,7 +288,7 @@ export const Root = styled.nav`
   --transition-link-colors: 0.3s ease;
 
   align-items: flex-start;
-  background: ${color.brand1.base};
+  background: ${th('color.brand1.base')};
   display: flex;
   flex-direction: column;
   font-family: ${th('fontInterface')}, sans-serif !important;

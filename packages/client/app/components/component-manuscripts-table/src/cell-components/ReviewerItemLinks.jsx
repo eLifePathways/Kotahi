@@ -3,12 +3,16 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import { th } from '@coko/client'
+
 import { Action, MediumRow } from '../../../shared'
-import { color } from '../../../../theme'
 import { findReviewerStatus } from './reviewStatusUtils'
 
 const Divider = styled.div`
-  background-image: linear-gradient(${color.brand2.base}, ${color.brand2.base});
+  background-image: linear-gradient(
+    ${th('color.brand2.base')},
+    ${th('color.brand2.base')}
+  );
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 1px 100%;

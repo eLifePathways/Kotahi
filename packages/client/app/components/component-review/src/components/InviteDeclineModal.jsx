@@ -6,7 +6,6 @@ import { convertTimestampToDateString } from '../../../../shared/dateUtils'
 import { UserAvatar } from '../../../component-avatar/src'
 import Modal from '../../../component-modal/src/Modal'
 import { ConfigurableStatus } from '../../../shared'
-import { color } from '../../../../theme'
 
 const ModalBody = styled.div`
   display: flex;
@@ -67,7 +66,8 @@ const DeclinedBadge = styled(ConfigurableStatus)`
 `
 
 const TextChange = styled.div`
-  color: ${props => (props.gray ? color.brand2.base : color.text)};
+  color: ${props =>
+    props.gray ? props.theme.color.brand2.base : props.theme.color.text};
   padding: 5px;
 `
 

@@ -1,8 +1,5 @@
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import { color } from '../../../../theme'
-
-// import theme from 'shared/theme';
 
 import { Truncate } from '../../../../globals'
 
@@ -13,7 +10,9 @@ export const MentionsInputStyle = {
 export const StyledMentionSuggestion = styled.div`
   align-items: center;
   background: ${props =>
-    props.focused ? th('colorBackgroundHue') : th('colorBackground')};
+    props.focused
+      ? props.theme.colorBackgroundHue
+      : props.theme.colorBackground};
   border-bottom: 1px solid ${th('colorBorder')};
   display: flex;
   line-height: 1.3;
@@ -27,7 +26,8 @@ export const MentionContent = styled.div`
 `
 
 export const MentionName = styled.span`
-  color: ${props => (props.focused ? color.brand1.base : color.text)};
+  color: ${props =>
+    props.focused ? props.theme.color.brand1.base : props.theme.color.text};
   font-size: 14px;
   font-weight: 500;
   margin-left: 12px;
@@ -38,7 +38,8 @@ export const MentionName = styled.span`
 `
 
 export const MentionUsername = styled.span`
-  color: ${props => (props.focused ? color.brand1.base : th('colorWarning'))};
+  color: ${props =>
+    props.focused ? props.theme.color.brand1.base : props.theme.colorWarning};
   font-size: 13px;
   font-weight: 400;
   margin-left: 12px;

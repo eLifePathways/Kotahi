@@ -4,16 +4,16 @@
 import { useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
-import { rotate360 } from '@coko/client'
+import { rotate360, th } from '@coko/client'
 import PropTypes from 'prop-types'
+
 import SendIcon from './SendButton'
 import { CssAssistantContext } from './hooks/CssAssistantContext'
-import { color } from '../../theme'
 import { callOn } from '../../shared/generalUtils'
 import { autoResize } from './utils'
 
 const StyledForm = styled.form`
-  --color: ${color.brand1.base};
+  --color: ${th('color.brand1.base')};
   --color-border: #0004;
   --font-size: 14px;
   align-items: center;
@@ -53,8 +53,8 @@ const StyledSpinner = styled.div`
 
   &::after {
     animation: ${rotate360} 1s linear infinite;
-    border: 2px solid ${color.brand1.base};
-    border-color: ${color.brand1.base} transparent;
+    border: 2px solid ${th('color.brand1.base')};
+    border-color: ${th('color.brand1.base')} transparent;
     border-radius: 50%;
     /* stylelint-disable-next-line string-quotes */
     content: ' ';
@@ -75,7 +75,7 @@ const SendButton = styled.button`
   width: 24px;
 
   > svg {
-    fill: ${color.brand1.base};
+    fill: ${th('color.brand1.base')};
     transform: scale(1.35);
   }
 `

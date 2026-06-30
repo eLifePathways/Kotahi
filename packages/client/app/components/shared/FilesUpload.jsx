@@ -4,16 +4,15 @@ import PropTypes from 'prop-types'
 import { cloneDeep, get } from 'lodash'
 import { FieldArray } from 'formik'
 import { grid, th } from '@coko/client'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import UploadingFile from './UploadingFile'
 import { Dropzone } from './Dropzone'
 import { Icon } from './Icon'
-import { color } from '../../theme'
 
 const Root = styled.div`
   align-items: center;
-  border: 1px dashed ${color.gray60};
+  border: 1px dashed ${th('color.gray60')};
   border-radius: ${th('borderRadius')};
   display: flex;
   height: ${grid(8)};
@@ -33,7 +32,8 @@ const Files = styled.div`
 
 const Message = styled.div`
   align-items: center;
-  color: ${props => (props.disabled ? color.textPlaceholder : 'inherit')};
+  color: ${props =>
+    props.disabled ? props.theme.color.textPlaceholder : 'inherit'};
   display: flex;
   justify-content: center;
   width: 100%;
@@ -63,6 +63,7 @@ const DropzoneAndList = ({
 }) => {
   // Disable the input in case we want a single file upload
   // and a file has already been uploaded
+  const theme = useTheme()
   const { t } = useTranslation()
 
   const files = cloneDeep(get(values, fieldName) || [])
@@ -121,7 +122,7 @@ const DropzoneAndList = ({
                 ) : (
                   <>
                     {t('dragndrop.Drag and drop your files here')}
-                    <Icon color={color.brand1.base()} inline>
+                    <Icon color={theme.color.brand1.base} inline>
                       file-plus
                     </Icon>
                   </>

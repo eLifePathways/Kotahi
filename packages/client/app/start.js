@@ -3,7 +3,7 @@ import { setContext } from '@apollo/client/link/context'
 
 import { startClient } from '@coko/client'
 
-import theme from './theme'
+import { makeTheme } from './theme'
 import routes from './Pages'
 
 import './i18n'
@@ -110,5 +110,7 @@ const makeApolloConfig = originalConfig => {
     cache: new InMemoryCache(cacheConfig),
   }
 }
+
+const theme = makeTheme()
 
 startClient(routes, theme, { makeApolloConfig })

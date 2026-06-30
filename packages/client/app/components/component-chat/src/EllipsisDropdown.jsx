@@ -5,10 +5,10 @@
 
 import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { color } from '../../../theme'
+import { th } from '@coko/client'
 
 const DropdownContainer = styled.div`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
   position: absolute;
   right: 0;
@@ -18,7 +18,7 @@ const DropdownContainer = styled.div`
 
 const DropdownItem = styled.div`
   border: 1px solid #ccc;
-  color: ${color.text};
+  color: ${th('color.text')};
   cursor: pointer;
   font-size: 16px;
   padding: 8px;

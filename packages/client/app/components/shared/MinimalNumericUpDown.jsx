@@ -8,29 +8,28 @@ import styled, { ThemeContext } from 'styled-components'
 import { ChevronUp, ChevronDown } from 'react-feather'
 import { th, grid } from '@coko/client'
 import { SolidColumn, TightRow } from './Containers'
-import { color } from '../../theme'
 
 /** Used for both up button and down button */
 const UpDownButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  color: ${color.gray60};
+  color: ${th('color.gray60')};
   height: ${grid(2)};
   justify-content: center;
   padding: 0 ${grid(0.5)};
   width: ${grid(3)};
 
   &:hover {
-    color: ${color.brand1.base};
+    color: ${th('color.brand1.base')};
   }
 
   & svg {
-    stroke: ${color.gray60};
+    stroke: ${th('color.gray60')};
   }
 
   &:hover svg {
-    stroke: ${color.brand1.base};
+    stroke: ${th('color.brand1.base')};
   }
 `
 
@@ -48,7 +47,7 @@ const Input = styled.input`
 
   &:hover,
   &:focus {
-    outline: 1px solid ${color.brand1.base};
+    outline: 1px solid ${th('color.brand1.base')};
   }
 `
 

@@ -5,8 +5,9 @@ import { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { th } from '@coko/client'
+
 import { Select, TextInput } from '../../shared'
-import theme from '../../../theme'
 
 import tasksJson from '../../../../config/journal/tasks.json' with { type: 'json' }
 
@@ -20,7 +21,7 @@ const AssigneeCellContainer = styled.div`
 
 const BaseAssigneeCell = styled.div`
   > div > div {
-    font-size: ${theme.fontSizeBase};
+    font-size: ${th('fontSizeBase')};
     line-height: 1.25;
 
     &:nth-child(2) {

@@ -2,19 +2,18 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { keys } from 'lodash'
-import { color } from '../../../../../theme'
 import { FlexRow } from '../../../../component-cms-manager/src/style'
 import { BRACKETS_TYPES } from '../constants'
 import { getBrackets, splitAndCapitalize } from '../helpers'
 
 // #region styleds ------------------------------------------------------
 // Just a idea to have different colors for each form badge (wich colors may need discussion)
-const getFormBadgeBg = ({ $form }) => {
+const getFormBadgeBg = ({ $form, theme }) => {
   const colorVariations = {
-    common: color.gray50,
+    common: theme.color.gray50,
     decision: '#d89400',
     review: '#803c01',
-    submission: color.brand1.base(),
+    submission: theme.color.brand1.base,
     editors: '#c46b28',
   }
 
@@ -25,7 +24,7 @@ const getFormBadgeBg = ({ $form }) => {
 const OptionButton = styled.button`
   background-color: white;
   border: none;
-  border-right: 1px solid ${color.brand1.tint70};
+  border-right: 1px solid ${th('color.brand1.tint70')};
   cursor: pointer;
   padding: ${grid(1.5)} ${grid(2)};
   scroll-snap-align: start;
@@ -33,11 +32,11 @@ const OptionButton = styled.button`
   width: 100%;
 
   &:hover {
-    background-color: ${color.brand1.tint90};
+    background-color: ${th('color.brand1.tint90')};
   }
 
   &[aria-selected='true'] {
-    background-color: ${color.brand1.tint90};
+    background-color: ${th('color.brand1.tint90')};
   }
 `
 
@@ -59,7 +58,7 @@ const OptionLabel = styled(FlexRow)`
   }
 
   > small {
-    color: ${color.gray20};
+    color: ${th('color.gray20')};
   }
 `
 

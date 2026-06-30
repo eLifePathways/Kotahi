@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import { grid, th, uuid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { cloneDeep, pick, isArray } from 'lodash'
-import { color } from '../../../../theme'
 
 import CollectionTable from './CollectionTable'
 import { HeadingCell } from '../../../component-production/src/components/styles'
@@ -35,8 +34,8 @@ const CmsHeadStyled = styled.div`
 
 export const CollectionsHeading = styled.div`
   align-items: center;
-  background-color: ${color.backgroundA};
-  border-top: 1px solid ${color.gray90};
+  background-color: ${th('color.backgroundA')};
+  border-top: 1px solid ${th('color.gray90')};
   column-gap: ${grid(2)};
   display: flex;
   flex-direction: row;

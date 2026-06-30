@@ -2,8 +2,8 @@
 
 import styled, { useTheme } from 'styled-components'
 import * as icons from 'react-feather'
+import { th } from '@coko/client'
 import ActionButton from './ActionButton'
-import { color } from '../../theme'
 
 const RoundButton = styled(ActionButton).attrs(props => ({
   'data-testid': props['data-testid'],
@@ -21,9 +21,9 @@ const RoundButton = styled(ActionButton).attrs(props => ({
 `
 
 const UnreadMessagesCount = styled.div`
-  background-color: ${color.brand1.base};
+  background-color: ${th('color.brand1.base')};
   border-radius: 50%;
-  color: ${color.white};
+  color: ${th('color.white')};
   font-size: 12px;
   height: 19px;
   line-height: 20px;

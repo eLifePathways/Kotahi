@@ -1,5 +1,5 @@
 import { css } from 'styled-components'
-import color from '../color'
+import { th } from '@coko/client'
 
 /*
   To disable underline from Logo
@@ -7,7 +7,7 @@ import color from '../color'
 
 export default {
   Root: css`
-    box-shadow: 0 0 1px ${color.brand1.base};
+    box-shadow: 0 0 1px ${th('color.brand1.base')};
     margin-bottom: 1px;
   `,
   LogoLink: css`

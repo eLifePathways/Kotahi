@@ -4,10 +4,10 @@
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
 import { useState, useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { X as CloseIcon, ChevronUp, ChevronDown } from 'react-feather'
 import { useTranslation } from 'react-i18next'
-import { color } from '../../theme'
+import { th } from '@coko/client'
 
 const Container = styled.div`
   display: flex;
@@ -16,8 +16,8 @@ const Container = styled.div`
 
 const LabelContainer = styled.div`
   align-items: center;
-  background: ${color.backgroundA};
-  border: 1.5px solid ${color.gray70};
+  background: ${th('color.backgroundA')};
+  border: 1.5px solid ${th('color.gray70')};
   border-radius: 10px;
   box-shadow: 0 1px 1px rgb(0 0 0 / 25%);
   display: flex;
@@ -40,12 +40,16 @@ const CounterActionContainer = styled.div`
     cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
 
     svg {
-      color: ${props => (props.disabled ? color.gray60 : color.gray40)};
+      color: ${props =>
+        props.disabled ? props.theme.color.gray60 : props.theme.color.gray40};
     }
 
     &:hover {
       svg {
-        stroke: ${props => (props.disabled ? color.gray60 : color.brand1.base)};
+        stroke: ${props =>
+          props.disabled
+            ? props.theme.color.gray60
+            : props.theme.color.brand1.base};
       }
     }
   }
@@ -77,6 +81,7 @@ const CounterField = ({
   compact = false,
   disabled = false,
 }) => {
+  const theme = useTheme()
   const [value, setValue] = useState(propsValue)
   const { t } = useTranslation()
 
@@ -139,7 +144,10 @@ const CounterField = ({
         <span>{displayValue}</span>
         {showResetIcon && (
           <CloseIconContainer disabled={disabled} onClick={() => resetValue()}>
-            <CloseIcon color={disabled ? color.gray60 : color.text} size={15} />
+            <CloseIcon
+              color={disabled ? theme.color.gray60 : theme.color.text}
+              size={15}
+            />
           </CloseIconContainer>
         )}
       </LabelContainer>

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled from 'styled-components'
-import { color } from '../../../../theme'
+import { th } from '@coko/client'
 
 const Button = styled.button`
   align-items: center;
@@ -26,13 +26,13 @@ const Button = styled.button`
 
   &:disabled {
     svg {
-      fill: ${color.gray90};
+      fill: ${th('color.gray90')};
     }
   }
 
   &:not(:disabled):hover {
     svg {
-      fill: ${color.brand1.base};
+      fill: ${th('color.brand1.base')};
     }
   }
 `

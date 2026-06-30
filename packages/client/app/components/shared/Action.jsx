@@ -1,22 +1,21 @@
 /* eslint-disable react/prop-types */
 
 import { useState } from 'react'
-import styled, { css } from 'styled-components'
-import { grid, rotate360 } from '@coko/client'
+import styled, { css, useTheme } from 'styled-components'
+import { th, grid, rotate360 } from '@coko/client'
 import { Check, AlertCircle } from 'react-feather'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import theme, { color } from '../../theme'
 
 const ActionLink = styled.button`
   background: transparent;
   border-bottom: 2px solid transparent;
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   display: inline-flex;
   flex-direction: row;
   font-size: inherit;
-  gap: ${theme.spacing.d};
+  gap: ${th('spacing.d')};
   line-height: inherit;
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
   width: fit-content;
@@ -27,7 +26,7 @@ const ActionLink = styled.button`
       ? ''
       : css`
           &:hover {
-            border-bottom: 2px solid ${color.brand1.base};
+            border-bottom: 2px solid ${th('color.brand1.base')};
             transition: border-bottom 0.2s;
           }
         `}
@@ -39,9 +38,9 @@ const Spinner = styled.div`
 
   &::after {
     animation: ${rotate360} 1s linear infinite;
-    border: 2.5px solid ${color.brand1.base};
-    border-color: ${color.brand1.base} transparent ${color.brand1.base}
-      transparent;
+    border: 2.5px solid ${th('color.brand1.base')};
+    border-color: ${th('color.brand1.base')} transparent
+      ${th('color.brand1.base')} transparent;
     border-radius: 50%;
     box-sizing: border-box;
     /* stylelint-disable-next-line string-quotes */
@@ -96,6 +95,7 @@ const Action = ({
   onClick,
   title,
 }) => {
+  const theme = useTheme()
   const [resultStatus, setResultStatus] = useState(null)
   const [isInProgress, setIsInProgress] = useState(false)
 
@@ -118,7 +118,7 @@ const Action = ({
       {!isInProgress && resultStatus === 'success' && (
         <IconContainer>
           <Check
-            color={color.brand1.base}
+            color={theme.color.brand1.base}
             data-testid="check-svg"
             size={16}
             strokeWidth={2}
@@ -128,7 +128,7 @@ const Action = ({
       {!isInProgress && resultStatus === 'failure' && (
         <IconContainer>
           <AlertCircle
-            color={color.warning.base}
+            color={theme.color.warning.base}
             data-testid="alert-circle-svg"
             size={16}
             strokeWidth={2}

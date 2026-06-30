@@ -5,14 +5,12 @@ import { useState, useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 import styled from 'styled-components'
-import { grid } from '@coko/client'
-
+import { th, grid } from '@coko/client'
 import { Formik } from 'formik'
 
 import { ConfigContext } from '../../../config/src'
 import { RadioBox } from '../../../component-formbuilder/src/components/builderComponents'
 import { Legend } from '../../../component-formbuilder/src/components/style'
-
 import { Button, ValidatedFieldFormik } from '../../../pubsweet'
 import {
   Title,
@@ -21,12 +19,10 @@ import {
   SectionActionInfo,
   SectionAction,
 } from './style'
-
 import { SectionContent } from '../../../shared'
 import Alert from './publishing/Alert'
 import PublishingResponse from './publishing/PublishingResponse'
 import { getLanguages } from '../../../../i18n'
-import { color } from '../../../../theme'
 import { FlexRow } from '../../../../globals'
 
 const ActionButtonsWrapper = styled(FlexRow)`
@@ -35,21 +31,21 @@ const ActionButtonsWrapper = styled(FlexRow)`
 
 const UnpublishButton = styled(Button)`
   background: #fff;
-  color: ${color.error.base};
+  color: ${th('color.error.base')};
   cursor: pointer;
-  outline: 1px solid ${color.error.base};
+  outline: 1px solid ${th('color.error.base')};
 
   &:hover,
   &:focus,
   &:active {
-    background: ${color.error.base};
+    background: ${th('color.error.base')};
     color: #fff;
   }
 `
 
 const PublishButton = styled(Button)`
   cursor: pointer;
-  outline: 1px solid ${color.brand1.base};
+  outline: 1px solid ${th('color.brand1.base')};
 `
 
 const PublishWrapper = styled.div`

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import CodeMirror from '@uiw/react-codemirror'
 import { html } from '@codemirror/lang-html'
 import { css } from '@codemirror/lang-css'
+
 import { ConfigContext } from '../../../config/src'
 import ProductionWaxEditor from '../../../wax-collab/src/ProductionWaxEditor'
 import { DownloadDropdown } from './DownloadDropdown'
@@ -27,7 +28,6 @@ import { ControlsContainer } from '../../../component-manuscripts/src/style'
 import AuthorFeedbackForm from '../../../component-author-feedback/src/components/AuthorFeedbackForm'
 import UploadAsset from './uploadManager/UploadAsset'
 import ReadonlyFormTemplate from '../../../component-review/src/components/metadata/ReadonlyFormTemplate'
-import { color } from '../../../../theme'
 import gatherManuscriptVersions from '../../../../shared/manuscript_versions'
 import PreviousFeedbackSubmissions from './PreviousFeedbackSubmissions'
 import { CssAssistantProvider } from '../../../component-ai-assistant/hooks/CssAssistantContext'
@@ -60,7 +60,7 @@ const StyledManuscript = styled(Manuscript)`
 `
 
 const ScrollableTabContent = styled.section`
-  background-color: ${color.backgroundA};
+  background-color: ${th('color.backgroundA')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
   height: calc(100vh - 108px);
@@ -72,7 +72,7 @@ const LabeledTab = styled.div`
   position: relative;
 
   &::before {
-    background: ${color.brand1.base};
+    background: ${th('color.brand1.base')};
     border-radius: 5px;
     color: white;
     content: 'Beta';

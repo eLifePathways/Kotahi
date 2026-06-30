@@ -3,10 +3,10 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
+import { th } from '@coko/client'
 
 import { CssAssistantContext } from './hooks/CssAssistantContext'
-import { color } from '../../theme'
 
 const Wrapper = styled.span`
   display: flex;
@@ -68,7 +68,7 @@ const Triangle = styled.span`
 `
 
 const SmallText = styled.strong`
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   text-decoration: underline;
 `
 
@@ -157,6 +157,7 @@ const OptionsTemplate = ({ content }) => {
 }
 
 const ChatBubble = ({ forceHide, icons, hasApiKey }) => {
+  const theme = useTheme()
   const { feedback } = useContext(CssAssistantContext)
   const [hideMessage, setHideMessage] = useState(false)
 
@@ -175,8 +176,8 @@ const ChatBubble = ({ forceHide, icons, hasApiKey }) => {
           width: '35px',
           height: '35px',
           borderRadius: '50%',
-          backgroundColor: color.brand1.base(),
-          border: color.brand1.shade50(),
+          backgroundColor: theme.color.brand1.base(),
+          border: theme.color.brand1.shade50(),
           textAlign: 'center',
           color: '#fff',
         }}

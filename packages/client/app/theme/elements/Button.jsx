@@ -1,11 +1,10 @@
 import { css } from 'styled-components'
 import { th } from '@coko/client'
-import color from '../color'
 
 const secondary = css`
   background: none;
   border: none;
-  color: ${color.brand1.base};
+  color: ${th('color.brand1.base')};
   padding: 0;
   text-decoration: underline;
 
@@ -14,12 +13,12 @@ const secondary = css`
   &:active {
     background: none;
     border: none;
-    color: ${color.brand1.shade25};
+    color: ${th('color.brand1.shade25')};
     outline: none;
   }
 
   &[disabled] {
-    color: ${color.gray40};
+    color: ${th('color.gray40')};
     cursor: default;
 
     &:hover {
@@ -41,6 +40,6 @@ export default css`
 
   &:focus,
   &:hover {
-    background-color: ${color.brand1.tint25};
+    background-color: ${th('color.brand1.tint25')};
   }
 `
