@@ -1,4 +1,5 @@
 const { BaseModel } = require('@coko/server')
+const { formatSearchQueryForPostgres } = require('../../utils/searchUtils')
 const Group = require('../group/group.model')
 const Manuscript = require('../manuscript/manuscript.model')
 
@@ -45,17 +46,59 @@ class CoarNotification extends BaseModel {
     return this.query(trx).where({ manuscriptId }).orderBy('created', 'desc')
   }
 
-  static async getNotificationsAndManuscriptsByGroupOrNone(
+  static async getPaginatedNotificationsAndManuscriptsByGroupOrNone(
     groupId,
+    filters,
+    offset,
+    limit,
     options = {},
   ) {
     const { trx } = options
 
-    return this.query(trx)
-      .withGraphFetched('manuscript')
-      .where({ groupId })
-      .orWhere({ groupId: null })
-      .orderBy('created', 'desc')
+    const baseQuery = () =>
+      this.query(trx).where(builder => {
+        builder
+          .where('coar_notifications.group_id', groupId)
+          .orWhereNull('coar_notifications.group_id')
+      })
+
+    const searchFilter = filters?.find(f => f.field === 'search')
+
+    const manuscriptSearchQuery =
+      searchFilter && formatSearchQueryForPostgres(searchFilter.value)
+
+    const applySearchFilter = query => {
+      if (searchFilter?.value) {
+        query
+          .leftJoin(
+            'manuscripts',
+            'coar_notifications.manuscript_id',
+            'manuscripts.id',
+          )
+          .where(builder => {
+            builder
+              .whereRaw(`coar_notifications.payload::text ILIKE ?`, [
+                `%${searchFilter.value}%`,
+              ])
+              .orWhereRaw(
+                `coar_notifications.manuscript_id IS NOT NULL AND manuscripts.search_tsvector @@ to_tsquery('english', ?)`,
+                [manuscriptSearchQuery],
+              )
+          })
+      }
+
+      return query
+    }
+
+    const totalCount = await applySearchFilter(baseQuery()).resultSize()
+
+    const messages = await applySearchFilter(
+      baseQuery().withGraphFetched('manuscript').orderBy('created', 'desc'),
+    )
+      .offset(offset || 0)
+      .limit(limit || 10)
+
+    return { messages, totalCount }
   }
 
   static async getOfferNotificationForManuscript(manuscriptId, options = {}) {

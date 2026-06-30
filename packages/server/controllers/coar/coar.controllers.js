@@ -672,17 +672,29 @@ const getNotificationsForManuscript = async manuscriptId => {
   return notifications
 }
 
-const getAllNotificationsForGroup = async groupId => {
-  const notifications = (
-    await CoarNotification.getNotificationsAndManuscriptsByGroupOrNone(groupId)
-  ).map(n => ({ ...n, payload: JSON.stringify(n.payload) }))
+const getPaginatedNotificationsForGroup = async (
+  groupId,
+  filters,
+  offset,
+  limit,
+) => {
+  const { messages, totalCount } =
+    await CoarNotification.getPaginatedNotificationsAndManuscriptsByGroupOrNone(
+      groupId,
+      filters,
+      offset,
+      limit,
+    )
 
-  return notifications
+  return {
+    messages: messages.map(n => ({ ...n, payload: JSON.stringify(n.payload) })),
+    totalCount,
+  }
 }
 
 module.exports = {
   createNotification,
-  getAllNotificationsForGroup,
+  getPaginatedNotificationsForGroup,
   getNotificationsForManuscript,
   sendAnnouncementNotification,
   sendTentativeAcceptCoarNotification,

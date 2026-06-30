@@ -1,6 +1,11 @@
 extend type Query {
   coarNotificationsForManuscript(manuscriptId: ID!): [CoarNotification!]!
-  coarNotificationsForGroupOrNone(groupId: ID!): [CoarNotification!]!
+  paginatedCoarNotificationsForGroupOrNone(
+    filters: [ManuscriptsFilter!]!
+    groupId: ID!
+    limit: Int
+    offset: Int
+  ): CoarNotificationSearchResponse!
 }
 
 extend type Mutation {
@@ -23,4 +28,9 @@ type CoarNotification {
 type ResendCoarNotifyPayloadResponse {
   success: Boolean!
   reason: String
+}
+
+type CoarNotificationSearchResponse {
+  messages: [CoarNotification!]!
+  totalCount: Int!
 }

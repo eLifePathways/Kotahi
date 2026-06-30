@@ -1,6 +1,6 @@
 const {
   getNotificationsForManuscript,
-  getAllNotificationsForGroup,
+  getPaginatedNotificationsForGroup,
   reprocessCoarNotifyPayload,
 } = require('../../../controllers/coar/coar.controllers')
 
@@ -10,8 +10,11 @@ module.exports = {
       return getNotificationsForManuscript(manuscriptId)
     },
 
-    async coarNotificationsForGroupOrNone(_, { groupId }) {
-      return getAllNotificationsForGroup(groupId)
+    async paginatedCoarNotificationsForGroupOrNone(
+      _,
+      { filters, groupId, limit, offset },
+    ) {
+      return getPaginatedNotificationsForGroup(groupId, filters, offset, limit)
     },
   },
   Mutation: {

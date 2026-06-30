@@ -97,16 +97,16 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
   const payload = JSON.parse(requestData)
 
   try {
+    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+
     const response = await request({
-      method: 'post',
+      method: 'POST',
       url: inboxUrl,
       headers: {
         'Content-Type': 'application/json',
       },
       data: requestData,
     })
-
-    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
 
     return response?.data ?? false
   } catch (err) {
