@@ -79,7 +79,8 @@ export const makeTheme = (
 
     backgroundA: '#FFFFFF',
     backgroundB: '#f9fafb',
-    backgroundC: '#f4f5f7',
+    // backgroundC: '#f4f5f7',
+    backgroundC: '#f2f2f2',
 
     brand1: {
       shade50: Color(colorBrand1).darken(0.52),
