@@ -13,11 +13,12 @@ const Wrapper = styled.div`
 
 const Header = styled.div`
   color: ${th('colorPrimary')};
-  font-size: 2.2rem;
+  font-size: 2rem;
   margin-bottom: ${grid(3)};
   padding-bottom: ${grid(1.5)};
   border-bottom: 2px solid ${th('colorPrimary')};
   text-transform: capitalize;
+  font-family: ${th('fontHeading')};
 `
 
 const Content = styled.div`

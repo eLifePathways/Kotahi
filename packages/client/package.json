@@ -29,6 +29,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@fontsource/roboto": "^4.5.8",
+    "@fontsource/spectral-sc": "^5.2.8",
     "@rjsf/core": "4.2.3",
     "@uiw/react-codemirror": "^4.21.20",
     "antd": "^6.3.7",

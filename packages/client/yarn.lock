@@ -1062,6 +1062,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/spectral-sc@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@fontsource/spectral-sc@npm:5.2.8"
+  checksum: 10c0/8be7e8bcdb589c1d9495f1de7ca1e7cef70719e2815b8dbe8f3e8ebf210ea6554ac69a464b72bba3e39f8feff6f7bb6fca145a3e8fb3fa4ae27e7be3729d83b7
+  languageName: node
+  linkType: hard
+
 "@graphql-typed-document-node/core@npm:^3.1.1":
   version: 3.2.0
   resolution: "@graphql-typed-document-node/core@npm:3.2.0"
@@ -5372,6 +5379,7 @@ __metadata:
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"
     "@fontsource/roboto": "npm:^4.5.8"
+    "@fontsource/spectral-sc": "npm:^5.2.8"
     "@rjsf/core": "npm:4.2.3"
     "@storybook/addon-docs": "npm:^10.4.6"
     "@storybook/react-vite": "npm:^10.4.6"

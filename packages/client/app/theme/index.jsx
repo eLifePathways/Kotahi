@@ -24,6 +24,8 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 import '@fontsource/roboto/400-italic.css'
 
+import '@fontsource/spectral-sc'
+
 export const validateColor = colorCode => {
   try {
     Color(colorCode)
@@ -228,8 +230,7 @@ export const makeTheme = (
   // fonts
   fontInterface:
     "Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
-  fontHeading:
-    "Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+  fontHeading: "'Spectral SC', Georgia, 'Times New Roman', serif",
   fontReading:
     "Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
   fontWriting:
