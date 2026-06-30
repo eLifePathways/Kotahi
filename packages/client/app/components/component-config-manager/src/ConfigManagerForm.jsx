@@ -192,7 +192,11 @@ const FieldTemplate = props => {
 
   const showWarning = alertFields.includes(id)
 
-  const getFieldName = key => description._owner.key === key
+  const getFieldName = key => {
+    const parts = id.split('_')
+    return parts.length === 2 && parts[1] === key
+  }
+
   // eslint-disable-next-line no-nested-ternary
   return !showInstanceType ? (
     !getFieldName('instanceName') ? (

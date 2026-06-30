@@ -5,7 +5,6 @@ import { ToolGroup, LeftMenuTitle } from 'wax-prosemirror-core'
 import i18next from 'i18next'
 
 class CitationGroup extends ToolGroup {
-  tools = []
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Citations')} />)
 
   constructor(
@@ -27,7 +26,7 @@ class CitationGroup extends ToolGroup {
     // @inject('AnyStyleTool') anystyle,
   ) {
     super()
-    this.tools = [
+    this._tools = [
       refList,
       reference,
       callout,
