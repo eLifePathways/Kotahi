@@ -10,10 +10,24 @@
 
 #### Deployment changes
 
+### Version 2026.06.29-0
+
+#### Bug fixes
+
+- Fixed a bug that caused some tools to not show in the wax editor toolbars.
+- Fixed a bug that caused the cms file browser to not load.
+
+### Version 2026.06.24-0
+
+#### Bug fixes
+We worked on fixing an issue where when kotahi was connected to a fly.io managed postgres cluster, the database connection to the app would crash after a while.
+
+#### Deployment changes
+
 ##### Job queue database connection
 We now allow the job queues to connect to a database independently from the main database connection. This is handled by `JOB_QUEUE_POSTGES_*` environment variables. The names are the same as the existing `POSTGRES_*` variables (ie. `JOB_QUEUE_POSTGRES_HOST`, `JOB_QUEUE_POSTGRES_PORT` etc.). As with the existing `SUBSCRIPTIONS_POSTGRES_*` variables, if a particular variable is not provided, it will fall back on the equivalent `POSTGRES_*` variable's value.
 
-If using fly.io's managed postgres clusters, the setup we recommend is setting up a transaction pool on your datatbase, letting the app connect to the transaction pool, while bypassing the pool for job queues and subscriptions. Transaction pools do not support advisory locks or `LISTEN/NOTIFY` in postgres, and these features are necessary for the job queue and subscriptions respectively. Your environment variables could look like the following:
+If using fly.io's managed postgres clusters, the setup we recommend is setting up a transaction pool on your database, letting the app connect to the transaction pool, while bypassing the pool for job queues and subscriptions. Transaction pools do not support advisory locks or `LISTEN/NOTIFY` in postgres, and these features are necessary for the job queue and subscriptions respectively. Your environment variables could look like the following:
 
 ```sh
 POSTGRES_HOST=your_pool_host
@@ -27,7 +41,7 @@ JOB_QUEUE_POSTGRES_HOST=your_non_pool_host
 ```
 
 ##### Typescript
-We switched to a typescript build for both the client and the server. If you are not using our provided docker containers, but you are building the app yourself, refer to the updated `Dockerfile-production` files in the `packages/client` and `packages/server` for instructions.
+We switched to a typescript build for both the client and the server. If you are not using our provided docker containers, but you are building the app yourself, refer to the updated `Dockerfile-production` files in the `packages/client` and `packages/server` folders for instructions.
 
 ### Version 2025.06.02-0
 

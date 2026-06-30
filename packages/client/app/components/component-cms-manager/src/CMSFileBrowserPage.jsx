@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
+/* eslint-disable promise/catch-or-return, promise/always-return */
 
 import { useState, useCallback, useEffect, useContext } from 'react'
 import { debounce, isEmpty, pick } from 'lodash'
@@ -111,7 +112,7 @@ const CMSFileBrowserPage = () => {
     refetch,
   } = useQuery(GET_FOLDERS_LIST)
 
-  const { data: metadata, loadingMetadata } = useQuery(
+  const { data: metadata, loading: loadingMetadata } = useQuery(
     CMS_GET_SUBMISSION_FORM,
     {
       variables: {
@@ -130,30 +131,36 @@ const CMSFileBrowserPage = () => {
 
   const [updateObject] = useMutation(UPDATE_RESOURCE)
 
-  const [getFileData] = useLazyQuery(GET_CMS_FILE_CONTENT, {
-    onCompleted: ({ getCmsFileContent: Content }) => {
-      const extension = Content.name.split('.').pop().toLowerCase()
-      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg']
+  const [execGetFileData] = useLazyQuery(GET_CMS_FILE_CONTENT)
 
-      if (imageExtensions.includes(extension)) {
-        setImageSrc(Content.url)
-      }
+  const getFileData = useCallback(
+    options => {
+      execGetFileData(options).then(result => {
+        const Content = result.data?.getCmsFileContent
+        if (!Content) return
+        const extension = Content.name.split('.').pop().toLowerCase()
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg']
 
-      setActiveContent({
-        id: Content.id,
-        content: Content.content,
-        name: Content.name,
-        isImage: imageExtensions.includes(extension),
-        isFolder: false,
+        if (imageExtensions.includes(extension)) {
+          setImageSrc(Content.url)
+        }
+
+        setActiveContent({
+          id: Content.id,
+          content: Content.content,
+          name: Content.name,
+          isImage: imageExtensions.includes(extension),
+          isFolder: false,
+        })
       })
     },
-  })
+    [execGetFileData],
+  )
 
-  const [getTreeData, { loading, error }] = useLazyQuery(GET_CMS_FILES_TREE, {
-    fetchPolicy: 'network-only',
-    onCompleted: ({ getCmsFilesTree: data }) => {
-      if (isEmpty(treeData)) {
-        setTreeData({
+  const handleTreeData = useCallback(data => {
+    setTreeData(prevTree => {
+      if (isEmpty(prevTree)) {
+        return {
           ...data,
           isOpen: true,
           children: data.children.map(child => {
@@ -165,15 +172,30 @@ const CMSFileBrowserPage = () => {
                   children: [],
                 }
           }),
-        })
-      } else {
-        const updatedTreeData = searchAddChildren(treeData, data)
-        setTreeData({
-          ...updatedTreeData,
-        })
+        }
       }
+
+      return { ...searchAddChildren(prevTree, data) }
+    })
+  }, [])
+
+  const [execGetTreeData, { loading, error }] = useLazyQuery(
+    GET_CMS_FILES_TREE,
+    {
+      fetchPolicy: 'network-only',
     },
-  })
+  )
+
+  const getTreeData = useCallback(
+    options => {
+      execGetTreeData(options).then(result => {
+        if (result.data?.getCmsFilesTree) {
+          handleTreeData(result.data.getCmsFilesTree)
+        }
+      })
+    },
+    [execGetTreeData, handleTreeData],
+  )
 
   useEffect(() => {
     getTreeData({

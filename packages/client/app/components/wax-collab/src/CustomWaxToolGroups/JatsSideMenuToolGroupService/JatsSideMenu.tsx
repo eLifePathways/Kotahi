@@ -24,9 +24,6 @@ import { VerticalTabs, BlockLevelTools } from './VerticalTabs'
 // ----- from, e.g. /wax-prosemirror-schema/src/nodes/epigraphProseNode.js – this is similar to what I did to make H5/H6
 
 class JatsSideMenu extends ToolGroup {
-  tools = []
-  toolGroups = []
-
   constructor(
     /* stylelint-disable */
     @inject('FrontMatterGroup') frontmattergroup,
@@ -39,7 +36,7 @@ class JatsSideMenu extends ToolGroup {
     /* stylelint-enable */
   ) {
     super()
-    this.toolGroups = [
+    this._toolGroups = [
       {
         name: 'FrontMatterTab',
         groups: [frontmattergroup, fundinggroup, keywordgroup],
