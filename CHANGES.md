@@ -6,10 +6,14 @@
 
 #### Bug fixes
 
+#### Deployment changes
+
+### Version 2026.06.29-0
+
+#### Bug fixes
+
 - Fixed a bug that caused some tools to not show in the wax editor toolbars.
 - Fixed a bug that caused the cms file browser to not load.
-
-#### Deployment changes
 
 ### Version 2026.06.24-0
 
