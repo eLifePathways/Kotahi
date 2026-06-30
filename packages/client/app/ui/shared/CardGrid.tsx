@@ -29,16 +29,22 @@ const IconWrapper = styled.div`
 
 const Card = styled.div`
   min-height: ${grid(38)};
-  border: 2px solid ${th('colorBorder')};
   border-radius: 3px;
+  box-shadow: 0 0 0 1px ${th('color.gray80')};
   padding: ${grid(6)} ${grid(4)} 0;
   cursor: pointer;
+  background-color: ${th('colorBackground')};
+  transition: box-shadow 0.2s ease;
 
   display: flex;
   flex-direction: column;
 
   ${Title} {
     border-color: ${th('colorPrimary')};
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 3px ${th('colorPrimary')};
   }
 
   &:hover ${IconWrapper} {

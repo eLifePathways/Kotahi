@@ -52,7 +52,6 @@ const WidthLimiter = styled.div`
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
-  max-width: 1200px;
   min-height: 0;
 `
 
@@ -230,7 +229,7 @@ const FormBuilderLayout = ({
       <Page title={t(`formBuilder.${category}.title`)}>
         <div
           style={{
-            height: '100%',
+            height: 'calc(100vh - 160px)',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',

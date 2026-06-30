@@ -3,7 +3,7 @@
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import TaskList from './TaskList'
-import { SectionContent, WidthLimiter } from '../../shared'
+import { SectionContent } from '../../shared'
 import Page from '../../../ui/shared/Page'
 
 const TaskListContainer = styled.div`
@@ -23,24 +23,22 @@ const TasksTemplate = ({
   const { t } = useTranslation()
   return (
     <Page title={t('tasksPage.Task Template Builder')}>
-      <WidthLimiter>
-        <SectionContent>
-          <TaskListContainer>
-            <TaskList
-              deleteTaskNotification={deleteTaskNotification}
-              editAsTemplate
-              emailTemplates={emailTemplates}
-              manuscriptId={null}
-              roles={roles}
-              tasks={tasks}
-              updateTask={updateTask}
-              updateTaskNotification={updateTaskNotification}
-              updateTasks={updateTasks}
-              users={users}
-            />
-          </TaskListContainer>
-        </SectionContent>
-      </WidthLimiter>
+      <SectionContent>
+        <TaskListContainer>
+          <TaskList
+            deleteTaskNotification={deleteTaskNotification}
+            editAsTemplate
+            emailTemplates={emailTemplates}
+            manuscriptId={null}
+            roles={roles}
+            tasks={tasks}
+            updateTask={updateTask}
+            updateTaskNotification={updateTaskNotification}
+            updateTasks={updateTasks}
+            users={users}
+          />
+        </TaskListContainer>
+      </SectionContent>
     </Page>
   )
 }

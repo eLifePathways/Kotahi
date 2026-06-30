@@ -9,12 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../config/src'
 import journalSchema from './collection/ui/journalSchema' // Import the function that generates the schema and uiSchema
 
-import {
-  ActionButton,
-  PaddedContent,
-  SectionContent,
-  WidthLimiter,
-} from '../../shared'
+import { ActionButton, PaddedContent, SectionContent } from '../../shared'
 import Page from '../../../ui/shared/Page'
 
 const StyledContent = styled.div`
@@ -81,19 +76,17 @@ const CmsMetadataPage = () => {
       <style>{`html { font-size: 16px; }`}</style>
       <Page title={t('leftMenu.Metadata')}>
         <StyledContent>
-          <WidthLimiter>
-            <SectionContent>
-              <PaddedContent>
-                <Form
-                  disabled
-                  FieldTemplate={FieldTemplate(t)}
-                  formData={config.groupIdentity}
-                  schema={journalSch}
-                  uiSchema={uiJournalSch}
-                />
-              </PaddedContent>
-            </SectionContent>
-          </WidthLimiter>
+          <SectionContent>
+            <PaddedContent>
+              <Form
+                disabled
+                FieldTemplate={FieldTemplate(t)}
+                formData={config.groupIdentity}
+                schema={journalSch}
+                uiSchema={uiJournalSch}
+              />
+            </PaddedContent>
+          </SectionContent>
         </StyledContent>
       </Page>
     </>

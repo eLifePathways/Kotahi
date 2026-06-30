@@ -14,7 +14,6 @@ import {
   ActionButton,
   PaddedContent,
   SectionContent,
-  WidthLimiter,
   LabelBadge,
 } from '../../../shared'
 import Page from '../../../../ui/shared/Page'
@@ -224,50 +223,48 @@ const CollectionList = ({
       <style>{`html { font-size: 16px; }`}</style>
       <Page title={t('leftMenu.Collections')}>
         <StyledContent>
-          <WidthLimiter>
-            <SectionContent>
-              <PaddedContent>
-                <CmsHeadStyled>
-                  <Action onClick={addUiCollection}>
-                    + {t('cmsPage.metadata.addCollection')}
-                  </Action>
-                </CmsHeadStyled>
-                <CollectionsHeading>
-                  {columnsProps.map(info => (
-                    <HeadingCell key={info.name}>{info.title}</HeadingCell>
-                  ))}
-                </CollectionsHeading>
-                {}
-                <>
-                  {publishCollection.length === 0 ? (
-                    <NoCollectionSpan>
-                      {t('cmsPage.metadata.noCollections')}
-                    </NoCollectionSpan>
-                  ) : (
-                    publishCollection.map(collection => (
-                      <CollectionTable
-                        collection={collection}
-                        columnDefinitions={columnsProps}
-                        key={collection.id}
-                      />
-                    ))
-                  )}
-                </>
-                {activeCollection && (
-                  <CollectionModalForm
-                    collection={activeCollection}
-                    deleteCollection={deleteCollectionFn}
-                    manuscriptLoadOptions={manuscriptLoadOptions}
-                    onChange={onChange}
-                    onClose={() => {
-                      setActiveCollection(null)
-                    }}
-                    submitCollection={submitCollection}
-                  />
+          <SectionContent>
+            <PaddedContent>
+              <CmsHeadStyled>
+                <Action onClick={addUiCollection}>
+                  + {t('cmsPage.metadata.addCollection')}
+                </Action>
+              </CmsHeadStyled>
+              <CollectionsHeading>
+                {columnsProps.map(info => (
+                  <HeadingCell key={info.name}>{info.title}</HeadingCell>
+                ))}
+              </CollectionsHeading>
+              {}
+              <>
+                {publishCollection.length === 0 ? (
+                  <NoCollectionSpan>
+                    {t('cmsPage.metadata.noCollections')}
+                  </NoCollectionSpan>
+                ) : (
+                  publishCollection.map(collection => (
+                    <CollectionTable
+                      collection={collection}
+                      columnDefinitions={columnsProps}
+                      key={collection.id}
+                    />
+                  ))
                 )}
-              </PaddedContent>
-            </SectionContent>
-          </WidthLimiter>
+              </>
+              {activeCollection && (
+                <CollectionModalForm
+                  collection={activeCollection}
+                  deleteCollection={deleteCollectionFn}
+                  manuscriptLoadOptions={manuscriptLoadOptions}
+                  onChange={onChange}
+                  onClose={() => {
+                    setActiveCollection(null)
+                  }}
+                  submitCollection={submitCollection}
+                />
+              )}
+            </PaddedContent>
+          </SectionContent>
         </StyledContent>
       </Page>
     </>

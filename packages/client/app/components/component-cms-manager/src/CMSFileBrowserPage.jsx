@@ -12,13 +12,14 @@ import { css } from '@codemirror/lang-css'
 import SplitPane, { Pane } from 'split-pane-react'
 import 'split-pane-react/esm/themes/default.css'
 
-import { serverUrl } from '@coko/client'
+import { serverUrl, th } from '@coko/client'
 
 import Browser from './browser/FileBrowser'
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner, SectionContent, Spinner } from '../../shared'
 import UploadComponent from '../../component-production/src/components/uploadManager/UploadComponent'
 import { EditPageContainer } from './style'
 import { ConfigContext } from '../../config/src'
+import Page from '../../../ui/shared/Page'
 
 import {
   GET_CMS_FILE_CONTENT,
@@ -45,8 +46,13 @@ const SpanActive = styled.span`
   font-weight: bold;
 `
 
+const FullHeightContainer = styled(EditPageContainer)`
+  background: ${th('color.backgroundC')};
+  height: calc(100vh - 160px);
+`
+
 const MainFileContent = styled.div`
-  background-color: #f4f5f7;
+  border-left: 2px solid ${th('colorPrimary')};
   display: flex;
   height: 100%;
   overflow: auto;
@@ -283,47 +289,56 @@ const CMSFileBrowserPage = () => {
   }
 
   return (
-    <EditPageContainer>
-      <SplitPane onChange={setSizes} sizes={sizes} split="vertical">
-        <StyledPane maxSize="50%" minSize={50}>
-          <Browser
-            addObject={addObject}
-            dataFolders={dataFolders}
-            deleteObject={deleteObject}
-            displayShortIdAsIdentifier={controlPanel?.displayManuscriptShortId}
-            folderLists={dataFolders.getFoldersList || []}
-            form={form}
-            getTreeData={getTreeData}
-            onSelect={onSelect}
-            rebuildFlaxSite={rebuildFlaxSite}
-            renameObject={renameObject}
-            treeData={treeData}
-            updateFlaxFolderFn={updateFlaxFolderFn}
-          />
-        </StyledPane>
-        <MainFileContent>
-          {!activeContent.isFolder &&
-            activeContent.id &&
-            !activeContent.isImage && (
-              <StyledCodeMirror
-                extensions={[css(), html()]}
-                onChange={onChangeContent}
-                value={activeContent.content}
+    <Page title={t('leftMenu.FileBrowser')}>
+      <FullHeightContainer>
+        <SectionContent
+          style={{ display: 'flex', flex: 1, overflow: 'hidden' }}
+        >
+          <SplitPane onChange={setSizes} sizes={sizes} split="vertical">
+            <StyledPane maxSize="50%" minSize={50}>
+              <Browser
+                addObject={addObject}
+                dataFolders={dataFolders}
+                deleteObject={deleteObject}
+                displayShortIdAsIdentifier={
+                  controlPanel?.displayManuscriptShortId
+                }
+                folderLists={dataFolders.getFoldersList || []}
+                form={form}
+                getTreeData={getTreeData}
+                onSelect={onSelect}
+                rebuildFlaxSite={rebuildFlaxSite}
+                renameObject={renameObject}
+                treeData={treeData}
+                updateFlaxFolderFn={updateFlaxFolderFn}
               />
-            )}
-          {activeContent.isFolder && activeContent.id && (
-            <UploadContainer>
-              Upload To Folder <SpanActive>{activeContent.name}</SpanActive>:
-              <UploadComponent
-                label={t('dragndrop.Drag and drop other files here')}
-                uploadAssetsFn={uploadAssetsFn}
-              />
-            </UploadContainer>
-          )}
-          {activeContent.isImage && <img alt="Preview" src={imageSrc} />}
-        </MainFileContent>
-      </SplitPane>
-    </EditPageContainer>
+            </StyledPane>
+            <MainFileContent>
+              {!activeContent.isFolder &&
+                activeContent.id &&
+                !activeContent.isImage && (
+                  <StyledCodeMirror
+                    extensions={[css(), html()]}
+                    onChange={onChangeContent}
+                    value={activeContent.content}
+                  />
+                )}
+              {activeContent.isFolder && activeContent.id && (
+                <UploadContainer>
+                  Upload To Folder <SpanActive>{activeContent.name}</SpanActive>
+                  :
+                  <UploadComponent
+                    label={t('dragndrop.Drag and drop other files here')}
+                    uploadAssetsFn={uploadAssetsFn}
+                  />
+                </UploadContainer>
+              )}
+              {activeContent.isImage && <img alt="Preview" src={imageSrc} />}
+            </MainFileContent>
+          </SplitPane>
+        </SectionContent>
+      </FullHeightContainer>
+    </Page>
   )
 }
 
