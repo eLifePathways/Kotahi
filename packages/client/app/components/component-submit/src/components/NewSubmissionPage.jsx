@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Container, Content, UploadContainer, Heading } from '../style'
 import UploadManuscript from './UploadManuscript'
 import { ConfigContext } from '../../../config/src'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 const acceptUploadFiles = [
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -25,9 +26,10 @@ const acceptFiles =
     ? acceptUploadFiles.join()
     : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
-const Dashboard = ({ currentUser }) => {
+const Dashboard = () => {
   const client = useApolloClient()
   const { t } = useTranslation()
+  const currentUser = useCurrentUser()
 
   const {
     submission: { submissionPage },

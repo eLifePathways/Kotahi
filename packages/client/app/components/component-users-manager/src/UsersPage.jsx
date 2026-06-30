@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client/react'
 import { CommsErrorBanner, Spinner } from '../../shared'
@@ -10,6 +8,7 @@ import {
   useQueryParams,
 } from '../../../shared/urlParamUtils'
 import UsersTable from './UsersTable'
+import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 import {
   GET_USERS,
@@ -25,9 +24,10 @@ const defaultSortDirections = {
   groupManager: 'ASC',
 }
 
-const UsersPage = ({ currentUser }) => {
+const UsersPage = () => {
   const location = useLocation()
   const applyQueryParams = useQueryParams()
+  const currentUser = useCurrentUser()
 
   const params = new URLSearchParams(location.search)
   const page = params.get(URI_PAGENUM_PARAM) || 1

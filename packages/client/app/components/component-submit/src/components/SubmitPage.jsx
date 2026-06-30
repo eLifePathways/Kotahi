@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { debounce, set } from 'lodash'
@@ -13,6 +11,7 @@ import { validateManuscriptSubmission } from '../../../../shared/manuscriptUtils
 import CommsErrorBanner from '../../../shared/CommsErrorBanner'
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 import useChat from '../../../../hooks/useChat'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 import {
   PUBLISH_MANUSCRIPT,
   SET_SHOULD_PUBLISH_FIELD,
@@ -48,11 +47,11 @@ const useValidateORCID = () => {
   return { validationOrcid }
 }
 
-const SubmitPage = ({ currentUser }) => {
+const SubmitPage = () => {
   const navigate = useNavigate()
   const params = useParams()
   const location = useLocation()
-
+  const currentUser = useCurrentUser()
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config

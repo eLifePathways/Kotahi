@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
 import { useLocation } from 'react-router-dom'
+
 import { ConfigContext } from '../../../config/src'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 import {
   extractFilters,
   extractSortData,
@@ -20,10 +21,12 @@ import {
 import EditorTable from './sections/EditorTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
 
-const DashboardEditsPage = ({ currentUser }) => {
+const DashboardEditsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['seniorEditor', 'handlingEditor', 'editor']
+
+  const currentUser = useCurrentUser()
 
   const applyQueryParams = useQueryParams()
 

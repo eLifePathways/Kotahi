@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
@@ -14,11 +13,14 @@ import {
 import { UPDATE_TAB, DASHBOARD } from '../../../../queries'
 import SubmissionsTable from './sections/SubmissionsTable'
 import { CommsErrorBanner, Spinner } from '../../../shared'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
-const DashboardSubmissionsPage = ({ currentUser }) => {
+const DashboardSubmissionsPage = () => {
   const location = useLocation()
   const config = useContext(ConfigContext)
   const wantedRoles = ['author']
+
+  const currentUser = useCurrentUser()
 
   const applyQueryParams = useQueryParams()
 

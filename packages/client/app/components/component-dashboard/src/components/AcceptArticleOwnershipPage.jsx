@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
-
 import { useContext } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { Container } from '../../../shared'
@@ -9,10 +7,10 @@ import { GET_INVITATION_STATUS } from '../../../../queries'
 import { ConfigContext } from '../../../config/src'
 import InvitationError from './InvitationError'
 
-const AcceptArticleOwnershipPage = ({ match }) => {
+const AcceptArticleOwnershipPage = () => {
   const config = useContext(ConfigContext)
   const { t } = useTranslation()
-  const { invitationId } = match.params
+  const { invitationId } = useParams()
   const { urlFrag } = config
 
   const { loading, data, error } = useQuery(GET_INVITATION_STATUS, {

@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react'
+import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
 import styled from 'styled-components'
@@ -39,9 +40,11 @@ const DetailText = styled.div`
   line-height: ${th('lineHeightBaseSmall')};
 `
 
-const ArticleArtifactPage = ({ match }) => {
+const ArticleArtifactPage = () => {
+  const { version, artifactId } = useParams()
+
   const { loading, data, error } = useQuery(PUBLISHED_MANUSCRIPT_AND_FORMS, {
-    variables: { id: match.params.version },
+    variables: { id: version },
     fetchPolicy: 'network-only',
   })
 
@@ -52,10 +55,10 @@ const ArticleArtifactPage = ({ match }) => {
   manuscript.submission = JSON.parse(manuscript.submission)
 
   const artifact = manuscript.publishedArtifacts.find(
-    a => a.id === match.params.artifactId,
+    a => a.id === artifactId,
   ) || {
     title: 'Not found!',
-    content: `<p style="color: red">No published artifact was found with ID ${match.params.artifactId}. Please check the page address.</p>`,
+    content: `<p style="color: red">No published artifact was found with ID ${artifactId}. Please check the page address.</p>`,
   }
 
   const relatedDocumentTitle =

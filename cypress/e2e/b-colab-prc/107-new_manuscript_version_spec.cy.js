@@ -39,10 +39,9 @@ describe('checking manuscript version', () => {
       cy.contains('test-pdf.pdf').should('exist')
       cy.contains('Decision Status').scrollIntoView()
       // ReviewPage.clickRevise()
-      cy.get('[data-testid=safe-radio-group] input[value=revise]').click({
-        force: true,
-      })
+      ControlPage.clickRevise()
       /* Submit the decision */
+      cy.wait(1000)
       ControlPage.clickSubmitDecisionButton()
       /* Check appears in front of button */
       ControlPage.checkSvgExists()

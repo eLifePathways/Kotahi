@@ -2,7 +2,7 @@
 
 import { useContext } from 'react'
 import { th, grid } from '@coko/client'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
@@ -35,10 +35,11 @@ const Tabs = styled.div`
   margin-top: ${grid(1)};
 `
 
-const DashboardLayout = ({ urlFrag, children }) => {
+const DashboardLayout = ({ children }) => {
   const config = useContext(ConfigContext)
   const navigate = useNavigate()
   const location = useLocation()
+  const { groupName } = useParams()
   const applyQueryParams = useQueryParams()
 
   const uriQueryParams = new URLSearchParams(location.search)
@@ -82,7 +83,7 @@ const DashboardLayout = ({ urlFrag, children }) => {
             />
             <Button
               $primary
-              onClick={() => navigate(`${urlFrag}/newSubmission`)}
+              onClick={() => navigate(`/${groupName}/newSubmission`)}
             >
               {t('dashboardPage.New submission')}
             </Button>
@@ -95,7 +96,7 @@ const DashboardLayout = ({ urlFrag, children }) => {
         <Tabs>
           {dashboardPages.map(({ href, label }) => (
             <TabContainer key={href}>
-              <TabLink to={urlFrag + href}>
+              <TabLink to={`/${groupName}${href}`}>
                 <Tab $active={location.pathname.endsWith(href)}>
                   <div>{label}</div>
                 </Tab>

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
 import React, { useContext } from 'react'
@@ -12,6 +11,7 @@ import ModalContext from '../../../asset-manager/src/ui/Modal/ModalContext'
 import DownloadPdfComponent from './DownloadPdf'
 import DownloadJatsComponent from './DownloadJats'
 import { waxAiToolSystem } from '../../helpers'
+import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 import {
   GET_SPECIFIC_FILES,
@@ -49,8 +49,9 @@ const showAuthorProofingMode = (
   )
 }
 
-const ProductionPage = ({ currentUser }) => {
+const ProductionPage = () => {
   const params = useParams()
+  const currentUser = useCurrentUser()
   const { groupId, controlPanel, submission } = useContext(ConfigContext)
   const client = useApolloClient()
   const {

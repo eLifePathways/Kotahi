@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable promise/catch-or-return */
 /* eslint-disable promise/always-return */
 
@@ -13,6 +12,7 @@ import { Spinner, CommsErrorBanner } from '../../shared'
 
 import packageJson from '../../../../package.json'
 import { ConfigContext } from '../../config/src'
+import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 import {
   GET_USER,
@@ -25,9 +25,9 @@ import {
 
 const { version: kotahiVersion } = packageJson
 
-const ProfilePage = ({ currentUser }) => {
+const ProfilePage = () => {
   const { id } = useParams()
-
+  const currentUser = useCurrentUser()
   const { urlFrag } = useContext(ConfigContext)
   const [didLogout, setDidLogout] = useState(false)
 

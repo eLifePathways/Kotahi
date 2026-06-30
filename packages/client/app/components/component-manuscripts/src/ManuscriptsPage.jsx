@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/immutability */
-/* eslint-disable react/prop-types */
 
 /* eslint-disable no-shadow */
 
@@ -41,14 +40,18 @@ import {
 } from '../../../shared/urlParamUtils'
 import { validateDoi, validateSuffix } from '../../../shared/commsUtils'
 import useChat from '../../../hooks/useChat'
+import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
-const ManuscriptsPage = ({ currentUser }) => {
+const ManuscriptsPage = () => {
   const location = useLocation()
   const { t } = useTranslation()
-  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
+  const currentUser = useCurrentUser()
+
   const config = useContext(ConfigContext)
   const { urlFrag } = config
   const chatRoomId = fnv.hash(config.clientUrl).hex()
+
+  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
 
   /** Returns an array of column names, e.g.
    *  ['shortId', 'created', 'titleAndAbstract', 'submission.topic', 'status'] */
