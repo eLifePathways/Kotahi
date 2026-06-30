@@ -38,7 +38,13 @@ import UsersPage from './components/component-users-manager/src/UsersPage'
 import { ConfigContext } from './components/config/src'
 import { XpubContext } from './components/xpub-with-context/src'
 
-import { AuthenticatedPage, GroupPage, MenuPage } from './pages'
+import {
+  AuthenticatedPage,
+  CMSPage,
+  FormsPage,
+  GroupPage,
+  MenuPage,
+} from './pages'
 
 import { CURRENT_USER } from './queries'
 
@@ -106,16 +112,19 @@ const RoleGate = (props: RoleGateProps): ReactNode => {
  */
 const DashboardRoutes = (): ReactNode => {
   const config = useContext(ConfigContext)
+  // @ts-ignore
+  const dashboard = config?.dashboard
+
   return (
     <Routes>
       <Route element={<DashboardRedirect />} path="" />
-      {config?.dashboard?.showSections?.includes('submission') && (
+      {dashboard?.showSections?.includes('submission') && (
         <Route element={<DashboardSubmissionsPage />} path="submissions" />
       )}
-      {config?.dashboard?.showSections?.includes('review') && (
+      {dashboard?.showSections?.includes('review') && (
         <Route element={<DashboardReviewsPage />} path="reviews" />
       )}
-      {config?.dashboard?.showSections?.includes('editor') && (
+      {dashboard?.showSections?.includes('editor') && (
         <Route element={<DashboardEditsPage />} path="edits" />
       )}
     </Routes>
@@ -215,6 +224,8 @@ const Router = (): ReactNode => {
               >
                 <Route element={<ReportPage />} path="reports" />
 
+                <Route element={<FormsPage />} path="forms" />
+
                 <Route
                   element={<FormBuilderPage category="submission" />}
                   path="submission-form-builder"
@@ -233,17 +244,19 @@ const Router = (): ReactNode => {
                 <Route element={<UsersPage />} path="users" />
                 <Route element={<TasksTemplatePage />} path="tasks" />
 
-                <Route path="cms">
-                  <Route element={<CMSPagesPage />} path="pages/:pageId?" />
-                  <Route element={<CMSLayoutPage />} path="layout" />
-                  <Route element={<CMSArticlePage />} path="article" />
-                  <Route element={<CMSFileBrowserPage />} path="filebrowser" />
-                  <Route element={<CMSMetadataPage />} path="metadata" />
-                  <Route
-                    element={<CMSPublishingCollectionPage />}
-                    path="collections"
-                  />
-                </Route>
+                <Route element={<CMSPage />} path="cms" />
+                <Route element={<CMSPagesPage />} path="cms/pages/:pageId?" />
+                <Route element={<CMSLayoutPage />} path="cms/layout" />
+                <Route element={<CMSArticlePage />} path="cms/article" />
+                <Route
+                  element={<CMSFileBrowserPage />}
+                  path="cms/filebrowser"
+                />
+                <Route element={<CMSMetadataPage />} path="cms/metadata" />
+                <Route
+                  element={<CMSPublishingCollectionPage />}
+                  path="cms/collections"
+                />
 
                 <Route element={<ConfigManagerPage />} path="configuration" />
               </Route>

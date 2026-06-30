@@ -9,15 +9,14 @@ import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../config/src'
 import journalSchema from './collection/ui/journalSchema' // Import the function that generates the schema and uiSchema
 
-import {
-  ActionButton,
-  Container,
-  HeadingWithAction,
-  Heading,
-  PaddedContent,
-  SectionContent,
-  WidthLimiter,
-} from '../../shared'
+import { ActionButton, PaddedContent, SectionContent } from '../../shared'
+import Page from '../../../ui/shared/Page'
+
+const StyledContent = styled.div`
+  font-family: ${th('fontInterface')};
+  font-size: ${th('fontSizeBase')};
+  line-height: ${th('lineHeightBase')};
+`
 
 const FieldWrapper = styled.div`
   display: flex;
@@ -73,11 +72,10 @@ const CmsMetadataPage = () => {
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
         rel="stylesheet"
       />
-      <Container>
-        <HeadingWithAction>
-          <Heading>{t('leftMenu.Metadata')}</Heading>
-        </HeadingWithAction>
-        <WidthLimiter>
+      {/* Reset Bootstrap 3's html { font-size: 10px } which bleeds into the rest of the app */}
+      <style>{`html { font-size: 16px; }`}</style>
+      <Page title={t('leftMenu.Metadata')}>
+        <StyledContent>
           <SectionContent>
             <PaddedContent>
               <Form
@@ -89,8 +87,8 @@ const CmsMetadataPage = () => {
               />
             </PaddedContent>
           </SectionContent>
-        </WidthLimiter>
-      </Container>
+        </StyledContent>
+      </Page>
     </>
   )
 }

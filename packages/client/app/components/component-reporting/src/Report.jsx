@@ -4,35 +4,21 @@
 import PropTypes from 'prop-types'
 import styled, { useTheme } from 'styled-components'
 import { forEach, map } from 'lodash'
-import { th, grid } from '@coko/client'
+import { th } from '@coko/client'
 import { Trans, useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 
 import { Icon } from '../../pubsweet'
+import Page from '../../../ui/shared/Page'
 import DateRangePicker from './DateRangePicker'
 import SummaryReport from './SummaryReport'
 import Table from './Table'
 import SparkBar from './SparkBar'
 import Tooltip from './Tooltip'
 
-const Page = styled.div`
-  flex: 1 1 100%;
-  height: 100vh;
-  overflow-y: auto;
-  padding: 0 ${grid(2)} ${grid(3)} ${grid(2)};
-`
-
 const Select = styled.select`
   border: 1px solid ${th('colorBorder')};
   padding: 5px;
-`
-
-const Heading = styled.div`
-  color: ${th('color.brand1.base')};
-  font-family: ${th('fontReading')};
-  font-size: ${th('fontSizeHeading3')};
-  line-height: ${th('lineHeightHeading3')};
-  margin: ${th('gridUnit')} 0;
 `
 
 const MinorNote = styled.span`
@@ -413,8 +399,7 @@ const Report = ({
 }) => {
   const { t } = useTranslation()
   return (
-    <Page>
-      <Heading>{t('reportsPage.Reports')}</Heading>
+    <Page title={t('reportsPage.Reports')}>
       <SelectionLine data-testid="report-options">
         {t('reportsPage.Show')}{' '}
         <Select

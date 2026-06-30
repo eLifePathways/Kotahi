@@ -6,10 +6,8 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import User from './User'
 import {
-  Container,
   Table,
   Header,
-  Heading,
   Content,
   Pagination,
   PaginationContainer,
@@ -17,10 +15,12 @@ import {
   SortDown,
   TightRow,
 } from '../../shared'
+import Page from '../../../ui/shared/Page'
 
 const StyledTable = styled(Table)`
   border-radius: 0;
   border-width: 0;
+  margin-top: 0;
 `
 
 const HeaderCell = styled.th`
@@ -63,8 +63,7 @@ const UsersTable = ({
   const { t } = useTranslation()
 
   return (
-    <Container>
-      <Heading>{t('usersTable.Users')}</Heading>
+    <Page title={t('usersTable.Users')}>
       <Content>
         <StyledTable>
           <Header>
@@ -105,7 +104,7 @@ const UsersTable = ({
           totalCount={totalCount}
         />
       </Content>
-    </Container>
+    </Page>
   )
 }
 

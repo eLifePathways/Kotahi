@@ -12,15 +12,18 @@ import { HeadingCell } from '../../../component-production/src/components/styles
 import {
   Action,
   ActionButton,
-  Container,
-  HeadingWithAction,
-  Heading,
   PaddedContent,
   SectionContent,
-  WidthLimiter,
   LabelBadge,
 } from '../../../shared'
+import Page from '../../../../ui/shared/Page'
 import CollectionModalForm from './CollectionModalForm'
+
+const StyledContent = styled.div`
+  font-family: ${th('fontInterface')};
+  font-size: ${th('fontSizeBase')};
+  line-height: ${th('lineHeightBase')};
+`
 
 const CmsHeadStyled = styled.div`
   button {
@@ -216,11 +219,10 @@ const CollectionList = ({
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
         rel="stylesheet"
       />
-      <Container>
-        <HeadingWithAction>
-          <Heading>{t('leftMenu.Collections')}</Heading>
-        </HeadingWithAction>
-        <WidthLimiter>
+      {/* Reset Bootstrap 3's html { font-size: 10px } which bleeds into the rest of the app */}
+      <style>{`html { font-size: 16px; }`}</style>
+      <Page title={t('leftMenu.Collections')}>
+        <StyledContent>
           <SectionContent>
             <PaddedContent>
               <CmsHeadStyled>
@@ -263,8 +265,8 @@ const CollectionList = ({
               )}
             </PaddedContent>
           </SectionContent>
-        </WidthLimiter>
-      </Container>
+        </StyledContent>
+      </Page>
     </>
   )
 }

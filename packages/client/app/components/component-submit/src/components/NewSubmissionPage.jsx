@@ -2,7 +2,8 @@ import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useApolloClient } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
-import { Container, Content, UploadContainer, Heading } from '../style'
+import { Content, UploadContainer } from '../style'
+import Page from '../../../../ui/shared/Page'
 import UploadManuscript from './UploadManuscript'
 import { ConfigContext } from '../../../config/src'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
@@ -52,12 +53,13 @@ const Dashboard = () => {
   }
 
   return (
-    <Container>
-      <Heading>
-        {submissionPage?.title
+    <Page
+      title={
+        submissionPage?.title
           ? submissionPage.title
-          : t('newSubmission.New submission')}
-      </Heading>
+          : t('newSubmission.New submission')
+      }
+    >
       <Content>
         <UploadContainer>
           <UploadManuscript
@@ -70,7 +72,7 @@ const Dashboard = () => {
           />
         </UploadContainer>
       </Content>
-    </Container>
+    </Page>
   )
 }
 

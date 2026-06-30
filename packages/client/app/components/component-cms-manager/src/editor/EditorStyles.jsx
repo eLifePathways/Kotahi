@@ -1,7 +1,7 @@
 /* stylelint-disable string-quotes, declaration-block-no-redundant-longhand-properties */
 
 import styled from 'styled-components'
-import { th } from '@coko/client'
+import { th, grid } from '@coko/client'
 import waxDefaultStyles from '../../../wax-collab/src/layout/waxDefaultStyles'
 import EditorElements from '../../../wax-collab/src/layout/EditorElements'
 
@@ -59,7 +59,7 @@ export const EditorDiv = styled.div`
   height: 100%;
   ${props => !props.$hideComments && 'min-width: 800px'};
   overflow: auto;
-  padding: 5px;
+  padding: ${grid(2)};
   position: relative;
 
   .error & {

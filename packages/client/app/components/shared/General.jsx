@@ -26,8 +26,6 @@ export const SectionContent = styled(Section)`
   background-color: ${th('color.backgroundA')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
-  margin-bottom: ${grid(2)};
-  margin-top: ${grid(2)};
   padding: 0;
 
   /* stylelint-disable-next-line */

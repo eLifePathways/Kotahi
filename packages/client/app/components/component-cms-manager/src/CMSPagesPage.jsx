@@ -2,7 +2,9 @@ import { useContext, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
-import { Spinner, CommsErrorBanner } from '../../shared'
+import styled from 'styled-components'
+import { th, grid } from '@coko/client'
+import { Spinner, CommsErrorBanner, SectionContent } from '../../shared'
 
 import CMSPageEditForm from './pages/CMSPageEdit'
 
@@ -10,9 +12,13 @@ import CMSPageEditSidebar from './pages/CMSPageEditSidebar'
 
 import { ConfigContext } from '../../config/src'
 
-import { EditPageContainer, EditPageLeft, EditPageRight } from './style'
+import {
+  EditPageContainer,
+  EditPageLeft as BaseEditPageLeft,
+  EditPageRight as BaseEditPageRight,
+} from './style'
 
-import PageHeader from './components/PageHeader'
+import Page from '../../../ui/shared/Page'
 
 import {
   GET_CMS_PAGES,
@@ -21,6 +27,26 @@ import {
   REBUILD_FLAX_SITE,
   DELETE_CMS_PAGE,
 } from '../../../queries'
+
+const EditPageLeft = styled(BaseEditPageLeft)`
+  overflow-y: auto;
+`
+
+const EditPageRight = styled(BaseEditPageRight)`
+  background-color: transparent;
+  border-left: 2px solid ${th('colorPrimary')};
+  overflow-y: auto;
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  .ProseMirror {
+    padding: ${grid(2)};
+  }
+`
+
+const FullHeightContainer = styled(EditPageContainer)`
+  background: ${th('color.backgroundC')};
+  height: calc(100vh - 160px);
+`
 
 const CMSPagesPage = () => {
   const navigate = useNavigate()
@@ -86,38 +112,40 @@ const CMSPagesPage = () => {
   }
 
   return (
-    <EditPageContainer>
-      <EditPageLeft>
-        <CMSPageEditSidebar
-          cmsPages={cmsPages}
-          currentCMSPage={cmsPage}
-          isNewPage={isNewPage}
-          onItemClick={selectedCmsPage => showPage(selectedCmsPage)}
-          onNewItemButtonClick={() => addNewPage()}
-        />
-      </EditPageLeft>
-      <EditPageRight>
-        <PageHeader
-          leftSideOnly
-          mainHeading={
-            isNewPage ? t('cmsPage.pages.New Page') : t('cmsPage.pages.Pages')
-          }
-        />
-        {cmsPage && (
-          <CMSPageEditForm
-            cmsPage={cmsPage}
-            createNewCMSPage={createNewCMSPage}
-            deleteCMSPage={deleteCMSPage}
-            flaxSiteUrlForGroup={flaxSiteUrlForGroup}
-            isNewPage={isNewPage}
-            key={cmsPage.id}
-            rebuildFlaxSiteQuery={rebuildFlaxSiteQuery}
-            showPage={showPage}
-            updatePageDataQuery={updatePageDataQuery}
-          />
-        )}
-      </EditPageRight>
-    </EditPageContainer>
+    <Page
+      title={isNewPage ? t('cmsPage.pages.New Page') : t('cmsPage.pages.Pages')}
+    >
+      <FullHeightContainer>
+        <SectionContent
+          style={{ display: 'flex', flex: 1, overflow: 'hidden' }}
+        >
+          <EditPageLeft>
+            <CMSPageEditSidebar
+              cmsPages={cmsPages}
+              currentCMSPage={cmsPage}
+              isNewPage={isNewPage}
+              onItemClick={selectedCmsPage => showPage(selectedCmsPage)}
+              onNewItemButtonClick={() => addNewPage()}
+            />
+          </EditPageLeft>
+          <EditPageRight>
+            {cmsPage && (
+              <CMSPageEditForm
+                cmsPage={cmsPage}
+                createNewCMSPage={createNewCMSPage}
+                deleteCMSPage={deleteCMSPage}
+                flaxSiteUrlForGroup={flaxSiteUrlForGroup}
+                isNewPage={isNewPage}
+                key={cmsPage.id}
+                rebuildFlaxSiteQuery={rebuildFlaxSiteQuery}
+                showPage={showPage}
+                updatePageDataQuery={updatePageDataQuery}
+              />
+            )}
+          </EditPageRight>
+        </SectionContent>
+      </FullHeightContainer>
+    </Page>
   )
 }
 

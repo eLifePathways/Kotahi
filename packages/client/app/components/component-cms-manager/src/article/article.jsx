@@ -11,40 +11,40 @@ import { html } from '@codemirror/lang-html'
 import { css } from '@codemirror/lang-css'
 
 import {
-  Heading,
-  HeadingWithAction,
-  HiddenTabs,
-  Manuscript,
+  HiddenTabsContainer,
+  Tab,
+  TabContainer,
   ErrorBoundary,
 } from '../../../shared'
 
 import { FormActionButton } from '../style'
+import Page from '../../../../ui/shared/Page'
+import { FlexRow } from '../../../../globals'
 
 import UploadAsset from '../../../component-production/src/components/uploadManager/UploadAsset'
 import ManuscriptMetadata from './ManuscriptMetadata'
 
-const FlexRow = styled.div`
+const Tabs = styled.div`
   display: flex;
-  gap: ${grid(1)};
-  justify-content: space-between;
+  margin-top: ${grid(1)};
 `
 
-const StyledManuscript = styled(Manuscript)`
-  display: flex;
-  flex: 1 1 100%;
-  flex-direction: column;
-  height: 100vh;
-  overflow-y: auto;
+const TabRow = styled(FlexRow)`
   width: 100%;
+`
+
+const PublishButton = styled(FormActionButton)`
+  margin-bottom: ${grid(1)};
+  margin-left: auto;
+  margin-right: 0;
 `
 
 const ScrollableTabContent = styled.section`
   background-color: ${th('color.backgroundA')};
   border-radius: ${th('borderRadius')};
-  box-shadow: ${({ theme }) => theme.boxShadow.shades[200]};
-  height: calc(100vh - 108px);
+  height: calc(100vh - 200px);
+
   overflow: auto;
-  width: calc(100% - 50px);
 `
 
 const Article = ({
@@ -58,6 +58,8 @@ const Article = ({
   const [cssValue, setCssValue] = useState(articleTemplate.css)
 
   const [htmlValue, setHtmlValue] = useState(articleTemplate.article)
+
+  const [activeTab, setActiveTab] = useState('article-template')
 
   const onChangeCss = useCallback(
     debounce(cssContent => {
@@ -107,84 +109,90 @@ const Article = ({
     ),
   }
 
-  const cssArticle = {
-    content: (
-      <ScrollableTabContent>
-        <CodeMirror
-          extensions={[css()]}
-          onChange={onChangeCss}
-          value={cssValue}
-        />
-      </ScrollableTabContent>
-    ),
-    key: 'article-css',
-    label: 'Article Css',
-  }
-
-  const htmlTemplate = {
-    content: (
-      <ScrollableTabContent>
-        <CodeMirror
-          extensions={[html()]}
-          onChange={onChangeHtml}
-          value={htmlValue}
-        />
-      </ScrollableTabContent>
-    ),
-    key: 'article-template',
-    label: 'Article Template',
-  }
-
-  const uploadAssets = {
-    content: (
-      <ScrollableTabContent>
-        <UploadAsset
-          files={articleTemplate.files}
-          groupTemplateId={articleTemplate.groupId}
-          onCopyAsImage={onCopyAsImage}
-          tag="isCms"
-        />
-      </ScrollableTabContent>
-    ),
-    key: 'template-assets',
-    label: 'Template Assets',
-  }
-
-  const manuscriptMetadata = {
-    content: (
-      <ScrollableTabContent>
-        <ManuscriptMetadata
-          displayShortIdAsIdentifier={displayShortIdAsIdentifier}
-          formWithSubmissionFieldsOnly={formWithSubmissionFieldsOnly}
-        />
-      </ScrollableTabContent>
-    ),
-    key: 'manuscript-metadata',
-    label: 'Article Metadata',
-  }
+  const sections = [
+    {
+      key: 'article-css',
+      label: 'Article Css',
+      content: (
+        <ScrollableTabContent>
+          <CodeMirror
+            extensions={[css()]}
+            onChange={onChangeCss}
+            value={cssValue}
+          />
+        </ScrollableTabContent>
+      ),
+    },
+    {
+      key: 'article-template',
+      label: 'Article Template',
+      content: (
+        <ScrollableTabContent>
+          <CodeMirror
+            extensions={[html()]}
+            onChange={onChangeHtml}
+            value={htmlValue}
+          />
+        </ScrollableTabContent>
+      ),
+    },
+    {
+      key: 'template-assets',
+      label: 'Template Assets',
+      content: (
+        <ScrollableTabContent>
+          <UploadAsset
+            files={articleTemplate.files}
+            groupTemplateId={articleTemplate.groupId}
+            onCopyAsImage={onCopyAsImage}
+            tag="isCms"
+          />
+        </ScrollableTabContent>
+      ),
+    },
+    {
+      key: 'manuscript-metadata',
+      label: 'Article Metadata',
+      content: (
+        <ScrollableTabContent>
+          <ManuscriptMetadata
+            displayShortIdAsIdentifier={displayShortIdAsIdentifier}
+            formWithSubmissionFieldsOnly={formWithSubmissionFieldsOnly}
+          />
+        </ScrollableTabContent>
+      ),
+    },
+  ]
 
   return (
-    <StyledManuscript>
-      <HeadingWithAction>
-        <FlexRow>
-          <Heading>{t('cmsPage.article.title')}</Heading>
-          <FormActionButton onClick={onPublish} primary type="button">
-            {submitButtonText}
-          </FormActionButton>
-        </FlexRow>
-      </HeadingWithAction>
+    <Page title={t('cmsPage.article.title')}>
       <ErrorBoundary>
-        <HiddenTabs
-          defaultActiveKey="article-template"
-          sections={[
-            cssArticle,
-            htmlTemplate,
-            uploadAssets,
-            manuscriptMetadata,
-          ]}
-        />
+        <HiddenTabsContainer $sticky={false}>
+          <TabRow>
+            <Tabs>
+              {sections.map(({ key, label }) => (
+                <TabContainer key={key} onClick={() => setActiveTab(key)}>
+                  <Tab $active={activeTab === key}>
+                    <div>{label}</div>
+                  </Tab>
+                </TabContainer>
+              ))}
+            </Tabs>
+            <PublishButton onClick={onPublish} primary type="button">
+              {submitButtonText}
+            </PublishButton>
+          </TabRow>
+        </HiddenTabsContainer>
+        {sections.map(section => (
+          <div
+            key={section.key}
+            style={{ display: activeTab === section.key ? 'block' : 'none' }}
+          >
+            {section.content}
+          </div>
+        ))}
       </ErrorBoundary>
-    </StyledManuscript>
+    </Page>
   )
 }
 

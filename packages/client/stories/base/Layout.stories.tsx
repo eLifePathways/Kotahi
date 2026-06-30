@@ -1,11 +1,12 @@
 import styled from 'styled-components'
+import { th } from '@coko/client'
 
 import preview from '../../.storybook/preview'
 import Layout from '../../app/ui/base/Layout'
 
 const Left = styled.div`
   color: white;
-  background-color: forestgreen;
+  background-color: ${th('colorPrimary')};
   width: 300px;
 
   display: flex;

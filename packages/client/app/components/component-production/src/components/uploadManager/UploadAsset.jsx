@@ -12,24 +12,23 @@ import { convertTimestampToRelativeDateString } from '../../../../../shared/date
 import { Placeholder } from '../../../../component-dashboard/src/style'
 import { ConfirmationModal } from '../../../../component-modal/src/ConfirmationModal'
 import FileRow from '../FileRow'
-import {
-  Container,
-  SectionContent,
-  SectionRow,
-  ActionButton,
-} from '../../../../shared'
+import { SectionContent, SectionRow, ActionButton } from '../../../../shared'
 import { HeadingCell } from '../styles'
 import UploadComponent from './UploadComponent'
 import { TagDropdown } from './TagDropDown'
 import { UPDATE_FILE_TAGS } from '../../../../../queries'
 
-const UploadAssetContainer = styled(Container)`
+const NoShadowSectionContent = styled(SectionContent)`
+  box-shadow: none;
+`
+
+const UploadAssetContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
   overflow: auto;
-  padding: calc(8px * 2) calc(8px * 3);
+  width: 100%;
 `
 
 export const FileTableStyled = styled.div`
@@ -294,7 +293,7 @@ const UploadAsset = ({
 
   return (
     <UploadAssetContainer>
-      <SectionContent>
+      <NoShadowSectionContent>
         <StyledSectionRow key="upload-asset">
           <WrapperUpload>
             <span>Css Upload:</span>
@@ -340,7 +339,7 @@ const UploadAsset = ({
             )}
           </FileTableStyled>
         </SectionRow>
-      </SectionContent>
+      </NoShadowSectionContent>
       <ConfirmationModal
         closeModal={() => setFileBeingDeletedId(null)}
         confirmationAction={onDelete(fileBeingDeletedId)}

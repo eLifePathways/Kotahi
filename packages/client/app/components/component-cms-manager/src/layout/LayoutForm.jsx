@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 
+import styled from 'styled-components'
+
 import { SectionContent, PaddedContent } from '../../../shared'
 import { ActionButtonContainer, FormActionButton } from '../style'
 import PublishStatus from '../components/PublishStatus'
@@ -8,6 +10,12 @@ import Header from './Header'
 import Branding from './Branding'
 import Footer from './Footer'
 import SiteStatus from './SiteStatus'
+
+const Wrapper = styled.div`
+  > section:first-child > div {
+    margin-top: 0;
+  }
+`
 
 const LayoutForm = ({
   formikProps,
@@ -81,7 +89,7 @@ const LayoutForm = ({
   }
 
   return (
-    <div>
+    <Wrapper>
       {renderBranding()}
       {renderHeader()}
       {renderFooter()}
@@ -98,7 +106,7 @@ const LayoutForm = ({
         </div>
         <PublishStatus cmsComponent={cmsLayout} />
       </ActionButtonContainer>
-    </div>
+    </Wrapper>
   )
 }
 

@@ -19,6 +19,7 @@
     "prosemirror-view": "1.30.2"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.2.5",
     "@apollo/client": "4.1.9",
     "@codemirror/lang-css": "^6.2.1",
     "@codemirror/lang-html": "^6.4.6",
@@ -28,6 +29,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@fontsource/roboto": "^4.5.8",
+    "@fontsource/spectral-sc": "^5.2.8",
     "@rjsf/core": "4.2.3",
     "@uiw/react-codemirror": "^4.21.20",
     "antd": "^6.3.7",
@@ -90,10 +92,10 @@
     "yjs": "13.5.38"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "8.6.14",
-    "@storybook/react-vite": "^10.4.3",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/react-vite": "^10.4.6",
     "@types/react": "^19.2.14",
-    "storybook": "^10.4.3"
+    "storybook": "^10.4.6"
   },
   "packageManager": "yarn@4.9.2"
 }

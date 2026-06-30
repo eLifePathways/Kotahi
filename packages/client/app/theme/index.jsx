@@ -24,6 +24,8 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 import '@fontsource/roboto/400-italic.css'
 
+import '@fontsource/spectral-sc'
+
 export const validateColor = colorCode => {
   try {
     Color(colorCode)
@@ -34,8 +36,20 @@ export const validateColor = colorCode => {
   }
 }
 
-const defaultBrandColor1 = '#3aae2a'
-const defaultBrandColor2 = '#9e9e9e'
+// Look into a warmer papery theme
+// background
+// 1. #F9F8F6 • Cotton Rag Paper (The Safe Bet)
+// 2. #F7F5F0 • Heavy Cardstock (More Alabaster)
+// 3. #FAF9F6 • Clean Washi Paper (Whisper Light)
+
+// font
+// warm, dark gray like #2C2A29
+// or #333230
+
+// const defaultBrandColor1 = '#3aae2a'
+// const defaultBrandColor2 = '#9e9e9e'
+const defaultBrandColor1 = '#4a7c59'
+const defaultBrandColor2 = '#6b7280'
 
 export const makeTheme = (
   colorBrand1 = defaultBrandColor1,
@@ -67,7 +81,8 @@ export const makeTheme = (
 
     backgroundA: '#FFFFFF',
     backgroundB: '#f9fafb',
-    backgroundC: '#f4f5f7',
+    // backgroundC: '#f4f5f7',
+    backgroundC: '#f2f2f2',
 
     brand1: {
       shade50: Color(colorBrand1).darken(0.52),
@@ -208,13 +223,14 @@ export const makeTheme = (
   /** @deprecated in favor of color.gray80 */
   colorContainerBorder: '#DEDEDE',
 
+  colorDisabled: '#bfbfbf',
+
   /* Text variables */
 
   // fonts
   fontInterface:
     "Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
-  fontHeading:
-    "Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+  fontHeading: "'Spectral SC', Georgia, 'Times New Roman', serif",
   fontReading:
     "Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
   fontWriting:
@@ -247,6 +263,7 @@ export const makeTheme = (
 
   /* Border */
   borderRadius: '6px',
+  borderRadiusLarge: '15%',
   borderWidth: '1px', // julien: not 0
   borderStyle: 'solid',
 

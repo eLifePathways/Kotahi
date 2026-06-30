@@ -46,6 +46,8 @@ export default createGlobalStyle`
 
   a {
     color: ${th('color.brand1.base')};
+    /* stylelint-disable-next-line declaration-no-important */
+    text-decoration: none !important;
   }
 
   strong,
