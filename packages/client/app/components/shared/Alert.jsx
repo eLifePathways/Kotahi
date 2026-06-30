@@ -8,7 +8,13 @@ const StyledAntAlert = styled(AntAlert)`
   margin-bottom: ${({ $marginBottom }) => grid($marginBottom) ?? 0};
 `
 
-const Alert = ({ bottomMargin = 0, description, message, showIcon = false, type = 'info' }) => {
+const Alert = ({
+  bottomMargin = 0,
+  description,
+  message,
+  showIcon = false,
+  type = 'info',
+}) => {
   const { t } = useTranslation()
 
   return (
