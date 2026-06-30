@@ -79,6 +79,8 @@ const CoarLabel = ({
 
   const type = getPatternType(rawType)
 
+  const { $title } = JSON.parse(manuscript?.submission || '{}')
+
   let color
 
   if (['Accept'].includes(type)) {
@@ -103,6 +105,11 @@ const CoarLabel = ({
           </Tag>
           <Moment format="DD MMM YYYY, HH:mm:ss">{created}</Moment>
         </FlexRowItem>
+        {$title && (
+          <FlexRowItem>
+            {$title.length > 50 ? `${$title.slice(0, 50)}...` : $title}
+          </FlexRowItem>
+        )}
         {allowPayloadEdit && activityType !== 'UnprocessableNotification' && (
           <FlexRowItem>
             {manuscript && (

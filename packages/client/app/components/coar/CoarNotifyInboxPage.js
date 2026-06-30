@@ -1,20 +1,36 @@
 import { useMutation, useQuery } from '@apollo/client'
 import React, { useContext } from 'react'
 import {
-  GET_COAR_NOTIFICATIONS_BY_GROUP_ID_OR_NONE,
+  GET_PAGINATED_COAR_NOTIFICATIONS_BY_GROUP_ID_OR_NONE,
   RESEND_COAR_NOTIFY_PAYLOAD,
 } from '../../queries/coar.queries'
 import CoarNotifyInbox from './CoarNotifyInbox'
 import { ConfigContext } from '../config/src'
+import {
+  extractFilters,
+  URI_PAGENUM_PARAM,
+  URI_SEARCH_PARAM,
+  useQueryParams,
+} from '../../shared/urlParamUtils'
 
-const CoarNotifyInboxPage = ({ currentUser }) => {
+const CoarNotifyInboxPage = ({ currentUser, history }) => {
   const config = useContext(ConfigContext)
+  const applyQueryParams = useQueryParams()
 
   const groupId = config?.groupId
 
+  const uriQueryParams = new URLSearchParams(history.location.search)
+  const page = uriQueryParams.get(URI_PAGENUM_PARAM) || 1
+  const filters = extractFilters(uriQueryParams)
+  const limit = config?.manuscript?.paginationCount || 10
+  const currentSearchQuery = uriQueryParams.get(URI_SEARCH_PARAM)
+
   const { data, error, loading, refetch } = useQuery(
-    GET_COAR_NOTIFICATIONS_BY_GROUP_ID_OR_NONE,
-    { variables: { groupId } },
+    GET_PAGINATED_COAR_NOTIFICATIONS_BY_GROUP_ID_OR_NONE,
+    {
+      fetchPolicy: 'network-only',
+      variables: { filters, groupId, limit, offset: (page - 1) * limit },
+    },
   )
 
   const [resendCoarNotifyPayload] = useMutation(RESEND_COAR_NOTIFY_PAYLOAD)
@@ -23,7 +39,11 @@ const CoarNotifyInboxPage = ({ currentUser }) => {
     return 'error'
   }
 
-  const messages = data?.coarNotificationsForGroupOrNone || []
+  const { messages, totalCount } =
+    data?.paginatedCoarNotificationsForGroupOrNone || {
+      messages: [],
+      totalCount: 0,
+    }
 
   const handleResendCoarNotifyPayload = async ({
     id: notificationId,
@@ -45,10 +65,15 @@ const CoarNotifyInboxPage = ({ currentUser }) => {
 
   return (
     <CoarNotifyInbox
+      applyQueryParams={applyQueryParams}
       config={config}
+      currentSearchPage={page}
+      currentSearchQuery={currentSearchQuery}
       loading={loading}
+      messageLimit={limit}
       messages={messages}
       onResendCoarNotifyPayload={handleResendCoarNotifyPayload}
+      totalMessageCount={totalCount}
     />
   )
 }
