@@ -8,7 +8,8 @@ const readPluginGroupsFromManifestFile = async () => {
   let pluginGroups
 
   try {
-    pluginGroups = require('../../config/plugins/plugins_manifest.json')
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    pluginGroups = require(`../../config/plugins/${'plugins_manifest.json'}`)
     /* eslint-disable-next-line */
   } catch (error) {
     console.info('No plugins manifest found; skipping plugins.')

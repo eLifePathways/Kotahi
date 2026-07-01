@@ -18,7 +18,8 @@ const {
 let allDocmapsScheme
 
 try {
-  allDocmapsScheme = require('../../../config/journal/docmaps_scheme.json')
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  allDocmapsScheme = require(`../../../config/journal/${'docmaps_scheme.json'}`)
   /* eslint-disable-next-line */
 } catch (err) {
   allDocmapsScheme = null
