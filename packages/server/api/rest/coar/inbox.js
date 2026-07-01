@@ -7,6 +7,7 @@ const {
   sendUnprocessableCoarNotification,
   validateIPs,
   validateAuthToken,
+  createNotification,
 } = require('../../../controllers/coar/coar.controllers')
 
 module.exports = async app => {
@@ -20,6 +21,7 @@ module.exports = async app => {
     let hasError = false
 
     const group = await Group.query().findOne({ name: groupName })
+    const groupId = group?.id || null
 
     if (!group) {
       message = 'Group not found'
@@ -27,7 +29,7 @@ module.exports = async app => {
       hasError = true
     }
 
-    if (!hasError && !(await validateAuthToken(authHeader, group.id))) {
+    if (!hasError && !(await validateAuthToken(authHeader, groupId))) {
       message = 'Unauthorized Request'
       res.status(403).send({ message })
       hasError = true
@@ -40,26 +42,43 @@ module.exports = async app => {
       hasError = true
     }
 
+    if (
+      !hasError &&
+      !(payload && typeof payload === 'object' && !!Object.keys(payload).length)
+    ) {
+      message = 'No payload provided'
+      res.status(400).send({ message })
+      hasError = true
+    }
+
     if (hasError) {
-      await sendUnprocessableCoarNotification(message, payload)
+      await createNotification(payload, groupId, null)
+      await sendUnprocessableCoarNotification(message, payload, null, groupId)
       return
     }
 
     try {
       const { message: processMessage, status } = await processNotification(
-        group,
+        group.id,
         payload,
       )
 
       if (status > 299) {
-        await sendUnprocessableCoarNotification(processMessage, payload)
+        await createNotification(payload, groupId, null)
+
+        await sendUnprocessableCoarNotification(
+          processMessage,
+          payload,
+          null,
+          group.id,
+        )
       }
 
       res.status(status).send({ message: processMessage })
     } catch (error) {
       message = 'Failed to create notification.'
       logger.error(error)
-      await sendUnprocessableCoarNotification(message, payload)
+      await sendUnprocessableCoarNotification(message, payload, null, group.id)
       res.status(500).send({ message })
     }
   })

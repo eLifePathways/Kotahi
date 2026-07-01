@@ -126,6 +126,7 @@ const esLa = {
       Article: 'Plantilla de Publicación',
       Metadata: 'Metadatos del Diario',
       Collections: 'Colecciones',
+      CoarNotifyInbox: 'Bandeja de entrada de COAR Notify',
     },
     menuSettings: {
       KeepMenuVisible: 'Mantener menú visible',
@@ -246,6 +247,19 @@ const esLa = {
         'Por favor confirme que desea restaurar el estado no archivado de los manuscritos seleccionados.',
       takeAction: 'Acción',
       exportAsJson: 'Descargar JSON',
+    },
+    coarNotifyInboxPage: {
+      controlManuscript: 'Manuscrito de control',
+      correctPayload:
+        'Contenido de carga útil no válido. Por favor corrija la carga útil.',
+      editCoarPayloadTitle: 'Editar carga útil de COAR Notify',
+      editPayload: 'Editar carga útil',
+      evaluateManuscript: 'Evaluar manuscrito',
+      modalDescription:
+        'Hubo un error al procesar esta carga útil de COAR Notify. Por favor corrija los datos no válidos e intente nuevamente.',
+      payload: 'Objeto JSON de carga útil',
+      resendPayload: 'Reenviar carga útil',
+      title: 'Bandeja de entrada de COAR Notify',
     },
     decisionPage: {
       'Current version': 'Versión Actual',

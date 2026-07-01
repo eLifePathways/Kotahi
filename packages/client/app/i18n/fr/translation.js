@@ -126,6 +126,7 @@ const fr = {
       FileBrowser: 'Explorateur de fichiers',
       Metadata: 'Métadonnées de Publication',
       Collections: 'Colecciones',
+      CoarNotifyInbox: 'Boîte de réception COAR Notify',
     },
     menuSettings: {
       KeepMenuVisible: 'Garder le menu visible',
@@ -248,6 +249,19 @@ const fr = {
         'Veuillez confirmer que vous souhaitez restaurer le statut non archivé des manuscrits sélectionnés.',
       takeAction: 'Action',
       exportAsJson: 'Télécharger JSON',
+    },
+    coarNotifyInboxPage: {
+      controlManuscript: 'Manuscrit de contrôle',
+      correctPayload:
+        'Contenu de charge utile invalide. Veuillez corriger la charge utile.',
+      editCoarPayloadTitle: 'Modifier la charge utile COAR Notify',
+      editPayload: 'Modifier la charge utile',
+      evaluateManuscript: 'Évaluer le manuscrit',
+      modalDescription:
+        "Une erreur s'est produite lors du traitement de cette charge utile COAR Notify. Veuillez corriger les données invalides et réessayer.",
+      payload: 'Objet JSON de charge utile',
+      resendPayload: 'Renvoyer la charge utile',
+      title: 'Boîte de réception COAR Notify',
     },
     decisionPage: {
       'Current version': 'Version actuelle',

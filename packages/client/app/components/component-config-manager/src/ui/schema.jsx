@@ -92,6 +92,11 @@ export const generateSchemas = ({
               description: t('configPage.Brand name'),
               default: 'Kotahi',
             },
+            title: {
+              type: 'string',
+              description: t('configPage.title'),
+              default: '',
+            },
             journalAbbreviatedName: {
               type: ['string', 'null'],
               description: t('configPage.journalAbbreviatedName'),

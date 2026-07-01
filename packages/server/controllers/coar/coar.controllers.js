@@ -214,22 +214,32 @@ const sendUnprocessableCoarNotification = async (
   groupId = null,
 ) => {
   const { id: notificationId, origin, target } = originalPayload
+  const activeConfig = await Config.getCached(groupId)
+
+  const actor = {
+    id: 'https://kotahi.community',
+    type: 'Organization',
+    name: 'Kotahi',
+  }
+
+  if (activeConfig) {
+    const { rorUrl, title } = activeConfig.formData?.groupIdentity ?? {}
+
+    if (rorUrl && title) {
+      actor.id = rorUrl
+      actor.name = title
+    }
+  }
 
   const payload = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
       'https://coar-notify.net',
     ],
-    actor: {
-      id: 'https://kotahi.community',
-      type: 'Organization',
-      name: 'Kotahi',
-    },
+    actor,
     id: generateUrn(),
     inReplyTo: notificationId,
-    object: {
-      id: notificationId,
-    },
+    object: originalPayload,
     origin: {
       id: serverUrl,
       type: 'Service',
@@ -255,13 +265,11 @@ const sendUnprocessableCoarNotification = async (
       data: stringifiedPayload,
     })
 
-    if (manuscriptId) {
-      await CoarNotification.query().insert({ payload, manuscriptId, groupId })
-    }
+    await createNotification(payload, groupId, manuscriptId)
 
     return response ? response.data : false
   } catch (e) {
-    logger.error(e)
+    logger.error(`Failed to send COAR UnprocessableNotification: ${e}`)
     return false
   }
 }
@@ -269,11 +277,24 @@ const sendUnprocessableCoarNotification = async (
 const createNotification = async (payload, groupId, manuscriptId = null) => {
   const notification = await CoarNotification.query().insert({
     payload,
-    groupId,
+    ...(groupId ? { groupId } : {}),
     ...(manuscriptId ? { manuscriptId } : {}),
   })
 
   return notification
+}
+
+const updateNotification = async (
+  reprocessNotification,
+  payload,
+  groupId,
+  manuscriptId = null,
+) => {
+  return reprocessNotification.$query().patchAndFetch({
+    groupId,
+    payload,
+    ...(manuscriptId ? { manuscriptId } : {}),
+  })
 }
 
 const getManuscriptByDoi = async (doi, groupId) => {
@@ -305,16 +326,15 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
       ? await getCrossrefDataViaDoi(doi)
       : await getDataciteViaDoi(doi)
 
-  //   const crossrefData = await getCrossrefDataViaDoi(doi)
-  const existingManuscript = await getManuscriptByDoi(doi, groupId)
-
-  if (existingManuscript) return null
-
   if (!doiMetadata) {
     throw new Error(
       `Could not find metadata for DOI ${doi}. Please verify with ${doiRa}`,
     )
   }
+
+  const existingManuscript = await getManuscriptByDoi(doi, groupId)
+
+  if (existingManuscript) return null
 
   const {
     title,
@@ -428,7 +448,10 @@ const extractDoi = payload => {
 
 const extractNotificationType = payload => {
   if (Array.isArray(payload?.type)) {
-    if (payload.type.includes('Offer')) {
+    if (
+      payload.type.includes('Offer') &&
+      payload.type.includes('coar-notify:ReviewAction')
+    ) {
       return 'Offer'
     }
 
@@ -444,21 +467,75 @@ const extractNotificationType = payload => {
   return null
 }
 
-const processNotification = async (group, payload) => {
-  const groupId = group.id
+const hasValidContext = payload => {
+  const context = payload['@context']
+
+  return (
+    context &&
+    Array.isArray(context) &&
+    context.some(c => c.includes('w3.org/ns/activitystreams'))
+  )
+}
+
+const generate400Error = message => ({ status: 400, message })
+
+/**
+ * Process a given COAR Notify payload to create a manuscript for a given group
+ * @param {*} groupId Group ID to assign the COAR Notify message
+ * @param {*} payload COAR Notify Payload being processed
+ * @param {*} [reprocessNotification] This notification is being reprocessed, due to a previous error. This notification will be updated with the valid payload.
+ * @returns {Promise<{status: number, message: string}>}
+ */
+const processNotification = async (
+  groupId,
+  payload,
+  reprocessNotification = null,
+) => {
   const doi = extractDoi(payload)
+
+  if (!hasValidContext(payload)) {
+    return generate400Error('Property `@context` is invalid')
+  }
+
+  if (!payload.id) {
+    return generate400Error('Property `id` is missing from payload')
+  }
+
+  if (!payload.object || !payload.object.id) {
+    return generate400Error(
+      `Property ${'`object`'} is missing ${
+        !payload.object ? '' : '`id` '
+      }from payload`,
+    )
+  }
+
+  if (!payload.origin) {
+    return generate400Error('Property `origin` is missing from payload')
+  }
+
+  if (!payload.target) {
+    return generate400Error('Property `target` is missing from payload')
+  }
 
   const type = extractNotificationType(payload)
 
   if (!type) {
-    return { status: 400, message: 'Invalid notification type' }
+    return generate400Error(
+      `Invalid/unsupported notification type: ${payload.type}. Only 'Request Review' and 'Undo Offer' patterns are accepted`,
+    )
   }
 
-  if (type === 'Undo' && !payload.inReplyTo) {
-    return {
-      status: 400,
-      message: 'Property `inReplyTo` is missing from payload',
-    }
+  if (
+    type === 'Undo' &&
+    (!payload.inReplyTo || payload.inReplyTo !== payload.object.id)
+  ) {
+    return generate400Error(
+      `Property ${'`inReplyTo`'} ${
+        !payload.inReplyTo
+          ? 'is missing from payload'
+          : 'does not match `object.id`'
+      }`,
+    )
   }
 
   const existingNotification =
@@ -481,24 +558,33 @@ const processNotification = async (group, payload) => {
       return { status: 404, message: 'Manuscript not found' }
     }
 
-    await createNotification(payload, groupId, existingManuscript.id)
+    if (!reprocessNotification) {
+      await createNotification(payload, groupId, existingManuscript.id)
+    } else {
+      await updateNotification(
+        reprocessNotification,
+        payload,
+        groupId,
+        existingManuscript.id,
+      )
+    }
+
     await archiveManuscript(existingManuscript.id)
 
     return { status: 202, message: 'Manuscript archived successfully' }
   }
 
-  if (existingNotification) {
-    return {
-      status: 400,
-      message: 'Notification already exists with the same payload.',
-    }
+  if (existingNotification && !reprocessNotification) {
+    return generate400Error(
+      'Notification already exists with the same payload.',
+    )
   }
 
   // may contain the error message to be returned
   const doiRa = await getDoiRegistrationAgency(doi)
 
   if (!supportedDoiRegistrationAgencies.includes(doiRa)) {
-    return { status: 400, message: doiRa }
+    return generate400Error(doiRa)
   }
 
   let newManuscript
@@ -511,10 +597,24 @@ const processNotification = async (group, payload) => {
       doiRa,
     )
   } catch (extractError) {
-    return { status: 400, message: extractError.message }
+    return generate400Error(extractError.message)
   }
 
-  const notification = await createNotification(payload, groupId)
+  if (!newManuscript && reprocessNotification) {
+    return generate400Error('Manuscript already exists with DOI.')
+  }
+
+  let notification
+
+  if (!reprocessNotification) {
+    notification = await createNotification(payload, groupId)
+  } else {
+    notification = await updateNotification(
+      reprocessNotification,
+      payload,
+      groupId,
+    )
+  }
 
   // existing manuscript
   if (!newManuscript) {
@@ -528,6 +628,42 @@ const processNotification = async (group, payload) => {
   return { status: 202, message: 'Notification created successfully.' }
 }
 
+const reprocessCoarNotifyPayload = async (
+  groupId,
+  existingNotificationId,
+  stringifiedPayload,
+) => {
+  const existingNotification = await CoarNotification.findById(
+    existingNotificationId,
+  )
+
+  if (!existingNotification) {
+    return {
+      success: false,
+      reason: `Existing COAR Notify message not found for id: ${existingNotificationId}`,
+    }
+  }
+
+  const payload = JSON.parse(stringifiedPayload)
+
+  try {
+    const { message, status } = await processNotification(
+      groupId,
+      payload,
+      existingNotification,
+    )
+
+    if (status < 300) {
+      return { success: true }
+    }
+
+    return { success: false, reason: message }
+  } catch (e) {
+    logger.error('reprocessCoarNotifyPayload failed:', e.message)
+    return { success: false, reason: e.message }
+  }
+}
+
 const getNotificationsForManuscript = async manuscriptId => {
   const notifications = (
     await CoarNotification.getNotificationsForManuscript(manuscriptId)
@@ -536,13 +672,36 @@ const getNotificationsForManuscript = async manuscriptId => {
   return notifications
 }
 
+const getPaginatedNotificationsForGroup = async (
+  groupId,
+  filters,
+  offset,
+  limit,
+) => {
+  const { messages, totalCount } =
+    await CoarNotification.getPaginatedNotificationsAndManuscriptsByGroupOrNone(
+      groupId,
+      filters,
+      offset,
+      limit,
+    )
+
+  return {
+    messages: messages.map(n => ({ ...n, payload: JSON.stringify(n.payload) })),
+    totalCount,
+  }
+}
+
 module.exports = {
+  createNotification,
+  getPaginatedNotificationsForGroup,
   getNotificationsForManuscript,
   sendAnnouncementNotification,
   sendTentativeAcceptCoarNotification,
   sendRejectCoarNotification,
   sendUnprocessableCoarNotification,
   processNotification,
+  reprocessCoarNotifyPayload,
   validateAuthToken,
   validateIPs,
 }

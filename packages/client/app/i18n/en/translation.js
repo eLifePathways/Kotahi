@@ -126,6 +126,7 @@ const en = {
       FileBrowser: 'File browser',
       Metadata: 'Publication Metadata',
       Collections: 'Collections',
+      CoarNotifyInbox: 'COAR Notify Inbox',
     },
     menuSettings: {
       KeepMenuVisible: 'Keep menu visible',
@@ -245,6 +246,18 @@ const en = {
         'Please confirm you wish to restore the selected manuscripts to unarchived status.',
       takeAction: 'Action',
       exportAsJson: 'Download JSON',
+    },
+    coarNotifyInboxPage: {
+      controlManuscript: 'Control Manuscript',
+      correctPayload: 'Invalid payload content. Please correct payload.',
+      editCoarPayloadTitle: 'Edit COAR Notify Payload',
+      editPayload: 'Edit Payload',
+      evaluateManuscript: 'Evaluate Manuscript',
+      modalDescription:
+        'There was an error processing this COAR Notify payload. Please correct the invalid data, and try again.',
+      payload: 'Payload JSON object',
+      resendPayload: 'Resend Payload',
+      title: 'COAR Notify Inbox',
     },
     decisionPage: {
       'Current version': 'Current version',

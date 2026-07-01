@@ -1,4 +1,7 @@
 const { BaseModel } = require('@coko/server')
+const { formatSearchQueryForPostgres } = require('../../utils/searchUtils')
+const Group = require('../group/group.model')
+const Manuscript = require('../manuscript/manuscript.model')
 
 class CoarNotification extends BaseModel {
   static get tableName() {
@@ -16,10 +19,86 @@ class CoarNotification extends BaseModel {
     }
   }
 
+  static get relationMappings() {
+    return {
+      group: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: Group,
+        join: {
+          from: 'coar_notifications.groupId',
+          to: 'groups.id',
+        },
+      },
+      manuscript: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: Manuscript,
+        join: {
+          from: 'coar_notifications.manuscriptId',
+          to: 'manuscripts.id',
+        },
+      },
+    }
+  }
+
   static async getNotificationsForManuscript(manuscriptId, options = {}) {
     const { trx } = options
 
-    return this.query(trx).where({ manuscriptId })
+    return this.query(trx).where({ manuscriptId }).orderBy('created', 'desc')
+  }
+
+  static async getPaginatedNotificationsAndManuscriptsByGroupOrNone(
+    groupId,
+    filters,
+    offset,
+    limit,
+    options = {},
+  ) {
+    const { trx } = options
+
+    const baseQuery = () =>
+      this.query(trx).where(builder => {
+        builder
+          .where('coar_notifications.group_id', groupId)
+          .orWhereNull('coar_notifications.group_id')
+      })
+
+    const searchFilter = filters?.find(f => f.field === 'search')
+
+    const manuscriptSearchQuery =
+      searchFilter && formatSearchQueryForPostgres(searchFilter.value)
+
+    const applySearchFilter = query => {
+      if (searchFilter?.value) {
+        query
+          .leftJoin(
+            'manuscripts',
+            'coar_notifications.manuscript_id',
+            'manuscripts.id',
+          )
+          .where(builder => {
+            builder
+              .whereRaw(`coar_notifications.payload::text ILIKE ?`, [
+                `%${searchFilter.value}%`,
+              ])
+              .orWhereRaw(
+                `coar_notifications.manuscript_id IS NOT NULL AND manuscripts.search_tsvector @@ to_tsquery('english', ?)`,
+                [manuscriptSearchQuery],
+              )
+          })
+      }
+
+      return query
+    }
+
+    const totalCount = await applySearchFilter(baseQuery()).resultSize()
+
+    const messages = await applySearchFilter(
+      baseQuery().withGraphFetched('manuscript').orderBy('created', 'desc'),
+    )
+      .offset(offset || 0)
+      .limit(limit || 10)
+
+    return { messages, totalCount }
   }
 
   static async getOfferNotificationForManuscript(manuscriptId, options = {}) {

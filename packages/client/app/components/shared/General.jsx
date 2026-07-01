@@ -129,7 +129,13 @@ const Heading = styled.div.attrs({
   line-height: ${th('lineHeightHeading3')};
 `
 
-export { Page, Heading }
+const FlexRow = styled.div`
+  display: flex;
+  gap: ${grid(1)};
+  justify-content: space-between;
+`
+
+export { FlexRow, Page, Heading }
 
 export const HeadingWithAction = styled.div`
   align-items: center;

@@ -10,7 +10,7 @@ const StyledCollapse = styled(AntCollapse)`
 
 const Collapse = ({
   accordion = false,
-  expandIconPosition = 'start',
+  expandIconPlacement = 'start',
   items = [],
   ...otherProps
 }) => {
@@ -18,7 +18,7 @@ const Collapse = ({
     <StyledCollapse
       {...otherProps}
       accordion={accordion}
-      expandIconPosition={expandIconPosition}
+      expandIconPlacement={expandIconPlacement}
       items={items}
     />
   )
@@ -26,7 +26,7 @@ const Collapse = ({
 
 Collapse.propTypes = {
   accordion: PropTypes.bool,
-  expandIconPosition: PropTypes.oneOf(['start', 'end']),
+  expandIconPlacement: PropTypes.oneOf(['start', 'end']),
   items: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

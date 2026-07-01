@@ -49,6 +49,7 @@ import DashboardEditsPage from './component-dashboard/src/components/DashboardEd
 import DashboardLayout from './component-dashboard/src/components/DashboardLayout'
 import DashboardReviewsPage from './component-dashboard/src/components/DashboardReviewsPage'
 import DashboardSubmissionsPage from './component-dashboard/src/components/DashboardSubmissionsPage'
+import CoarNotifyInboxPage from './component-coar/CoarNotifyInboxPage'
 
 const getParams = ({ routerPath, path }) => {
   return matchPath(routerPath, path).params
@@ -173,6 +174,7 @@ const AdminPage = () => {
   const submissionFormBuilderLink = `${urlFrag}/admin/submission-form-builder`
   const reviewFormBuilderLink = `${urlFrag}/admin/review-form-builder`
   const decisionFormBuilderLink = `${urlFrag}/admin/decision-form-builder`
+  const coarNotifyLink = `${urlFrag}/admin/coar-inbox`
   const configurationLink = `${urlFrag}/admin/configuration`
   const homeLink = `${urlFrag}/dashboard`
   const dashboardSubmissionsLink = `${urlFrag}/dashboard/submissions`
@@ -234,6 +236,15 @@ const AdminPage = () => {
       name: t('leftMenu.Manuscripts'),
       icon: 'file-text',
     })
+
+    if (config?.controlPanel?.showTabs.includes('COAR Notify Metadata')) {
+      links.push({
+        link: coarNotifyLink,
+        name: t('leftMenu.CoarNotifyInbox'),
+        icon: '_coar-notify',
+      })
+    }
+
     if (config?.report?.showInMenu && isGroupAdmin)
       links.push({
         link: reportsLink,
@@ -716,6 +727,18 @@ const AdminPage = () => {
             }
             key="manuscripts"
             path={`admin/manuscripts`}
+          />,
+          <Route
+            element={
+              <PrivateRoute
+                component={CoarNotifyInboxPage}
+                currentUser={currentUser}
+                path={coarNotifyLink}
+                redirectLink={redirectLink}
+              />
+            }
+            key="coarInbox"
+            path={`admin/coar-inbox`}
           />,
         ]}
         {isGroupAdmin && [
