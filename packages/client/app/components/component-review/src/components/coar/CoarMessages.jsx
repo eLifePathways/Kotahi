@@ -88,7 +88,12 @@ const CoarLabel = ({
 
   let color
 
-  if (['Accept'].includes(type)) {
+  if (
+    ['Accept'].includes(type) ||
+    ['EndorsementAction', 'RelationshipAction', 'ReviewAction'].includes(
+      activityType,
+    )
+  ) {
     color = 'success'
   } else if (['TentativeAccept', 'TentativeReject'].includes(type)) {
     color = 'warning'
