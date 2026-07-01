@@ -108,7 +108,7 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
       data: requestData,
     })
 
-    return response?.data ?? false
+    return response?.status < 300
   } catch (err) {
     logger.error(err)
     throw err
