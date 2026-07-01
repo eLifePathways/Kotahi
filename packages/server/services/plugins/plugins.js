@@ -8,7 +8,6 @@ const readPluginGroupsFromManifestFile = async () => {
   let pluginGroups
 
   try {
-    // eslint-disable-next-line import/no-unresolved, n/no-missing-require
     pluginGroups = require('../../config/plugins/plugins_manifest.json')
     /* eslint-disable-next-line */
   } catch (error) {

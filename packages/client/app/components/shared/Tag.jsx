@@ -16,7 +16,7 @@ const Tag = ({ children, color, fontSize = 'baseSmall', variant }) => {
         fontSize: theme[fontSizeLabel],
         padding: `${grid(2)} ${grid(4)}`,
       }}
-	  variant={variant}
+      variant={variant}
     >
       {children}
     </AntTag>

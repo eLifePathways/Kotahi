@@ -1,6 +1,5 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
-// eslint-disable-next-line import/prefer-default-export
 export const GET_PAGINATED_COAR_NOTIFICATIONS_BY_GROUP_ID_OR_NONE = gql`
   query GetPaginatedCoarNotificationsForGroupOrNone(
     $filters: [ManuscriptsFilter!]!

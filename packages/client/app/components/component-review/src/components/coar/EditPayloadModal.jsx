@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -10,11 +11,11 @@ import { ActionButton, Alert, Section, TextInput } from '../../../../shared'
 import ValidatedField from '../../../../component-submit/src/components/ValidatedField'
 
 const EditPayloadModal = ({ isOpen, onClose, onSubmit, originalMessage }) => {
-  if (!isOpen) return null
-
   const { t } = useTranslation()
   const [errorMessage, setErrorMessage] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  if (!isOpen) return null
 
   const { id, payload } = originalMessage
   const initialValues = { payload: JSON.stringify(payload, null, 2) }
@@ -38,7 +39,7 @@ const EditPayloadModal = ({ isOpen, onClose, onSubmit, originalMessage }) => {
         setIsSubmitting(false)
       }}
     >
-      {({ errors, handleSubmit, setFieldValue, values }) => {
+      {({ errors, handleSubmit, setFieldValue }) => {
         const formIsValid = !Object.keys(errors).length
         const { payload: payloadFieldError } = errors || {}
         let submitButtonStatus = null

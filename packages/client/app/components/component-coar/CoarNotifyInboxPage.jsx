@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useContext } from 'react'
 import { useLocation } from 'react-router'
