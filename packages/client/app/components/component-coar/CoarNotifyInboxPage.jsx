@@ -60,9 +60,11 @@ const CoarNotifyInboxPage = () => {
       return { reason: resendErrors[0].message, success: false }
     }
 
-    refetch()
+    const result = resendData.resendCoarNotifyPayload
 
-    return resendData.resendCoarNotifyPayload
+    if (result.success) refetch()
+
+    return result
   }
 
   return (

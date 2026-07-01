@@ -62,7 +62,7 @@ const CoarNotifyInbox = ({
           config={config}
           loading={loading}
           messages={messages}
-          onResendCoarNotifyPayload={onResendCoarNotifyPayload ?? null}
+          onResendCoarNotifyPayload={onResendCoarNotifyPayload}
         />
         {!loading && (
           <Pagination
