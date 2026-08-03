@@ -33,7 +33,6 @@ const Content = styled.div`
   flex: 1;
   min-height: 0;
   font-size: ${th('fontSizeBase')};
-  padding-bottom: ${grid(6)};
 `
 
 type PageProps = {

@@ -3,13 +3,15 @@
 
 import { DateParser } from '@coko/client'
 import { get } from 'lodash'
+
 import FormCollaborateWax from '../../../../component-formbuilder/src/components/FormCollaborativeWax'
 import CollaborativeTextFieldBuilder from '../../../../component-formbuilder/src/components/builderComponents/CollaborativeTextField'
 import SimpleWaxEditor from '../../../../wax-collab/src/SimpleWaxEditor'
 import { Affiliation, Email, BadgeContainer } from '../style'
-import { Attachment, ColorBadge } from '../../../../shared'
+import { Attachment } from '../../../../shared'
 import ThreadedDiscussion from '../../../../component-formbuilder/src/components/builderComponents/ThreadedDiscussion/ThreadedDiscussion'
 import LocalContext from '../../../../component-submit/src/components/LocalContext'
+import Badge from '../../../../../ui/shared/Badge'
 
 const parseIdentifierAndName = id => {
   const lastIndex = id.lastIndexOf('-')
@@ -232,9 +234,13 @@ const ReadonlyFieldData = ({
           if (option) {
             if (option.labelColor)
               return (
-                <ColorBadge color={option.labelColor} key={option.id}>
+                <Badge
+                  key={option.id}
+                  small
+                  style={{ backgroundColor: option.labelColor }}
+                >
                   {option.label}
-                </ColorBadge>
+                </Badge>
               )
 
             return <div key={option.id}>{option.label}</div>

@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react'
+import { Fragment, useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
 import { CommsErrorBanner, Spinner } from '../../shared'
@@ -11,12 +11,16 @@ import { GET_TEMPLATE_VARIABLES } from '../../../queries'
 const EmailTemplatesPage = ({ wrapper: Wrapper = Fragment }) => {
   const config = useContext(ConfigContext)
   const { groupId } = config
-  useQuery(GET_TEMPLATE_VARIABLES, {
+  const { data: templateVariablesData } = useQuery(GET_TEMPLATE_VARIABLES, {
     variables: { groupId },
-    onCompleted: ({ getVariables: variables = [] }) => {
-      handlebars.store({ variables })
-    },
   })
+
+  useEffect(() => {
+    if (templateVariablesData?.getVariables) {
+      handlebars.store({ variables: templateVariablesData.getVariables })
+    }
+  }, [templateVariablesData])
+
   const { loading, error, emailTemplates } = useEmailTemplatesContext()
 
   if (loading || !emailTemplates) return <Spinner />

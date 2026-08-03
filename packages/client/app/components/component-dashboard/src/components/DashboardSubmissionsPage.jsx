@@ -32,7 +32,7 @@ const DashboardSubmissionsPage = () => {
 
   const limit = config?.manuscript?.paginationCount || 10
 
-  const { loading, error, data } = useQuery(DASHBOARD, {
+  const { loading, error, data, previousData } = useQuery(DASHBOARD, {
     variables: {
       wantedRoles,
       sort: sortName
@@ -48,6 +48,8 @@ const DashboardSubmissionsPage = () => {
     fetchPolicy: 'network-only',
   })
 
+  const currentData = data ?? previousData
+
   const [updateTab] = useMutation(UPDATE_TAB)
 
   useEffect(() => {
@@ -58,18 +60,25 @@ const DashboardSubmissionsPage = () => {
     })
   }, [])
 
-  if (loading) return <Spinner />
+  if (loading && !currentData) return <Spinner />
   if (error) return <CommsErrorBanner error={error} />
 
-  return config?.dashboard?.showSections?.includes('submission') ? (
+  const showSubmissions =
+    config?.dashboard?.showSections?.includes('submission')
+
+  if (!showSubmissions) return null
+
+  return (
     <SubmissionsTable
       applyQueryParams={applyQueryParams}
       currentUser={currentUser}
-      manuscriptsUserHasCurrentRoleIn={data.manuscriptsUserHasCurrentRoleIn}
-      submissionForm={data.formForPurposeAndCategory}
+      manuscriptsUserHasCurrentRoleIn={
+        currentData.manuscriptsUserHasCurrentRoleIn
+      }
+      submissionForm={currentData.formForPurposeAndCategory}
       uriQueryParams={uriQueryParams}
     />
-  ) : null
+  )
 }
 
 export default DashboardSubmissionsPage

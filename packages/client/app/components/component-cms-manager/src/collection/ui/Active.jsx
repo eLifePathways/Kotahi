@@ -37,7 +37,7 @@ const SpanSlider = styled.span`
   position: absolute;
   transition: 0.4s;
 
-  ::before {
+  &::before {
     background-color: white;
     border-radius: 50%;
     bottom: 4px;

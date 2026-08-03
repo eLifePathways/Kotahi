@@ -11,10 +11,7 @@ import { ConfigContext } from '../../config/src'
 const FloatRightButton = styled(RoundIconButton).attrs({
   'data-testid': 'float-right-button',
 })`
-  margin: ${grid(2)} ${grid(2)} ${grid(2)} ${grid(4)};
-  position: absolute;
-  right: 42px;
-  z-index: 1000;
+  margin: ${grid(1)};
 `
 
 /* eslint-disable-next-line no-unused-vars */

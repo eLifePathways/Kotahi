@@ -190,7 +190,13 @@ const Messages = ({
     >
       {manuscriptId ? <VideoChat manuscriptId={manuscriptId} /> : ''}
       {chatRoomId ? <VideoChat manuscriptId={chatRoomId} /> : ''}
-      <Ellipsis className="toggle-ellipsis-menu" onClick={toggleDropdown} />
+      <Ellipsis
+        className="toggle-ellipsis-menu"
+        onClick={e => {
+          e.stopPropagation()
+          toggleDropdown()
+        }}
+      />
       {openDropdown && (
         <EllipsisDropdown
           isMuted={channelNotificationOption === 'off'}

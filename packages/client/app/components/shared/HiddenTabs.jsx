@@ -4,7 +4,7 @@
 /* stylelint-disable custom-property-pattern */
 
 import { useContext, useState, useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { grid, th, override } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 
@@ -14,10 +14,8 @@ import RoundIconButton from './RoundIconButton'
 import { safeCall } from '../../shared/generalUtils'
 
 export const CompactChatButton = styled(RoundIconButton)`
-  height: 33px;
   margin-top: 0;
   min-width: 0;
-  width: 33px;
 `
 
 export const Tab = styled.div.attrs(props => ({
@@ -48,6 +46,12 @@ export const Tab = styled.div.attrs(props => ({
   padding-bottom: 0;
   position: relative;
   z-index: 6;
+
+  ${props =>
+    props.$chat &&
+    css`
+      padding: ${grid(2.5)};
+    `}
 
   & > div {
     border-bottom: 3px solid
@@ -129,7 +133,7 @@ const HiddenTabs = ({
               key={key}
               onClick={() => setActiveKeyAndCallOnChange(key)}
             >
-              <Tab $active={activeKey === key} key={key}>
+              <Tab $active={activeKey === key} $chat={!!hideChat} key={key}>
                 <div>{label || key}</div>
               </Tab>
             </TabContainer>

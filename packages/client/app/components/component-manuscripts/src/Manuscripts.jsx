@@ -45,9 +45,11 @@ import { ConfigContext } from '../../config/src'
 const OuterContainer = styled(Container)`
   overflow: hidden;
   padding: 0;
+  height: 100%;
 `
 
 const ManuscriptsColumns = styled(Columns)`
+  gap: ${grid(4)};
   height: 100%;
 `
 

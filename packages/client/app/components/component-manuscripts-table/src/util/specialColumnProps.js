@@ -19,10 +19,11 @@ import {
   LastReviewerUpdated,
   ReviewerStatusBadge,
 } from '../cell-components'
-import reviewFilterOptions from '../../../../../config/journal/review-status'
 import AuthorProofingLink from '../cell-components/AuthorProofingLink'
-
-import localizeReviewFilterOptions from '../../../../shared/localizeReviewFilterOptions'
+import {
+  reviewerStatusValues,
+  reviewerStatusTranslationKeys,
+} from '../../../../ui/shared/_constants'
 
 /**
  * buildSpecialColumnProps: Build the special components for specific form fields
@@ -50,10 +51,10 @@ const buildSpecialColumnProps = (
     updateReviewerStatus,
   } = specialComponentValues
 
-  const LocalizedReviewFilterOptions = localizeReviewFilterOptions(
-    reviewFilterOptions,
-    i18next.t,
-  )
+  const LocalizedReviewFilterOptions = reviewerStatusValues.map(value => ({
+    value,
+    label: i18next.t(reviewerStatusTranslationKeys[value]),
+  }))
 
   const specialColumnProps = {
     shortId: {

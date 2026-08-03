@@ -1,13 +1,18 @@
 /* eslint-disable react/prop-types */
 
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { th } from '@coko/client'
 import { Chart } from 'react-google-charts'
 import { countBy } from 'lodash'
 import i18next from 'i18next'
 import { getMembersOfTeam } from '../../../../shared/manuscriptUtils'
-import reviewStatuses from '../../../../../config/journal/review-status'
-import localizeReviewFilterOptions from '../../../../shared/localizeReviewFilterOptions'
+import {
+  reviewerStatusValues,
+  reviewerStatusVariants,
+  reviewerStatusTranslationKeys,
+  badgeVariantColorTokens,
+  badgeDefaultColorToken,
+} from '../../../../ui/shared/_constants'
 
 const Root = styled.div`
   font-family: ${th('fontReviewer')};
@@ -63,15 +68,20 @@ const header = [
 
 // TODO Refactor to use recharts instead of react-google-charts
 const ReviewStatusDonut = ({ manuscript }) => {
+  const theme = useTheme()
   const statusOptions = {}
 
-  const LocalizedReviewFilterOptions = localizeReviewFilterOptions(
-    reviewStatuses,
-    i18next.t,
-  )
+  reviewerStatusValues.forEach(value => {
+    const variant = reviewerStatusVariants[value]
 
-  LocalizedReviewFilterOptions.forEach(item => {
-    statusOptions[item.value] = { text: item.label, color: item.color }
+    const colorToken = variant
+      ? badgeVariantColorTokens[variant]
+      : badgeDefaultColorToken
+
+    statusOptions[value] = {
+      text: i18next.t(reviewerStatusTranslationKeys[value]),
+      color: theme[colorToken],
+    }
   })
 
   const filterInvitedUsers = reviewer => {

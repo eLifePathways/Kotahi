@@ -1,20 +1,5 @@
 import { DROPDOWN_ID } from './constants'
 
-const { keys } = Object
-
-export const getFormBadgeBg = form => props => {
-  const colorVariations = {
-    common: '#f0f0f0',
-    decision: '#fffacb',
-    review: '#ffddc2',
-    submission: props.theme.color.brand1.tint90,
-    editors: '#fae5b4',
-  }
-
-  const safeKey = keys(colorVariations).includes(form) ? form : 'common'
-  return colorVariations[safeKey]
-}
-
 export const normalize = str => str?.trim().toLowerCase()
 
 export const capitalizeFirst = value =>

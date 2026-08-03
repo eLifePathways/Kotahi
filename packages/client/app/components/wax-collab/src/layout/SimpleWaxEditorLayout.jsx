@@ -1,4 +1,4 @@
-/* eslint-disable react/display-name */
+/* eslint-disable  react/prop-types, react/display-name */
 
 /* eslint-disable new-cap */
 
@@ -10,6 +10,7 @@ import {
   SimpleInfoContainer,
   SimpleMenu,
 } from './EditorStyles'
+import HandlebarsAutocomplete from '../../../component-email-templates/src/handlebarsAutocomplete/components/HandleBarsAutocomplete'
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
 
@@ -18,7 +19,7 @@ const CounterInfo = ComponentPlugin('bottomRightInfo')
 
 const SimpleWaxEditorLayout =
   (readonly, dataTestid = null) =>
-  props => (
+  ({ useHandlebarsAutocomplete, ...props }) => (
     <>
       <SimpleGrid $readonly={readonly}>
         {readonly ? (
@@ -42,6 +43,8 @@ const SimpleWaxEditorLayout =
           </>
         )}
       </SimpleGrid>
+
+      {useHandlebarsAutocomplete && <HandlebarsAutocomplete />}
 
       {!readonly && (
         <SimpleInfoContainer>

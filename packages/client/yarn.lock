@@ -599,9 +599,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coko/client@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "@coko/client@npm:2.2.2"
+"@coko/client@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@coko/client@npm:2.4.0"
   dependencies:
     "@ant-design/icons": "npm:^6.2.2"
     "@dnd-kit/core": "npm:^6.3.1"
@@ -633,7 +633,7 @@ __metadata:
   bin:
     coko-client-build: ./scripts/coko-client-build.mjs
     coko-client-dev: ./scripts/coko-client-dev.mjs
-  checksum: 10c0/22405483f22cb3506042e7e4cee501b394d4f094b8595aa66899e8b82aa61acec1bc1236b511462d4a9ad5caafe726f45ab850ce58d88e7c39698542cb95f9b6
+  checksum: 10c0/8e2d9cfea9f4f96c5aeb46a7ab321d30427f869275bc073d861f85b50e283f600816e48a5053096d764a381308899504b8bffebe741697b4acc00a835d3bf694
   languageName: node
   linkType: hard
 
@@ -5381,7 +5381,7 @@ __metadata:
     "@codemirror/lang-css": "npm:^6.2.1"
     "@codemirror/lang-html": "npm:^6.4.6"
     "@codemirror/lang-json": "npm:^6.0.1"
-    "@coko/client": "npm:^2.2.2"
+    "@coko/client": "npm:^2.4.0"
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"

@@ -5,12 +5,12 @@
 /* stylelint-disable color-function-notation, alpha-value-notation */
 
 import { useState, useEffect, useRef } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { ChevronUp, ChevronDown, X } from 'react-feather'
 import Color from 'color'
 import { th } from '@coko/client'
 
-import { LabelBadge } from '../../../shared'
+import Badge from '../../../../ui/shared/Badge'
 
 const BaseDropdown = styled.div.attrs({
   'data-testid': 'label-dropdown-base-dropdown',
@@ -94,6 +94,19 @@ const LabelDropdown = ({
     values.length > 0 ? values[0]?.value : undefined,
   )
 
+  const theme = useTheme()
+
+  /* eslint-disable-next-line no-nested-ternary */
+  const iconColor = values[0]?.color
+    ? Color(values[0].color).isDark()
+      ? theme.color.textReverse
+      : theme.color.text
+    : theme.color.textReverse
+
+  const badgeStyle = values[0]?.color
+    ? { backgroundColor: values[0].color, color: iconColor }
+    : undefined
+
   const dropdownRef = useRef(null)
 
   const updateManuscript = (versionId, manuscriptDelta) =>
@@ -144,56 +157,28 @@ const LabelDropdown = ({
         role="button"
         tabindex="0"
       >
-        <LabelBadge color={values[0]?.color}>
+        <Badge style={badgeStyle}>
           <StatusLabel>{values[0]?.displayValue}</StatusLabel>
           {isDropdownOpen ? (
             <ActionsContainer>
               <StyledButton onClick={() => unsetCustomStatus(manuscript.id)}>
-                <X
-                  color={
-                    values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${th('color.textReverse')}`
-                      : `${th('color.text')}`
-                  }
-                  size={18}
-                />
+                <X color={iconColor} size={18} />
               </StyledButton>
               <StyledButton onClick={setDropDownOpenFn}>
-                <ChevronUp
-                  color={
-                    values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${th('color.textReverse')}`
-                      : `${th('color.text')}`
-                  }
-                  size={18}
-                />
+                <ChevronUp color={iconColor} size={18} />
               </StyledButton>
             </ActionsContainer>
           ) : (
             <ActionsContainer>
               <StyledButton onClick={() => unsetCustomStatus(manuscript.id)}>
-                <X
-                  color={
-                    values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${th('color.textReverse')}`
-                      : `${th('color.text')}`
-                  }
-                  size={18}
-                />
+                <X color={iconColor} size={18} />
               </StyledButton>
               <StyledButton onClick={setDropDownOpenFn}>
-                <ChevronDown
-                  color={
-                    values[0]?.color && Color(values[0]?.color).isDark()
-                      ? `${th('color.textReverse')}`
-                      : `${th('color.text')}`
-                  }
-                  size={18}
-                />
+                <ChevronDown color={iconColor} size={18} />
               </StyledButton>
             </ActionsContainer>
           )}
-        </LabelBadge>
+        </Badge>
       </DropdownElement>
 
       {isDropdownOpen && (
