@@ -1,4 +1,5 @@
 {
   "extends": "@coko/server/dist/cli/tsConfig.json",
-  "include": ["**/*"]
+  "include": ["**/*"],
+  "exclude": ["vitest.workerDb.ts"]
 }

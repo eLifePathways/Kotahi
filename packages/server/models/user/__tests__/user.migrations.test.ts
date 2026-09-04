@@ -31,6 +31,7 @@ describe('User migrations', () => {
   })
 
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

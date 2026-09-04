@@ -33,6 +33,9 @@ packages/server/config/journal/docmaps_scheme.json
 cypress/videos
 cypress/screenshots
 
+playwright-report
+test-results
+
 # macOS
 .dccache
 
@@ -55,3 +58,4 @@ packages/server/scripts/local
 !**/.yarn/versions
 
 .claude
+stats.html

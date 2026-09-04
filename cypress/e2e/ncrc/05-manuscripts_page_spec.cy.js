@@ -1,4 +1,4 @@
-/* eslint-disable promise/always-return, promise/catch-or-return */
+/* eslint-disable promise/always-return */
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 import { manuscripts } from '../../support/routes'
@@ -410,102 +410,6 @@ describe.skip('manuscripts page tests', () => {
       ManuscriptsPage.getLabelRow(1).should('contain', 'ready to evaluate')
     })
 
-    it('sort article by Description', () => {
-      ManuscriptsPage.getTableHead(0).should('contain', 'Description')
-      ManuscriptsPage.getArticleTitleByRow(0).should('contain', 'def')
-      ManuscriptsPage.getArticleTitleByRow(1).should('contain', 'abc')
-      ManuscriptsPage.getArticleTitleByRow(2).should('contain', '123')
-      ManuscriptsPage.clickTableHead(0)
-      ManuscriptsPage.getArticleTitleByRow(0).should('contain', '123')
-      ManuscriptsPage.getArticleTitleByRow(1).should('contain', 'abc')
-      ManuscriptsPage.getArticleTitleByRow(2).should('contain', 'def')
-    })
-    it('sort article by Journal', () => {
-      ManuscriptsPage.getTableHead(1).should('contain', 'Journal')
-      ManuscriptsPage.getArticleTitleByRow(0).should('contain', 'def')
-      ManuscriptsPage.getArticleTitleByRow(1).should('contain', 'abc')
-      ManuscriptsPage.getArticleTitleByRow(2).should('contain', '123')
-      ManuscriptsPage.clickTableHead(1)
-      ManuscriptsPage.getArticleTitleByRow(0).should('contain', '123')
-      ManuscriptsPage.getArticleTitleByRow(1).should('contain', 'abc')
-      ManuscriptsPage.getArticleTitleByRow(2).should('contain', 'def')
-    })
-
-    it('filter article after status and url contain that status', () => {
-      ManuscriptsPage.clickSubmit()
-      NewSubmissionPage.clickSubmitUrlAndWaitPageLoad()
-      // fill the submit form and submit it
-      cy.fixture('submission_form_data').then(data => {
-        SubmissionFormPage.fillInDoi(data.doi)
-        SubmissionFormPage.fillInTitle(data.articleId)
-        SubmissionFormPage.fillInOurTake(data.ourTake)
-        SubmissionFormPage.clickStudyDesignDropdown()
-        SubmissionFormPage.selectDropdownOption(0)
-        SubmissionFormPage.fillInMainFindings(data.mainFindings)
-        SubmissionFormPage.fillInStudyStrengths(data.studyStrengths)
-        SubmissionFormPage.fillInLimitations(data.limitations)
-        SubmissionFormPage.fillInValueAdded(data.valueAdded)
-        SubmissionFormPage.clickCustomStatusDropdown()
-        SubmissionFormPage.selectDropdownOption(0)
-        SubmissionFormPage.clickTopicsCheckboxWithText(data.topic)
-        SubmissionFormPage.fillInFirstAuthor(data.creator)
-        SubmissionFormPage.fillInDatePublished(data.date)
-        SubmissionFormPage.fillInJournal(data.journal)
-        SubmissionFormPage.fillInReviewer(data.creator)
-        SubmissionFormPage.fillInReviewCreator(data.creator)
-
-        SubmissionFormPage.waitThreeSec()
-        SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
-      })
-
-      cy.wait(3000)
-      ManuscriptsPage.clickStatus(-1)
-      ManuscriptsPage.getTableRowsCount().should('eq', 3)
-      ManuscriptsPage.getStatus(0).should('contain', 'Unsubmitted')
-      cy.url().should('contain', 'new')
-      Menu.clickManuscriptsAndAssertPageLoad()
-      ManuscriptsPage.clickStatus(0)
-      ManuscriptsPage.getTableRowsCount().should('eq', 1)
-      ManuscriptsPage.getStatus(0).should('contain', 'Submitted')
-      cy.url().should('contain', 'submitted')
-    })
-
-    it('filter article after status from dropdown list and url contain that status', () => {
-      ManuscriptsPage.clickSubmit()
-      NewSubmissionPage.clickSubmitUrlAndWaitPageLoad()
-      // fill the submit form and submit it
-      cy.fixture('submission_form_data').then(data => {
-        SubmissionFormPage.fillInDoi(data.doi)
-        SubmissionFormPage.fillInTitle(data.articleId)
-        SubmissionFormPage.fillInOurTake(data.ourTake)
-        SubmissionFormPage.clickStudyDesignDropdown()
-        SubmissionFormPage.selectDropdownOption(0)
-        SubmissionFormPage.fillInMainFindings(data.mainFindings)
-        SubmissionFormPage.fillInStudyStrengths(data.studyStrengths)
-        SubmissionFormPage.fillInLimitations(data.limitations)
-        SubmissionFormPage.fillInValueAdded(data.valueAdded)
-        SubmissionFormPage.clickCustomStatusDropdown()
-        SubmissionFormPage.selectDropdownOption(0)
-        SubmissionFormPage.clickTopicsCheckboxWithText(data.topic)
-        SubmissionFormPage.fillInFirstAuthor(data.creator)
-        SubmissionFormPage.fillInDatePublished(data.date)
-        SubmissionFormPage.fillInJournal(data.journal)
-        SubmissionFormPage.fillInReviewer(data.creator)
-        SubmissionFormPage.fillInReviewCreator(data.creator)
-
-        SubmissionFormPage.waitThreeSec()
-        SubmissionFormPage.clickSubmitResearchAndWaitPageLoad()
-      })
-
-      cy.wait(3000)
-      ManuscriptsPage.getTableRowsCount().should('eq', 4)
-      ManuscriptsPage.clickTableHead(5)
-      ManuscriptsPage.selectDropdownOptionWithText('Submitted')
-      ManuscriptsPage.getTableRowsCount().should('eq', 1)
-      ManuscriptsPage.getStatus(0).should('contain', 'Submitted')
-      cy.url().should('contain', 'submitted')
-    })
-
     it('combined filtering after status, topic and label, link content that combination', () => {
       ManuscriptsPage.clickSubmit()
       NewSubmissionPage.clickSubmitUrlAndWaitPageLoad()
@@ -631,13 +535,6 @@ describe.skip('manuscripts page tests', () => {
       ManuscriptsPage.getArticleLabel().should('contain', 'ready to evaluate')
       ManuscriptsPage.getSelectAllCheckbox().click()
       ManuscriptsPage.getSelectedArticlesCount().should('contain', 1)
-    })
-    it('check label field after bulk delete', () => {
-      ManuscriptsPage.clickArticleCheckbox(1)
-      ManuscriptsPage.clickDelete()
-      ManuscriptsPage.clickConfirm()
-      ManuscriptsPage.getNumberOfAvailableArticles().should('contain', 1)
-      ManuscriptsPage.getArticleLabel().should('contain', 'ready to evaluate')
     })
   })
 })

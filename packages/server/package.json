@@ -21,7 +21,7 @@
     "typecheck": "node_modules/.bin/tsc --noEmit"
   },
   "dependencies": {
-    "@coko/server": "^5.1.1",
+    "@coko/server": "^5.1.2",
     "@dqbd/tiktoken": "^1.0.14",
     "archiver": "^5.3.0",
     "atob": "^2.1.2",
@@ -67,7 +67,9 @@
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "@types/pg": "^8.23.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "pg": "^8.23.0",
     "vitest": "^4.1.10"
   },
   "resolutions": {

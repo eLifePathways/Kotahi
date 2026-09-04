@@ -1,10 +1,11 @@
-import { describe, afterEach, beforeAll, it, expect } from 'vitest'
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest'
 import gql from 'graphql-tag'
 import {
   createGraphqlTestServer,
   migrationManager,
   db,
   config,
+  DbTestUtils,
 } from '@coko/server'
 
 import { Group, User, Manuscript, Team, Config } from '../../../../models'
@@ -58,11 +59,12 @@ describe('Manuscript API', () => {
   })
 
   afterEach(async () => {
-    await Config.query().delete()
-    await Manuscript.query().delete()
-    await Group.query().delete()
-    await User.query().delete()
-    await Team.query().delete()
+    await DbTestUtils.clearDb()
+  })
+
+  afterAll(async () => {
+    await DbTestUtils.clearDb()
+    await db.destroy()
   })
 
   it('reads wax comments', async () => {

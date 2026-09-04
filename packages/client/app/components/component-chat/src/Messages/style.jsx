@@ -217,7 +217,7 @@ export const UnreadLabel = styled(ChatLabel)`
 
 export const DateLabelContainer = styled(ChatLabelContainer)`
   border-top: 2px solid #6c6c6c;
-  margin: 40px 0 30px;
+  margin: ${grid(5)} ${grid(2)};
 `
 export const DateLabel = styled(ChatLabel)`
   background-color: #fff;

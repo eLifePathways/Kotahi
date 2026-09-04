@@ -25,7 +25,7 @@ describe('Completing a decision', () => {
 
       cy.wait(2000)
       DashboardPage.clickManuscriptNavButton()
-      ManuscriptsPage.selectOptionWithText('Control')
+      ManuscriptsPage.clickControlLink()
       ControlPage.getAssignSeniorEditorDropdown().click({ force: true })
       cy.contains(name.role.seniorEditor).click({ force: true })
     })
@@ -61,7 +61,7 @@ describe('Completing a decision', () => {
 
       /* View Decision as an Author */
       cy.login(name.role.author, dashboard) // Login as an Author
-      DashboardPage.getSubmittedManuscript().click() // Click on first MySubmission
+      DashboardPage.clickSubmissionActionLink() // Click on first MySubmission
 
       // Verify Decision Content
       DashboardPage.getDecisionField(0).should('contain', decisionTextContent)
@@ -77,9 +77,7 @@ describe('Completing a decision', () => {
       )
       SubmissionFormPage.clickSubmitResearch()
       SubmissionFormPage.clickSubmitYourManuscript()
-      DashboardPage.getSubmittedManuscript()
-        .contains('test pdf')
-        .should('exist') // Verify new submission got created
+      DashboardPage.getSubmissionTitle().contains('test pdf').should('exist') // Verify new submission got created
     })
   })
 

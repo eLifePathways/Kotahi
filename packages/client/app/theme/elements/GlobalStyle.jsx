@@ -55,6 +55,10 @@ const globalStyles = css`
     font-weight: bold;
   }
 
+  mark {
+    background-color: ${th('colorPrimaryVeryLight')};
+  }
+
   /* Ant notifications */
 
   .ant-notification-notice {

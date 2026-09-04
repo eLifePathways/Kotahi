@@ -96,7 +96,9 @@ Cypress.Commands.add(
     cy.wait(1000)
     DashboardPage.clickDashboardTab(1)
     DashboardPage.clickAcceptReviewButton()
-    cy.contains('button', 'Do Review').should('be.visible')
+    cy.contains('Accept this review invitation?').should('be.visible')
+    cy.contains('button', 'OK').click()
+    DashboardPage.getDoReviewButton().should('contain', 'Do Review')
     DashboardPage.clickDoReviewAndVerifyPageLoaded()
     cy.contains('div', 'Metadata').should('be.visible')
 
@@ -121,7 +123,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('submitDecision', (decisionText, decisionAction) => {
   cy.awaitDisappearSpinner()
-  ManuscriptsPage.selectOptionWithText('Control')
+  ManuscriptsPage.clickControlLink()
   ControlPage.clickDecisionTab(1)
   ControlPage.fillInDecision(decisionText)
 

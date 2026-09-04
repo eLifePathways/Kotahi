@@ -15,47 +15,55 @@ const EVALUATION_BUTTON = '[href*=evaluation]'
 const CREATED_CARET = 'Carets__Caret'
 const TABLE_HEADER = '[class*=Table__Header]'
 const ARTICLE_TITLE = '[class*=Table__Row]>td:nth-child(1)'
-const ARTICLE_ID = '[name="submission.articleId"]'
-const ARTICLE_LABEL = '[name="submission.$customStatus"]'
-const DROPDOWN_LABEL = '[data-testid=label-dropdown-base-dropdown]'
+const ARTICLE_ID = '[data-testid="submission.articleId"]'
+const ARTICLE_LABEL =
+  '[data-testid="submission.$customStatus"] [data-testid="editable-option-select"]'
 const ARTICLE_TOPIC = '[class*=Table__Cell] > [title]'
-const TABLE_ROW = '[data-testid=manuscripts-row]'
+const TABLE_ROW = '.ant-table-tbody .ant-table-row'
 const TABLE_CELL = 'Table__Cell'
-const LABEL = '[name="submission.$customStatus"]'
-const CONFIRM_BUTTON =
-  '[data-testid="confirmation-modal-container"] button:nth-child(1)'
 
-const ARTICLE_CHECKBOX =
-  '[data-testid=row-item-checkbox]label > [type*=checkbox]'
-
-const SELECT_ALL_CHECKBOX = '[type=checkbox]'
+const ARTICLE_CHECKBOX = '.ant-table-tbody .ant-checkbox-wrapper'
+const SELECT_ALL_CHECKBOX = '.ant-table-thead .ant-checkbox-wrapper'
 const EDITOR_NAME_CELL = 'style__StyledAuthor'
-const TOOLTIP_TEXT = 'rc-tooltip-inner'
-const ARTICLES_COUNT = '[data-testid=pagination-container] > div > strong'
+const ARTICLES_COUNT = '.ant-pagination-total-text strong'
 const PAGINATION_PAGE_BUTTON = 'Page '
 
-const CONFIRMATION_MESSAGE =
-  '[data-testid="confirmation-modal-container"] [data-testid="message-string"]'
+const CONFIRMATION_MESSAGE = '.ant-modal-confirm-content'
 
 const IMPORT_CONFIRMATION_POPUP = '[class*=Toastify] > [role=alert]'
 // const CONTROL = '[href*=decision]'
 const DROPDOWN_OPTION = '[data-testid="select-option"]'
 
 export const ManuscriptsPage = {
-  getManuscriptsOptionsList() {
-    return cy.getByDataTestId('action-link')
+  getEvaluationLink() {
+    return cy.getByDataTestId('evaluation-action-link').first()
   },
-  selectOptionWithText(text) {
-    this.getManuscriptsOptionsList().contains(text).click()
+  clickEvaluationLink() {
+    this.getEvaluationLink().click()
   },
-  getOptionWithText(text) {
-    return this.getManuscriptsOptionsList().contains(text)
+  getControlLink() {
+    return cy.getByDataTestId('control-action-link')
   },
-  getOptionsElife() {
-    return cy.getByDataTestId('action-link')
+  clickControlLink() {
+    this.getControlLink().click()
   },
-  getOptionsElifeText(text) {
-    return cy.getByDataTestId('action-link').contains(text)
+  getViewLink() {
+    return cy.getByDataTestId('view-action-link')
+  },
+  clickViewLink() {
+    this.getViewLink().click()
+  },
+  getProductionLink() {
+    return cy.getByDataTestId('production-action-link')
+  },
+  clickProductionLink() {
+    this.getProductionLink().click()
+  },
+  getPublishLink() {
+    return cy.getByDataTestId('publish-action-link')
+  },
+  clickPublishLink() {
+    this.getPublishLink().click()
   },
   getSubmitButton() {
     return cy.get(BUTTON).contains('New submission')
@@ -79,7 +87,7 @@ export const ManuscriptsPage = {
     return cy.get('h1')
   },
   getEvaluationButton() {
-    return cy.contains('button', 'Evaluation')
+    return this.getEvaluationLink()
   },
   getNthEvaluationButton(nth) {
     return cy.get(EVALUATION_BUTTON).eq(nth)
@@ -127,7 +135,7 @@ export const ManuscriptsPage = {
     return cy.getByContainsClass(CREATED_CARET).eq(nth)
   },
   getAuthorField(nth) {
-    return cy.getByDataTestId('usercombo-primary').eq(nth)
+    return cy.getByDataTestId('person-name').eq(nth)
   },
   getAuthor(nth) {
     return this.getAuthorField(nth).invoke('text')
@@ -138,11 +146,8 @@ export const ManuscriptsPage = {
   getStatus(nth) {
     return this.getStatusField(nth).invoke('text')
   },
-  clickStatus(nth) {
-    this.getStatusField(nth).click()
-  },
   getTableHead() {
-    return cy.getByDataTestId('manuscripts-header-row')
+    return cy.get('.ant-table-thead')
   },
   getArticleTitleByRow(nth) {
     return cy.get(ARTICLE_TITLE).eq(nth)
@@ -151,24 +156,29 @@ export const ManuscriptsPage = {
     return cy.get(ARTICLE_ID).eq(nth)
   },
   clickArticleId() {
-    return this.getArticleIdByRow(0).click()
+    return this.getArticleIdByRow(0).scrollIntoView().click()
   },
-  clickTableHead(nth) {
-    this.getTableHead(nth).click()
+  filterColumnByValue(columnKey, valueLabel) {
+    cy.get(`.ant-table-thead [data-testid="${columnKey}"]`)
+      .find('.ant-table-filter-trigger')
+      .click()
+    cy.get('.ant-table-filter-dropdown').contains(valueLabel).click()
+    cy.get('.ant-table-filter-dropdown').contains('button', 'OK').click()
   },
   selectCustomStatus(statusLabel) {
-    cy.get(
-      '[data-testid=manuscripts-header-row] [data-testid="submission.$customStatus"]',
-    )
-      // .scrollIntoView()
-      .click()
-    cy.get('[data-testid="select-option"]').contains(statusLabel).click()
+    this.filterColumnByValue('submission.$customStatus', statusLabel)
   },
   getArticleLabel() {
     return cy.get(ARTICLE_LABEL)
   },
   clickArticleLabel(nth) {
     this.getArticleLabel().eq(nth).click()
+  },
+  clickArticleLabelClear(nth) {
+    this.getArticleLabel()
+      .eq(nth)
+      .find('.ant-select-clear')
+      .click({ force: true })
   },
   getAllArticleTopics() {
     return cy.get(ARTICLE_TOPIC)
@@ -211,7 +221,7 @@ export const ManuscriptsPage = {
     return cy.getByContainsClass(TABLE_CELL).eq(1)
   },
   getLabelRow(nth) {
-    return cy.get(LABEL).eq(nth)
+    return cy.get(ARTICLE_LABEL).eq(nth)
   },
   getTableHeader() {
     return cy.get(TABLE_HEADER, { timeout: 15000 })
@@ -234,38 +244,32 @@ export const ManuscriptsPage = {
   getSelectedArticlesCount() {
     return cy.getByDataTestId('selected-manuscripts-number').invoke('text')
   },
-  getActionDropdown() {
-    return cy.getByDataTestId('manuscripts-dropdown-container').click()
-  },
   clickDelete() {
-    this.getActionDropdown().contains('Archive').click()
+    cy.contains('button', /^Archive$/).click()
   },
   getConfirmButton() {
-    return cy.get(CONFIRM_BUTTON)
-  },
-  getLabelDropdown() {
-    return cy.get(DROPDOWN_LABEL).eq(0)
+    return cy.contains('button', 'OK')
   },
   clickConfirm() {
-    this.getConfirmButton().click()
+    this.getConfirmButton().should('be.visible').click()
   },
   getConfirmationMessageForBulkDelete() {
     return cy.get(CONFIRMATION_MESSAGE)
   },
   getCloseButton() {
-    return cy.get(BUTTON).contains('Cancel')
+    return cy.contains('button', 'Cancel')
   },
   clickClose() {
-    this.getCloseButton().click()
+    this.getCloseButton().should('be.visible').click()
   },
   getEditorName() {
     return cy.getByContainsClass(EDITOR_NAME_CELL)
   },
   getTooltipIcon() {
-    return cy.getByDataTestId('info-icon')
+    return cy.getByDataTestId('abstract-tooltip-icon')
   },
   getTooltipText() {
-    return cy.getByContainsClass(TOOLTIP_TEXT)
+    return cy.getByDataTestId('abstract-tooltip')
   },
   getNumberOfAvailableArticles() {
     return cy.get(ARTICLES_COUNT).eq(-1)
@@ -275,12 +279,6 @@ export const ManuscriptsPage = {
   },
   clickPaginationButton(nth) {
     this.getPaginationButton(nth).click({ force: true })
-  },
-  getSelectButton() {
-    return cy.get(BUTTON).contains('Select')
-  },
-  clickSelect() {
-    this.getSelectButton().click()
   },
   getSuccessfulImportPopup() {
     return cy.get(IMPORT_CONFIRMATION_POPUP, { timeout: 600000 })

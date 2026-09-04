@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '../../../pubsweet'
 import { SectionHeader, SectionRow } from '../../../shared'
-import { UserAction } from '../../../component-manuscripts-table/src/style'
+import { UserAction } from './style'
 import DeclinedReviewer from './DeclinedReviewer'
 
 const DropdownTitleContainer = styled.div`

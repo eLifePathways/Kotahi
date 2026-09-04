@@ -6,15 +6,11 @@ import { useTranslation } from 'react-i18next'
 import { grid, th, DateParser } from '@coko/client'
 import { values } from 'lodash'
 import { useNavigate } from 'react-router-dom'
-import {
-  ActionButton,
-  Collapse,
-  FlexRow,
-  Spinner,
-  Tag,
-} from '../../../../shared'
+
+import { ActionButton, Collapse, FlexRow, Spinner } from '../../../../shared'
 import { articleStatuses } from '../../../../../globals'
 import EditPayloadModal from './EditPayloadModal'
+import Badge from '../../../../../ui/shared/Badge'
 
 const Container = styled.div`
   align-items: center;
@@ -86,7 +82,7 @@ const CoarLabel = ({
 
   const { $title } = JSON.parse(manuscript?.submission || '{}')
 
-  let color
+  let badgeVariant
 
   if (
     ['Accept'].includes(type) ||
@@ -94,11 +90,11 @@ const CoarLabel = ({
       activityType,
     )
   ) {
-    color = 'success'
+    badgeVariant = 'success'
   } else if (['TentativeAccept', 'TentativeReject'].includes(type)) {
-    color = 'warning'
+    badgeVariant = 'warning'
   } else if (['Reject', 'Undo'].includes(type)) {
-    color = 'error'
+    badgeVariant = 'error'
   }
 
   const handleEditPayload = () => {
@@ -109,10 +105,10 @@ const CoarLabel = ({
     <div>
       <FlexRow>
         <FlexRowItem>
-          <Tag color={color} fontSize="base" variant="outlined">
+          <Badge small variant={badgeVariant}>
             {t(`decisionPage.coarTab.${type}`)}
             {activityType && `: ${t(`decisionPage.coarTab.${activityType}`)}`}
-          </Tag>
+          </Badge>
           <DateParser dateFormat="DD MMM YYYY, HH:mm:ss" timestamp={created} />
         </FlexRowItem>
         {$title && (

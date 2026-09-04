@@ -46,8 +46,6 @@ const esLa = {
       Delete: 'Eliminar',
       View: 'Ver',
       'Enter search terms...': 'Ingrese términos de búsqueda...',
-      surroundMultiword:
-        'Agrupe frases de varias palabras entre comillas "". Excluya un término anteponiendo -. Especifique coincidencias alternativas usando O. Use * como comodín para el final de las palabras. Encierre subexpresiones entre paréntesis ().',
       noOption: 'Sin opción',
       danteRangeCalendar: {
         Presets: 'Preajustes',
@@ -175,7 +173,17 @@ const esLa = {
     manuscriptsTable: {
       'No matching manuscripts were found':
         'No se encontraron manuscritos coincidentes',
+      searchChip: 'Búsqueda: {{query}}',
+      searchTipsHeader: 'Consejos para usar la búsqueda',
+      searchTips: [
+        'Agrupe frases de varias palabras entre comillas "".',
+        'Excluya un término anteponiendo -.',
+        'Especifique coincidencias alternativas usando O.',
+        'Use * como comodín para el final de las palabras.',
+        'Presione / en cualquier parte de la página para ir a la búsqueda.',
+      ],
       'Manuscript number': 'Número de Manuscrito',
+      'No.': 'N.º',
       Created: 'Creado',
       Updated: 'Actualizado',
       lastReviewerStatusUpdate: 'Actualización del estado del último revisor',
@@ -192,6 +200,21 @@ const esLa = {
       Production: 'Producción',
       'No results found': 'No se encontraron resultados',
       pagination: `Mostrando <strong>{{firstResult}}</strong> a <strong>{{lastResult}}</strong> de <strong>{{totalCount}}</strong> resultados`,
+      removeFilter: 'Eliminar filtro',
+      compactView: 'Vista compacta',
+      overdueTasks: 'Tareas vencidas',
+      noAbstract: 'No se proporcionó ningún resumen',
+      abstractHeader: 'Resumen',
+      showAbstract: 'Mostrar resumen',
+      selectedCount: '{{count}} seleccionados',
+      confirmArchive: '¿Archivar {{count}} manuscritos?',
+      confirmUnarchive: '¿Desarchivar {{count}} manuscritos?',
+      confirmReviewAccept: '¿Aceptar esta invitación de revisión?',
+      confirmReviewReject: '¿Rechazar esta invitación de revisión?',
+      confirmPublish: '¿Publicar este manuscrito?',
+      detailedView: 'Vista detallada',
+      reviewerStatusColumnTip:
+        'Cada bloque representa a un revisor y el color representa su estado. Pasa el cursor sobre los bloques para ver más detalles.',
       reviewAccept: 'Aceptar',
       reviewReject: 'Rechazar',
       reviewDo: 'Hacer Revisión',

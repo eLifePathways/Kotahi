@@ -315,11 +315,74 @@ jobs:
       - name: Run tests
         run: yarn cypress run --spec cypress/e2e/ncrc
 
+  end-to-end:
+    name: End to end tests - playwright
+    runs-on: ubuntu-latest
+
+    env:
+      USE_SANDBOXED_ORCID: true
+      ORCID_CLIENT_ID: ${{ secrets.ORCID_CLIENT_ID }}
+      ORCID_CLIENT_SECRET: ${{ secrets.ORCID_CLIENT_SECRET }}
+      E2E_TESTING_API: 1
+      SERVER_URL: http://localhost:3000
+      INSTANCE_GROUPS: journal:journal,prc:prc,single_form:preprint1,preprint2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install root dependencies
+        run: |
+          corepack enable
+          yarn install --immutable
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Pull containers
+        run: docker compose pull
+
+      - name: Build containers
+        run: docker compose build
+
+      - name: Run containers
+        run: docker compose up -d
+
+      - name: Wait for containers to be up and running
+        run: |
+          timeout 120s bash -c '
+            until [ "$(docker inspect --format="{{.State.Health.Status}}" $(docker compose ps -q server))" = "healthy" ] &&
+                  [ "$(docker inspect --format="{{.State.Health.Status}}" $(docker compose ps -q client))" = "healthy" ]; do
+              sleep 2
+            done
+          '
+
+      - name: Run tests
+        run: npx playwright test
+
   deploy_test_server:
     name: Deploy test server
 
     if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
-    needs: [server-tests, typecheck-client, typecheck-server]
+    needs:
+      [
+        lint,
+        typecheck-client,
+        typecheck-server,
+        server-tests,
+        e2e-journal,
+        e2e-colab,
+        e2e-elife,
+        e2e-ncrc,
+        end-to-end,
+      ]
+
     runs-on: ubuntu-latest
     container:
       image: cokoapps/fly
@@ -338,7 +401,19 @@ jobs:
     name: Deploy test client
 
     if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
-    needs: [server-tests, typecheck-client, typecheck-server]
+    needs:
+      [
+        lint,
+        typecheck-client,
+        typecheck-server,
+        server-tests,
+        e2e-journal,
+        e2e-colab,
+        e2e-elife,
+        e2e-ncrc,
+        end-to-end,
+      ]
+
     runs-on: ubuntu-latest
     container:
       image: cokoapps/fly
@@ -357,7 +432,19 @@ jobs:
     name: Deploy main server
 
     if: github.event_name == 'push' && github.ref_name == 'main'
-    needs: [server-tests, typecheck-client, typecheck-server]
+    needs:
+      [
+        lint,
+        typecheck-client,
+        typecheck-server,
+        server-tests,
+        e2e-journal,
+        e2e-colab,
+        e2e-elife,
+        e2e-ncrc,
+        end-to-end,
+      ]
+
     runs-on: ubuntu-latest
     container:
       image: cokoapps/fly
@@ -376,7 +463,19 @@ jobs:
     name: Deploy main client
 
     if: github.event_name == 'push' && github.ref_name == 'main'
-    needs: [server-tests, typecheck-client, typecheck-server]
+    needs:
+      [
+        lint,
+        typecheck-client,
+        typecheck-server,
+        server-tests,
+        e2e-journal,
+        e2e-colab,
+        e2e-elife,
+        e2e-ncrc,
+        end-to-end,
+      ]
+
     runs-on: ubuntu-latest
     container:
       image: cokoapps/fly

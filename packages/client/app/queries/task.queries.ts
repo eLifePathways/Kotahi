@@ -171,9 +171,3 @@ export const GET_TASKS = gql`
     }
   }
 `
-
-export const REMOVE_TASK_ALERTS_FOR_CURRENT_USER = gql`
-  mutation RemoveTaskAlertsForCurrentUser {
-    removeTaskAlertsForCurrentUser
-  }
-`

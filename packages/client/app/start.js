@@ -34,6 +34,16 @@ const cacheConfig = {
             return incoming
           },
         },
+        teams: {
+          merge(existing, incoming) {
+            return incoming
+          },
+        },
+        authorFeedback: {
+          merge(existing, incoming) {
+            return { ...existing, ...incoming }
+          },
+        },
       },
     },
     ThreadedDiscussion: {

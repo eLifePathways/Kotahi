@@ -1,26 +1,13 @@
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { keys } from 'lodash'
+
 import { FlexRow } from '../../../../component-cms-manager/src/style'
 import { BRACKETS_TYPES } from '../constants'
 import { getBrackets, splitAndCapitalize } from '../helpers'
+import Badge from '../../../../../ui/shared/Badge'
 
-// #region styleds ------------------------------------------------------
-// Just a idea to have different colors for each form badge (wich colors may need discussion)
-const getFormBadgeBg = ({ $form, theme }) => {
-  const colorVariations = {
-    common: theme.color.gray50,
-    decision: '#d89400',
-    review: '#803c01',
-    submission: theme.color.brand1.base,
-    editors: '#c46b28',
-  }
-
-  const safeKey = keys(colorVariations).includes($form) ? $form : 'common'
-  return colorVariations[safeKey]
-}
-
+// #region styled
 const OptionButton = styled.button`
   background-color: white;
   border: none;
@@ -62,18 +49,7 @@ const OptionLabel = styled(FlexRow)`
   }
 `
 
-const FormBadge = styled.span`
-  background-color: ${getFormBadgeBg};
-  border-radius: ${th('borderRadius')};
-  color: ${th('colorBackground')};
-  font-size: ${th('fontSizeBaseSmaller')};
-  line-height: 1;
-  min-width: 80px;
-  padding: ${grid(1.2)} ${grid(1.6)};
-  text-align: center;
-  text-rendering: optimizelegibility;
-`
-// #endregion styleds ---------------------------------------------------
+// #endregion styled
 
 const Option = ({ option, selected = false, select }) => {
   const { label, value, form, type } = option
@@ -94,7 +70,7 @@ const Option = ({ option, selected = false, select }) => {
           <span>{safeLabel}</span>
           <small>{displayValue}</small>
         </OptionLabel>
-        <FormBadge $form={form}>{form}</FormBadge>
+        <Badge small>{form}</Badge>
       </OptionContent>
     </OptionButton>
   )

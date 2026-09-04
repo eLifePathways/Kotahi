@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useMemo } from 'react'
 import { useParams, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { ThemeProvider } from 'styled-components'
+import { AntConfigProvider } from '@coko/client'
 
 import { GET_GROUPS } from '../queries'
 import { reloadTranslationsForGroup } from '../i18n'
@@ -99,12 +100,14 @@ const GroupPage = (): ReactNode => {
   // TO DO - should yjs provider wrap the whole group?
   return (
     <ThemeProvider theme={theme}>
-      <ConfigProvider config={config}>
-        <YjsProvider>
-          <DynamicFavicon config={config} />
-          <Outlet />
-        </YjsProvider>
-      </ConfigProvider>
+      <AntConfigProvider theme={theme}>
+        <ConfigProvider config={config}>
+          <YjsProvider>
+            <DynamicFavicon config={config} />
+            <Outlet />
+          </YjsProvider>
+        </ConfigProvider>
+      </AntConfigProvider>
     </ThemeProvider>
   )
 }
