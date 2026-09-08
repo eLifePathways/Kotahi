@@ -11,6 +11,7 @@ import {
   type MouseEvent,
   Fragment,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -1349,14 +1350,25 @@ const ManuscriptsTable = ({
   }
   // #endregion handlers
 
-  const resolvedColumns = columns.map(column =>
-    resolveColumn(column, {
+  const resolvedColumns = useMemo(
+    () =>
+      columns.map(column =>
+        resolveColumn(column, {
+          columnFilters,
+          sortState,
+          reviewerStatusViewMode,
+          onReviewerStatusViewModeChange,
+          onOptionChange,
+        }),
+      ),
+    [
+      columns,
       columnFilters,
       sortState,
       reviewerStatusViewMode,
       onReviewerStatusViewModeChange,
       onOptionChange,
-    }),
+    ],
   )
 
   return (

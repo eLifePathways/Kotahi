@@ -3,7 +3,14 @@
  */
 
 // #region import
-import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -219,6 +226,26 @@ const extractFilters = (
 
 const extractArchived = (params: URLSearchParams): boolean =>
   params.has(URI_PARAMS.ARCHIVED)
+
+type QueryState = {
+  filters: { field: string; value: string | null }[]
+  sortName: string | undefined
+  sortDirection: 'ascend' | 'descend' | undefined
+  page: number
+  archived: boolean
+}
+
+const deriveQueryState = (params: URLSearchParams): QueryState => {
+  const { name, direction } = extractSortData(params)
+
+  return {
+    filters: extractFilters(params),
+    sortName: name,
+    sortDirection: direction,
+    page: Number(params.get(URI_PARAMS.PAGENUM)) || 1,
+    archived: extractArchived(params),
+  }
+}
 
 const importSourceFor = (
   manuscript: Record<string, any>,
@@ -438,16 +465,29 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
     'compact' | 'detailed'
   >(readReviewerStatusViewMode)
 
+  const [queryState, setQueryState] = useState<QueryState>(() =>
+    deriveQueryState(searchParams),
+  )
+
+  const searchParamsString = searchParams.toString()
+  const lastSyncedSearchParamsStringRef = useRef(searchParamsString)
+
+  useEffect(() => {
+    if (searchParamsString === lastSyncedSearchParamsStringRef.current) return
+    lastSyncedSearchParamsStringRef.current = searchParamsString
+    setQueryState(deriveQueryState(new URLSearchParams(searchParamsString)))
+  }, [searchParamsString])
+
   // #region definitions
   const { roles, configColumnsPath, defaultColumnKeys, forcedColumnKeys } =
     VARIANT_CONFIG[variant]
   const searchInAllVersions = variant === 'reviewer'
   const authorProofingEnabled = config.controlPanel?.authorProofingEnabled
-  const currentSearchQuery = searchParams.get(URI_PARAMS.SEARCH)
-  const { name: sortName, direction: sortDirection } =
-    extractSortData(searchParams)
-  const filters = extractFilters(searchParams)
-  const page = Number(searchParams.get(URI_PARAMS.PAGENUM)) || 1
+  const { filters, sortName, sortDirection, page } = queryState
+
+  const currentSearchQuery =
+    filters.find(f => f.field === URI_PARAMS.SEARCH)?.value ?? null
+
   const pageSize = config?.manuscript?.paginationCount || 10
 
   const specialColumnTitles = useMemo(
@@ -491,7 +531,7 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
   // #endregion definitions
 
   // #region query-data
-  const isArchived = extractArchived(searchParams)
+  const isArchived = queryState.archived
 
   const sharedQueryVariables = {
     sort: sortName
@@ -507,7 +547,9 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
   const roleQuery = useQuery(GET_MANUSCRIPTS_FOR_ROLE, {
     variables: {
       ...sharedQueryVariables,
-      reviewerStatus: searchParams.get(URI_PARAMS.REVIEWER_STATUS),
+      reviewerStatus:
+        filters.find(f => f.field === URI_PARAMS.REVIEWER_STATUS)?.value ??
+        null,
       wantedRoles: roles,
       searchInAllVersions,
     },
@@ -585,12 +627,20 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
       else params.delete(fieldName)
     })
 
+    lastSyncedSearchParamsStringRef.current = params.toString()
     setSearchParams(params)
   }
 
   const handleSortChange = (
     newSortState: ManuscriptsTableSortState | null,
   ): void => {
+    setQueryState(prev => ({
+      ...prev,
+      sortName: newSortState?.columnKey,
+      sortDirection: newSortState?.order,
+      page: 1,
+    }))
+
     applyQueryParams({
       [URI_PARAMS.SORT]: newSortState
         ? `${newSortState.columnKey}_${newSortState.order}`
@@ -602,29 +652,56 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
   const handleFiltersChange = (
     newColumnFilters: Record<string, string[]>,
   ): void => {
+    const encodedFilters = mapValues(newColumnFilters, (values, key) => {
+      const column = tableColumns.find(c => c.key === key)
+
+      if (column?.dataType === 'date') {
+        const [start, end] = values ?? []
+
+        return start && end
+          ? `${isoDateToCompact(start)}-${isoDateToCompact(end)}`
+          : null
+      }
+
+      return values && values.length > 0 ? values.join(',') : null
+    })
+
+    setQueryState(prev => {
+      const otherFilters = prev.filters.filter(
+        f => !(f.field in encodedFilters),
+      )
+
+      const newFilters = Object.entries(encodedFilters)
+        .filter((entry): entry is [string, string] => entry[1] !== null)
+        .map(([field, value]) => ({ field, value }))
+
+      return {
+        ...prev,
+        filters: [...otherFilters, ...newFilters],
+        page: 1,
+      }
+    })
+
     applyQueryParams({
-      ...mapValues(newColumnFilters, (values, key) => {
-        const column = tableColumns.find(c => c.key === key)
-
-        if (column?.dataType === 'date') {
-          const [start, end] = values ?? []
-
-          return start && end
-            ? `${isoDateToCompact(start)}-${isoDateToCompact(end)}`
-            : null
-        }
-
-        return values && values.length > 0 ? values.join(',') : null
-      }),
+      ...encodedFilters,
       [URI_PARAMS.PAGENUM]: 1,
     })
   }
 
   const handlePageChange = (newPage: number): void => {
+    setQueryState(prev => ({ ...prev, page: newPage }))
     applyQueryParams({ [URI_PARAMS.PAGENUM]: newPage })
   }
 
   const handleSearch = (value: string): void => {
+    setQueryState(prev => ({
+      ...prev,
+      filters: [
+        ...prev.filters.filter(f => f.field !== URI_PARAMS.SEARCH),
+        ...(value ? [{ field: URI_PARAMS.SEARCH, value }] : []),
+      ],
+    }))
+
     applyQueryParams({ [URI_PARAMS.SEARCH]: value })
   }
 
@@ -748,6 +825,8 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
   }
 
   const handleViewingArchivedChange = (viewingArchived: boolean): void => {
+    setQueryState(prev => ({ ...prev, archived: viewingArchived, page: 1 }))
+
     applyQueryParams({
       [URI_PARAMS.ARCHIVED]: viewingArchived ? 'true' : null,
       [URI_PARAMS.PAGENUM]: 1,
@@ -1196,30 +1275,31 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
    * Date filters are 'yyyyMMdd-yyyyMMdd' range.
    * All other filters are comma-separated values.
    */
-  const columnFilters = tableColumns.reduce<Record<string, string[]>>(
-    (accumulator, column) => {
-      if (!column.filterable) return accumulator
+  const columnFilters = useMemo(
+    () =>
+      tableColumns.reduce<Record<string, string[]>>((accumulator, column) => {
+        if (!column.filterable) return accumulator
 
-      const value = searchParams.get(column.key)
-      if (!value) return accumulator
+        const value = filters.find(f => f.field === column.key)?.value
+        if (!value) return accumulator
 
-      if (column.dataType === 'date') {
-        const [start, end] = value.split('-')
+        if (column.dataType === 'date') {
+          const [start, end] = value.split('-')
 
-        if (start && end) {
-          accumulator[column.key] = [
-            compactDateToIso(start),
-            compactDateToIso(end),
-          ]
+          if (start && end) {
+            accumulator[column.key] = [
+              compactDateToIso(start),
+              compactDateToIso(end),
+            ]
+          }
+
+          return accumulator
         }
 
+        accumulator[column.key] = value.split(',')
         return accumulator
-      }
-
-      accumulator[column.key] = value.split(',')
-      return accumulator
-    },
-    {},
+      }, {}),
+    [tableColumns, filters],
   )
   // #endregion column-filters
 
