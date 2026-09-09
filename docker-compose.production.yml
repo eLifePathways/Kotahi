@@ -174,7 +174,7 @@ services:
 
   # Create the file server and give it a root user
   fileHosting:
-    image: minio/minio:RELEASE.2023-05-04T21-44-30Z
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     ports:
       - ${S3_PORT:-9000}:9000
       - ${MINIO_CONSOLE_PORT:-9001}:9001
@@ -192,7 +192,7 @@ services:
 
   # Create non-root user and bucket that we'll connect to
   createbucket:
-    image: minio/mc:RELEASE.2023-05-04T18-10-16Z
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
     depends_on:
       fileHosting:
         condition: service_healthy
