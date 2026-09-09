@@ -7,7 +7,7 @@ import * as Icons from '../../app/ui/base/Icons'
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
   gap: 12px;
 `
 

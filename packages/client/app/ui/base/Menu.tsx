@@ -5,6 +5,7 @@ import styled, { css, RuleSet } from 'styled-components'
 import { grid, th, Link as UILink } from '@coko/client'
 
 import Avatar from '../shared/Avatar'
+import { collapseTransition } from '../constants'
 import {
   Home,
   File,
@@ -21,8 +22,6 @@ import {
 // #region styled
 const fullWidth = '272px'
 const collapsedWidth = '64px'
-const collapseTime = '0.3s'
-const collapseTransition = `${collapseTime} ease`
 
 /**
  * If you notice redundant font-family, font-size and line-height values all

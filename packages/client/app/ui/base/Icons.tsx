@@ -7,6 +7,7 @@ export {
   FileTextOutlined as File,
   FormOutlined as Form,
   HomeOutlined as Home,
+  MessageOutlined as Chat,
   ReadOutlined as Book,
   UnorderedListOutlined as Tasks,
   UserOutlined as User,

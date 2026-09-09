@@ -3,19 +3,20 @@
 
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { th } from '@coko/client'
+import { grid, th } from '@coko/client'
 import ChatInput from './SuperChatInput/SuperChatInput'
 import Messages from './Messages/Messages'
 import UserActivityTracker from '../../shared/UserActivityTracker'
 
 const ChatInputContainer = styled.div`
+  margin-bottom: ${grid(1)};
   position: relative;
 
   span.mention-tag {
     background-color: ${th('colorPrimary')};
     border-radius: 4px;
     color: ${th('color.white')};
-    padding: 2px 4px;
+    padding: ${grid(0.5)} ${grid(1)};
   }
 `
 
@@ -27,6 +28,7 @@ export const FloatingUnreadLabelContainer = styled.div`
   top: -26px;
   width: 100%;
 `
+
 export const FloatingUnreadLabel = styled.div`
   background-color: ${th('color.brand1.tint25')};
   border-radius: 4px;
@@ -38,6 +40,7 @@ export const FloatingUnreadLabel = styled.div`
   padding: 2px 30px;
   position: relative;
 `
+
 export const FloatingUnreadLabelClose = styled.span`
   border-radius: 4px;
   cursor: pointer;

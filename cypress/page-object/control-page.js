@@ -43,7 +43,7 @@ const ACCEPTED_TO_PUBLISH_REVIEW_ICON =
 
 // Chat
 const MESSAGE_CONTAINER = '[data-testid="chat-panel"]'
-const CHAT_TAB = '[data-testid="chat-panel"] [data-testid=tab-container]'
+const CHAT_TAB = '[data-testid="chat-panel"] .ant-tabs-tab'
 const EXPAND_CHAT_BUTTON = '[data-testid="expand-chat"]'
 
 // Multiple Elements

@@ -17,6 +17,7 @@ import {
   URI_SEARCH_PARAM,
 } from '../../../shared/urlParamUtils'
 import MessageContainer from '../../component-chat/src/MessageContainer'
+import ChatPanelExpandButton from '../../../ui/shared/ChatPanelExpandButton'
 import ManuscriptsTable from '../../component-manuscripts-table/src/ManuscriptsTable'
 import buildColumnDefinitions from '../../component-manuscripts-table/src/util/buildColumnDefinitions'
 import { ConfirmationModal } from '../../component-modal/src/ConfirmationModal'
@@ -27,7 +28,6 @@ import {
   Container,
   Pagination,
   PaginationContainerShadowed,
-  RoundIconButton,
   ScrollableContent,
   Spinner,
 } from '../../shared'
@@ -41,6 +41,7 @@ import {
 import { ConfigContext } from '../../config/src'
 
 const OuterContainer = styled(Container)`
+  height: 100%;
   overflow: hidden;
   padding: 0;
 `
@@ -64,12 +65,6 @@ const FlexRowWithSmallGapAbove = styled(FlexRow)`
   align-items: end;
   justify-content: flex-start;
   margin-bottom: ${grid(2)};
-`
-
-const RoundIconButtonWrapper = styled(RoundIconButton).attrs({
-  'data-testid': 'round-icon-button-wrapper',
-})`
-  position: sticky;
 `
 
 const DropdownContainer = styled.div.attrs({
@@ -315,21 +310,23 @@ const Manuscripts = props => {
     archived,
   )
 
-  const hideChat = async () => {
-    try {
-      setIsAdminChatOpen(false)
-      chatExpand({ variables: { state: false } })
-      const { channelsData } = chatProps || {}
+  const toggleAdminChat = () => {
+    setIsAdminChatOpen(prevState => !prevState)
+    chatExpand({ variables: { state: !isAdminChatOpen } })
 
-      const dataRefetchPromises = channelsData?.map(async channel => {
-        await channel?.refetchUnreadMessagesCount?.()
-        await channel?.refetchNotificationOptionData?.()
-      })
+    // Refresh unread counts/notification data in the background so the
+    // collapsed chat button's badge stays accurate. This must not block the
+    // panel from opening/closing above.
+    const { channelsData } = chatProps || {}
 
-      await Promise.all(dataRefetchPromises)
-    } catch (error) {
-      console.error('Error hiding chat:', error)
-    }
+    const dataRefetchPromises = (channelsData || []).map(async channel => {
+      await channel?.refetchUnreadMessagesCount?.()
+      await channel?.refetchNotificationOptionData?.()
+    })
+
+    Promise.all(dataRefetchPromises).catch(error => {
+      console.error('Error refreshing discussion data:', error)
+    })
   }
 
   const topRightControls = (
@@ -366,15 +363,12 @@ const Manuscripts = props => {
         }
         currentSearchQuery={currentSearchQuery}
       />
-      {!isAdminChatOpen && !hideManuscriptsChat && (
-        <RoundIconButtonWrapper
-          iconName="MessageSquare"
-          onClick={() => {
-            setIsAdminChatOpen(true)
-            chatExpand({ variables: { state: true } })
-          }}
-          title={t('chat.Show group manager discussion')}
-          unreadMessagesCount={channelData?.unreadMessagesCount}
+      {!hideManuscriptsChat && (
+        <ChatPanelExpandButton
+          isOpen={isAdminChatOpen}
+          label={t('chat.Show group manager discussion')}
+          onClick={toggleAdminChat}
+          unreadCount={channelData?.unreadMessagesCount}
         />
       )}
     </ControlsContainer>
@@ -478,14 +472,14 @@ const Manuscripts = props => {
             </div>
           </ManuscriptsPane>
 
-          {/* Group Manager Discussion, Hide Chat, Chat component */}
-          {isAdminChatOpen && !hideManuscriptsChat && (
+          {!hideManuscriptsChat && (
             <MessageContainer
               channelId={groupManagerDiscussionChannel?.id}
               channels={channels}
               chatProps={chatProps}
               currentUser={currentUser}
-              hideChat={hideChat}
+              isOpen={isAdminChatOpen}
+              onToggle={toggleAdminChat}
             />
           )}
         </ManuscriptsColumns>

@@ -3,6 +3,7 @@
 
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { set, flatten } from 'lodash'
@@ -13,19 +14,24 @@ import EditorSection from '../decision/EditorSection'
 import {
   Columns,
   Manuscript,
-  Chat,
   SectionContent,
   HiddenTabs,
   ErrorBoundary,
   VersionSwitcher,
 } from '../../../../shared'
-import { ChatButton, CollapseButton } from '../style'
 import MessageContainer from '../../../../component-chat/src/MessageContainer'
+import ChatPanelExpandButton from '../../../../../ui/shared/ChatPanelExpandButton'
 import SharedReviewerGroupReviews from './SharedReviewerGroupReviews'
 import FormTemplate from '../../../../component-submit/src/components/FormTemplate'
 import { ConfigContext } from '../../../../config/src'
 import YjsContext from '../../../../provider-yjs/YjsProvider'
 import { NEW_REVIEW_FRAGMENT } from '../../../../../queries'
+
+const FloatingChatPanelExpandButton = styled(ChatPanelExpandButton)`
+  margin-top: 16px;
+  position: absolute;
+  right: 18px;
+`
 
 const ReviewLayout = ({
   currentUser,
@@ -368,21 +374,23 @@ const ReviewLayout = ({
     currentUser.chatExpanded,
   )
 
-  const toggleSubmissionDiscussionVisibility = async () => {
-    try {
-      const { channelsData } = chatProps || {}
+  const toggleSubmissionDiscussionVisibility = () => {
+    setIsDiscussionVisible(prevState => !prevState)
+    chatExpand({ variables: { state: !isDiscussionVisible } })
 
-      const dataRefetchPromises = channelsData?.map(async channel => {
-        await channel?.refetchUnreadMessagesCount?.()
-        await channel?.refetchNotificationOptionData?.()
-      })
+    // Refresh unread counts/notification data in the background so the
+    // collapsed chat button's badge stays accurate. This must not block the
+    // panel from opening/closing above.
+    const { channelsData } = chatProps || {}
 
-      await Promise.all(dataRefetchPromises)
-      chatExpand({ variables: { state: !isDiscussionVisible } })
-      setIsDiscussionVisible(prevState => !prevState)
-    } catch (error) {
-      console.error('Error toggling submission discussion visibility:', error)
-    }
+    const dataRefetchPromises = (channelsData || []).map(async channel => {
+      await channel?.refetchUnreadMessagesCount?.()
+      await channel?.refetchNotificationOptionData?.()
+    })
+
+    Promise.all(dataRefetchPromises).catch(error => {
+      console.error('Error refreshing discussion data:', error)
+    })
   }
 
   return (
@@ -398,29 +406,19 @@ const ReviewLayout = ({
       </Manuscript>
       {!hideChat && (
         <>
-          {isDiscussionVisible && (
-            <Chat>
-              <MessageContainer
-                channelId={channelId}
-                channels={channels}
-                chatProps={chatProps}
-                currentUser={currentUser}
-              />
-              <CollapseButton
-                iconName="ChevronRight"
-                onClick={toggleSubmissionDiscussionVisibility}
-                title={t('chat.Hide Chat')}
-              />
-            </Chat>
-          )}
-          {!isDiscussionVisible && (
-            <ChatButton
-              iconName="MessageSquare"
-              onClick={toggleSubmissionDiscussionVisibility}
-              title={t('chat.Show Chat')}
-              unreadMessagesCount={channelData?.unreadMessagesCount}
-            />
-          )}
+          <MessageContainer
+            channelId={channelId}
+            channels={channels}
+            chatProps={chatProps}
+            currentUser={currentUser}
+            isOpen={isDiscussionVisible}
+            onToggle={toggleSubmissionDiscussionVisibility}
+          />
+          <FloatingChatPanelExpandButton
+            isOpen={isDiscussionVisible}
+            onClick={toggleSubmissionDiscussionVisibility}
+            unreadCount={channelData?.unreadMessagesCount}
+          />
         </>
       )}
     </Columns>
