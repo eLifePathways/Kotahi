@@ -324,7 +324,15 @@ const splitVisibleUnits = (text: string): string[] =>
 const trimHtml = (html: string, maxLength: number, ellipsis = ''): string => {
   if (maxLength <= 0) return ''
 
-  const tokenRegex = /(<[^>]+>)|([^<]+)/g
+  /**
+   * This reads as
+   * - valid html opening or closing tag OR
+   * - html that we want to discard (eg. comments) OR
+   * - plain text
+   */
+  const tokenRegex =
+    /(<\/?[a-zA-Z][a-zA-Z0-9-]*[^>]*>)|(<[!?][^>]*>)|((?:[^<]|<(?![a-zA-Z/!?]))+)/g
+
   const openTagStack: string[] = []
 
   let result = ''
@@ -332,61 +340,61 @@ const trimHtml = (html: string, maxLength: number, ellipsis = ''): string => {
   let match: RegExpExecArray | null
 
   /**
-   * Each loop will match either an html tag or an uninterrupted string of
-   * text between tags (because of tokenRegex).
+   * Each loop will match one of the cases of tokenRegex.
    */
   while ((match = tokenRegex.exec(html)) !== null) {
-    const [, tagToken, textToken] = match
+    const [, tag, discard, text] = match
 
-    if (tagToken) {
+    if (tag) {
       /**
        * Is it a closing tag?
        * Then find the opening tag and drop it from the stack.
        */
-      const closeMatch = tagToken.match(/^<\/\s*([a-zA-Z0-9-]+)/)
+      const closeMatch = tag.match(/^<\/\s*([a-zA-Z][a-zA-Z0-9-]*)/)
 
       if (closeMatch) {
         const tagName = closeMatch[1].toLowerCase()
         const lastIndex = openTagStack.lastIndexOf(tagName)
         if (lastIndex !== -1) openTagStack.splice(lastIndex, 1)
-        result += tagToken
-        continue
       }
 
       /**
        * Is it an opening tag?
        * If it's not self-closing (eg. <img />), push it to the stack of open tags.
        */
-      const openMatch = tagToken.match(/^<\s*([a-zA-Z0-9-]+)/)
+      const openMatch = tag.match(/^<\s*([a-zA-Z][a-zA-Z0-9-]*)/)
 
       if (openMatch) {
         const tagName = openMatch[1].toLowerCase()
 
-        const isSelfClosing =
-          tagToken.endsWith('/>') || HTML_VOID_TAGS.has(tagName)
+        const isSelfClosing = tag.endsWith('/>') || HTML_VOID_TAGS.has(tagName)
 
         if (!isSelfClosing) openTagStack.push(tagName)
-        result += tagToken
-        continue
       }
 
-      // Neither an opening nor a closing tag - comments, DOCTYPE etc. Drop them.
-    } else if (textToken) {
+      result += tag
+    }
+
+    if (text) {
       /**
        * Is it text between tags?
        * Count characters toward cutoff point.
        */
       const remainingSpace = maxLength - visibleCharCount
-      const units = splitVisibleUnits(textToken)
+      const units = splitVisibleUnits(text)
 
       if (units.length <= remainingSpace) {
-        result += textToken
+        result += text
         visibleCharCount += units.length
       } else {
         result += units.slice(0, remainingSpace).join('') + ellipsis
         visibleCharCount += remainingSpace
         break
       }
+    }
+
+    if (discard) {
+      // Do nothing. if this matches, we do not want it.
     }
   }
 
