@@ -136,7 +136,7 @@ const Manuscripts = props => {
     doUpdateManuscript,
     exportManuscriptsToJson,
     initialChatExpanded,
-    saveChatExpanded,
+    onAdminChatChange,
   } = props
 
   const navigate = useNavigate()
@@ -312,21 +312,7 @@ const Manuscripts = props => {
   const toggleAdminChat = () => {
     const isExpanded = !isAdminChatOpen
     setIsAdminChatOpen(isExpanded)
-    saveChatExpanded(isExpanded)
-
-    // Refresh unread counts/notification data in the background so the
-    // collapsed chat button's badge stays accurate. This must not block the
-    // panel from opening/closing above.
-    const { channelsData } = chatProps || {}
-
-    const dataRefetchPromises = (channelsData || []).map(async channel => {
-      await channel?.refetchUnreadMessagesCount?.()
-      await channel?.refetchNotificationOptionData?.()
-    })
-
-    Promise.all(dataRefetchPromises).catch(error => {
-      console.error('Error refreshing discussion data:', error)
-    })
+    onAdminChatChange(isExpanded)
   }
 
   const topRightControls = (

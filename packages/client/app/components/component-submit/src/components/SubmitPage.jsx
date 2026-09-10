@@ -116,7 +116,9 @@ const SubmitPage = () => {
   const initialChatExpanded =
     localStorage.getItem('chatPanelExpanded:submit') === 'true'
 
-  const saveChatExpanded = expanded => {
+  const onDiscussionVisibilityChange = expanded => {
+    chatProps.refreshUnreadData()
+
     try {
       localStorage.setItem('chatPanelExpanded:submit', String(expanded))
     } catch {
@@ -301,11 +303,11 @@ const SubmitPage = () => {
       manuscript={manuscript}
       manuscriptLatestVersionId={manuscriptLatestVersionId}
       onChange={handleChange}
+      onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       onSubmit={onSubmit}
       parent={manuscript}
       republish={republish}
       reviewForm={reviewForm}
-      saveChatExpanded={saveChatExpanded}
       setShouldPublishField={
         currentUser.groupRoles.includes('groupAdmin')
           ? setShouldPublishField

@@ -282,7 +282,9 @@ const ManuscriptsPage = () => {
   const initialChatExpanded =
     localStorage.getItem('chatPanelExpanded:manuscripts') === 'true'
 
-  const saveChatExpanded = expanded => {
+  const onAdminChatChange = expanded => {
+    chatProps.refreshUnreadData()
+
     try {
       localStorage.setItem('chatPanelExpanded:manuscripts', String(expanded))
     } catch {
@@ -307,10 +309,10 @@ const ManuscriptsPage = () => {
       importManuscripts={importManuscriptsAndRefetch}
       initialChatExpanded={initialChatExpanded}
       isImporting={isImporting}
+      onAdminChatChange={onAdminChatChange}
       page={page}
       publishManuscript={publishManuscript}
       queryObject={queryObject}
-      saveChatExpanded={saveChatExpanded}
       setReadyToEvaluateLabels={setReadyToEvaluateLabels}
       shouldAllowBulkImport={shouldAllowBulkImport}
       sortDirection={sortDirection}

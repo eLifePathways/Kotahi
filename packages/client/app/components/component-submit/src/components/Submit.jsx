@@ -77,7 +77,7 @@ const Submit = ({
   validateSuffix,
   validationOrcid,
   initialChatExpanded,
-  saveChatExpanded,
+  onDiscussionVisibilityChange,
 }) => {
   const config = useContext(ConfigContext)
 
@@ -250,19 +250,7 @@ const Submit = ({
   const toggleSubmisionDiscussionVisibility = () => {
     const isExpanded = !isSubmisionDiscussionVisible
     setIsSubmisionDiscussionVisible(isExpanded)
-    saveChatExpanded(isExpanded)
-
-    // Refresh unread counts/notification data in the background so the
-    // collapsed chat button's badge stays accurate. This must not block the
-    // panel from opening/closing above.
-    const firstChannel = chatProps?.channelsData?.[0]
-
-    Promise.all([
-      channelData?.refetchUnreadMessagesCount?.(),
-      firstChannel?.refetchNotificationOptionData?.(),
-    ]).catch(error => {
-      console.error('Error refreshing discussion data:', error)
-    })
+    onDiscussionVisibilityChange(isExpanded)
   }
 
   return (

@@ -165,7 +165,9 @@ const DecisionPage = () => {
   const initialChatExpanded =
     localStorage.getItem('chatPanelExpanded:decision') === 'true'
 
-  const saveChatExpanded = expanded => {
+  const onDiscussionVisibilityChange = expanded => {
+    chatProps.refreshUnreadData()
+
     try {
       localStorage.setItem('chatPanelExpanded:decision', String(expanded))
     } catch {
@@ -666,6 +668,7 @@ const DecisionPage = () => {
       lockUnlockReview={lockUnlockReview}
       makeDecision={makeDecision}
       manuscript={manuscript}
+      onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       onRefreshAdaStatus={refreshAdaStatus}
       publishManuscript={handlePublishManuscript}
       queryAI={queryAI}
@@ -678,7 +681,6 @@ const DecisionPage = () => {
       reviewers={data?.manuscript?.reviews}
       reviewForm={reviewForm}
       roles={roles}
-      saveChatExpanded={saveChatExpanded}
       selectedEmail={selectedEmail}
       selectedEmailIsBlacklisted={selectedEmailIsBlacklisted}
       sendChannelMessage={sendChannelMessage}

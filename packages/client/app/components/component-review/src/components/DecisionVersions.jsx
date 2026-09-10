@@ -33,7 +33,7 @@ const DecisionVersions = ({
   channels,
   coarMessages,
   initialChatExpanded,
-  saveChatExpanded,
+  onDiscussionVisibilityChange,
   form,
   handleChange,
   hideChat,
@@ -105,25 +105,7 @@ const DecisionVersions = ({
   const toggleDiscussionVisibility = () => {
     const isExpanded = !isDiscussionVisible
     setIsDiscussionVisible(isExpanded)
-    saveChatExpanded(isExpanded)
-
-    // Refresh unread counts/notification data in the background so the
-    // collapsed chat button's badge stays accurate. This must not block the
-    // panel from opening/closing above.
-    const { channelsData, reloadUnreadMessageCounts } = chatProps || {}
-
-    const dataRefetchPromises = (channelsData || []).map(async channel => {
-      await channel?.refetchUnreadMessagesCount?.()
-      await channel?.refetchNotificationOptionData?.()
-    })
-
-    if (reloadUnreadMessageCounts) {
-      dataRefetchPromises.push(reloadUnreadMessageCounts())
-    }
-
-    Promise.all(dataRefetchPromises).catch(error => {
-      console.error('Error refreshing discussion data:', error)
-    })
+    onDiscussionVisibilityChange(isExpanded)
   }
 
   const manuscriptLatestVersionId = versions[0].manuscript.id

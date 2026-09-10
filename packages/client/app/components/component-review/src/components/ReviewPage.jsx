@@ -144,7 +144,9 @@ const ReviewPage = () => {
   const initialChatExpanded =
     localStorage.getItem('chatPanelExpanded:review') === 'true'
 
-  const saveChatExpanded = expanded => {
+  const onDiscussionVisibilityChange = expanded => {
+    chatProps.refreshUnreadData()
+
     try {
       localStorage.setItem('chatPanelExpanded:review', String(expanded))
     } catch {
@@ -228,8 +230,8 @@ const ReviewPage = () => {
       deleteFile={deleteFile}
       hideChat={hideReviewerChat}
       initialChatExpanded={initialChatExpanded}
+      onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       reviewForm={reviewForm}
-      saveChatExpanded={saveChatExpanded}
       submissionForm={submissionForm}
       threadedDiscussionProps={threadedDiscussionProps}
       updateReviewerStatus={updateReviewerStatus}
