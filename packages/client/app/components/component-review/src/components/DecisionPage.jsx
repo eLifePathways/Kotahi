@@ -162,6 +162,17 @@ const DecisionPage = () => {
 
   const chatProps = useChat(channels)
 
+  const initialChatExpanded =
+    localStorage.getItem('chatPanelExpanded:decision') === 'true'
+
+  const saveChatExpanded = expanded => {
+    try {
+      localStorage.setItem('chatPanelExpanded:decision', String(expanded))
+    } catch {
+      // ignore
+    }
+  }
+
   const [selectedEmail, setSelectedEmail] = useState('')
   const [externalEmail, setExternalEmail] = useState('')
 
@@ -650,6 +661,7 @@ const DecisionPage = () => {
       form={form}
       handleChange={handleChange}
       hideChat={hideAuthorChat && hideDiscussionFromEditorsReviewersAuthors}
+      initialChatExpanded={initialChatExpanded}
       isCoarLoading={coarLoading}
       lockUnlockReview={lockUnlockReview}
       makeDecision={makeDecision}
@@ -666,6 +678,7 @@ const DecisionPage = () => {
       reviewers={data?.manuscript?.reviews}
       reviewForm={reviewForm}
       roles={roles}
+      saveChatExpanded={saveChatExpanded}
       selectedEmail={selectedEmail}
       selectedEmailIsBlacklisted={selectedEmailIsBlacklisted}
       sendChannelMessage={sendChannelMessage}

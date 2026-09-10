@@ -20,7 +20,6 @@ import {
   COMPLETE_COMMENT,
   DELETE_PENDING_COMMENT,
   VALIDATE_ORCID,
-  EXPAND_CHAT,
   USER_MANUSCRIPT,
   UPDATE_MANUSCRIPT,
   SUBMIT_MANUSCRIPT,
@@ -55,7 +54,6 @@ const SubmitPage = () => {
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config
-  const [chatExpand] = useMutation(EXPAND_CHAT)
   const { validationOrcid } = useValidateORCID()
 
   useEffect(() => {
@@ -114,6 +112,17 @@ const SubmitPage = () => {
   ]
 
   const chatProps = useChat(channels)
+
+  const initialChatExpanded =
+    localStorage.getItem('chatPanelExpanded:submit') === 'true'
+
+  const saveChatExpanded = expanded => {
+    try {
+      localStorage.setItem('chatPanelExpanded:submit', String(expanded))
+    } catch {
+      // ignore
+    }
+  }
 
   const [update] = useMutation(UPDATE_MANUSCRIPT)
   const [submit] = useMutation(SUBMIT_MANUSCRIPT)
@@ -281,7 +290,6 @@ const SubmitPage = () => {
     <Submit
       channelId={channelId}
       channels={channels}
-      chatExpand={chatExpand}
       chatProps={chatProps}
       createFile={createFile}
       createNewVersion={createNewVersion}
@@ -289,6 +297,7 @@ const SubmitPage = () => {
       decisionForm={decisionForm}
       deleteFile={deleteFile}
       hideChat={hideChat}
+      initialChatExpanded={initialChatExpanded}
       manuscript={manuscript}
       manuscriptLatestVersionId={manuscriptLatestVersionId}
       onChange={handleChange}
@@ -296,6 +305,7 @@ const SubmitPage = () => {
       parent={manuscript}
       republish={republish}
       reviewForm={reviewForm}
+      saveChatExpanded={saveChatExpanded}
       setShouldPublishField={
         currentUser.groupRoles.includes('groupAdmin')
           ? setShouldPublishField

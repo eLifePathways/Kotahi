@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { uuid } from '@coko/client'
 import DecisionVersion from './DecisionVersion'
@@ -32,6 +32,8 @@ const DecisionVersions = ({
   chatProps,
   channels,
   coarMessages,
+  initialChatExpanded,
+  saveChatExpanded,
   form,
   handleChange,
   hideChat,
@@ -97,30 +99,31 @@ const DecisionVersions = ({
     [],
   )
 
-  const [isDiscussionVisible, setIsDiscussionVisible] = React.useState(
-    currentUser.chatExpanded,
-  )
+  const [isDiscussionVisible, setIsDiscussionVisible] =
+    useState(initialChatExpanded)
 
   const toggleDiscussionVisibility = () => {
-    setIsDiscussionVisible(prevState => !prevState)
+    const isExpanded = !isDiscussionVisible
+    setIsDiscussionVisible(isExpanded)
+    saveChatExpanded(isExpanded)
 
     // Refresh unread counts/notification data in the background so the
     // collapsed chat button's badge stays accurate. This must not block the
     // panel from opening/closing above.
-    // const { channelsData, reloadUnreadMessageCounts } = chatProps || {}
+    const { channelsData, reloadUnreadMessageCounts } = chatProps || {}
 
-    // const dataRefetchPromises = (channelsData || []).map(async channel => {
-    //   await channel?.refetchUnreadMessagesCount?.()
-    //   await channel?.refetchNotificationOptionData?.()
-    // })
+    const dataRefetchPromises = (channelsData || []).map(async channel => {
+      await channel?.refetchUnreadMessagesCount?.()
+      await channel?.refetchNotificationOptionData?.()
+    })
 
-    // if (reloadUnreadMessageCounts) {
-    //   dataRefetchPromises.push(reloadUnreadMessageCounts())
-    // }
+    if (reloadUnreadMessageCounts) {
+      dataRefetchPromises.push(reloadUnreadMessageCounts())
+    }
 
-    // Promise.all(dataRefetchPromises).catch(error => {
-    //   console.error('Error refreshing discussion data:', error)
-    // })
+    Promise.all(dataRefetchPromises).catch(error => {
+      console.error('Error refreshing discussion data:', error)
+    })
   }
 
   const manuscriptLatestVersionId = versions[0].manuscript.id

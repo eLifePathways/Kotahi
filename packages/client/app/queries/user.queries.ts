@@ -22,7 +22,6 @@ export const CURRENT_USER = gql`
       email
       recentTab
       preferredLanguage
-      chatExpanded
       defaultIdentity {
         identifier
         email

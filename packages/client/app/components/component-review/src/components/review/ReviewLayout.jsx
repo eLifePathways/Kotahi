@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
@@ -48,10 +48,11 @@ const ReviewLayout = ({
   hideChat = false,
   threadedDiscussionProps,
   chatProps,
+  initialChatExpanded,
+  saveChatExpanded,
   updateReviewMutation,
   updateReviewerStatus,
   versionsOfManuscriptCurrentUserIsReviewerOf,
-  chatExpand,
 }) => {
   const navigate = useNavigate()
   const config = useContext(ConfigContext) || {}
@@ -370,13 +371,13 @@ const ReviewLayout = ({
       }
     })
 
-  const [isDiscussionVisible, setIsDiscussionVisible] = React.useState(
-    currentUser.chatExpanded,
-  )
+  const [isDiscussionVisible, setIsDiscussionVisible] =
+    useState(initialChatExpanded)
 
   const toggleSubmissionDiscussionVisibility = () => {
-    setIsDiscussionVisible(prevState => !prevState)
-    chatExpand({ variables: { state: !isDiscussionVisible } })
+    const isExpanded = !isDiscussionVisible
+    setIsDiscussionVisible(isExpanded)
+    saveChatExpanded(isExpanded)
 
     // Refresh unread counts/notification data in the background so the
     // collapsed chat button's badge stays accurate. This must not block the

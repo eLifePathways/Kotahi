@@ -26,7 +26,6 @@ import {
   GET_MANUSCRIPTS_DATA,
   UNARCHIVE_MANUSCRIPTS,
   PUBLISH_MANUSCRIPT,
-  EXPAND_CHAT,
   UPDATE_MANUSCRIPT,
 } from '../../../queries'
 import Manuscripts from './Manuscripts'
@@ -248,7 +247,6 @@ const ManuscriptsPage = () => {
   }
 
   const [update] = useMutation(UPDATE_MANUSCRIPT)
-  const [chatExpand] = useMutation(EXPAND_CHAT)
 
   const [doPublishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
   const client = useApolloClient()
@@ -281,13 +279,23 @@ const ManuscriptsPage = () => {
 
   const chatProps = useChat(channels)
 
+  const initialChatExpanded =
+    localStorage.getItem('chatPanelExpanded:manuscripts') === 'true'
+
+  const saveChatExpanded = expanded => {
+    try {
+      localStorage.setItem('chatPanelExpanded:manuscripts', String(expanded))
+    } catch {
+      // ignore
+    }
+  }
+
   return (
     <Manuscripts
       applyQueryParams={applyQueryParams}
       archived={archived}
       archiveManuscripts={archiveManuscripts}
       channels={channels}
-      chatExpand={chatExpand}
       chatProps={chatProps}
       configuredColumnNames={configuredColumnNames}
       currentUser={currentUser}
@@ -297,10 +305,12 @@ const ManuscriptsPage = () => {
       groupManagerDiscussionChannel={groupManagerDiscussionChannel}
       hideManuscriptsChat={hideDiscussionFromGroupAdminsManagers}
       importManuscripts={importManuscriptsAndRefetch}
+      initialChatExpanded={initialChatExpanded}
       isImporting={isImporting}
       page={page}
       publishManuscript={publishManuscript}
       queryObject={queryObject}
+      saveChatExpanded={saveChatExpanded}
       setReadyToEvaluateLabels={setReadyToEvaluateLabels}
       shouldAllowBulkImport={shouldAllowBulkImport}
       sortDirection={sortDirection}

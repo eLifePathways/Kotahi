@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
 /* eslint-disable react/prop-types */
 
-import React, { useCallback, useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { set, debounce } from 'lodash'
@@ -76,7 +76,8 @@ const Submit = ({
   validateDoi,
   validateSuffix,
   validationOrcid,
-  chatExpand,
+  initialChatExpanded,
+  saveChatExpanded,
 }) => {
   const config = useContext(ConfigContext)
 
@@ -85,7 +86,7 @@ const Submit = ({
   )
 
   const [isSubmisionDiscussionVisible, setIsSubmisionDiscussionVisible] =
-    React.useState(currentUser.chatExpanded)
+    useState(initialChatExpanded)
 
   const allowAuthorsSubmitNewVersion =
     config?.submission?.allowAuthorsSubmitNewVersion
@@ -247,8 +248,9 @@ const Submit = ({
   })
 
   const toggleSubmisionDiscussionVisibility = () => {
-    setIsSubmisionDiscussionVisible(prevState => !prevState)
-    chatExpand({ variables: { state: !isSubmisionDiscussionVisible } })
+    const isExpanded = !isSubmisionDiscussionVisible
+    setIsSubmisionDiscussionVisible(isExpanded)
+    saveChatExpanded(isExpanded)
 
     // Refresh unread counts/notification data in the background so the
     // collapsed chat button's badge stays accurate. This must not block the

@@ -158,4 +158,31 @@ describe('User migrations', () => {
     const columnInfoRollback = await db('users').columnInfo('menu_pinned')
     expect(columnInfoRollback.type).toEqual('boolean')
   })
+
+  it('drops the chat expanded column', async () => {
+    let hasColumn: boolean
+
+    await migrationManager.migrate({
+      to: '1783674872-remove-menu-pinned',
+    })
+
+    hasColumn = await db.schema.hasColumn('users', 'chat_expanded')
+    expect(hasColumn).toBe(true)
+
+    const columnInfoPre = await db('users').columnInfo('chat_expanded')
+    expect(columnInfoPre.type).toEqual('boolean')
+
+    await migrationManager.migrate({ step: 1 })
+
+    hasColumn = await db.schema.hasColumn('users', 'chat_expanded')
+    expect(hasColumn).toBe(false)
+
+    await migrationManager.rollback({ step: 1 })
+
+    hasColumn = await db.schema.hasColumn('users', 'chat_expanded')
+    expect(hasColumn).toBe(true)
+
+    const columnInfoRollback = await db('users').columnInfo('chat_expanded')
+    expect(columnInfoRollback.type).toEqual('boolean')
+  })
 })

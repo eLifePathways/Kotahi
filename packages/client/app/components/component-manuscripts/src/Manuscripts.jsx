@@ -135,7 +135,8 @@ const Manuscripts = props => {
     channels,
     doUpdateManuscript,
     exportManuscriptsToJson,
-    chatExpand,
+    initialChatExpanded,
+    saveChatExpanded,
   } = props
 
   const navigate = useNavigate()
@@ -154,9 +155,7 @@ const Manuscripts = props => {
 
   const [selectedNewManuscripts, setSelectedNewManuscripts] = useState([])
 
-  const [isAdminChatOpen, setIsAdminChatOpen] = useState(
-    currentUser.chatExpanded,
-  )
+  const [isAdminChatOpen, setIsAdminChatOpen] = useState(initialChatExpanded)
 
   const toggleNewManuscriptCheck = id => {
     setSelectedNewManuscripts(s => {
@@ -311,8 +310,9 @@ const Manuscripts = props => {
   )
 
   const toggleAdminChat = () => {
-    setIsAdminChatOpen(prevState => !prevState)
-    chatExpand({ variables: { state: !isAdminChatOpen } })
+    const isExpanded = !isAdminChatOpen
+    setIsAdminChatOpen(isExpanded)
+    saveChatExpanded(isExpanded)
 
     // Refresh unread counts/notification data in the background so the
     // collapsed chat button's badge stays accurate. This must not block the

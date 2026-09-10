@@ -31,7 +31,6 @@ extend type Mutation {
   updateRecentTab(tab: String): User
   setGlobalRole(userId: ID!, role: String!, shouldEnable: Boolean!): User!
   setGroupRole(userId: ID!, role: String!, shouldEnable: Boolean!): User!
-  expandChat(state: Boolean!): User!
 }
 
 type UpdateEmailResponse {
@@ -68,7 +67,6 @@ type User {
   lastOnline: DateTime
   isOnline: Boolean
   recentTab: String
-  chatExpanded: Boolean!
 }
 
 type CurrentRole {
