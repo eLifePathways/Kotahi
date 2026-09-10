@@ -15,6 +15,7 @@ const {
   createManuscripts,
   assignRole,
   setReviewerStatus,
+  createReview,
   updateGroupConfig,
   updateFormFields,
   updateManuscriptSubmission,
@@ -217,6 +218,32 @@ module.exports = app => {
           username,
           status,
         })
+        res.status(200).json(result)
+      } catch (err) {
+        logger.error(err)
+        res.status(500).json({ error: err.message })
+      }
+    },
+  )
+
+  app.post(
+    '/api/e2e/createReview/:manuscriptId/:username',
+    async (req, res) => {
+      const { manuscriptId, username } = req.params
+      const { isHiddenFromAuthor, isHiddenReviewerName } = req.query
+
+      try {
+        const result = await createReview({
+          manuscriptId,
+          username,
+          ...(isHiddenFromAuthor !== undefined && {
+            isHiddenFromAuthor: isHiddenFromAuthor === 'true',
+          }),
+          ...(isHiddenReviewerName !== undefined && {
+            isHiddenReviewerName: isHiddenReviewerName === 'true',
+          }),
+        })
+
         res.status(200).json(result)
       } catch (err) {
         logger.error(err)

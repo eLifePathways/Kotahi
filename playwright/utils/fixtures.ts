@@ -56,6 +56,12 @@ type Api = {
     username: string
     status: string
   }) => Promise<unknown>
+  createReview: (opts: {
+    manuscriptId: string
+    username: string
+    isHiddenFromAuthor?: boolean
+    isHiddenReviewerName?: boolean
+  }) => Promise<{ id: string }>
   updateGroupConfig: (patch: Record<string, unknown>) => Promise<unknown>
   updateFormFields: (opts: {
     purpose: string
@@ -144,6 +150,26 @@ export const test = base.extend<{
             `${apiUrl}/setReviewerStatus/${manuscriptId}/${encodeURIComponent(username)}?status=${encodeURIComponent(status)}`,
           ),
         ),
+
+      createReview: ({
+        manuscriptId,
+        username,
+        isHiddenFromAuthor,
+        isHiddenReviewerName,
+      }) => {
+        const params = new URLSearchParams()
+        if (isHiddenFromAuthor !== undefined)
+          params.set('isHiddenFromAuthor', String(isHiddenFromAuthor))
+
+        if (isHiddenReviewerName !== undefined)
+          params.set('isHiddenReviewerName', String(isHiddenReviewerName))
+
+        return jsonOrThrow(
+          request.post(
+            `${apiUrl}/createReview/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
+          ),
+        )
+      },
 
       updateGroupConfig: patch =>
         jsonOrThrow(

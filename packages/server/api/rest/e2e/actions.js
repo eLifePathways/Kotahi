@@ -11,6 +11,7 @@ const Identity = require('../../../models/identity/identity.model')
 const Channel = require('../../../models/channel/channel.model')
 const Form = require('../../../models/form/form.model')
 const Manuscript = require('../../../models/manuscript/manuscript.model')
+const Review = require('../../../models/review/review.model')
 const seedForms = require('../../../scripts/seedForms')
 
 const GENERIC_USER_COUNT = 5
@@ -563,6 +564,47 @@ const setReviewerStatus = async ({ manuscriptId, username, status }) => {
   return TeamMember.patchAndFetchById(teamMember.id, { status })
 }
 
+const createReview = async ({
+  manuscriptId,
+  username,
+  isHiddenFromAuthor = true,
+  isHiddenReviewerName = true,
+}) => {
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  const team = await Team.findOne({ objectId: manuscriptId, role: 'reviewer' })
+
+  if (!team) {
+    throw new Error(`No "reviewer" team found for manuscript "${manuscriptId}"`)
+  }
+
+  const teamMember = await TeamMember.findOne({
+    teamId: team.id,
+    userId: user.id,
+  })
+
+  if (!teamMember) {
+    throw new Error(
+      `No reviewer team member found for user "${username}" on manuscript "${manuscriptId}"`,
+    )
+  }
+
+  // Matches the shape manuscript.controllers.js creates when a reviewer
+  // accepts an invitation - a real review always starts out this way.
+  return Review.insert({
+    manuscriptId,
+    userId: user.id,
+    isDecision: false,
+    isHiddenFromAuthor,
+    isHiddenReviewerName,
+    jsonData: '{}',
+  })
+}
+
 const updateGroupConfig = async ({ groupName, patch }) => {
   const group = await Group.findOne({ name: groupName })
 
@@ -617,6 +659,7 @@ module.exports = {
   createManuscripts,
   assignRole,
   setReviewerStatus,
+  createReview,
   updateGroupConfig,
   updateFormFields,
   updateManuscriptSubmission,

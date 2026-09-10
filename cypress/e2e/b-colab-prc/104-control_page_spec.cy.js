@@ -1,13 +1,12 @@
 /* eslint-disable promise/always-return, promise/no-nesting */
 /* eslint-disable cypress/no-unnecessary-waiting */
 
-import { dashboard, manuscripts } from '../../support/routes1'
+import { dashboard } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 // import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
-import { ReviewPage } from '../../page-object/review-page'
 
 describe('control page tests', () => {
   // UPDATE 0.05.2025
@@ -167,86 +166,6 @@ describe('control page tests', () => {
 
     cy.request('POST', `${restoreUrl}/commons.colab_bootstrap`)
     cy.request('POST', `${seedUrl}/senior_editor_assigned`)
-  })
-
-  context('Hide review and hide reviewer functionality', () => {
-    before(() => {
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.admin, manuscripts)
-        cy.awaitDisappearSpinner()
-        Menu.clickManuscriptsAndAssertPageLoad()
-        ManuscriptsPage.clickControlLink()
-        cy.awaitDisappearSpinner()
-        ControlPage.getAssignSeniorEditorDropdown().should('be.visible')
-        cy.awaitDisappearSpinner()
-        ControlPage.inviteReviewer(name.role.reviewers[1])
-        cy.reload()
-        cy.get('input[value = "isCollaborative"]').should('not.exist')
-
-        ControlPage.getNumberOfInvitedReviewers().should('eq', 1)
-        cy.login(name.role.reviewers[1], dashboard)
-        cy.awaitDisappearSpinner()
-        cy.wait(1000)
-        DashboardPage.clickDashboardTab(1)
-        DashboardPage.clickAcceptReviewButton()
-        cy.contains('Accept this review invitation?').should('be.visible')
-        cy.contains('button', 'OK').click()
-
-        DashboardPage.getDoReviewButton().should('contain', 'Do Review')
-        DashboardPage.clickDoReview()
-        cy.fixture('submission_form_data').then(data => {
-          cy.contains('div', 'Metadata').should('be.visible')
-          cy.get('[data-testid=tab-container]')
-            .contains('Review')
-            .invoke('click')
-          cy.wait(500)
-          ReviewPage.fillInReviewComment(data.review1)
-          ReviewPage.clickAcceptRadioButton()
-          ReviewPage.clickSubmitButton()
-          ReviewPage.clickConfirmSubmitButton()
-
-          cy.get('[data-testid="submission.$title"]').contains('test pdf')
-        })
-      })
-    })
-
-    beforeEach(() => {
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.admin, manuscripts)
-        cy.awaitDisappearSpinner()
-        ManuscriptsPage.clickControlLink()
-        cy.awaitDisappearSpinner()
-        ControlPage.getAssignSeniorEditorDropdown().should('be.visible')
-      })
-      ControlPage.clickReviewsTab()
-    })
-
-    it('By default the review and the reviewer name are hidden so reviewer can not see their name', () => {
-      ControlPage.getHideReviewToAuthorCheckbox().should('be.checked')
-      ControlPage.getHideReviewerNameCheckbox().should('be.checked')
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.reviewers[1], dashboard)
-        DashboardPage.clickDoReview()
-        cy.get('[data-testid=tab-container]').contains('Review').click()
-        ControlPage.getReviewerName().should(
-          'not.contain',
-          name.role.reviewers[1],
-        )
-      })
-    })
-
-    it('When review and reviewer name are not hidden then reviewer can see their name', () => {
-      ControlPage.clickHideReviewToAuthor()
-      ControlPage.getHideReviewToAuthorCheckbox().should('not.be.checked')
-      ControlPage.clickHideReviewerNameToAuthor()
-      ControlPage.getHideReviewerNameCheckbox().should('not.be.checked')
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.reviewers[1], dashboard)
-        DashboardPage.clickDoReview()
-        cy.get('[data-testid=tab-container]').contains('Review').click()
-        ControlPage.getReviewerName().should('contain', name.role.reviewers[1])
-      })
-    })
   })
 
   context('sending email notifications', () => {
