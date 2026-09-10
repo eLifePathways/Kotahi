@@ -1186,6 +1186,73 @@ test.describe('manuscripts table data types', () => {
     ).toBeVisible()
   })
 
+  test('title column preserves inline formatting when truncating a long rich-text title', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: {
+        $title:
+          '<p class="paragraph">Effects of <i>Arabidopsis thaliana under simulated microgravity conditions</i> in a novel hydroponic system</p>',
+      },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    const titleCell = rows.first().locator('td[data-testid="titleAndAbstract"]')
+
+    await expect(titleCell.locator('i')).toHaveText(
+      'Arabidopsis thaliana under simulated microgravity...',
+    )
+    await expect(titleCell).toContainText('Effects of')
+    await expect(titleCell).not.toContainText('conditions')
+    await expect(titleCell).not.toContainText('hydroponic')
+  })
+
+  test('title column truncation does not corrupt an HTML entity at the cut point', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    // The '&amp;' sits right around the 60-character truncation limit - if
+    // trimHtml counted it as 5 raw characters instead of 1 visible one, it
+    // could slice mid-entity and produce a literal '&am' in the output.
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: {
+        $title:
+          '<p class="paragraph">A Very Long Title About AT&amp;T Research Findings In The Field</p>',
+      },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    const titleCell = rows.first().locator('td[data-testid="titleAndAbstract"]')
+
+    await expect(titleCell).toContainText('AT&T')
+    await expect(titleCell).not.toContainText('&am')
+  })
+
   test('abstract tooltip shows the manuscript abstract', async ({
     api,
     loginAs,
@@ -1294,7 +1361,7 @@ test.describe('manuscripts table data types', () => {
     expect(abstractText.trim().split(/\s+/)).toHaveLength(60)
   })
 
-  test('title column strips HTML formatting and shows plain text', async ({
+  test('title column preserves HTML formatting instead of stripping it', async ({
     api,
     loginAs,
     page,
@@ -1318,7 +1385,7 @@ test.describe('manuscripts table data types', () => {
     const titleCell = rows.first().locator('td[data-testid="titleAndAbstract"]')
 
     await expect(titleCell).toContainText('Some Bold Text')
-    await expect(titleCell.locator('strong')).toHaveCount(0)
+    await expect(titleCell.locator('strong')).toHaveText('Bold')
   })
 
   test('title column truncates a title longer than 60 characters', async ({

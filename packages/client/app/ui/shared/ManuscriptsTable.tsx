@@ -284,13 +284,124 @@ const truncateAbstract = (abstract: string): string => {
 const stripHtml = (html: string): string =>
   DOMPurify.sanitize(html, { ALLOWED_TAGS: [] })
 
+const HTML_VOID_TAGS = new Set([
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
+])
+
+/**
+ * Matches an html entity reference (eg. &amp;) as a single visible unit.
+ * Without this, the counter would count something like &amp; as 5 chars, not 1.
+ * Or even worse, it could trim in the middle of the entity.
+ */
+const VISIBLE_UNIT_REGEX =
+  /&#x[0-9a-fA-F]+;|&#\d+;|&[a-zA-Z][a-zA-Z0-9]*;|[\s\S]/g
+
+const splitVisibleUnits = (text: string): string[] =>
+  text.match(VISIBLE_UNIT_REGEX) ?? []
+
+/**
+ * Trim rich (html) text:
+ * - without breaking when the closing of a tag is after the end of the trim
+ * - without counting html tags as part of the trim length
+ *
+ * Works by keeping a stack of opened tags. If a closing tag is found, the
+ * open tag is removed from the stack. Whatever's left at the end is the list
+ * of tags that were opened but never closed because we trimmed them.
+ */
+const trimHtml = (html: string, maxLength: number, ellipsis = ''): string => {
+  if (maxLength <= 0) return ''
+
+  const tokenRegex = /(<[^>]+>)|([^<]+)/g
+  const openTagStack: string[] = []
+
+  let result = ''
+  let visibleCharCount = 0
+  let match: RegExpExecArray | null
+
+  /**
+   * Each loop will match either an html tag or an uninterrupted string of
+   * text between tags (because of tokenRegex).
+   */
+  while ((match = tokenRegex.exec(html)) !== null) {
+    const [, tagToken, textToken] = match
+
+    if (tagToken) {
+      /**
+       * Is it a closing tag?
+       * Then find the opening tag and drop it from the stack.
+       */
+      const closeMatch = tagToken.match(/^<\/\s*([a-zA-Z0-9-]+)/)
+
+      if (closeMatch) {
+        const tagName = closeMatch[1].toLowerCase()
+        const lastIndex = openTagStack.lastIndexOf(tagName)
+        if (lastIndex !== -1) openTagStack.splice(lastIndex, 1)
+        result += tagToken
+        continue
+      }
+
+      /**
+       * Is it an opening tag?
+       * If it's not self-closing (eg. <img />), push it to the stack of open tags.
+       */
+      const openMatch = tagToken.match(/^<\s*([a-zA-Z0-9-]+)/)
+
+      if (openMatch) {
+        const tagName = openMatch[1].toLowerCase()
+
+        const isSelfClosing =
+          tagToken.endsWith('/>') || HTML_VOID_TAGS.has(tagName)
+
+        if (!isSelfClosing) openTagStack.push(tagName)
+        result += tagToken
+        continue
+      }
+
+      // Neither an opening nor a closing tag - comments, DOCTYPE etc. Drop them.
+    } else if (textToken) {
+      /**
+       * Is it text between tags?
+       * Count characters toward cutoff point.
+       */
+      const remainingSpace = maxLength - visibleCharCount
+      const units = splitVisibleUnits(textToken)
+
+      if (units.length <= remainingSpace) {
+        result += textToken
+        visibleCharCount += units.length
+      } else {
+        result += units.slice(0, remainingSpace).join('') + ellipsis
+        visibleCharCount += remainingSpace
+        break
+      }
+    }
+  }
+
+  // Close all open tags that do not have a closing tag
+  while (openTagStack.length > 0) {
+    result += `</${openTagStack.pop()}>`
+  }
+
+  return result
+}
+
 const TITLE_CHARACTER_LIMIT = 60
 
-const truncateTitle = (title: string): string => {
-  const plainTitle = stripHtml(title)
-  if (plainTitle.length <= TITLE_CHARACTER_LIMIT) return plainTitle
-  return `${plainTitle.slice(0, TITLE_CHARACTER_LIMIT).trimEnd()}...`
-}
+const truncateTitle = (title: string): string =>
+  trimHtml(title, TITLE_CHARACTER_LIMIT, '...')
 
 type TitleCellValue = {
   title: string
