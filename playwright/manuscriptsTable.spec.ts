@@ -919,6 +919,54 @@ test.describe('manuscripts table data types', () => {
     )
   })
 
+  test('embargo date column shows the absolute date for a future date, not relative wording', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.updateFormFields({
+      purpose: 'submit',
+      category: 'submission',
+      fields: [
+        {
+          name: 'submission.$embargoDate',
+          title: 'Embargo date',
+          component: 'DatePicker',
+          options: [],
+        },
+      ],
+    })
+
+    await api.updateGroupConfig({
+      manuscript: { tableColumns: 'shortId,submission.$embargoDate' },
+    })
+
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    const embargoDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: { $embargoDate: embargoDate.toISOString() },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    const embargoCell = rows
+      .first()
+      .locator('td[data-testid="submission.$embargoDate"]')
+
+    await expect(embargoCell).toHaveText(formatAbsoluteDate(embargoDate))
+    await expect(embargoCell).not.toContainText('ago')
+  })
+
   test('reviewer status grid shows a box per reviewer and updates when a status changes', async ({
     api,
     loginAs,

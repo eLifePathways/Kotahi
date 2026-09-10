@@ -1119,13 +1119,23 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
           return { ...column, sortable: true }
         }
 
-        if (
-          ['created', 'updated'].includes(column.key) ||
-          fieldDefinitions[column.key]?.component === 'DatePicker'
-        ) {
+        if (['created', 'updated'].includes(column.key)) {
           return {
             ...column,
             dataType: 'date',
+            sortable: true,
+            filterable: true,
+          }
+        }
+
+        if (fieldDefinitions[column.key]?.component === 'DatePicker') {
+          return {
+            ...column,
+            dataType: 'date',
+            // A DatePicker field (e.g. embargo date) is a scheduled date,
+            // often in the future - "3 days ago"-style relative wording
+            // (renderDate's default) reads as nonsense for those.
+            dateFormat: 'absolute',
             sortable: true,
             filterable: true,
           }

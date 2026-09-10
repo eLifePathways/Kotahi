@@ -59,7 +59,10 @@ import {
   badgeVariantColorTokens,
   badgeDefaultColorToken,
 } from './_constants'
-import { convertTimestampToRelativeDateString } from '../../shared/dateUtils'
+import {
+  convertTimestampToRelativeDateString,
+  convertTimestampToDateWithoutTimeString,
+} from '../../shared/dateUtils'
 // #endregion import
 
 // #region helpers
@@ -424,6 +427,18 @@ const DateRangeFilterDropdown = ({
 const renderDate = (value: any): ReactNode => {
   if (!value) return null
   return convertTimestampToRelativeDateString(value)
+}
+
+/**
+ * Unlike `renderDate`, doesn't fall back to relative wording ("today", "3
+ * days ago") for recent values. That phrasing assumes a date in the past
+ * (fine for e.g. 'created'/'updated'), but reads as nonsense ("-3 days
+ * ago") for a scheduled date such as an embargo date, which is often in
+ * the future.
+ */
+const renderAbsoluteDate = (value: any): ReactNode => {
+  if (!value) return null
+  return convertTimestampToDateWithoutTimeString(value)
 }
 // #endregion dates
 
@@ -865,6 +880,15 @@ export type ManuscriptsTableColumn = {
   title: string
   options?: ManuscriptsTableColumnOption[]
   /**
+   * Applies to the 'date' datatype. 'relative' (the default) shows
+   * "today"/"yesterday"/"N days ago" for recent values, falling back to the
+   * absolute date beyond 7 days -- appropriate for a date that's always in
+   * the past, like 'created'/'updated'. 'absolute' always shows the plain
+   * date, which is the sensible choice for a scheduled date that can be in
+   * the future, like an embargo date.
+   */
+  dateFormat?: 'relative' | 'absolute'
+  /**
    * Escape hatch for anything else (e.g. an actions column with
    * business-specific links) -- takes precedence over dataType.
    */
@@ -903,7 +927,11 @@ const resolveColumn = (
         }
         break
       case 'date':
-        resolved = { ...column, render: renderDate }
+        resolved = {
+          ...column,
+          render:
+            column.dateFormat === 'absolute' ? renderAbsoluteDate : renderDate,
+        }
         break
       case 'options':
         resolved = {
