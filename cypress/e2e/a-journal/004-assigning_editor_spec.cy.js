@@ -21,7 +21,7 @@ describe('Assigning editors and decision reject', () => {
         cy.wait(1000)
         Menu.clickManuscripts()
 
-        ManuscriptsPage.selectOptionWithText('Control')
+        ManuscriptsPage.clickControlLink()
 
         cy.wait(1000)
         ControlPage.clickAssignSeniorEditorDropdown()

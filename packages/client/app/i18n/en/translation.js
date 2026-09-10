@@ -46,8 +46,6 @@ const en = {
       Delete: 'Delete',
       View: 'View',
       'Enter search terms...': 'Enter search terms...',
-      surroundMultiword:
-        'Surround multi-word phrases with quotes "". Exclude a term by prefixing with -. Specify alternate matches using OR. Use * as wildcard for word endings. Wrap subexpressions in parentheses ().',
       noOption: 'No option',
       danteRangeCalendar: {
         Presets: 'Presets',
@@ -175,7 +173,17 @@ const en = {
     manuscriptsTable: {
       'No matching manuscripts were found':
         'No matching manuscripts were found',
+      searchChip: 'Search: {{query}}',
+      searchTipsHeader: 'Tips for using search',
+      searchTips: [
+        'Surround multi-word phrases with quotes "".',
+        'Exclude a term by prefixing with -.',
+        'Specify alternate matches using OR.',
+        'Use * as wildcard for word endings.',
+        'Press / anywhere on the page to jump to search.',
+      ],
       'Manuscript number': 'Manuscript number',
+      'No.': 'No.',
       Created: 'Created',
       Updated: 'Updated',
       lastReviewerStatusUpdate: 'Last Reviewer Status Update',
@@ -192,6 +200,21 @@ const en = {
       Production: 'Production',
       'No results found': 'No results found',
       pagination: `Showing <strong>{{firstResult}}</strong> to <strong>{{lastResult}}</strong> of <strong>{{totalCount}}</strong> results`,
+      removeFilter: 'Remove filter',
+      compactView: 'Compact view',
+      overdueTasks: 'Overdue tasks',
+      noAbstract: 'No abstract provided',
+      abstractHeader: 'Abstract',
+      showAbstract: 'Show abstract',
+      selectedCount: '{{count}} selected',
+      confirmArchive: 'Archive {{count}} manuscripts?',
+      confirmUnarchive: 'Unarchive {{count}} manuscripts?',
+      confirmReviewAccept: 'Accept this review invitation?',
+      confirmReviewReject: 'Decline this review invitation?',
+      confirmPublish: 'Publish this manuscript?',
+      detailedView: 'Detailed view',
+      reviewerStatusColumnTip:
+        'Each block represents a reviewer and the color represents their status. Hover over the blocks for details.',
       reviewAccept: 'Accept',
       reviewReject: 'Decline',
       reviewDo: 'Do Review',

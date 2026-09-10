@@ -1,13 +1,18 @@
 import { type AriaAttributes, type ReactNode } from 'react'
+import styled from 'styled-components'
 
 export {
   ArrowRightOutlined as ArrowRight,
   BarChartOutlined as Report,
+  CloseOutlined as Close,
   ControlOutlined as Settings,
   FileTextOutlined as File,
   FormOutlined as Form,
   HomeOutlined as Home,
+  InfoCircleOutlined as Info,
+  QuestionCircleOutlined as Help,
   ReadOutlined as Book,
+  TableOutlined as Table,
   UnorderedListOutlined as Tasks,
   UserOutlined as User,
   VerticalAlignTopOutlined as ExpandMenu,
@@ -18,13 +23,24 @@ type IconProps = {
   'aria-hidden'?: AriaAttributes['aria-hidden']
 }
 
+const IconWrapper = styled.span`
+  line-height: 0;
+  display: inline-flex;
+  vertical-align: middle;
+`
+
 export const Coar = ({
   className,
   'aria-hidden': ariaHidden,
 }: IconProps): ReactNode => {
   return (
-    <span aria-hidden={ariaHidden} aria-label="coar notify" role="img">
-      <svg className={className} height="1em" viewBox="0 0 21 21" width="1em">
+    <IconWrapper
+      aria-hidden={ariaHidden}
+      aria-label="coar notify"
+      className={className}
+      role="img"
+    >
+      <svg height="1em" viewBox="0 0 21 21" width="1em">
         <path
           clipRule="evenodd"
           d="M14.8334 1.48492C18.1727 1.55797 19.6727 3.19804 19.3334 6.40514C18.0017 8.62002 16.1684 9.16669 13.8334 8.04521C11.4017 5.46551 11.735 3.27877 14.8334 1.48492Z"
@@ -40,7 +56,7 @@ export const Coar = ({
           stroke="none"
         />
       </svg>
-    </span>
+    </IconWrapper>
   )
 }
 
@@ -49,13 +65,13 @@ export const SemanticScholar = ({
   'aria-hidden': ariaHidden,
 }: IconProps): ReactNode => {
   return (
-    <span aria-hidden={ariaHidden} aria-label="semantic scholar" role="img">
-      <svg
-        className={className}
-        height="0.75em"
-        viewBox="0 0 80 60"
-        width="1em"
-      >
+    <IconWrapper
+      aria-hidden={ariaHidden}
+      aria-label="semantic scholar"
+      className={className}
+      role="img"
+    >
+      <svg height="1em" viewBox="0 0 80 60" width="1em">
         <path
           clipRule="evenodd"
           d="M83.2 18.3c-2.9 1.8-5 2.9-7.4 4.3-14.4 8.7-28.3 18.4-39 31.1L31.6 60 15.8 34.8c3.5 2.8 12.4 10.7 16 12.5l11.6-8.8c8.1-5.7 31-18.1 39.8-20.2z"
@@ -75,6 +91,6 @@ export const SemanticScholar = ({
           fill="currentColor"
         />
       </svg>
-    </span>
+    </IconWrapper>
   )
 }

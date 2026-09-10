@@ -1,104 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useMutation, useQuery } from '@apollo/client/react'
+import { useMutation } from '@apollo/client/react'
 import { useEffect, useContext } from 'react'
-import { useLocation } from 'react-router-dom'
 import { ConfigContext } from '../../../config/src'
-import {
-  UPDATE_REVIEWER_STATUS,
-  REVIEWER_RESPONSE,
-  UPDATE_TAB,
-  DASHBOARD,
-  UPDATE_MANUSCRIPT,
-} from '../../../../queries'
-import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
-import {
-  extractFilters,
-  extractSortData,
-  URI_PAGENUM_PARAM,
-  URI_REVIEWER_STATUS_PARAM,
-  useQueryParams,
-} from '../../../../shared/urlParamUtils'
+import { UPDATE_TAB } from '../../../../queries'
 import ReviewerTable from './sections/ReviewerTable'
-import { CommsErrorBanner, Spinner } from '../../../shared'
 
 const DashboardReviewsPage = () => {
-  const location = useLocation()
   const config = useContext(ConfigContext)
-  const currentUser = useCurrentUser()
-
-  const wantedRoles = [
-    'reviewer',
-    'invited:reviewer',
-    'accepted:reviewer',
-    'inProgress:reviewer',
-    'completed:reviewer',
-    'collaborativeReviewer',
-    'invited:collaborativeReviewer',
-    'accepted:collaborativeReviewer',
-    'inProgress:collaborativeReviewer',
-    'completed:collaborativeReviewer',
-  ]
-
-  const applyQueryParams = useQueryParams()
-
-  const uriQueryParams = new URLSearchParams(location.search)
-  const page = uriQueryParams.get(URI_PAGENUM_PARAM) || 1
-  const sortName = extractSortData(uriQueryParams).name
-  const sortDirection = extractSortData(uriQueryParams).direction
-  const filters = extractFilters(uriQueryParams)
-
-  const limit = config?.manuscript?.paginationCount || 10
-
-  const { loading, error, data } = useQuery(DASHBOARD, {
-    variables: {
-      reviewerStatus: uriQueryParams.get(URI_REVIEWER_STATUS_PARAM),
-      wantedRoles,
-      sort: sortName
-        ? { field: sortName, isAscending: sortDirection === 'ASC' }
-        : null,
-      offset: (page - 1) * limit,
-      limit,
-      filters,
-      timezoneOffsetMinutes: new Date().getTimezoneOffset(),
-      groupId: config.groupId,
-      searchInAllVersions: true,
-    },
-    fetchPolicy: 'network-only',
-  })
-
-  const [update] = useMutation(UPDATE_MANUSCRIPT)
-  const [doUpdateManuscript] = useMutation(UPDATE_MANUSCRIPT)
-
-  const setReadyToEvaluateLabels = id => {
-    update({
-      variables: {
-        id,
-        input: JSON.stringify({
-          submission: {
-            $customStatus: 'readyToEvaluate',
-          },
-        }),
-      },
-    })
-  }
-
-  const unsetCustomStatus = id => {
-    update({
-      variables: {
-        id,
-        input: JSON.stringify({
-          submission: {
-            $customStatus: null,
-          },
-        }),
-      },
-    })
-  }
 
   const [updateTab] = useMutation(UPDATE_TAB)
-  const [reviewerRespond] = useMutation(REVIEWER_RESPONSE)
-  const [updateReviewerStatus] = useMutation(UPDATE_REVIEWER_STATUS)
 
   useEffect(() => {
     updateTab({
@@ -108,23 +19,11 @@ const DashboardReviewsPage = () => {
     })
   }, [])
 
-  if (loading) return <Spinner />
-  if (error) return <CommsErrorBanner error={error} />
+  const showReviews = config?.dashboard?.showSections?.includes('review')
 
-  return config?.dashboard?.showSections?.includes('review') ? (
-    <ReviewerTable
-      applyQueryParams={applyQueryParams}
-      currentUser={currentUser}
-      doUpdateManuscript={doUpdateManuscript}
-      manuscriptsUserHasCurrentRoleIn={data.manuscriptsUserHasCurrentRoleIn}
-      reviewerRespond={reviewerRespond}
-      setReadyToEvaluateLabels={setReadyToEvaluateLabels}
-      submissionForm={data.formForPurposeAndCategory}
-      unsetCustomStatus={unsetCustomStatus}
-      updateReviewerStatus={updateReviewerStatus}
-      uriQueryParams={uriQueryParams}
-    />
-  ) : null
+  if (!showReviews) return null
+
+  return <ReviewerTable />
 }
 
 export default DashboardReviewsPage

@@ -41,9 +41,14 @@ const EllipsisDropdown = ({
       }
     }
 
-    window.addEventListener('click', handleClickOutside)
+    // Deferred so the click that opened the dropdown (still bubbling to
+    // window at mount time) doesn't immediately close it again.
+    const timeoutId = setTimeout(() => {
+      window.addEventListener('click', handleClickOutside)
+    }, 0)
 
     return () => {
+      clearTimeout(timeoutId)
       window.removeEventListener('click', handleClickOutside)
     }
   }, [show])

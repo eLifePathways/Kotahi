@@ -141,9 +141,18 @@ const makeArticleMeta = (
   }
 
   if (title || formData.$title) {
-    thisArticleMeta += `<title-group><article-title>${
-      title || formData.$title
-    }</article-title></title-group>`
+    const rawTitle = title || formData.$title
+
+    // drop p tag for correctness
+    // article-title takes inline content, not a block-level <p>
+    const unwrappedTitle = rawTitle.replace(
+      /^<p(?: class="paragraph")?>([\s\S]*)<\/p>$/,
+      '$1',
+    )
+
+    const sanitizedTitle = htmlToJats(unwrappedTitle)
+
+    thisArticleMeta += `<title-group><article-title>${sanitizedTitle}</article-title></title-group>`
   }
 
   if (formData.$authors?.length) {

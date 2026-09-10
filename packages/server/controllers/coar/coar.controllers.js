@@ -15,6 +15,11 @@ const {
 
 const { getSubmissionForm } = require('../review.controllers')
 
+const {
+  rawAbstractToSafeHtml,
+  rawTitleToSafeHtml,
+} = require('../../services/importArticles/importTools')
+
 let archiveManuscript
 setImmediate(() => {
   archiveManuscript =
@@ -356,13 +361,13 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
   const newManuscript = {
     submission: {
       datePublished: publishedDate,
-      $abstract: abstract || '',
+      $abstract: rawAbstractToSafeHtml(abstract) || '',
       firstAuthor: author,
       journal,
       topics,
       $doi: doi,
       url,
-      $title: title,
+      $title: rawTitleToSafeHtml(title) || '',
       $authors,
       ...additionalMappedMetadata,
     },

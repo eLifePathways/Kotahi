@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
-import { Button } from '../../../pubsweet'
+import { Button, Action } from '../../../pubsweet'
 import { RoundIconButton } from '../../../shared'
 
 export const AdminSection = styled.div`
@@ -154,6 +154,14 @@ export const AssignedAuthorForProofingInfo = styled.div`
   color: ${th('color.text')};
   font-size: ${th('fontSizeBaseSmall')};
   margin: 8px 0;
+`
+
+export const UserAction = styled(Action)`
+  cursor: pointer;
+  display: block;
+  font-size: inherit;
+  opacity: ${({ isDisabled }) => (isDisabled ? '0.5' : '1')};
+  width: fit-content;
 `
 
 export {

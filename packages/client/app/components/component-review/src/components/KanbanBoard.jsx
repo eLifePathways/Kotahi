@@ -15,10 +15,10 @@ import {
 } from '../../../shared'
 import ReviewersDeclined from './ReviewersDeclined'
 import { getMembersOfTeam } from '../../../../shared/manuscriptUtils'
-import statuses from '../../../../../config/journal/review-status'
-import localizeReviewFilterOptions from '../../../../shared/localizeReviewFilterOptions'
 import KanbanCard from './reviewers/KanbanCard'
 import { findReviewFromReviewer } from './reviewers/util'
+import ReviewerStatus from '../../../../ui/shared/ReviewerStatus'
+import { reviewerStatusValues } from '../../../../ui/shared/_constants'
 
 const Kanban = styled.div.attrs({
   'data-testid': 'kanban',
@@ -38,17 +38,6 @@ const Column = styled.div(({ $columns }) => ({
   /* stylelint-disable-next-line scss/operator-no-unspaced */
   width: `calc(${100 / $columns ?? 4}% - 15px)`,
 }))
-
-const StatusLabel = styled.div`
-  background-color: ${props => props.$statusColor || '#ffffff'};
-  border-radius: 12px;
-  color: ${props => (props.$lightText ? '#ffffff' : '#000000')};
-  display: inline-block;
-  font-weight: bold;
-  margin-block: 4px;
-  margin-inline: 0;
-  padding: 4px 10px;
-`
 
 const CardsWrapper = styled.div.attrs({
   'data-testid': 'kanban-cards-wrapper',
@@ -185,8 +174,6 @@ const KanbanBoard = ({
       }
     })
 
-  const LocalizedStatusOptions = localizeReviewFilterOptions(statuses, t)
-
   const filterOptions = isAuthorBoard
     ? ['rejected', 'closed', 'inprogress', 'completed']
     : ['rejected', 'closed']
@@ -209,15 +196,15 @@ const KanbanBoard = ({
         manuscript.reviews.filter(review => !review.isDecision)) ||
       []
 
-  const getReviewersWithoutDuplicates = (status, someReviewers) =>
+  const getReviewersWithoutDuplicates = (statusValue, someReviewers) =>
     someReviewers
       .sort(
         (a, b) => (a.isEmail ? 0 : 1) - (b.isEmail ? 0 : 1), // to prioritize those with email sent
       )
       .filter((reviewer, index) => {
         const hasTheRightStatus =
-          reviewer.status === normalizeStatus(status.value) ||
-          (reviewer.status === 'closed' && status.value === 'completed')
+          reviewer.status === normalizeStatus(statusValue) ||
+          (reviewer.status === 'closed' && statusValue === 'completed')
 
         const isDuplicate =
           !!reviewer.user &&
@@ -226,12 +213,6 @@ const KanbanBoard = ({
 
         return hasTheRightStatus && !isDuplicate
       })
-
-  const statusLabel = status => {
-    return status?.value === 'completed'
-      ? t('reviewerStatus.completedClosed')
-      : status?.label
-  }
 
   const members = isAuthorBoard ? authors : emailAndWebReviewers
 
@@ -250,64 +231,69 @@ const KanbanBoard = ({
         </SectionHeader>
         <SectionRow style={{ padding: 0 }}>
           <Kanban>
-            {LocalizedStatusOptions.filter(
-              status => !filterOptions.includes(status.value.toLowerCase()),
-            ).map(status => (
-              <Column $columns={isAuthorBoard ? 2 : 4} key={status.value}>
-                <StatusLabel
-                  $lightText={status.lightText}
-                  $statusColor={status.color}
-                >
-                  {statusLabel(status)}
-                </StatusLabel>
-                <CardsWrapper>
-                  {getReviewersWithoutDuplicates(status, members).map(
-                    reviewer => (
-                      <KanbanCard
-                        createFile={createFile}
-                        currentUser={currentUser}
-                        deleteFile={deleteFile}
-                        isAuthorCard={isAuthorBoard}
-                        isCurrentVersion={isCurrentVersion}
-                        isInvitation={reviewer.isEmail}
-                        key={reviewer.id}
-                        manuscript={version}
-                        removeAuthor={removeAuthor}
-                        removeInvitation={removeInvitation}
-                        removeReviewer={removeReviewer}
-                        review={
-                          status.value === 'completed' ||
-                          (status.value === 'inProgress' &&
-                            reviewer.isCollaborative === true)
-                            ? findReviewFromReviewer(allReviews, reviewer)
-                            : null
-                        }
-                        reviewer={reviewer}
-                        reviewForm={reviewForm}
-                        showEmailInvitation={
-                          reviewer.isEmail && status.value === 'invited'
-                        }
-                        status={
-                          status.value === 'completed' &&
-                          reviewer.isCollaborative
-                            ? 'closed'
-                            : status.value
-                        }
-                        updateCollaborativeTeamMember={
-                          updateCollaborativeTeamMember
-                        }
-                        updateReview={updateReview}
-                        updateReviewJsonData={updateReviewJsonData}
-                        updateSharedStatusForInvitedReviewer={
-                          updateSharedStatusForInvitedReviewer
-                        }
-                        updateTeamMember={updateTeamMember}
-                      />
-                    ),
-                  )}
-                </CardsWrapper>
-              </Column>
-            ))}
+            {reviewerStatusValues
+              .filter(
+                statusValue =>
+                  !filterOptions.includes(statusValue.toLowerCase()),
+              )
+              .map(statusValue => (
+                <Column $columns={isAuthorBoard ? 2 : 4} key={statusValue}>
+                  <ReviewerStatus
+                    label={
+                      statusValue === 'completed'
+                        ? t('reviewerStatus.completedClosed')
+                        : undefined
+                    }
+                    status={statusValue}
+                  />
+                  <CardsWrapper>
+                    {getReviewersWithoutDuplicates(statusValue, members).map(
+                      reviewer => (
+                        <KanbanCard
+                          createFile={createFile}
+                          currentUser={currentUser}
+                          deleteFile={deleteFile}
+                          isAuthorCard={isAuthorBoard}
+                          isCurrentVersion={isCurrentVersion}
+                          isInvitation={reviewer.isEmail}
+                          key={reviewer.id}
+                          manuscript={version}
+                          removeAuthor={removeAuthor}
+                          removeInvitation={removeInvitation}
+                          removeReviewer={removeReviewer}
+                          review={
+                            statusValue === 'completed' ||
+                            (statusValue === 'inProgress' &&
+                              reviewer.isCollaborative === true)
+                              ? findReviewFromReviewer(allReviews, reviewer)
+                              : null
+                          }
+                          reviewer={reviewer}
+                          reviewForm={reviewForm}
+                          showEmailInvitation={
+                            reviewer.isEmail && statusValue === 'invited'
+                          }
+                          status={
+                            statusValue === 'completed' &&
+                            reviewer.isCollaborative
+                              ? 'closed'
+                              : statusValue
+                          }
+                          updateCollaborativeTeamMember={
+                            updateCollaborativeTeamMember
+                          }
+                          updateReview={updateReview}
+                          updateReviewJsonData={updateReviewJsonData}
+                          updateSharedStatusForInvitedReviewer={
+                            updateSharedStatusForInvitedReviewer
+                          }
+                          updateTeamMember={updateTeamMember}
+                        />
+                      ),
+                    )}
+                  </CardsWrapper>
+                </Column>
+              ))}
           </Kanban>
           <ReviewersDeclined members={members} />
         </SectionRow>

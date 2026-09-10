@@ -17,6 +17,7 @@ describe('archiveOldManuscripts', () => {
   })
 
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

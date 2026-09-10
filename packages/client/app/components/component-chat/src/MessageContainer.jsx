@@ -16,7 +16,7 @@ const MessageContainer = styled.section`
   background: rgb(255 255 255);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 
   ${props =>
     props.$channels
