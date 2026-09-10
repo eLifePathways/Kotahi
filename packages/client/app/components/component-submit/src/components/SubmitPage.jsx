@@ -11,6 +11,7 @@ import { validateManuscriptSubmission } from '../../../../shared/manuscriptUtils
 import CommsErrorBanner from '../../../shared/CommsErrorBanner'
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 import useChat from '../../../../hooks/useChat'
+import { collapseTimeMs } from '../../../../ui/constants'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 import {
   PUBLISH_MANUSCRIPT,
@@ -117,13 +118,17 @@ const SubmitPage = () => {
     localStorage.getItem('chatPanelExpanded:submit') === 'true'
 
   const onDiscussionVisibilityChange = expanded => {
-    chatProps.refreshUnreadData()
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
 
-    try {
-      localStorage.setItem('chatPanelExpanded:submit', String(expanded))
-    } catch {
-      // ignore
-    }
+      try {
+        localStorage.setItem('chatPanelExpanded:submit', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
   }
 
   const [update] = useMutation(UPDATE_MANUSCRIPT)

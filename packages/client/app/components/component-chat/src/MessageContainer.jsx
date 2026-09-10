@@ -8,7 +8,7 @@ import ChatPanel from '../../../ui/shared/ChatPanel'
 import Chat from './Chat'
 import { getActiveTab } from '../../../shared/manuscriptUtils'
 
-const chatComponent = (channelId, currentUser, chatProps) => {
+const chatComponent = (channelId, currentUser, chatProps, isOpen) => {
   const {
     updateChannelViewed,
     reportUserIsActiveMutation,
@@ -28,6 +28,7 @@ const chatComponent = (channelId, currentUser, chatProps) => {
       currentUser={currentUser}
       fetchMoreData={channelData?.fetchMoreData}
       firstUnreadMessageId={channelData?.firstUnreadMessageId}
+      isOpen={isOpen}
       notificationOptionData={channelData?.notificationOptionData}
       queryData={channelData?.queryResult}
       reportUserIsActiveMutation={reportUserIsActiveMutation}
@@ -55,7 +56,7 @@ const Container = ({
   const items = (channels || []).map(channel => ({
     key: channel.type,
     label: channel.name,
-    children: chatComponent(channel.id, currentUser, chatProps),
+    children: chatComponent(channel.id, currentUser, chatProps, isOpen),
   }))
 
   const location = useLocation()

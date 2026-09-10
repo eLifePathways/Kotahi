@@ -60,6 +60,7 @@ const Chat = ({
   queryData,
   unreadMessagesCount,
   firstUnreadMessageId,
+  isOpen,
   updateChannelViewed,
   reportUserIsActiveMutation,
   notificationOptionData,
@@ -120,13 +121,17 @@ const Chat = ({
   }
 
   return (
-    <UserActivityTracker reportUserIsActive={handleReportUserIsActive}>
+    <UserActivityTracker
+      isActive={isOpen}
+      reportUserIsActive={handleReportUserIsActive}
+    >
       <Messages
         channelId={channelId}
         channelNotificationOption={channelNotificationOption}
         currentUser={currentUser}
         fetchMoreData={fetchMoreData}
         firstUnreadMessageId={firstUnreadMessageId}
+        isOpen={isOpen}
         queryData={queryData}
         toggleChannelMuteStatus={toggleChannelMuteStatus}
         unreadMessagesCount={unreadMessagesCount}

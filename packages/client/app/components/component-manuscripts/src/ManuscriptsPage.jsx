@@ -38,6 +38,7 @@ import {
 } from '../../../shared/urlParamUtils'
 import { validateDoi, validateSuffix } from '../../../shared/commsUtils'
 import useChat from '../../../hooks/useChat'
+import { collapseTimeMs } from '../../../ui/constants'
 import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 const ManuscriptsPage = () => {
@@ -283,13 +284,17 @@ const ManuscriptsPage = () => {
     localStorage.getItem('chatPanelExpanded:manuscripts') === 'true'
 
   const onAdminChatChange = expanded => {
-    chatProps.refreshUnreadData()
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
 
-    try {
-      localStorage.setItem('chatPanelExpanded:manuscripts', String(expanded))
-    } catch {
-      // ignore
-    }
+      try {
+        localStorage.setItem('chatPanelExpanded:manuscripts', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
   }
 
   return (

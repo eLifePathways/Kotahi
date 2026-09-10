@@ -7,3 +7,4 @@
 // at the same speed.
 export const collapseTime = '0.3s'
 export const collapseTransition = `${collapseTime} ease`
+export const collapseTimeMs = parseFloat(collapseTime) * 1000

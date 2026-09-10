@@ -20,6 +20,7 @@ import {
   REVIEW_FORM_UPDATED,
 } from '../../../../queries'
 import useChat from '../../../../hooks/useChat'
+import { collapseTimeMs } from '../../../../ui/constants'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 import { getCurrentUserReview } from './review/util'
@@ -145,13 +146,17 @@ const ReviewPage = () => {
     localStorage.getItem('chatPanelExpanded:review') === 'true'
 
   const onDiscussionVisibilityChange = expanded => {
-    chatProps.refreshUnreadData()
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
 
-    try {
-      localStorage.setItem('chatPanelExpanded:review', String(expanded))
-    } catch {
-      // ignore
-    }
+      try {
+        localStorage.setItem('chatPanelExpanded:review', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
   }
 
   if (loading || currentUser === null) return <Spinner />

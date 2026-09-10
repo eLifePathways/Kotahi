@@ -42,7 +42,7 @@ const PanelContent = styled.div`
 
 // Reaches into AntD's internals so the active tabpane fills the height.
 const FillHeightTabs = styled(Tabs)`
-  &&& {
+  && {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -114,23 +114,21 @@ const ChatPanel = ({
 
   return (
     <Wrapper $isOpen={isOpen} data-testid="chat-panel">
-      {isOpen && (
-        <PanelContent>
-          <FillHeightTabs
-            defaultActiveKey={defaultActiveKey}
-            items={items}
-            tabBarExtraContent={
-              <CollapseButton
-                aria-label={t('chat.Hide Chat')}
-                onClick={onToggle}
-                title={t('chat.Hide Chat')}
-              >
-                <ExpandMenu aria-hidden />
-              </CollapseButton>
-            }
-          />
-        </PanelContent>
-      )}
+      <PanelContent inert={!isOpen}>
+        <FillHeightTabs
+          defaultActiveKey={defaultActiveKey}
+          items={items}
+          tabBarExtraContent={
+            <CollapseButton
+              aria-label={t('chat.Hide Chat')}
+              onClick={onToggle}
+              title={t('chat.Hide Chat')}
+            >
+              <ExpandMenu aria-hidden />
+            </CollapseButton>
+          }
+        />
+      </PanelContent>
     </Wrapper>
   )
 }

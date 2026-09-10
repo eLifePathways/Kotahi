@@ -65,6 +65,7 @@ import {
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 
 import useChat from '../../../../hooks/useChat'
+import { collapseTimeMs } from '../../../../ui/constants'
 
 import { getCurrentUserReview } from './review/util'
 import { getRoles } from '../../../../shared/manuscriptUtils'
@@ -166,13 +167,17 @@ const DecisionPage = () => {
     localStorage.getItem('chatPanelExpanded:decision') === 'true'
 
   const onDiscussionVisibilityChange = expanded => {
-    chatProps.refreshUnreadData()
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
 
-    try {
-      localStorage.setItem('chatPanelExpanded:decision', String(expanded))
-    } catch {
-      // ignore
-    }
+      try {
+        localStorage.setItem('chatPanelExpanded:decision', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
   }
 
   const [selectedEmail, setSelectedEmail] = useState('')
