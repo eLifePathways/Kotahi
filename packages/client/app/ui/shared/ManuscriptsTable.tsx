@@ -71,6 +71,28 @@ const renderPlainOrRichText = (value: any): ReactNode => {
     <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value) }} />
   )
 }
+
+const isRenderablePrimitive = (value: any): boolean =>
+  value == null ||
+  typeof value === 'string' ||
+  typeof value === 'number' ||
+  typeof value === 'boolean'
+
+/**
+ * Safety net for columns with no explicit `dataType`/`render`: a raw
+ * object or array of objects (e.g. an unhandled custom form field, such
+ * as a list of contributors or links) can't be rendered as a React child
+ * directly, and would otherwise crash the whole table.
+ */
+const renderFallbackValue = (value: any): ReactNode => {
+  if (isRenderablePrimitive(value)) return value
+
+  if (Array.isArray(value)) {
+    return value.every(isRenderablePrimitive) ? value.join(', ') : null
+  }
+
+  return null
+}
 // #endregion helpers
 
 // #region options
@@ -950,6 +972,10 @@ const resolveColumn = (
       default:
         break
     }
+  }
+
+  if (!resolved.render) {
+    resolved = { ...resolved, render: renderFallbackValue }
   }
 
   if (column.filterable && column.options) {

@@ -1342,6 +1342,51 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
           return accumulator
         }
 
+        const fieldComponent = fieldDefinitions[property]?.component
+
+        if (fieldComponent === 'AuthorsInput') {
+          const authors = get(manuscript, property)
+
+          accumulator[property] = Array.isArray(authors)
+            ? authors
+                .map((author: Record<string, any>) =>
+                  [author.firstName, author.middleName, author.lastName]
+                    .filter(Boolean)
+                    .join(' '),
+                )
+                .filter(Boolean)
+                .join(', ')
+            : undefined
+
+          return accumulator
+        }
+
+        if (fieldComponent === 'DoisInput') {
+          const dois = get(manuscript, property)
+
+          accumulator[property] = Array.isArray(dois)
+            ? dois
+                .map((doi: Record<string, any>) => doi.doi)
+                .filter(Boolean)
+                .join(', ')
+            : undefined
+
+          return accumulator
+        }
+
+        if (fieldComponent === 'LinksInput') {
+          const links = get(manuscript, property)
+
+          accumulator[property] = Array.isArray(links)
+            ? links
+                .map((link: Record<string, any>) => link.url)
+                .filter(Boolean)
+                .join(', ')
+            : undefined
+
+          return accumulator
+        }
+
         accumulator[property] = get(manuscript, property)
         return accumulator
       },

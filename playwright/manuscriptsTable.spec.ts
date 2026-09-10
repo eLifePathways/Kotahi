@@ -562,6 +562,207 @@ test.describe('manuscripts table data types', () => {
     await expect(statusSelect).not.toContainText('Ready')
   })
 
+  test('authors column joins contributor names', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.updateFormFields({
+      purpose: 'submit',
+      category: 'submission',
+      fields: [
+        {
+          name: 'submission.testAuthors',
+          title: 'Test Authors',
+          component: 'AuthorsInput',
+          options: [],
+        },
+      ],
+    })
+
+    await api.updateGroupConfig({
+      manuscript: { tableColumns: 'shortId,submission.testAuthors' },
+    })
+
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: {
+        testAuthors: [
+          { firstName: 'Jane', lastName: 'Doe' },
+          { firstName: 'John', middleName: 'Q', lastName: 'Smith' },
+        ],
+      },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    const authorsCell = rows
+      .first()
+      .locator('td[data-testid="submission.testAuthors"]')
+
+    await expect(authorsCell).toHaveText('Jane Doe, John Q Smith')
+  })
+
+  test('multiple DOIs column joins the DOI list', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.updateFormFields({
+      purpose: 'submit',
+      category: 'submission',
+      fields: [
+        {
+          name: 'submission.testDois',
+          title: 'Test DOIs',
+          component: 'DoisInput',
+          options: [],
+        },
+      ],
+    })
+
+    await api.updateGroupConfig({
+      manuscript: { tableColumns: 'shortId,submission.testDois' },
+    })
+
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: {
+        testDois: [
+          { id: '1', doi: '10.1000/xyz123' },
+          { id: '2', doi: '10.1000/abc456' },
+        ],
+      },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    const doisCell = rows
+      .first()
+      .locator('td[data-testid="submission.testDois"]')
+
+    await expect(doisCell).toHaveText('10.1000/xyz123, 10.1000/abc456')
+  })
+
+  test('links column joins the URL list', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.updateFormFields({
+      purpose: 'submit',
+      category: 'submission',
+      fields: [
+        {
+          name: 'submission.testLinks',
+          title: 'Test Links',
+          component: 'LinksInput',
+          options: [],
+        },
+      ],
+    })
+
+    await api.updateGroupConfig({
+      manuscript: { tableColumns: 'shortId,submission.testLinks' },
+    })
+
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: {
+        testLinks: [
+          { url: 'https://example.com/a' },
+          { url: 'https://example.com/b' },
+        ],
+      },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    const linksCell = rows
+      .first()
+      .locator('td[data-testid="submission.testLinks"]')
+
+    await expect(linksCell).toHaveText(
+      'https://example.com/a, https://example.com/b',
+    )
+  })
+
+  test('a column with no known dataType falls back to a blank cell', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    // No form field is registered for either of these columns, so
+    // useManuscriptsTable.tsx can't infer a dataType for them - this
+    // exercises ManuscriptsTable.tsx's renderFallbackValue safety net
+    // directly, for both an array of primitives and an array of objects.
+    await api.updateGroupConfig({
+      manuscript: {
+        tableColumns:
+          'shortId,submission.testPrimitiveArray,submission.testObjectArray',
+      },
+    })
+
+    const { manuscriptIds } = await api.createManuscripts({ amount: 1 })
+    const [manuscriptId] = manuscriptIds
+
+    await api.updateManuscriptSubmission({
+      manuscriptId,
+      patch: {
+        testPrimitiveArray: ['x', 'y', 'z'],
+        testObjectArray: [{ foo: 'bar' }, { foo: 'baz' }],
+      },
+    })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const rows = page.locator('.ant-table-tbody tr')
+    await expect(rows).toHaveCount(1)
+
+    await expect(
+      rows.first().locator('td[data-testid="submission.testPrimitiveArray"]'),
+    ).toHaveText('x, y, z')
+
+    await expect(
+      rows.first().locator('td[data-testid="submission.testObjectArray"]'),
+    ).toHaveText('')
+
+    // proves the rest of the table rendered fine around the fallback cells
+    await expect(
+      rows.first().locator('td[data-testid="shortId"]'),
+    ).not.toBeEmpty()
+  })
+
   test('person datatype column shows the submitter without an ORCID', async ({
     api,
     loginAs,
