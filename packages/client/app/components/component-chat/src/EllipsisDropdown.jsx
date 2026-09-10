@@ -11,7 +11,8 @@ const DropdownContainer = styled.div`
   background-color: ${th('color.backgroundA')};
   box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
   position: absolute;
-  right: 0;
+  right: 12px;
+  top: 24px;
   width: 176px;
   z-index: 1000;
 `
@@ -41,9 +42,14 @@ const EllipsisDropdown = ({
       }
     }
 
-    window.addEventListener('click', handleClickOutside)
+    // Deferred so the click that opened the dropdown (still bubbling to
+    // window at mount time) doesn't immediately close it again.
+    const timeoutId = setTimeout(() => {
+      window.addEventListener('click', handleClickOutside)
+    }, 0)
 
     return () => {
+      clearTimeout(timeoutId)
       window.removeEventListener('click', handleClickOutside)
     }
   }, [show])
