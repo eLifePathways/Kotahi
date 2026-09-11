@@ -13,7 +13,6 @@ on:
 jobs:
   lint:
     name: Lint
-    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/lint.yml
     secrets: inherit
 
@@ -63,7 +62,6 @@ jobs:
 
   typecheck-devdocs:
     name: Typecheck devdocs
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
@@ -121,7 +119,6 @@ jobs:
 
   e2e-journal:
     name: End to end tests - journal
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     env:
@@ -170,7 +167,6 @@ jobs:
 
   e2e-colab:
     name: End to end tests - colab
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     env:
@@ -219,7 +215,6 @@ jobs:
 
   e2e-elife:
     name: End to end tests - elife
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     env:
@@ -268,7 +263,6 @@ jobs:
 
   e2e-ncrc:
     name: End to end tests - ncrc
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     env:
