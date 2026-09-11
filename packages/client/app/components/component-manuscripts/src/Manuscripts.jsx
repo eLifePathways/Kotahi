@@ -28,11 +28,11 @@ const OuterContainer = styled(Container)`
 `
 
 const ManuscriptsColumns = styled(Columns)`
-  gap: ${grid(4)};
   height: 100%;
 `
 
 const ManuscriptsPane = styled.div`
+  height: 100%;
   overflow-y: auto;
 `
 
@@ -81,15 +81,15 @@ const Manuscripts = props => {
   }
 
   return (
-    <Page
-      title={t(
-        tableProps.viewingArchived
-          ? 'manuscriptsPage.archivedManuscripts'
-          : 'manuscriptsPage.Manuscripts',
-      )}
-    >
-      <OuterContainer>
-        <ManuscriptsColumns>
+    <ManuscriptsColumns>
+      <Page
+        title={t(
+          tableProps.viewingArchived
+            ? 'manuscriptsPage.archivedManuscripts'
+            : 'manuscriptsPage.Manuscripts',
+        )}
+      >
+        <OuterContainer>
           <ManuscriptsPane>
             <FlexRow>
               <ControlsContainer>
@@ -130,22 +130,20 @@ const Manuscripts = props => {
               </TableWrapper>
             </ScrollableContent>
           </ManuscriptsPane>
+        </OuterContainer>
+      </Page>
 
-          {!hideManuscriptsChat && (
-            <>
-              <MessageContainer
-                channelId={groupManagerDiscussionChannel?.id}
-                channels={channels}
-                chatProps={chatProps}
-                currentUser={currentUser}
-                isOpen={isAdminChatOpen}
-                onToggle={toggleAdminChat}
-              />
-            </>
-          )}
-        </ManuscriptsColumns>
-      </OuterContainer>
-    </Page>
+      {!hideManuscriptsChat && (
+        <MessageContainer
+          channelId={groupManagerDiscussionChannel?.id}
+          channels={channels}
+          chatProps={chatProps}
+          currentUser={currentUser}
+          isOpen={isAdminChatOpen}
+          onToggle={toggleAdminChat}
+        />
+      )}
+    </ManuscriptsColumns>
   )
 }
 
