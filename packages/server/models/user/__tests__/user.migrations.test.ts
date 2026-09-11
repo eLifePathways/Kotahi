@@ -164,7 +164,7 @@ describe('User migrations', () => {
     let hasColumn: boolean
 
     await migrationManager.migrate({
-      to: '1783674872-remove-menu-pinned',
+      to: '1785502335-restrict-search-and-resolve-option-labels',
     })
 
     hasColumn = await db.schema.hasColumn('users', 'chat_expanded')
