@@ -47,12 +47,6 @@ const TableWrapper = styled.div`
   padding: ${grid(3)} ${grid(2)};
 `
 
-const FloatingChatPanelExpandButton = styled(ChatPanelExpandButton)`
-  margin-top: 16px;
-  position: absolute;
-  right: 18px;
-`
-
 const Manuscripts = props => {
   const {
     hideManuscriptsChat,
@@ -120,6 +114,13 @@ const Manuscripts = props => {
                       : t('manuscriptsPage.Refresh')}
                   </ActionButton>
                 )}
+
+                <ChatPanelExpandButton
+                  isOpen={isAdminChatOpen}
+                  label={t('chat.Show group manager discussion')}
+                  onClick={toggleAdminChat}
+                  unreadCount={channelData?.unreadMessagesCount}
+                />
               </ControlsContainer>
             </FlexRow>
 
@@ -139,12 +140,6 @@ const Manuscripts = props => {
                 currentUser={currentUser}
                 isOpen={isAdminChatOpen}
                 onToggle={toggleAdminChat}
-              />
-              <FloatingChatPanelExpandButton
-                isOpen={isAdminChatOpen}
-                label={t('chat.Show group manager discussion')}
-                onClick={toggleAdminChat}
-                unreadCount={channelData?.unreadMessagesCount}
               />
             </>
           )}
