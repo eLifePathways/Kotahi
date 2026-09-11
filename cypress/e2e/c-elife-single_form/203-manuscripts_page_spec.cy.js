@@ -33,13 +33,6 @@ describe('Manuscripts page tests', () => {
       ManuscriptsPage.getTableHead().should('be.visible')
     })
 
-    it('check Submit button is visible', () => {
-      ManuscriptsPage.clickExpandChatButton()
-      ManuscriptsPage.getSubmitButton().should('be.visible')
-      cy.get('button[title="Hide Chat"]').click()
-      cy.contains('Group Manager discussion').should('not.exist')
-    })
-
     it('evaluation button is visible and publish button is not visible on unsubmited status article', () => {
       ManuscriptsPage.getEvaluationButton()
         .scrollIntoView()

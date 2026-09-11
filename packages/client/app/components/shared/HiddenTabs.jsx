@@ -123,11 +123,7 @@ const HiddenTabs = ({
               key={key}
               onClick={() => setActiveKeyAndCallOnChange(key)}
             >
-              <Tab
-                $active={activeKey === key}
-                // $chat={!!hideChat}
-                key={key}
-              >
+              <Tab $active={activeKey === key} key={key}>
                 <div>{label || key}</div>
               </Tab>
             </TabContainer>

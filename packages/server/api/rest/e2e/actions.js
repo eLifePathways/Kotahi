@@ -9,6 +9,7 @@ const TeamMember = require('../../../models/teamMember/teamMember.model')
 const User = require('../../../models/user/user.model')
 const Identity = require('../../../models/identity/identity.model')
 const Channel = require('../../../models/channel/channel.model')
+const ChannelMember = require('../../../models/channelMember/channelMember.model')
 const Form = require('../../../models/form/form.model')
 const Manuscript = require('../../../models/manuscript/manuscript.model')
 const Review = require('../../../models/review/review.model')
@@ -129,6 +130,20 @@ const deleteGroupData = async (group, trx) => {
       deleteAllMatching(Team, { objectId: manuscript.id }, trx),
     ),
   )
+
+  const { result: channels } = await Channel.find(
+    { groupId: group.id },
+    { trx },
+  )
+
+  if (channels.length > 0) {
+    await ChannelMember.query(trx)
+      .delete()
+      .whereIn(
+        'channelId',
+        channels.map(channel => channel.id),
+      )
+  }
 
   await deleteAllMatching(Manuscript, { groupId: group.id }, trx)
   await deleteAllMatching(Team, { objectId: group.id }, trx)
@@ -415,6 +430,24 @@ const createManuscripts = async ({ groupName, count, submitterUsername }) => {
                 { trx },
               ),
           ),
+        )
+
+        await Channel.insert(
+          [
+            {
+              topic: 'Manuscript discussion',
+              type: 'all',
+              groupId: group.id,
+              manuscriptId: manuscript.id,
+            },
+            {
+              topic: 'Editorial discussion',
+              type: 'editorial',
+              groupId: group.id,
+              manuscriptId: manuscript.id,
+            },
+          ],
+          { trx },
         )
       }),
     )
