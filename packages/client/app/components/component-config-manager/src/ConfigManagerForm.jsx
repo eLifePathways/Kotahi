@@ -24,7 +24,6 @@ import emailTemplatesToSchema from './helpers'
 import { EmailTemplatesProvider } from '../../component-email-templates/hooks/EmailTemplatesContext'
 import NotificationPage from '../../component-notification-event/NotificationPage'
 import { T } from '../../component-notification-event/misc/constants'
-import { getFormBadgeBg } from '../../component-email-templates/src/handlebarsAutocomplete/helpers'
 import DescriptionField from './ui/DescriptionField'
 
 const StyledContainer = styled.div`
@@ -105,30 +104,15 @@ const EmailsTabWrapper = styled(StyledSectionContent)`
     padding: ${grid(2)} ${grid(4)};
 
     span.handlebars {
-      background-color: ${getFormBadgeBg('common')};
-      border-radius: 5px;
+      background-color: ${th('colorSecondary')};
+      color: ${th('colorTextReverse')};
+      border-radius: 3px;
       box-shadow:
         0 0 6px 0 #0001,
         inset 0 0 4px 0 #0002;
       margin: 0;
       padding: 2px 4px;
       text-rendering: geometricprecision;
-    }
-
-    span.handlebars.submission-form {
-      background-color: ${getFormBadgeBg('submission')};
-    }
-
-    span.handlebars.review-form {
-      background-color: ${getFormBadgeBg('review')};
-    }
-
-    span.handlebars.decision-form {
-      background-color: ${getFormBadgeBg('decision')};
-    }
-
-    span.handlebars.editors-form {
-      background-color: ${getFormBadgeBg('editors')};
     }
   }
 

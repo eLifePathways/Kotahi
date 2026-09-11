@@ -20,8 +20,112 @@ export const DELETE_MANUSCRIPT = gql`
   }
 `
 
-export const GET_MANUSCRIPTS_AND_FORM = gql`
-  query Manuscripts(
+const MANUSCRIPT_FIELDS = gql`
+  fragment ManuscriptFields on Manuscript {
+    id
+    shortId
+    submitter {
+      id
+      username
+      isOnline
+      profilePicture
+      defaultIdentity {
+        id
+        identifier
+        name
+      }
+    }
+    teams {
+      id
+      role
+      displayName
+      members {
+        id
+        user {
+          id
+          username
+          email
+          defaultIdentity {
+            id
+            identifier
+          }
+        }
+        status
+        updated
+      }
+    }
+    status
+    authorFeedback {
+      assignedAuthors {
+        authorName
+        assignedOnDate
+      }
+    }
+    meta {
+      manuscriptId
+      history {
+        type
+        date
+      }
+    }
+    submission
+    created
+    updated
+    firstVersionCreated
+    published
+    hasOverdueTasksForUser
+    invitations {
+      id
+      status
+      toEmail
+      invitedPersonType
+      user {
+        id
+      }
+    }
+    rolesFound
+    importSourceServer
+  }
+`
+
+const FORM_FIELDS = gql`
+  fragment FormFields on Form {
+    structure {
+      children {
+        id
+        component
+        name
+        title
+        shortDescription
+        isReadOnly
+        validate {
+          id
+          label
+          value
+          labelColor
+          defaultValue
+        }
+        validateValue {
+          minChars
+          maxChars
+          minSize
+        }
+        doiValidation
+        doiUniqueSuffixValidation
+        options {
+          id
+          label
+          labelColor
+          defaultValue
+          value
+        }
+      }
+    }
+  }
+`
+
+export const GET_ALL_MANUSCRIPTS = gql`
+  query AllManuscripts(
     $sort: ManuscriptsSort
     $filters: [ManuscriptsFilter!]!
     $offset: Int
@@ -41,120 +145,27 @@ export const GET_MANUSCRIPTS_AND_FORM = gql`
     ) {
       totalCount
       manuscripts {
-        id
-        shortId
-        meta {
-          manuscriptId
-        }
-        submission
-        created
-        updated
-        firstVersionCreated
-        status
-        published
-        teams {
-          id
-          role
-          members {
-            id
-            user {
-              id
-              username
-            }
-          }
-        }
-        importSourceServer
         manuscriptVersions {
-          id
-          shortId
-          meta {
-            manuscriptId
-          }
-          submission
-          created
-          updated
-          status
-          published
-          teams {
-            id
-            role
-            members {
-              id
-              user {
-                defaultIdentity {
-                  identifier
-                }
-                id
-                username
-              }
-            }
-          }
-          submitter {
-            username
-            isOnline
-            defaultIdentity {
-              id
-              identifier
-              name
-            }
-            id
-            profilePicture
-          }
-          importSourceServer
+          ...ManuscriptFields
+          parentId
         }
-        submitter {
-          username
-          isOnline
-          defaultIdentity {
-            id
-            identifier
-            name
-          }
-          id
-          profilePicture
+        ...ManuscriptFields
+        searchSnippets {
+          field
+          html
         }
-        searchSnippet
       }
     }
-
     formForPurposeAndCategory(
       purpose: "submit"
       category: "submission"
       groupId: $groupId
     ) {
-      structure {
-        children {
-          id
-          component
-          name
-          title
-          shortDescription
-          isReadOnly
-          validate {
-            id
-            label
-            value
-            labelColor
-            defaultValue
-          }
-          validateValue {
-            minChars
-            maxChars
-            minSize
-          }
-          doiValidation
-          doiUniqueSuffixValidation
-          options {
-            id
-            label
-            labelColor
-            defaultValue
-            value
-          }
-        }
-      }
+      ...FormFields
     }
   }
+  ${MANUSCRIPT_FIELDS}
+  ${FORM_FIELDS}
 `
 
 export const IMPORT_MANUSCRIPTS = gql`
@@ -506,6 +517,7 @@ const userFragmentFields = `
     submitter {
       username
       defaultIdentity {
+        id
         name
       }
       id
@@ -801,6 +813,7 @@ const manuscriptFields = `
     submitter {
       username
       defaultIdentity {
+        id
         name
       }
       id
@@ -1009,93 +1022,18 @@ export const SET_SHOULD_PUBLISH_FIELD = gql`
   }
 `
 
-const manuscriptFragment = `
-  id
-  shortId
-  teams {
-    id
-    role
-    displayName
-    members {
-      id
-      user {
-        id
-        username
-        email
-      }
-      status
-    updated
-    }
-  }
-  status
-  authorFeedback {
-    assignedAuthors {
-      authorName
-      assignedOnDate
-    }
-  }
-  meta {
-    manuscriptId
-    history {
-      type
-      date
-    }
-  }
-  submission
-  created
-  updated
-  firstVersionCreated
-  published
-  hasOverdueTasksForUser
-  invitations {
-    id
-    status
-    toEmail
-    invitedPersonType
-    user {
-    id
-    }
-  }
-  rolesFound
-`
-
-const formForPurposeAndCategoryFragment = `
-  formForPurposeAndCategory(purpose: "submit", category: "submission", groupId: $groupId) {
-    structure {
-      children {
-        id
-        component
-        name
-        title
-        shortDescription
-        isReadOnly
-        validate {
-          id
-          label
-          value
-          labelColor
-          defaultValue
-        }
-        validateValue {
-          minChars
-          maxChars
-          minSize
-        }
-        doiValidation
-        options {
-          id
-          label
-          labelColor
-          defaultValue
-          value
-        }
-      }
-    }
-  }
-`
-
-export const DASHBOARD = gql`
-  query Dashboard($reviewerStatus: String, $wantedRoles: [String]!, $sort: ManuscriptsSort, $filters: [ManuscriptsFilter!]!, $offset: Int, $limit: Int, $timezoneOffsetMinutes: Int, $groupId: ID!, $searchInAllVersions: Boolean!) {
+export const GET_MANUSCRIPTS_FOR_ROLE = gql`
+  query ManuscriptsForRole(
+    $reviewerStatus: String
+    $wantedRoles: [String]!
+    $sort: ManuscriptsSort
+    $filters: [ManuscriptsFilter!]!
+    $offset: Int
+    $limit: Int
+    $timezoneOffsetMinutes: Int
+    $groupId: ID!
+    $searchInAllVersions: Boolean!
+  ) {
     manuscriptsUserHasCurrentRoleIn(
       reviewerStatus: $reviewerStatus
       wantedRoles: $wantedRoles
@@ -1105,20 +1043,31 @@ export const DASHBOARD = gql`
       limit: $limit
       timezoneOffsetMinutes: $timezoneOffsetMinutes
       groupId: $groupId
-      searchInAllVersions: $searchInAllVersions)
-      {
-        totalCount
-        manuscripts {
-          manuscriptVersions {
-            ${manuscriptFragment}
-            parentId
-          }
-          ${manuscriptFragment}
-          searchSnippet
+      searchInAllVersions: $searchInAllVersions
+    ) {
+      totalCount
+      manuscripts {
+        manuscriptVersions {
+          ...ManuscriptFields
+          parentId
+        }
+        ...ManuscriptFields
+        searchSnippets {
+          field
+          html
         }
       }
-    ${formForPurposeAndCategoryFragment}
+    }
+    formForPurposeAndCategory(
+      purpose: "submit"
+      category: "submission"
+      groupId: $groupId
+    ) {
+      ...FormFields
+    }
   }
+  ${MANUSCRIPT_FIELDS}
+  ${FORM_FIELDS}
 `
 
 export const MANUSCRIPT_FOR_MANUSCRIPT_PAGE = gql`
@@ -1269,6 +1218,7 @@ const productionFragmentFields = `
     submitter {
       username
       defaultIdentity {
+        id
         name
       }
       id

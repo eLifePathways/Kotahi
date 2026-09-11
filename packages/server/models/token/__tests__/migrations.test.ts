@@ -1,5 +1,5 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { config, db, migrationManager, uuid } from '@coko/server'
+import { config, db, DbTestUtils, migrationManager, uuid } from '@coko/server'
 
 import Group from '../../group/group.model'
 import Token from '../token.model'
@@ -11,17 +11,11 @@ describe('Token Migrations', () => {
   })
 
   beforeEach(async () => {
-    const tables = await db('pg_tables')
-      .select('tablename')
-      .where('schemaname', 'public')
-
-    for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
-      await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
-    }
+    await DbTestUtils.dropAllTables()
   })
 
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

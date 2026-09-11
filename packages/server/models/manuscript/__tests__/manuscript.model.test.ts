@@ -20,6 +20,7 @@ describe('Manuscript model', () => {
   })
 
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

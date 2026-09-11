@@ -80,7 +80,9 @@ const SearchControl = ({ currentSearchQuery, applySearchQuery }) => {
             }}
             placeholder={t('common.Enter search terms...')}
             ref={ref}
-            title={t('common.surroundMultiword')}
+            title={t('manuscriptsTable.searchTips', {
+              returnObjects: true,
+            }).join(' ')}
             type="text"
             value={searchText}
           />

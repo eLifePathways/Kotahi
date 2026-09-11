@@ -2,17 +2,16 @@
 
 import { grid, th } from '@coko/client'
 import PropTypes from 'prop-types'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { Mail } from 'react-feather'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
-import { ConfigContext } from '../../../../config/src'
 import { isCurrentUserCollaborative } from '../review/util'
 import { convertTimestampToRelativeDateString } from '../../../../../shared/dateUtils'
 import { UserAvatar } from '../../../../component-avatar/src'
 import ReviewDetailsModal from '../../../../component-review-detail-modal/src'
-import { ColorBadge } from '../../../../shared'
+import Badge from '../../../../../ui/shared/Badge'
 
 const Card = styled.div.attrs({
   'data-testid': 'kanban-card',
@@ -104,7 +103,6 @@ const KanbanCard = ({
 }) => {
   const [open, setOpen] = useState(false)
   const { t } = useTranslation()
-  const config = useContext(ConfigContext)
 
   const isCollaborative =
     reviewer.invitedPersonType === 'COLLABORATIVE_REVIEWER' ||
@@ -166,9 +164,9 @@ const KanbanCard = ({
           </InfoGrid>
           {isCollaborative && (
             <CollaborativeBadge>
-              <ColorBadge color={config.groupIdentity.primaryColor}>
+              <Badge small variant="primary">
                 {t('common.kanban.isCollaborative')}
-              </ColorBadge>
+              </Badge>
             </CollaborativeBadge>
           )}
         </LeftSide>

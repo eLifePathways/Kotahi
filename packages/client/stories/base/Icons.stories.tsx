@@ -15,6 +15,7 @@ const IconTile = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 12px;
   padding: 16px;
   border: 1px solid ${th('colorBorder')};
   border-radius: ${th('borderRadius')};

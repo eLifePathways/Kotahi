@@ -28,7 +28,7 @@ describe('validating required field and doi values in submission form', () => {
     })
     ManuscriptsPage.getTableHead().should('be.visible')
     Menu.clickManuscripts()
-    ManuscriptsPage.getOptionsElifeText('Evaluation').click()
+    ManuscriptsPage.clickEvaluationLink()
   })
 
   context('check the Submission form based on form builder', () => {
@@ -75,7 +75,7 @@ describe('validating required field and doi values in submission form', () => {
         SubmissionFormPage.clickElifeSubmitResearch()
 
         // check for the submission form contains doi
-        ManuscriptsPage.getOptionsElifeText('Evaluation').click()
+        ManuscriptsPage.clickEvaluationLink()
         SubmissionFormPage.getDoi().should(
           'have.value',
           data.doi.split('https://doi.org/')[1],

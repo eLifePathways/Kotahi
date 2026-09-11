@@ -52,10 +52,12 @@ describe('Update the submission form field', () => {
       // Verify that changes are autosaved
       SubmissionFormPage.getTitleField().should('have.value', data.description)
       SubmissionFormPage.clickSubmitResearchAndWaitPageLoadElife()
-      ManuscriptsPage.getOptionsElifeText('Evaluation').click()
+      ManuscriptsPage.clickEvaluationLink()
       SubmissionFormPage.clickSubmitResearchAndWaitPageLoadElife()
       cy.intercept('/graphql').as('getResponse')
-      ManuscriptsPage.getOptionsElifeText('Publish').click()
+      ManuscriptsPage.clickPublishLink()
+      cy.contains('Publish this manuscript?').should('be.visible')
+      cy.contains('button', 'OK').click()
       cy.wait('@getResponse').its('response').should('deep.include', {
         statusCode: 200,
         statusMessage: 'OK',
