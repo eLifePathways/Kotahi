@@ -8,10 +8,10 @@ import {
   IMPORT_MANUSCRIPTS,
   IMPORTED_MANUSCRIPTS,
   GET_SYSTEM_WIDE_DISCUSSION_CHANNEL,
-  EXPAND_CHAT,
 } from '../../../queries'
 import Manuscripts from './Manuscripts'
 import useChat from '../../../hooks/useChat'
+import { collapseTimeMs } from '../../../ui/constants'
 import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
 
 const ManuscriptsPage = () => {
@@ -53,8 +53,6 @@ const ManuscriptsPage = () => {
     })
   }
 
-  const [chatExpand] = useMutation(EXPAND_CHAT)
-
   const shouldAllowBulkImport = config?.manuscript?.manualImport
 
   const groupManagerDiscussionChannel =
@@ -77,16 +75,34 @@ const ManuscriptsPage = () => {
 
   const chatProps = useChat(channels)
 
+  const initialChatExpanded =
+    localStorage.getItem('chatPanelExpanded:manuscripts') === 'true'
+
+  const onAdminChatChange = expanded => {
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
+
+      try {
+        localStorage.setItem('chatPanelExpanded:manuscripts', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
+  }
+
   return (
     <Manuscripts
       channels={channels}
-      chatExpand={chatExpand}
       chatProps={chatProps}
       currentUser={currentUser}
       groupManagerDiscussionChannel={groupManagerDiscussionChannel}
       hideManuscriptsChat={hideDiscussionFromGroupAdminsManagers}
       importManuscripts={importManuscriptsAndRefetch}
+      initialChatExpanded={initialChatExpanded}
       isImporting={isImporting}
+      onAdminChatChange={onAdminChatChange}
       shouldAllowBulkImport={shouldAllowBulkImport}
     />
   )

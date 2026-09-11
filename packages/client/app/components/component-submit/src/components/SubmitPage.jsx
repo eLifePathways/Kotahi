@@ -11,6 +11,7 @@ import { validateManuscriptSubmission } from '../../../../shared/manuscriptUtils
 import CommsErrorBanner from '../../../shared/CommsErrorBanner'
 import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 import useChat from '../../../../hooks/useChat'
+import { collapseTimeMs } from '../../../../ui/constants'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 import {
   PUBLISH_MANUSCRIPT,
@@ -20,7 +21,6 @@ import {
   COMPLETE_COMMENT,
   DELETE_PENDING_COMMENT,
   VALIDATE_ORCID,
-  EXPAND_CHAT,
   USER_MANUSCRIPT,
   UPDATE_MANUSCRIPT,
   SUBMIT_MANUSCRIPT,
@@ -55,7 +55,6 @@ const SubmitPage = () => {
   const { t } = useTranslation()
   const config = useContext(ConfigContext)
   const { urlFrag, instanceName } = config
-  const [chatExpand] = useMutation(EXPAND_CHAT)
   const { validationOrcid } = useValidateORCID()
 
   useEffect(() => {
@@ -114,6 +113,23 @@ const SubmitPage = () => {
   ]
 
   const chatProps = useChat(channels)
+
+  const initialChatExpanded =
+    localStorage.getItem('chatPanelExpanded:submit') === 'true'
+
+  const onDiscussionVisibilityChange = expanded => {
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
+
+      try {
+        localStorage.setItem('chatPanelExpanded:submit', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
+  }
 
   const [update] = useMutation(UPDATE_MANUSCRIPT)
   const [submit] = useMutation(SUBMIT_MANUSCRIPT)
@@ -281,7 +297,6 @@ const SubmitPage = () => {
     <Submit
       channelId={channelId}
       channels={channels}
-      chatExpand={chatExpand}
       chatProps={chatProps}
       createFile={createFile}
       createNewVersion={createNewVersion}
@@ -289,9 +304,11 @@ const SubmitPage = () => {
       decisionForm={decisionForm}
       deleteFile={deleteFile}
       hideChat={hideChat}
+      initialChatExpanded={initialChatExpanded}
       manuscript={manuscript}
       manuscriptLatestVersionId={manuscriptLatestVersionId}
       onChange={handleChange}
+      onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       onSubmit={onSubmit}
       parent={manuscript}
       republish={republish}

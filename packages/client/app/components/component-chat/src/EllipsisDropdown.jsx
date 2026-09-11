@@ -11,7 +11,8 @@ const DropdownContainer = styled.div`
   background-color: ${th('color.backgroundA')};
   box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
   position: absolute;
-  right: 0;
+  right: 12px;
+  top: 24px;
   width: 176px;
   z-index: 1000;
 `

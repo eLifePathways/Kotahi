@@ -17,10 +17,10 @@ import {
   DELETE_FILE,
   UPDATE_REVIEW,
   MANUSCRIPT,
-  EXPAND_CHAT,
   REVIEW_FORM_UPDATED,
 } from '../../../../queries'
 import useChat from '../../../../hooks/useChat'
+import { collapseTimeMs } from '../../../../ui/constants'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
 import { getCurrentUserReview } from './review/util'
@@ -40,7 +40,6 @@ const ReviewPage = () => {
   const [completeComments] = useMutation(COMPLETE_COMMENTS)
   const [completeComment] = useMutation(COMPLETE_COMMENT)
   const [deletePendingComment] = useMutation(DELETE_PENDING_COMMENT)
-  const [chatExpand] = useMutation(EXPAND_CHAT)
 
   const [deleteFile] = useMutation(DELETE_FILE, {
     update(cache, { data: { deleteFile: fileToDelete } }) {
@@ -143,6 +142,23 @@ const ReviewPage = () => {
 
   const chatProps = useChat(channels)
 
+  const initialChatExpanded =
+    localStorage.getItem('chatPanelExpanded:review') === 'true'
+
+  const onDiscussionVisibilityChange = expanded => {
+    // Deferred past the panel's own collapse/expand transition so refetching
+    // unread data doesn't compete with it for frames.
+    setTimeout(() => {
+      chatProps.refreshUnreadData()
+
+      try {
+        localStorage.setItem('chatPanelExpanded:review', String(expanded))
+      } catch {
+        // ignore
+      }
+    }, collapseTimeMs)
+  }
+
   if (loading || currentUser === null) return <Spinner />
 
   if (error) {
@@ -211,7 +227,6 @@ const ReviewPage = () => {
     <ReviewLayout
       channelId={channelId}
       channels={channels}
-      chatExpand={chatExpand}
       chatProps={chatProps}
       createFile={createFile}
       currentUser={currentUser}
@@ -219,6 +234,8 @@ const ReviewPage = () => {
       decisionForm={decisionForm}
       deleteFile={deleteFile}
       hideChat={hideReviewerChat}
+      initialChatExpanded={initialChatExpanded}
+      onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       reviewForm={reviewForm}
       submissionForm={submissionForm}
       threadedDiscussionProps={threadedDiscussionProps}

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
 /* eslint-disable react/prop-types */
 
-import React, { useCallback, useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { set, debounce } from 'lodash'
@@ -12,12 +12,12 @@ import DecisionAndReviews from './DecisionAndReviews'
 import CreateANewVersion from './CreateANewVersion'
 import ReadonlyFormTemplate from '../../../component-review/src/components/metadata/ReadonlyFormTemplate'
 import MessageContainer from '../../../component-chat/src/MessageContainer'
+import ChatPanelExpandButton from '../../../../ui/shared/ChatPanelExpandButton'
 
 import {
   VersionSwitcher,
   HiddenTabs,
   Columns,
-  Chat,
   Manuscript,
   ErrorBoundary,
   SectionContent,
@@ -28,10 +28,6 @@ import EditorSection from '../../../component-review/src/components/decision/Edi
 import AssignEditorsReviewers from './assignEditors/AssignEditorsReviewers'
 import AssignEditor from './assignEditors/AssignEditor'
 import SubmissionForm from './SubmissionForm'
-import {
-  ChatButton,
-  CollapseButton,
-} from '../../../component-review/src/components/style'
 
 const TabPanel = styled.div`
   background: ${th('color.backgroundA')};
@@ -41,6 +37,12 @@ const TabPanel = styled.div`
   ${SectionContent} {
     box-shadow: none;
   }
+`
+
+const FloatingChatPanelExpandButton = styled(ChatPanelExpandButton)`
+  margin-top: 16px;
+  position: absolute;
+  right: 18px;
 `
 
 export const createBlankSubmissionBasedOnForm = form => {
@@ -74,7 +76,8 @@ const Submit = ({
   validateDoi,
   validateSuffix,
   validationOrcid,
-  chatExpand,
+  initialChatExpanded,
+  onDiscussionVisibilityChange,
 }) => {
   const config = useContext(ConfigContext)
 
@@ -83,7 +86,7 @@ const Submit = ({
   )
 
   const [isSubmisionDiscussionVisible, setIsSubmisionDiscussionVisible] =
-    React.useState(currentUser.chatExpanded)
+    useState(initialChatExpanded)
 
   const allowAuthorsSubmitNewVersion =
     config?.submission?.allowAuthorsSubmitNewVersion
@@ -244,23 +247,10 @@ const Submit = ({
     })
   })
 
-  const toggleSubmisionDiscussionVisibility = async () => {
-    try {
-      await channelData?.refetchUnreadMessagesCount()
-      const firstChannel = chatProps?.channelsData?.[0]
-
-      const refetchNotificationOptionData =
-        firstChannel?.refetchNotificationOptionData
-
-      if (refetchNotificationOptionData) {
-        await refetchNotificationOptionData()
-      }
-
-      chatExpand({ variables: { state: !isSubmisionDiscussionVisible } })
-      setIsSubmisionDiscussionVisible(prevState => !prevState)
-    } catch (error) {
-      console.error('Error toggling submission discussion visibility:', error)
-    }
+  const toggleSubmisionDiscussionVisibility = () => {
+    const isExpanded = !isSubmisionDiscussionVisible
+    setIsSubmisionDiscussionVisible(isExpanded)
+    onDiscussionVisibilityChange(isExpanded)
   }
 
   return (
@@ -276,29 +266,19 @@ const Submit = ({
       </Manuscript>
       {!hideChat && (
         <>
-          {isSubmisionDiscussionVisible && (
-            <Chat>
-              <MessageContainer
-                channelId={channelId}
-                channels={channels}
-                chatProps={chatProps}
-                currentUser={currentUser}
-              />
-              <CollapseButton
-                iconName="ChevronRight"
-                onClick={toggleSubmisionDiscussionVisibility}
-                title={t('chat.Hide Chat')}
-              />
-            </Chat>
-          )}
-          {!isSubmisionDiscussionVisible && (
-            <ChatButton
-              iconName="MessageSquare"
-              onClick={toggleSubmisionDiscussionVisibility}
-              title={t('chat.Show Chat')}
-              unreadMessagesCount={channelData?.unreadMessagesCount}
-            />
-          )}
+          <MessageContainer
+            channelId={channelId}
+            channels={channels}
+            chatProps={chatProps}
+            currentUser={currentUser}
+            isOpen={isSubmisionDiscussionVisible}
+            onToggle={toggleSubmisionDiscussionVisibility}
+          />
+          <FloatingChatPanelExpandButton
+            isOpen={isSubmisionDiscussionVisible}
+            onClick={toggleSubmisionDiscussionVisibility}
+            unreadCount={channelData?.unreadMessagesCount}
+          />
         </>
       )}
     </Columns>

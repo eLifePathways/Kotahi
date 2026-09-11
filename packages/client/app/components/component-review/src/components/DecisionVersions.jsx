@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import styled from 'styled-components'
 import { uuid } from '@coko/client'
-import { useTranslation } from 'react-i18next'
 import DecisionVersion from './DecisionVersion'
 import gatherManuscriptVersions from '../../../../shared/manuscript_versions'
 
@@ -12,10 +12,15 @@ import {
   ErrorBoundary,
   Columns,
   Manuscript,
-  Chat,
 } from '../../../shared'
 import MessageContainer from '../../../component-chat/src/MessageContainer'
-import { ChatButton, CollapseButton } from './style'
+import ChatPanelExpandButton from '../../../../ui/shared/ChatPanelExpandButton'
+
+const FloatingChatPanelExpandButton = styled(ChatPanelExpandButton)`
+  margin-top: 16px;
+  position: absolute;
+  right: 18px;
+`
 
 const DecisionVersions = ({
   allUsers,
@@ -27,6 +32,8 @@ const DecisionVersions = ({
   chatProps,
   channels,
   coarMessages,
+  initialChatExpanded,
+  onDiscussionVisibilityChange,
   form,
   handleChange,
   hideChat,
@@ -79,7 +86,6 @@ const DecisionVersions = ({
   queryAI,
   unpublish,
 }) => {
-  const { t } = useTranslation()
   const versions = gatherManuscriptVersions(manuscript)
   const firstVersion = versions[versions.length - 1]
 
@@ -93,29 +99,13 @@ const DecisionVersions = ({
     [],
   )
 
-  const [isDiscussionVisible, setIsDiscussionVisible] = React.useState(
-    currentUser.chatExpanded,
-  )
+  const [isDiscussionVisible, setIsDiscussionVisible] =
+    useState(initialChatExpanded)
 
-  const toggleDiscussionVisibility = async () => {
-    try {
-      const { channelsData, reloadUnreadMessageCounts } = chatProps || {}
-
-      const dataRefetchPromises = channelsData?.map(async channel => {
-        await channel?.refetchUnreadMessagesCount?.()
-        await channel?.refetchNotificationOptionData?.()
-      })
-
-      if (reloadUnreadMessageCounts) {
-        dataRefetchPromises.push(reloadUnreadMessageCounts())
-      }
-
-      await Promise.all(dataRefetchPromises)
-
-      setIsDiscussionVisible(prevState => !prevState)
-    } catch (error) {
-      console.error('Error toggling discussion visibility:', error)
-    }
+  const toggleDiscussionVisibility = () => {
+    const isExpanded = !isDiscussionVisible
+    setIsDiscussionVisible(isExpanded)
+    onDiscussionVisibilityChange(isExpanded)
   }
 
   const manuscriptLatestVersionId = versions[0].manuscript.id
@@ -200,31 +190,20 @@ const DecisionVersions = ({
       </Manuscript>
       {!hideChat && (
         <>
-          {isDiscussionVisible && (
-            <Chat data-testid="chat-panel">
-              <MessageContainer
-                channels={channels}
-                chatProps={chatProps}
-                currentUser={currentUser}
-              />
-              <CollapseButton
-                iconName="ChevronRight"
-                onClick={toggleDiscussionVisibility}
-                title={t('chat.Hide Chat')}
-              />
-            </Chat>
-          )}
-          {!isDiscussionVisible && (
-            <ChatButton
-              data-testid="expand-chat"
-              iconName="MessageSquare"
-              onClick={toggleDiscussionVisibility}
-              title={t('chat.Show Chat')}
-              unreadMessagesCount={
-                chatProps.unreadMessagesQueryResult?.data?.unreadMessagesCount
-              }
-            />
-          )}
+          <MessageContainer
+            channels={channels}
+            chatProps={chatProps}
+            currentUser={currentUser}
+            isOpen={isDiscussionVisible}
+            onToggle={toggleDiscussionVisibility}
+          />
+          <FloatingChatPanelExpandButton
+            isOpen={isDiscussionVisible}
+            onClick={toggleDiscussionVisibility}
+            unreadCount={
+              chatProps.unreadMessagesQueryResult?.data?.unreadMessagesCount
+            }
+          />
         </>
       )}
     </Columns>
