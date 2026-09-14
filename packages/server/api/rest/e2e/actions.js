@@ -14,6 +14,17 @@ const Form = require('../../../models/form/form.model')
 const Manuscript = require('../../../models/manuscript/manuscript.model')
 const Review = require('../../../models/review/review.model')
 const seedForms = require('../../../scripts/seedForms')
+const { seedNotifications } = require('../../../scripts/seedNotifications')
+const EmailTemplate = require('../../../models/emailTemplate/emailTemplate.model')
+const Notification = require('../../../models/notification/notification.model')
+const defaultEmailTemplates = require('../../../config/defaultEmailTemplates')
+const eventsSource = require('../../../services/notification/eventsSource')
+
+// Mirrors scripts/seedConfig.js's default: every event active out of the box.
+const defaultEventsConfig = Object.keys(eventsSource).reduce((acc, key) => {
+  acc[key] = { active: true }
+  return acc
+}, {})
 
 const GENERIC_USER_COUNT = 5
 
@@ -150,6 +161,8 @@ const deleteGroupData = async (group, trx) => {
   await deleteAllMatching(Config, { groupId: group.id }, trx)
   await deleteAllMatching(Channel, { groupId: group.id }, trx)
   await deleteAllMatching(Form, { groupId: group.id }, trx)
+  await deleteAllMatching(EmailTemplate, { groupId: group.id }, trx)
+  await deleteAllMatching(Notification, { groupId: group.id }, trx)
   await Group.deleteById(group.id, { trx })
 }
 
@@ -261,7 +274,7 @@ const createGroup = async groupName => {
         groupManagersCanPublish: true,
         editorsCanPublish: true,
       },
-      notification: { eventsConfig: {} },
+      notification: { eventsConfig: defaultEventsConfig },
       eventNotification: {},
       groupIdentity: {
         brandName: groupName,
@@ -287,6 +300,45 @@ const createGroup = async groupName => {
     )
 
     await seedForms(group, config, { trx })
+
+    // Mirrors scripts/seedGroups.js's default email template seeding, so
+    // the notification-sending UI (SelectEmailTemplate) has options to pick.
+    const insertedEmailTemplates = await EmailTemplate.query(trx).insertGraph(
+      defaultEmailTemplates.map(template => ({
+        emailTemplateType: template.type,
+        emailContent: {
+          subject: template.subject,
+          cc: template.cc,
+          ccEditors: template.ccEditors,
+          body: template.body,
+          description: template.description,
+        },
+        groupId: group.id,
+      })),
+    )
+
+    const findTemplateByType = type =>
+      insertedEmailTemplates.find(e => e.emailTemplateType === type)
+
+    // Mirrors scripts/seedGroups.js's config mapping - without these, a
+    // "reviewer invitation" or "author proofing" notification send has no
+    // template to look up and silently no-ops.
+    formData.eventNotification.reviewerInvitationPrimaryEmailTemplate =
+      findTemplateByType('reviewerInvitation').id
+    formData.eventNotification.authorProofingInvitationEmailTemplate =
+      findTemplateByType('authorProofingInvitation').id
+    formData.eventNotification.authorProofingSubmittedEmailTemplate =
+      findTemplateByType('authorProofingSubmitted').id
+
+    const updatedConfig = await Config.query(trx).patchAndFetchById(config.id, {
+      formData,
+    })
+
+    // Mirrors scripts/seedGroups.js: creates the active Notification (event
+    // -> template) rows a real group gets, so eg. sending an "Author
+    // Invitation"/"Reviewer Invitation" notification actually succeeds
+    // instead of silently no-oping on "no active event found".
+    await seedNotifications(trx, group.id, updatedConfig)
 
     await Channel.insert(
       {
