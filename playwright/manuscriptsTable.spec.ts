@@ -184,6 +184,95 @@ test.describe('manuscripts table data', () => {
     ).toBeVisible()
   })
 
+  test('changing the page size via the pagination control shows more rows, updates the URL, and survives a reload', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.createManuscripts({ amount: 15 })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const shortIdCells = page.locator(
+      '.ant-table-tbody td[data-testid="shortId"]',
+    )
+
+    await expect(shortIdCells).toHaveCount(10)
+    expect(page.url()).not.toContain('pagesize=')
+
+    await page.locator('.ant-pagination-options-size-changer').click()
+    await page
+      .locator('.ant-select-dropdown:visible')
+      .getByText('20 / page', { exact: true })
+      .click()
+
+    await expect(shortIdCells).toHaveCount(15)
+    expect(page.url()).toContain('pagesize=20')
+
+    await page.reload()
+
+    await expect(shortIdCells).toHaveCount(15)
+    expect(page.url()).toContain('pagesize=20')
+  })
+
+  test('changing the page size while on a later page resets pagination to page 1', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.createManuscripts({ amount: 15 })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts?pagenum=2')
+
+    const shortIdCells = page.locator(
+      '.ant-table-tbody td[data-testid="shortId"]',
+    )
+
+    await expect(shortIdCells).toHaveCount(5)
+    expect(page.url()).toContain('pagenum=2')
+
+    await page.locator('.ant-pagination-options-size-changer').click()
+    await page
+      .locator('.ant-select-dropdown:visible')
+      .getByText('20 / page', { exact: true })
+      .click()
+
+    await expect(shortIdCells).toHaveCount(15)
+    expect(page.url()).toContain('pagesize=20')
+    expect(page.url()).not.toContain('pagenum=2')
+  })
+
+  test('the default page size comes from the group config, not a hardcoded value', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.updateGroupConfig({ manuscript: { paginationCount: 20 } })
+    await api.createManuscripts({ amount: 25 })
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
+
+    const shortIdCells = page.locator(
+      '.ant-table-tbody td[data-testid="shortId"]',
+    )
+
+    await expect(shortIdCells).toHaveCount(20)
+    expect(page.url()).not.toContain('pagesize=')
+
+    await expect(
+      page.locator('.ant-pagination-options-size-changer'),
+    ).toContainText('20 / page')
+  })
+
   test('reviewer sees only the manuscripts they were assigned to review', async ({
     api,
     loginAs,
