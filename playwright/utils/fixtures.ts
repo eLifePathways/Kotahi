@@ -19,6 +19,13 @@ type LoginAs = (username: string) => Promise<void>
 
 type NavigateTo = (path: string) => ReturnType<Page['goto']>
 
+// Opens a new, independent browser context (its own cookies/localStorage -
+// what `loginAs` writes the token into) logged in as a different user, for
+// tests that need two real, simultaneous sessions (eg. one user seeing
+// another's message arrive live). Contexts are closed automatically when
+// the test ends.
+type OpenPageAs = (username: string) => Promise<Page>
+
 type TestGroup = {
   groupName: string
   adminUsername: string
@@ -88,6 +95,7 @@ export const test = base.extend<{
   testGroup: TestGroup
   api: Api
   navigateTo: NavigateTo
+  openPageAs: OpenPageAs
 }>({
   // No default - always set via `use: { apiUrl }` in playwright.config.ts.
   apiUrl: ['', { option: true }],
@@ -104,6 +112,33 @@ export const test = base.extend<{
         token,
       )
     })
+  },
+
+  openPageAs: async ({ browser, apiUrl }, use) => {
+    const contexts: Awaited<ReturnType<typeof browser.newContext>>[] = []
+
+    await use(async username => {
+      const context = await browser.newContext()
+      contexts.push(context)
+
+      const { token } = await jsonOrThrow(
+        context.request.post(
+          `${apiUrl}/createToken/${encodeURIComponent(username)}`,
+        ),
+      )
+
+      const page = await context.newPage()
+
+      await page.addInitScript(
+        /* eslint-disable-next-line no-undef */
+        tokenValue => window.localStorage.setItem('token', tokenValue),
+        token,
+      )
+
+      return page
+    })
+
+    await Promise.all(contexts.map(context => context.close()))
   },
 
   testGroup: async ({ request, apiUrl }, use, testInfo) => {

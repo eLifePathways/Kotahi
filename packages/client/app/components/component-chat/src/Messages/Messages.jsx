@@ -45,6 +45,7 @@ const Messages = ({
   fetchMoreData,
   queryData,
   firstUnreadMessageId,
+  isOpen,
   unreadMessagesCount,
   updateChannelViewed,
   channelNotificationOption,
@@ -61,14 +62,14 @@ const Messages = ({
   }
 
   useEffect(() => {
-    // when there are new messages while the user is on the page
+    // when there are new messages while the panel is open
     // update the last view timestamp for the user
-    if (data?.messages) {
+    if (isOpen && data?.messages) {
       updateChannelViewed({
         variables: { channelId },
       })
     }
-  }, [data])
+  }, [data, isOpen])
   const [activeMessageDropdownId, setActiveMessageDropdownId] = useState(null)
 
   const showOrToggleDropdown = messageId => {
@@ -104,7 +105,7 @@ const Messages = ({
 
   const { t } = useTranslation()
 
-  if (loading) return <Spinner />
+  if (loading && !data) return <Spinner />
   if (error) return <CommsErrorBanner error={error} />
 
   const messages = sortAndGroupMessages(

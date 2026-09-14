@@ -11,14 +11,12 @@ import ManuscriptsTable from '../../../ui/shared/ManuscriptsTable'
 import useManuscriptsTable from '../../../pages/hooks/useManuscriptsTable'
 
 import MessageContainer from '../../component-chat/src/MessageContainer'
+import ChatPanelExpandButton from '../../../ui/shared/ChatPanelExpandButton'
 import {
   ActionButton,
   Columns,
-  CommsErrorBanner,
   Container,
-  RoundIconButton,
   ScrollableContent,
-  Spinner,
 } from '../../shared'
 import { ControlsContainer } from './style'
 import { ConfigContext } from '../../config/src'
@@ -30,11 +28,11 @@ const OuterContainer = styled(Container)`
 `
 
 const ManuscriptsColumns = styled(Columns)`
-  gap: ${grid(4)};
   height: 100%;
 `
 
 const ManuscriptsPane = styled.div`
+  height: 100%;
   overflow-y: auto;
 `
 
@@ -49,23 +47,20 @@ const TableWrapper = styled.div`
   padding: ${grid(3)} ${grid(2)};
 `
 
-const RoundIconButtonWrapper = styled(RoundIconButton).attrs({
-  'data-testid': 'round-icon-button-wrapper',
-})`
-  position: sticky;
-`
+const Manuscripts = props => {
+  const {
+    hideManuscriptsChat,
+    importManuscripts,
+    isImporting,
+    shouldAllowBulkImport,
+    currentUser,
+    chatProps,
+    groupManagerDiscussionChannel,
+    channels,
+    initialChatExpanded,
+    onAdminChatChange,
+  } = props
 
-const Manuscripts = ({
-  hideManuscriptsChat,
-  importManuscripts,
-  isImporting,
-  shouldAllowBulkImport,
-  currentUser,
-  chatProps,
-  groupManagerDiscussionChannel,
-  channels,
-  chatExpand,
-}) => {
   const navigate = useNavigate()
   const { groupName } = useParams()
   const { t } = useTranslation()
@@ -75,42 +70,26 @@ const Manuscripts = ({
     channel => channel?.channelId === groupManagerDiscussionChannel?.id,
   )
 
-  const [isAdminChatOpen, setIsAdminChatOpen] = useState(
-    currentUser.chatExpanded,
-  )
+  const [isAdminChatOpen, setIsAdminChatOpen] = useState(initialChatExpanded)
 
-  const { loading, error, ...tableProps } = useManuscriptsTable('admin')
+  const { ...tableProps } = useManuscriptsTable('admin')
 
-  const hideChat = async () => {
-    try {
-      setIsAdminChatOpen(false)
-      chatExpand({ variables: { state: false } })
-      const { channelsData } = chatProps || {}
-
-      const dataRefetchPromises = channelsData?.map(async channel => {
-        await channel?.refetchUnreadMessagesCount?.()
-        await channel?.refetchNotificationOptionData?.()
-      })
-
-      await Promise.all(dataRefetchPromises)
-    } catch (hideChatError) {
-      console.error('Error hiding chat:', hideChatError)
-    }
+  const toggleAdminChat = () => {
+    const isExpanded = !isAdminChatOpen
+    setIsAdminChatOpen(isExpanded)
+    onAdminChatChange(isExpanded)
   }
 
-  if (loading) return <Spinner />
-  if (error) return <CommsErrorBanner error={error} />
-
   return (
-    <Page
-      title={t(
-        tableProps.viewingArchived
-          ? 'manuscriptsPage.archivedManuscripts'
-          : 'manuscriptsPage.Manuscripts',
-      )}
-    >
-      <OuterContainer>
-        <ManuscriptsColumns>
+    <ManuscriptsColumns>
+      <Page
+        title={t(
+          tableProps.viewingArchived
+            ? 'manuscriptsPage.archivedManuscripts'
+            : 'manuscriptsPage.Manuscripts',
+        )}
+      >
+        <OuterContainer>
           <ManuscriptsPane>
             <FlexRow>
               <ControlsContainer>
@@ -135,17 +114,13 @@ const Manuscripts = ({
                       : t('manuscriptsPage.Refresh')}
                   </ActionButton>
                 )}
-                {!isAdminChatOpen && !hideManuscriptsChat && (
-                  <RoundIconButtonWrapper
-                    iconName="MessageSquare"
-                    onClick={() => {
-                      setIsAdminChatOpen(true)
-                      chatExpand({ variables: { state: true } })
-                    }}
-                    title={t('chat.Show group manager discussion')}
-                    unreadMessagesCount={channelData?.unreadMessagesCount}
-                  />
-                )}
+
+                <ChatPanelExpandButton
+                  isOpen={isAdminChatOpen}
+                  label={t('chat.Show group manager discussion')}
+                  onClick={toggleAdminChat}
+                  unreadCount={channelData?.unreadMessagesCount}
+                />
               </ControlsContainer>
             </FlexRow>
 
@@ -155,19 +130,20 @@ const Manuscripts = ({
               </TableWrapper>
             </ScrollableContent>
           </ManuscriptsPane>
+        </OuterContainer>
+      </Page>
 
-          {isAdminChatOpen && !hideManuscriptsChat && (
-            <MessageContainer
-              channelId={groupManagerDiscussionChannel?.id}
-              channels={channels}
-              chatProps={chatProps}
-              currentUser={currentUser}
-              hideChat={hideChat}
-            />
-          )}
-        </ManuscriptsColumns>
-      </OuterContainer>
-    </Page>
+      {!hideManuscriptsChat && (
+        <MessageContainer
+          channelId={groupManagerDiscussionChannel?.id}
+          channels={channels}
+          chatProps={chatProps}
+          currentUser={currentUser}
+          isOpen={isAdminChatOpen}
+          onToggle={toggleAdminChat}
+        />
+      )}
+    </ManuscriptsColumns>
   )
 }
 

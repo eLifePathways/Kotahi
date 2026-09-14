@@ -6,16 +6,6 @@
  * or through the Manuscripts page.
  */
 
-// Emai Notifications
-const NOTIFY_BUTTON = '[data-testid="email-notification-row"] > button'
-const EMAIL_NOTIFICATION_LOG_MESSAGE = 'email-log-message'
-const EMAIL_NOTIFICATION_SECTION = 'email-notification-row'
-const NEW_USER_CHECKBOX = '[data-testid="email-notification-row"] > label'
-const NEW_USER_EMAIL_FIELD = '[placeholder="Email"]'
-const NEW_USER_NAME_FIELD = '[placeholder="Name"]'
-const EMAIL_NOTIFICATION_DROPDOWNS =
-  '[data-testid="email-notification-row"] > div'
-
 const ASSIGN_SENIOR_EDITOR = 'assign-seniorEditor'
 const ASSIGN_HANDLING_EDITOR = 'assign-handlingEditor'
 const ASSIGN_MANUSCRIPT_EDITOR = 'assign-editor'
@@ -40,11 +30,6 @@ const REVIEWER_NAME = '[data-testid="reviewer-info"]'
 const NO_REVIEWS_MESSAGE = '[data-testid="section-row"]'
 const ACCEPTED_TO_PUBLISH_REVIEW_ICON =
   '[data-testid="decision-review-name"] img'
-
-// Chat
-const MESSAGE_CONTAINER = '[data-testid="chat-panel"]'
-const CHAT_TAB = '[data-testid="chat-panel"] [data-testid=tab-container]'
-const EXPAND_CHAT_BUTTON = '[data-testid="expand-chat"]'
 
 // Multiple Elements
 const SUBMIT_BUTTON = 'decision-action-btn' // Also Matches Notify Button
@@ -281,57 +266,6 @@ export const ControlPage = {
     }
 
     this.getMetadataCell(13).should('contain', getTodayDate())
-  },
-  getEmailNotificationSection() {
-    return cy.get(`[data-testid="${EMAIL_NOTIFICATION_SECTION}"]`)
-  },
-  getNewUserCheckbox() {
-    return cy.get(NEW_USER_CHECKBOX)
-  },
-  clickNewUser() {
-    this.getNewUserCheckbox().click()
-  },
-  getNewUserEmailField() {
-    return cy.get(NEW_USER_EMAIL_FIELD)
-  },
-  fillInNewUserEmail(email) {
-    this.getNewUserEmailField().fillInput(email)
-  },
-  getNewUserNameField() {
-    return cy.get(NEW_USER_NAME_FIELD)
-  },
-  fillInNewUserName(name) {
-    this.getNewUserNameField().fillInput(name)
-  },
-  getEmailNotificationDropdowns() {
-    return cy.get(EMAIL_NOTIFICATION_DROPDOWNS)
-  },
-  clickEmailNotificationNthDropdown(nth) {
-    this.getEmailNotificationDropdowns().eq(nth).click({ force: true })
-  },
-  getNotifyButton() {
-    return cy.get(NOTIFY_BUTTON)
-  },
-  clickNotify() {
-    this.getNotifyButton().click()
-  },
-  getMessageContainer() {
-    return cy.get(MESSAGE_CONTAINER)
-  },
-  getExpandChatButton() {
-    return cy.get(EXPAND_CHAT_BUTTON)
-  },
-  clickExpandChatButton() {
-    this.getExpandChatButton().click()
-  },
-  getChatTab() {
-    return cy.get(CHAT_TAB)
-  },
-  clickNthChatTab(nth) {
-    this.getChatTab().eq(nth).click()
-  },
-  getLogMessage() {
-    return cy.get(`[data-testid="${EMAIL_NOTIFICATION_LOG_MESSAGE}"]`)
   },
   getMetadataTab(nth) {
     return cy.getByDataTestId(METADATA_TAB).eq(nth)
