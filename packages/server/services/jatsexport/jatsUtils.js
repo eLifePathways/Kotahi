@@ -373,7 +373,7 @@ const fixMath = html => {
   // This converts math-display and math-inline to <disp-formula> and <inline-formula>
   // TODO: maybe should convert LaTex to MathML here using MathJax too?
 
-  const dom = htmlparser2.parseDocument(html)
+  const dom = htmlparser2.parseDocument(html, { xmlMode: true })
 
   const $ = cheerio.load(dom, {
     xmlMode: true,
