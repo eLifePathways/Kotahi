@@ -1282,7 +1282,7 @@ type ManuscriptsTableProps = {
    * changed manuscript's `record.id`; `value` is `null` when cleared.
    */
   onOptionChange?: (columnKey: string, id: string, value: string | null) => void
-  onPageChange: (page: number) => void
+  onPageChange: (page: number, pageSize: number) => void
   onReviewerStatusViewModeChange?: (viewMode: 'compact' | 'detailed') => void
   onSearch: (value: string) => void
   onSortChange?: (sortState: ManuscriptsTableSortState | null) => void
@@ -1682,6 +1682,8 @@ const ManuscriptsTable = ({
           current: page,
           pageSize,
           total: totalCount,
+          showSizeChanger: true,
+          pageSizeOptions: ['10', '20', '50', '100'],
           showTotal: (total: number, range: [number, number]) => (
             <Trans
               count={total}
