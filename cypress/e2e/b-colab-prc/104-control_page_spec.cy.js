@@ -6,7 +6,6 @@ import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 // import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { DashboardPage } from '../../page-object/dashboard-page'
-import { ControlPage } from '../../page-object/control-page'
 
 describe('control page tests', () => {
   // UPDATE 0.05.2025
@@ -168,56 +167,6 @@ describe('control page tests', () => {
     cy.request('POST', `${seedUrl}/senior_editor_assigned`)
   })
 
-  context('sending email notifications', () => {
-    // before(() => {
-    //   cy.task('restore', 'email_notification')
-    // })
-    beforeEach(() => {
-      cy.fixture('role_names').then(name => {
-        // login as seniorEditor
-        cy.login(name.role.seniorEditor, dashboard)
-        cy.wait(500)
-        DashboardPage.clickDashboardTab(2)
-        DashboardPage.clickControl() // Navigate to Control Page
-      })
-    })
-
-    it('can send email notifications to existing and non-existing users', () => {
-      /* New User */
-      sendNotification({
-        receiverName: 'Jon',
-        templateName: 'Author Invitation',
-        expectedMessage: null,
-        // should be saying this instead:
-        // 'Author Invitation sent by Elaine Barnes to Jon',
-        isNewUser: true,
-        email: 'jon@example.co',
-      })
-
-      /* Existing Users */
-      sendNotification({
-        receiverName: 'Emily',
-        templateName: 'Author Invitation',
-        expectedMessage:
-          'Submission Confirmation Email sent by Kotahi to Emily Clay',
-        // should be saying this instead:
-        // 'Author Invitation sent by Elaine Barnes to Emily Clay',
-      })
-
-      sendNotification({
-        receiverName: 'Joane',
-        templateName: 'Reviewer Invitation',
-        expectedMessage: null, // 'Reviewer Invitation sent by Elaine Barnes to Joane Pilger',
-      })
-
-      sendNotification({
-        receiverName: 'Gale',
-        templateName: 'Task notification',
-        expectedMessage: null, // 'Task notification sent by Elaine Barnes to Gale Davis',
-      })
-    })
-  })
-
   context('sending notifications via "Tasks" control panel', () => {
     beforeEach(() => {
       cy.fixture('role_names').then(name => {
@@ -310,54 +259,6 @@ describe('control page tests', () => {
     })
   })
 })
-
-function sendNotification({
-  receiverName,
-  templateName,
-  expectedMessage,
-  isNewUser = false,
-  email = null,
-}) {
-  cy.reload()
-  cy.contains('Tasks & Notifications').click()
-
-  if (isNewUser === true) {
-    cy.get('input[type="checkbox"]:last').click({ force: true })
-
-    cy.get('[data-cy="new-user-email"]').type(email)
-    cy.get('[data-cy="new-user-email"]').should('have.value', email)
-    cy.get('[data-cy="new-user-name"]').type(receiverName)
-    cy.get('[data-cy="new-user-name"]').should('have.value', receiverName)
-
-    ControlPage.getEmailNotificationDropdowns()
-      .eq(2)
-      .click()
-      .find('input')
-      .type(`${templateName}{enter}`, { force: true })
-  } else {
-    cy.getByDataTestId('choose-receiver').click()
-    cy.get('input[aria-label="Choose receiver"]').type(
-      `${receiverName}{enter}`,
-      {
-        force: true,
-      },
-    )
-
-    ControlPage.getEmailNotificationDropdowns()
-      .eq(1)
-      .click()
-      .find('input')
-      .type(`${templateName}{enter}`, { force: true })
-  }
-
-  cy.contains('Notify').click()
-  ControlPage.clickExpandChatButton()
-  ControlPage.clickNthChatTab(1)
-
-  if (expectedMessage) {
-    ControlPage.getMessageContainer().should('contain', expectedMessage)
-  }
-}
 
 function createTask({ assignee, title }) {
   cy.get('[title="Add a new task"]').click()

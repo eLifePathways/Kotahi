@@ -279,6 +279,22 @@ const useChat = (channels = null) => {
 
   const { refetch: reloadUnreadMessageCounts } = unreadMessagesQueryResult
 
+  // Refresh unread counts/notification data in the background so a chat
+  // panel's collapsed expand-button badge stays accurate. Callers should not
+  // await this - it must not block the panel from opening/closing.
+  const refreshUnreadData = () => {
+    const dataRefetchPromises = channelsData.map(async channel => {
+      await channel?.refetchUnreadMessagesCount?.()
+      await channel?.refetchNotificationOptionData?.()
+    })
+
+    dataRefetchPromises.push(reloadUnreadMessageCounts())
+
+    return Promise.all(dataRefetchPromises).catch(error => {
+      console.error('Error refreshing discussion data:', error)
+    })
+  }
+
   return {
     subscribeToNewMessages,
     subscribeToUpdatedMessage,
@@ -292,6 +308,7 @@ const useChat = (channels = null) => {
     channelsData,
     unreadMessagesQueryResult,
     reloadUnreadMessageCounts,
+    refreshUnreadData,
   }
 }
 

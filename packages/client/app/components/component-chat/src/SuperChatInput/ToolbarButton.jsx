@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled from 'styled-components'
-import { grid, th } from '@coko/client'
+import { th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 
 import { Icon } from '../../../pubsweet'
@@ -13,10 +13,14 @@ const Button = styled.a`
       ? props.theme.color.brand1.base
       : props.theme.color.textReverse};
   border: 1px solid ${th('color.gray50')};
-  border-radius: 10px;
-  height: fit-content;
-  margin: ${grid(2)} ${grid(2)} 0 0;
-  padding: 4px 0;
+  border-radius: ${th('borderRadius')};
+  display: flex;
+  /* Matches InputWrapper's min-height (SuperChatInput/style.jsx) so the
+     toolbar toggle lines up with the input box beside it. */
+  height: 40px;
+  justify-content: center;
+  margin-right: 10px;
+  padding: 21px 0 20px;
 
   &:hover {
     background-color: ${props =>

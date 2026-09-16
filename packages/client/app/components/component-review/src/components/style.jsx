@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Button, Action } from '../../../pubsweet'
-import { RoundIconButton } from '../../../shared'
 
 export const AdminSection = styled.div`
   margin-bottom: ${grid(6)};
@@ -112,21 +111,6 @@ export const BadgeContainer = styled.div`
   flex-flow: row wrap;
   gap: 4px 18px;
 `
-export const ChatButton = styled(RoundIconButton)`
-  margin-top: 16px;
-  position: absolute;
-  right: 18px;
-`
-
-export const CollapseButton = styled(RoundIconButton)`
-  height: 33px;
-  margin-top: 0;
-  min-width: 0;
-  position: absolute;
-  right: 0;
-  width: 33px;
-`
-
 export const AssignedAuthorForProofingLogsContainer = styled.div`
   align-items: flex-end;
   display: flex;

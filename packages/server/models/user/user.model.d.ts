@@ -12,7 +12,6 @@ declare class User extends BaseModel {
   lastOnline: string | Record<string, unknown> | null
   recentTab: string | null
   preferredLanguage: string | null
-  chatExpanded: boolean
 }
 
 export = User
