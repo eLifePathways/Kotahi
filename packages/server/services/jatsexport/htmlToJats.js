@@ -33,10 +33,6 @@ const insertSections = markup => {
       firstTitleContent,
       `<title>${replacementTitle}</title>`,
     )
-    // console.log(
-    //   'firstTitleContent',
-    //   convertRemainingTags(result.match(firstTitleContent)[1]),
-    // )
   }
 
   return result
@@ -44,7 +40,7 @@ const insertSections = markup => {
 
 const convertImages = html => {
   // Note that this will destroy any non-HTML tags that happen before this!
-  const dom = htmlparser2.parseDocument(html)
+  const dom = htmlparser2.parseDocument(html, { xmlMode: true })
 
   const $ = cheerio.load(dom, {
     xmlMode: true,
@@ -91,6 +87,18 @@ const convertLists = markup => {
     .replace(/<ol>/g, '<list list-type="order">')
     .replace(/<ul>/g, '<list list-type="bullet">')
     .replace(/<\/[ou]l>/g, '</list>')
+}
+
+const wrapStrayTextInParagraphs = markup => {
+  const dom = htmlparser2.parseDocument(markup, { xmlMode: true })
+  const $ = cheerio.load(dom, { xmlMode: true })
+
+  $('sec')
+    .contents()
+    .filter((index, node) => node.type === 'text' && node.data.trim() !== '')
+    .wrap('<p></p>')
+
+  return $.html()
 }
 
 const convertSmallCaps = markup => {
@@ -172,11 +180,18 @@ const convertRemainingTags = markup =>
     jatsTagsThatDontNeedConversion,
   )
 
-const htmlToJats = (html, convert) => {
-  // console.log('in html to jats', html)
+/** insertSections/convertImages/wrapStrayTextInParagraphs parse the markup
+ * with htmlparser2 in xmlMode, which only decodes the 5 predefined XML
+ * entities (amp, lt, gt, quot, apos) - anything else (e.g. &nbsp;) would
+ * come out the other side as literal, unconverted text. And cheerio's own
+ * serializer re-encodes special characters its own way on the way out
+ * (e.g. '&' as the named '&amp;', not the numeric '&#x26;' this file uses
+ * elsewhere), which isn't under our control. So this structural conversion
+ * is sandwiched between two entity-normalizing passes: one before, to
+ * protect entities the parser doesn't know, and one after, to undo
+ * whatever encoding cheerio chose. */
+const applyStructuralConversion = html => {
   let jats = html
-
-  jats = removeIllegalCharacters(jats)
 
   jats = insertSections(jats)
   jats = convertImages(jats)
@@ -184,8 +199,21 @@ const htmlToJats = (html, convert) => {
   jats = convertLists(jats)
   jats = convertSmallCaps(jats)
   jats = convertRemainingTags(jats)
+  jats = wrapStrayTextInParagraphs(jats)
 
-  if (!convert) {
+  return jats
+}
+
+const htmlToJats = (html, convert) => {
+  let jats = html
+
+  jats = removeIllegalCharacters(jats)
+
+  if (convert) {
+    jats = applyStructuralConversion(jats)
+  } else {
+    jats = convertCharacterEntities(jats)
+    jats = applyStructuralConversion(jats)
     jats = convertCharacterEntities(jats)
   }
 
