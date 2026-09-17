@@ -14,9 +14,9 @@ import {
   ActionButton,
   PaddedContent,
   SectionContent,
-  LabelBadge,
 } from '../../../shared'
 import Page from '../../../../ui/shared/Page'
+import Badge from '../../../../ui/shared/Badge'
 import CollectionModalForm from './CollectionModalForm'
 
 const StyledContent = styled.div`
@@ -184,9 +184,9 @@ const CollectionList = ({
 
       component: ({ collection }) => {
         return collection && collection.active ? (
-          <LabelBadge color="#3aae2a">True</LabelBadge>
+          <Badge variant="success">True</Badge>
         ) : (
-          <LabelBadge color="#ff0000">False</LabelBadge>
+          <Badge variant="error">False</Badge>
         )
       },
     },

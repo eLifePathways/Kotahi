@@ -107,14 +107,6 @@ const defaultIdentity = async user => {
   return cachedGet(`defaultIdentityOfUser:${user.id}`)
 }
 
-const expandChat = async (userId, state) => {
-  const user = await User.query().patchAndFetchById(userId, {
-    chatExpanded: state,
-  })
-
-  return user
-}
-
 const deleteUser = async (id, groupId) => {
   return User.transaction(async trx => {
     const user = await User.query(trx).findById(id)
@@ -848,7 +840,6 @@ module.exports = {
   channelUsersForMention,
   defaultIdentity,
   deleteUser,
-  expandChat,
   getCurrentUser,
   getSharedReviewersIds,
   getUser,

@@ -1,5 +1,5 @@
-import { describe, beforeAll, it, expect, afterAll } from 'vitest'
-import { db, config, migrationManager } from '@coko/server'
+import { describe, beforeAll, beforeEach, it, expect, afterAll } from 'vitest'
+import { db, config, migrationManager, DbTestUtils } from '@coko/server'
 
 import { formatCitation } from '../reference'
 import { Config, Group } from '../../models'
@@ -39,7 +39,12 @@ describe('checkFormatting', () => {
     await migrationManager.migrate()
   })
 
+  beforeEach(async () => {
+    await DbTestUtils.clearDb()
+  })
+
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

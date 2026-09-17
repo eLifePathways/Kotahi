@@ -1,5 +1,5 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { config, db, migrationManager } from '@coko/server'
+import { config, db, DbTestUtils, migrationManager } from '@coko/server'
 
 import Manuscript from '../../manuscript/manuscript.model'
 import Review from '../review.model'
@@ -12,17 +12,11 @@ describe('Review Migrations', () => {
   })
 
   beforeEach(async () => {
-    const tables = await db('pg_tables')
-      .select('tablename')
-      .where('schemaname', 'public')
-
-    for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
-      await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
-    }
+    await DbTestUtils.dropAllTables()
   })
 
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

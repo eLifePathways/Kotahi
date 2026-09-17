@@ -141,9 +141,18 @@ const makeArticleMeta = (
   }
 
   if (title || formData.$title) {
-    thisArticleMeta += `<title-group><article-title>${
-      title || formData.$title
-    }</article-title></title-group>`
+    const rawTitle = title || formData.$title
+
+    // drop p tag for correctness
+    // article-title takes inline content, not a block-level <p>
+    const unwrappedTitle = rawTitle.replace(
+      /^<p(?: class="paragraph")?>([\s\S]*)<\/p>$/,
+      '$1',
+    )
+
+    const sanitizedTitle = htmlToJats(unwrappedTitle)
+
+    thisArticleMeta += `<title-group><article-title>${sanitizedTitle}</article-title></title-group>`
   }
 
   if (formData.$authors?.length) {
@@ -364,7 +373,7 @@ const fixMath = html => {
   // This converts math-display and math-inline to <disp-formula> and <inline-formula>
   // TODO: maybe should convert LaTex to MathML here using MathJax too?
 
-  const dom = htmlparser2.parseDocument(html)
+  const dom = htmlparser2.parseDocument(html, { xmlMode: true })
 
   const $ = cheerio.load(dom, {
     xmlMode: true,

@@ -41,6 +41,8 @@ describe('Editor assigning reviewers', () => {
 
     // Go to dashboard and verify number of invited reviewer
     Menu.clickDashboard()
-    cy.getByDataTestId('donut-center-label').contains('6')
+    cy.getByDataTestId('statusCounts')
+      .find('[data-testid="reviewer-status-square"]')
+      .should('have.length', 6)
   })
 })

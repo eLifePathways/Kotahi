@@ -26,10 +26,6 @@ When configuring DNS for a production installation, Flax and Kotahi will need tw
 
 Metadata (for SEO) can be set inside of Kotahi by going to **Settings > CMS > File browser**, then editing `kotahi/layouts/base.njk`.
 
-### All I see is a "Recent publications" page with no publications. How do I login?
-
-Click **Dashboard** in the upper right. You'll be taken to the login flow.
-
 ## Publishing
 
 ### How do I publish from Kotahi?
@@ -98,7 +94,7 @@ Registering an `article` DOI to Crossref on the publish action requires that you
 <!-- prettier-ignore -->
 #### Registering peer review DOIs via Crossref
 
-Register peer review DOIs for `journal` and `prc` archetypes. A `referee-report` will be deposited for individual review submissions (data captured in a Review form submission) and an `aggregate` report for editorial team submissions (data captured in a Decision form submission). On publish action a peer review component will be depoisted if;
+Register peer review DOIs for `journal` and `prc` archetypes. A `referee-report` will be deposited for individual review submissions (data captured in a Review form submission) and an `aggregate` report for editorial team submissions (data captured in a Decision form submission). On publish action a peer review component will be deposited if:
 
 1. It contains data (not blank); and
 2. The review is not hidden; and
@@ -106,7 +102,7 @@ Register peer review DOIs for `journal` and `prc` archetypes. A `referee-report`
 
 #### Registering peer review DOIs via Crossref using a single form
 
-Alternatively, you may be using Kotahi to publish evaluations of pre-existing articles. If this is your workflow, Kotahi can register these evaluations with Crossref, generating a DOI for each. The registering of peer views using a single form when using the `preprint1` or `preprint2` archhetype. The following environment variables are required for this:
+Alternatively, you may be using Kotahi to publish evaluations of pre-existing articles. If this is your workflow, Kotahi can register these evaluations with Crossref, generating a DOI for each. The registering of peer views using a single form when using the `preprint1` or `preprint2` archetype. The following environment variables are required for this:
 
 ```
 CROSSREF_LOGIN=crossrefLogin
@@ -211,7 +207,7 @@ Note that publishing of review fields to hypothes.is is not yet supported.
 
 #### Publishing Hypothesis annotations with DocMaps
 
-Alternatively (or as well), you can specify one or more Hypothesis annotations to create for each published manuscript, each containing whatever field or combination of fields you choose, by providing a file `config/journal/docmaps_scheme.json` on your server. This mechanism allows more complex selections of data to be published; furthermore, a [DocMap](https://docmaps.knowledgefutures.org/) will also be created at time of publishing, which can be retrieved using kotahi's public API (see below). An example file, [`config/journal/example_docmaps_scheme.json`](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/config/journal/example_docmaps_scheme.json), is supplied.
+Alternatively (or as well), you can specify one or more Hypothesis annotations to create for each published manuscript, each containing whatever field or combination of fields you choose, by providing a file `config/journal/docmaps_scheme.json` on your server. This mechanism allows more complex selections of data to be published; furthermore, a [DocMap](https://docmaps.knowledgefutures.org/) will also be created at time of publishing, which can be retrieved using kotahi's public API (see below). An example file, [`packages/server/config/journal/example_docmaps_scheme.json`](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/config/journal/example_docmaps_scheme.json), is supplied.
 
 The `docmaps_scheme.json` file specifies the _actions_ to perform when a manuscript is published, complete with participant information and directives to determine how the outputs are generated. Essentially, its structure is copied into the `actions` node of a full DocMap, expanding any templated values and replacing special directives with generated data.
 
@@ -264,7 +260,7 @@ Kotahi exposes a graphql API for external access. The available queries are:
 - `unreviewedPreprints(token: String!, groupName: String): [Preprint!]!` returns a list of manuscripts with the `readyToEvaluate` label, for the specified group. `groupName` can be omitted if there is only one active group.
 - `docmap(externalId: String!, groupName: String): String!` returns a [DocMap](https://docmaps.knowledgefutures.org/) from the specified group, representing the relationship between a given preprint (`externalId` is the preprint's URL) and related artifacts such as evaluations that have been published from Kotahi. See above for how to enable this. `groupName` can be omitted if there is only one active group.
 
-Consult the code [here](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/api/graphql/manuscript/manuscript.graphql) and [here](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/api/graphql/docmap/docmap.graphql) for details, or the [graphql sandbox](https://studio.apollographql.com/sandbox/explorer), when your dev environment is running.
+Consult the code [here](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/api/graphql/manuscript/manuscript.graphql) and [here](https://github.com/eLifePathways/Kotahi/blob/main/packages/server/api/graphql/docmap/docmap.graphql) for details, or the [GraphQL sandbox](https://studio.apollographql.com/sandbox/explorer), when your dev environment is running.
 
 While these queries are publicly exposed and don't need a JWT token, the `unreviewedPreprints` query expects a `token` parameter for authentication; this must match a secret token set in the `KOTAHI_API_TOKENS` environment variable in the `.env` file. Tokens may contain any characters other than commas, and may not start or end with whitespace. Multiple tokens may be stored, separated by commas. We recommend that each token contain a human-readable identifier and a strong random string, e.g.:
 
@@ -298,7 +294,7 @@ To see what languages are currently available in Kotahi, visit your profile page
 
 ### How do I set the logo and branding colours?
 
-`app/brandConfig.json` allows logo, colors and brand name to be specified. Colors must be specified in hex format, e.g. "#9e9e9e".
+Branding colours, logos, and information can be set in Configuration > General Tab > Group Identity. Colours must be specified in hex format, e.g. "#9e9e9e".
 
 ## INSTANCE_GROUPS and Multitenancy
 
@@ -336,7 +332,7 @@ When upgrading from an earlier version of Kotahi prior to 2.0, it is recommended
 
 ### Configuring the Manuscripts table for your group
 
-The columns displayed in the Manuscripts table (viewable by Group Managers only) are determined in the Config Manager, by the setting "List columns to display on the Manuscripts page". Here you should enter a comma-separated list consisting of field-names and/or special column names. E.g.:
+The columns displayed in the Manuscripts table (viewable by Group Managers, Group Admins, and System Admins) are determined in the Config Manager, by the setting "List columns to display on the Manuscripts page". Here you should enter a comma-separated list consisting of field-names and/or special column names. E.g.:
 
 ```
 titleAndAbstract, created, updated, status, submission.$customStatus, author

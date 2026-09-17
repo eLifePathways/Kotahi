@@ -12,9 +12,70 @@ const {
   getStartOfDay,
   getEndOfDay,
   compactStringToDate,
+  dateToIso8601,
 } = require('../../utils/dateUtils')
 
 const URI_SEARCH_PARAM = 'search'
+
+/** Wraps a SQL text expression to strip HTML tags, so rich-text field values (e.g. an
+ * AbstractEditor field, or the article body) read as plain text in a headline snippet. Postgres's
+ * text search parser already treats tags as opaque "tag" tokens for matching purposes (so e.g.
+ * an attribute like `class="paragraph"` was never matchable), but `ts_headline` still reproduces
+ * the original markup verbatim around any matched words, so this only affects display. */
+const stripHtmlTags = expression =>
+  `regexp_replace(${expression}, '<[^>]+>', ' ', 'g')`
+
+/** Builds the list of field groups a search snippet can be labeled with: one per field defined on
+ * the submission form (so a snippet is labeled with the same field title an editor sees on the
+ * form, e.g. "Title", "Abstract", "Author names"), plus two fixed groups for manuscript data that
+ * isn't a submission-form field. `jsonKey` groups pull their text from `submission->jsonKey`;
+ * fixed groups supply a complete `expression` instead.
+ *
+ * Deliberately restricted to data already on the manuscripts row (the submission JSONB, short_id,
+ * meta.source) so that generating snippets never needs to join out to other tables (teams/
+ * team_members/invitations/users), matching what `manuscripts_searchable_text_trigger` populates
+ * search_tsvector from -- so a search match always has a corresponding visible snippet. */
+const buildSnippetFieldGroups = submissionForm => {
+  const formFieldGroups = (submissionForm?.structure?.children ?? [])
+    .filter(field => field.name?.startsWith('submission.'))
+    .map((field, index) => {
+      const jsonKey = field.name.slice('submission.'.length)
+      return {
+        alias: `snippet_field_${index}`,
+        field: field.shortDescription || field.title || jsonKey,
+        jsonKey,
+        // For Select/RadioGroup/CheckboxGroup-style fields, `submission` stores the option's
+        // value (an internal code), not its label (what the user sees) -- resolve to the label.
+        options:
+          Array.isArray(field.options) && field.options.length > 0
+            ? field.options
+            : undefined,
+      }
+    })
+
+  return [
+    ...formFieldGroups,
+    {
+      alias: 'snippet_manuscript_id',
+      field: 'Manuscript ID',
+      expression: 'm.short_id::text',
+    },
+    {
+      alias: 'snippet_article_body',
+      // meta.source is the manuscript's typeset HTML body (from the Wax editor).
+      field: 'Article body',
+      expression: stripHtmlTags(`COALESCE(m.meta->>'source', '')`),
+    },
+  ]
+}
+
+/** Turns a raw search-query result row into the labeled snippet list the client renders,
+ * omitting any field group that didn't actually match the search query. `submissionForm` must be
+ * the same one used to build the query, so the field groups line up with the row's columns. */
+const buildSearchSnippets = (row, submissionForm) =>
+  buildSnippetFieldGroups(submissionForm)
+    .filter(({ alias }) => row[alias])
+    .map(({ alias, field }) => ({ field, html: row[alias] }))
 
 /** This returns a modified array of reviews, omitting fields or entire reviews marked as
  * hidden from author, UNLESS the current user is the reviewer the review belongs to.
@@ -153,6 +214,20 @@ const getSafelyNamedJsonbFieldInfo = (fieldName, submissionForm) => {
   }
 }
 
+/** Like getSafelyNamedJsonbFieldInfo, but only returns a result for DatePicker fields --
+ * these are stored as plain 'yyyy-MM-dd' strings (see client's DatePicker.jsx), so they can
+ * be range-filtered the same way as the 'created'/'updated' columns. */
+const getSafelyNamedJsonbDateFieldInfo = (fieldName, submissionForm) => {
+  const jsonbField = getSafelyNamedJsonbFieldInfo(fieldName, submissionForm)
+  if (!jsonbField) return null
+
+  const field = submissionForm.structure.children.find(
+    f => f.name === fieldName,
+  )
+
+  return field.component === 'DatePicker' ? jsonbField : null
+}
+
 /** Check that the field exists and is not dangerously named (to avoid sql injection) */
 const isValidNonJsonbField = (fieldName, submissionForm) => {
   if (!/^[a-zA-Z]\w*$/.test(fieldName)) {
@@ -191,7 +266,10 @@ const applySortOrder = ({ field, isAscending }, submissionForm, addOrder) => {
 
   if (jsonbField) {
     const { name: jsonName } = jsonbField
-    addOrder(`LOWER(m.submission->>?)${sortDirection}`, jsonName)
+    addOrder(
+      `LOWER(${stripHtmlTags('m.submission->>?')})${sortDirection}`,
+      jsonName,
+    )
   } else if (isValidNonJsonbField(field, submissionForm)) {
     let sortingField = ''
     if (field === 'created') sortingField = 'COALESCE(p.created, m.created)'
@@ -255,6 +333,38 @@ const applyFilters = (
         return
       }
 
+      const jsonbDateField = getSafelyNamedJsonbDateFieldInfo(
+        filter.field,
+        submissionForm,
+      )
+
+      if (jsonbDateField) {
+        try {
+          const parts = filter.value.split('-')
+
+          // Unlike created/updated (real timestamptz columns), the stored value has no time
+          // component, so compare plain 'yyyy-MM-dd' boundaries rather than start/end-of-day
+          // timestamps.
+          const dateFrom = dateToIso8601(
+            compactStringToDate(parts[0], timezoneOffsetMinutes),
+          )
+
+          const dateTo = dateToIso8601(
+            compactStringToDate(parts[1], timezoneOffsetMinutes),
+          )
+
+          addWhere(`m.submission->>? >= ?`, jsonbDateField.name, dateFrom)
+          addWhere(`m.submission->>? <= ?`, jsonbDateField.name, dateTo)
+          /* eslint-disable-next-line */
+        } catch (error) {
+          logger.warn(
+            `Could not filter ${filter.field} by value '${filter.value}': could not parse as a date range.`,
+          )
+        }
+
+        return
+      }
+
       if (!/^[\w :./,()\-<>=_]+$/.test(filter.value)) {
         logger.warn(
           `Ignoring filter "${filter.field}" with illegal value "${filter.value}"`, // To prevent code injection!
@@ -267,16 +377,25 @@ const applyFilters = (
         submissionForm,
       )
 
+      const values = filter.value.split(',')
+
       if (jsonbField) {
         const { name: jsonName, valuesAreKeyedObjects: isKeyed } = jsonbField
 
         if (isKeyed) {
-          addWhere(`(m.submission->?)::jsonb \\? ?`, jsonName, filter.value)
+          addWhere(
+            `(${values.map(() => `(m.submission->?)::jsonb \\? ?`).join(' OR ')})`,
+            ...values.flatMap(value => [jsonName, value]),
+          )
         } else {
-          addWhere(`m.submission->>? = ?`, jsonName, filter.value)
+          addWhere(
+            `m.submission->>? IN (${values.map(() => '?').join(', ')})`,
+            jsonName,
+            ...values,
+          )
         }
       } else if (filter.field === 'status') {
-        addWhere('m.status = ?', filter.value)
+        addWhere(`m.status IN (${values.map(() => '?').join(', ')})`, ...values)
       } else if (filter.field === 'archived') {
         // ignore: this is handled elsewhere
       } else {
@@ -356,17 +475,68 @@ const buildQueryForManuscriptSearchFilterAndOrder = (
       searchQuery,
     )
 
-    addSelect(
-      `ts_headline('english', m.searchable_text, to_tsquery('english', ?)) AS snippet`,
-      searchQuery,
+    buildSnippetFieldGroups(submissionForm).forEach(
+      ({ jsonKey, expression, alias, options }) => {
+        let textExpression
+        let textExpressionParams
+
+        if (jsonKey && options) {
+          // Resolve stored value(s) to their option label(s), falling back to the raw value if
+          // it no longer matches any current option. Mirrors the equivalent logic in
+          // manuscripts_searchable_text_trigger, which does this at write time for matching.
+          textExpression = stripHtmlTags(`CASE jsonb_typeof(m.submission->?)
+            WHEN 'array' THEN (
+              SELECT string_agg(COALESCE(
+                (SELECT o->>'label' FROM jsonb_array_elements(?::jsonb) o WHERE o->>'value' = elem.value),
+                elem.value
+              ), ' ')
+              FROM jsonb_array_elements_text(m.submission->?) AS elem(value)
+            )
+            ELSE COALESCE(
+              (SELECT o->>'label' FROM jsonb_array_elements(?::jsonb) o WHERE o->>'value' = (m.submission->>?)),
+              m.submission->>?
+            )
+          END`)
+
+          const optionsJson = JSON.stringify(options)
+          textExpressionParams = [
+            jsonKey,
+            optionsJson,
+            jsonKey,
+            optionsJson,
+            jsonKey,
+            jsonKey,
+          ]
+        } else if (jsonKey) {
+          textExpression = stripHtmlTags(
+            `concatenate_text_values(m.submission->?)`,
+          )
+          textExpressionParams = [jsonKey]
+        } else {
+          textExpression = expression
+          textExpressionParams = []
+        }
+
+        addSelect(
+          `CASE WHEN to_tsvector('english', ${textExpression}) @@ to_tsquery('english', ?)
+            THEN ts_headline('english', ${textExpression}, to_tsquery('english', ?), 'MaxFragments=2, MaxWords=20, MinWords=5')
+            ELSE NULL END AS ${alias}`,
+          ...textExpressionParams,
+          searchQuery,
+          ...textExpressionParams,
+          searchQuery,
+        )
+      },
     )
 
     addWhere(`m.search_tsvector @@ to_tsquery('english', ?)`, searchQuery)
 
-    setOrderOnRank = 'ORDER BY rank DESC'
+    if (!sort) {
+      setOrderOnRank = 'ORDER BY rank DESC'
+    }
   }
 
-  if (!searchQuery && sort) {
+  if (sort) {
     applySortOrder(sort, submissionForm, addOrder)
   } else {
     // Give it some order to prevent it changing on refetch.
@@ -560,6 +730,7 @@ const applyTemplatesToArtifacts = (
 
 module.exports = {
   buildQueryForManuscriptSearchFilterAndOrder,
+  buildSearchSnippets,
   stripConfidentialDataFromReviews,
   hasElifeStyleEvaluations,
   applyTemplatesToArtifacts,

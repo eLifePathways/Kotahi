@@ -131,13 +131,18 @@ type Manuscript {
   publishedArtifacts: [PublishedArtifact!]!
   formFieldsToPublish: [FormFieldsToPublish!]!
   searchRank: Float
-  searchSnippet: String
+  searchSnippets: [ManuscriptSearchSnippet!]
   importSourceServer: String
   tasks: [Task!]
   hasOverdueTasksForUser: Boolean
   invitations: [Invitation]
   authorFeedback: ManuscriptAuthorFeeback
   rolesFound: [String!]
+}
+
+type ManuscriptSearchSnippet {
+  field: String!
+  html: String!
 }
 
 type ReviewExport {

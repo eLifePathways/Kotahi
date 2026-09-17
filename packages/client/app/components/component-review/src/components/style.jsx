@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
-import { Button } from '../../../pubsweet'
-import { RoundIconButton } from '../../../shared'
+import { Button, Action } from '../../../pubsweet'
 
 export const AdminSection = styled.div`
   margin-bottom: ${grid(6)};
@@ -112,21 +111,6 @@ export const BadgeContainer = styled.div`
   flex-flow: row wrap;
   gap: 4px 18px;
 `
-export const ChatButton = styled(RoundIconButton)`
-  margin-top: 16px;
-  position: absolute;
-  right: 18px;
-`
-
-export const CollapseButton = styled(RoundIconButton)`
-  height: 33px;
-  margin-top: 0;
-  min-width: 0;
-  position: absolute;
-  right: 0;
-  width: 33px;
-`
-
 export const AssignedAuthorForProofingLogsContainer = styled.div`
   align-items: flex-end;
   display: flex;
@@ -154,6 +138,14 @@ export const AssignedAuthorForProofingInfo = styled.div`
   color: ${th('color.text')};
   font-size: ${th('fontSizeBaseSmall')};
   margin: 8px 0;
+`
+
+export const UserAction = styled(Action)`
+  cursor: pointer;
+  display: block;
+  font-size: inherit;
+  opacity: ${({ isDisabled }) => (isDisabled ? '0.5' : '1')};
+  width: fit-content;
 `
 
 export {

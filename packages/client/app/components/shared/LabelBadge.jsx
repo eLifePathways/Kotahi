@@ -10,7 +10,7 @@ const BadgeDiv = ({ color, children, ...rest }) => (
 )
 
 /** Displays a badge with rounded corners colored according to props.color */
-export const ColorBadge = styled(BadgeDiv)`
+const ColorBadge = styled(BadgeDiv)`
   border-radius: 8px;
   display: inline-block;
   line-height: 1.1em;

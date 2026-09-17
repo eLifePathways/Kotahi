@@ -4,21 +4,12 @@
 /* stylelint-disable custom-property-pattern */
 
 import { useContext, useState, useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { grid, th, override } from '@coko/client'
-import { useTranslation } from 'react-i18next'
 
 import { TabsContainer } from './Tabs'
 import { ConfigContext } from '../config/src'
-import RoundIconButton from './RoundIconButton'
 import { safeCall } from '../../shared/generalUtils'
-
-export const CompactChatButton = styled(RoundIconButton)`
-  height: 33px;
-  margin-top: 0;
-  min-width: 0;
-  width: 33px;
-`
 
 export const Tab = styled.div.attrs(props => ({
   'data-testid': props['data-testid'] || 'hidden-tabs-tab',
@@ -48,6 +39,12 @@ export const Tab = styled.div.attrs(props => ({
   padding-bottom: 0;
   position: relative;
   z-index: 6;
+
+  ${props =>
+    props.$chat &&
+    css`
+      padding: ${grid(2.5)};
+    `}
 
   & > div {
     border-bottom: 3px solid
@@ -85,13 +82,10 @@ const HiddenTabs = ({
   defaultActiveKey = null,
   tabsContainerGridArea,
   background,
-  hideChat,
   shouldFillFlex,
 }) => {
   const config = useContext(ConfigContext)
   const [activeKey, setActiveKey] = useState(defaultActiveKey)
-
-  const { t } = useTranslation()
 
   useEffect(() => {
     setActiveKey(defaultActiveKey)
@@ -135,15 +129,6 @@ const HiddenTabs = ({
             </TabContainer>
           ))}
         </div>
-
-        {/* TODO: Hide Chat could be a seperate component */}
-        {hideChat && (
-          <CompactChatButton
-            iconName="ChevronRight"
-            onClick={hideChat}
-            title={t('chat.Hide Chat')}
-          />
-        )}
       </HiddenTabsContainer>
 
       {sections.map(section => (

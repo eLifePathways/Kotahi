@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, RuleSet } from 'styled-components'
 import { grid, th, Link as UILink } from '@coko/client'
 
+import { collapseTransition } from '../constants'
 import Avatar from '../shared/Avatar'
+import Badge from '../shared/Badge'
 import {
   Home,
   File,
@@ -21,8 +23,6 @@ import {
 // #region styled
 const fullWidth = '272px'
 const collapsedWidth = '64px'
-const collapseTime = '0.3s'
-const collapseTransition = `${collapseTime} ease`
 
 /**
  * If you notice redundant font-family, font-size and line-height values all
@@ -64,7 +64,7 @@ const GroupSection = styled.div`
 const GroupLetter = styled.div<{ $menuCollapsed: boolean }>`
   height: ${grid(12)};
   width: ${grid(12)};
-  border-radius: ${th('borderRadiusLarge')};
+  border-radius: ${th('borderRadius')};
 
   background-color: ${th('colorBackground')};
   color: ${th('colorPrimary')};
@@ -226,13 +226,9 @@ const UserRoles = styled.div<{ $labelsWrap: boolean }>`
   overflow: hidden;
 `
 
-const UserLabel = styled.span`
+const UserLabel = styled(Badge)`
   background-color: ${th('colorTextReverse')};
   color: ${th('colorPrimary')};
-  font-size: ${th('fontSizeBaseSmaller')};
-  padding: 0 ${grid(2)};
-  border-radius: ${th('borderRadius')};
-  white-space: nowrap;
 `
 
 const CollapseIconWrapper = css`
@@ -541,12 +537,14 @@ const Menu = (props: MenuProps): ReactNode => {
         </UserTop>
         <UserBottom $menuCollapsed={menuCollapsed}>
           <UserRoles $labelsWrap={labelsWrap}>
-            {isUserAdmin && <UserLabel>{t('common.roles.Admin')}</UserLabel>}
+            {isUserAdmin && (
+              <UserLabel small>{t('common.roles.Admin')}</UserLabel>
+            )}
             {isUserGroupAdmin && (
-              <UserLabel>{t('common.roles.Group Admin')}</UserLabel>
+              <UserLabel small>{t('common.roles.Group Admin')}</UserLabel>
             )}
             {isUserGroupManager && (
-              <UserLabel>{t('common.roles.Group Manager')}</UserLabel>
+              <UserLabel small>{t('common.roles.Group Manager')}</UserLabel>
             )}
           </UserRoles>
         </UserBottom>

@@ -9,7 +9,7 @@ import { Mail } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import { Primary, Secondary } from '../../../shared'
 import { convertTimestampToRelativeDateString } from '../../../../shared/dateUtils'
-import { UserAction } from '../../../component-manuscripts-table/src/style'
+import { UserAction } from './style'
 import InviteDeclineModal from './InviteDeclineModal'
 
 const DeclinedReviewerContainer = styled.div`

@@ -66,10 +66,22 @@ const rawAbstractToSafeHtml = raw => {
   return `<p>${encoded.replace(/\n\s*/g, '</p>\n<p>')}</p>`
 }
 
+/**
+ * Converts a title retrieved from an external source (eg. Semantic Scholar,
+ * Crossref, DataCite) to safe HTML. Unlike rawAbstractToSafeHtml, a title is
+ * always a single line, so it's wrapped in one <p> rather than split on
+ * newlines into several.
+ */
+const rawTitleToSafeHtml = raw => {
+  if (!raw) return null
+  return `<p>${he.encode(raw)}</p>`
+}
+
 module.exports = {
   getServerId,
   getLastImportDate,
   getEmptySubmission,
   getDate2WeeksAgo,
   rawAbstractToSafeHtml,
+  rawTitleToSafeHtml,
 }

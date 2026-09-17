@@ -1,13 +1,11 @@
 /* eslint-disable promise/always-return, promise/no-nesting */
 /* eslint-disable cypress/no-unnecessary-waiting */
 
-import { dashboard, manuscripts } from '../../support/routes1'
+import { dashboard } from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 // import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { DashboardPage } from '../../page-object/dashboard-page'
-import { ControlPage } from '../../page-object/control-page'
-import { ReviewPage } from '../../page-object/review-page'
 
 describe('control page tests', () => {
   // UPDATE 0.05.2025
@@ -169,133 +167,6 @@ describe('control page tests', () => {
     cy.request('POST', `${seedUrl}/senior_editor_assigned`)
   })
 
-  context('Hide review and hide reviewer functionality', () => {
-    before(() => {
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.admin, manuscripts)
-        cy.awaitDisappearSpinner()
-        Menu.clickManuscriptsAndAssertPageLoad()
-        ManuscriptsPage.selectOptionWithText('Control')
-        cy.awaitDisappearSpinner()
-        ControlPage.getAssignSeniorEditorDropdown().should('be.visible')
-        ControlPage.inviteReviewer(name.role.reviewers[1])
-        cy.reload()
-        cy.get('input[value = "isCollaborative"]').should('not.exist')
-
-        ControlPage.getNumberOfInvitedReviewers().should('eq', 1)
-        cy.login(name.role.reviewers[1], dashboard)
-        cy.awaitDisappearSpinner()
-        cy.wait(1000)
-        DashboardPage.clickDashboardTab(1)
-        DashboardPage.clickAcceptReviewButton()
-
-        cy.contains('button', 'Do Review').should('exist')
-        DashboardPage.clickDoReview()
-        cy.fixture('submission_form_data').then(data => {
-          cy.contains('div', 'Metadata').should('be.visible')
-          cy.get('[data-testid=tab-container]')
-            .contains('Review')
-            .invoke('click')
-          cy.wait(500)
-          ReviewPage.fillInReviewComment(data.review1)
-          ReviewPage.clickAcceptRadioButton()
-          ReviewPage.clickSubmitButton()
-          ReviewPage.clickConfirmSubmitButton()
-
-          cy.get('[name="submission.$title"]').contains('test pdf')
-        })
-      })
-    })
-
-    beforeEach(() => {
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.admin, manuscripts)
-        cy.awaitDisappearSpinner()
-        ManuscriptsPage.selectOptionWithText('Control')
-        cy.awaitDisappearSpinner()
-        ControlPage.getAssignSeniorEditorDropdown().should('be.visible')
-      })
-      ControlPage.clickReviewsTab()
-    })
-
-    it('By default the review and the reviewer name are hidden so reviewer can not see their name', () => {
-      ControlPage.getHideReviewToAuthorCheckbox().should('be.checked')
-      ControlPage.getHideReviewerNameCheckbox().should('be.checked')
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.reviewers[1], dashboard)
-        cy.get('[data-testid="submission.$title"]:last').click()
-        cy.get('[data-testid=tab-container]').contains('Review').click()
-        ControlPage.getReviewerName().should(
-          'not.contain',
-          name.role.reviewers[1],
-        )
-      })
-    })
-
-    it('When review and reviewer name are not hidden then reviewer can see their name', () => {
-      ControlPage.clickHideReviewToAuthor()
-      ControlPage.getHideReviewToAuthorCheckbox('should', 'not.be.checked')
-      ControlPage.clickHideReviewerNameToAuthor()
-      ControlPage.getHideReviewerNameCheckbox('should', 'not.be.checked')
-      cy.fixture('role_names').then(name => {
-        cy.login(name.role.reviewers[1], dashboard)
-        cy.get('[data-testid="submission.$title"]:last').click()
-        cy.get('[data-testid=tab-container]').contains('Review').click()
-        ControlPage.getReviewerName().should('contain', name.role.reviewers[1])
-      })
-    })
-  })
-
-  context('sending email notifications', () => {
-    // before(() => {
-    //   cy.task('restore', 'email_notification')
-    // })
-    beforeEach(() => {
-      cy.fixture('role_names').then(name => {
-        // login as seniorEditor
-        cy.login(name.role.seniorEditor, dashboard)
-        cy.wait(500)
-        DashboardPage.clickDashboardTab(2)
-        DashboardPage.clickControl() // Navigate to Control Page
-      })
-    })
-
-    it('can send email notifications to existing and non-existing users', () => {
-      /* New User */
-      sendNotification({
-        receiverName: 'Jon',
-        templateName: 'Author Invitation',
-        expectedMessage: null,
-        // should be saying this instead:
-        // 'Author Invitation sent by Elaine Barnes to Jon',
-        isNewUser: true,
-        email: 'jon@example.co',
-      })
-
-      /* Existing Users */
-      sendNotification({
-        receiverName: 'Emily',
-        templateName: 'Author Invitation',
-        expectedMessage:
-          'Submission Confirmation Email sent by Kotahi to Emily Clay',
-        // should be saying this instead:
-        // 'Author Invitation sent by Elaine Barnes to Emily Clay',
-      })
-
-      sendNotification({
-        receiverName: 'Joane',
-        templateName: 'Reviewer Invitation',
-        expectedMessage: null, // 'Reviewer Invitation sent by Elaine Barnes to Joane Pilger',
-      })
-
-      sendNotification({
-        receiverName: 'Gale',
-        templateName: 'Task notification',
-        expectedMessage: null, // 'Task notification sent by Elaine Barnes to Gale Davis',
-      })
-    })
-  })
-
   context('sending notifications via "Tasks" control panel', () => {
     beforeEach(() => {
       cy.fixture('role_names').then(name => {
@@ -304,7 +175,7 @@ describe('control page tests', () => {
       cy.awaitDisappearSpinner()
       DashboardPage.getHeader().should('be.visible')
       Menu.clickManuscriptsAndAssertPageLoad()
-      ManuscriptsPage.selectOptionWithText('Control')
+      ManuscriptsPage.clickControlLink()
       cy.awaitDisappearSpinner()
       cy.contains('Tasks & Notifications').click()
     })
@@ -388,54 +259,6 @@ describe('control page tests', () => {
     })
   })
 })
-
-function sendNotification({
-  receiverName,
-  templateName,
-  expectedMessage,
-  isNewUser = false,
-  email = null,
-}) {
-  cy.reload()
-  cy.contains('Tasks & Notifications').click()
-
-  if (isNewUser === true) {
-    cy.get('input[type="checkbox"]:last').click({ force: true })
-
-    cy.get('[data-cy="new-user-email"]').type(email)
-    cy.get('[data-cy="new-user-email"]').should('have.value', email)
-    cy.get('[data-cy="new-user-name"]').type(receiverName)
-    cy.get('[data-cy="new-user-name"]').should('have.value', receiverName)
-
-    ControlPage.getEmailNotificationDropdowns()
-      .eq(2)
-      .click()
-      .find('input')
-      .type(`${templateName}{enter}`, { force: true })
-  } else {
-    cy.getByDataTestId('choose-receiver').click()
-    cy.get('input[aria-label="Choose receiver"]').type(
-      `${receiverName}{enter}`,
-      {
-        force: true,
-      },
-    )
-
-    ControlPage.getEmailNotificationDropdowns()
-      .eq(1)
-      .click()
-      .find('input')
-      .type(`${templateName}{enter}`, { force: true })
-  }
-
-  cy.contains('Notify').click()
-  ControlPage.clickExpandChatButton()
-  ControlPage.clickNthChatTab(1)
-
-  if (expectedMessage) {
-    ControlPage.getMessageContainer().should('contain', expectedMessage)
-  }
-}
 
 function createTask({ assignee, title }) {
   cy.get('[title="Add a new task"]').click()

@@ -36,12 +36,6 @@ export const Status = styled.span.attrs({
   text-transform: uppercase;
 `
 
-export const ConfigurableStatus = styled(Status)`
-  background-color: ${p => p.color};
-  color: ${p =>
-    p.$lightText ? p.theme.color.textReverse : p.theme.color.text};
-`
-
 export const safeLabel = status => {
   const unknownFallback = `${i18next.t('msStatus.unknown')} (${status})`
   return i18next.t(`msStatus.${status}`, unknownFallback)

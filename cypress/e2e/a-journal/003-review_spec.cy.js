@@ -50,20 +50,20 @@ describe('Completing reviews', () => {
 
       cy.wait(1000)
       DashboardPage.clickDashboardTab(2)
-      cy.get('[fill="#56b984"]')
-        .should('be.visible')
-        .trigger('mouseover', { force: true })
-      cy.contains('Completed: 3')
-      cy.wait(1000)
-      cy.get('[fill="#fff2cd"]').should('be.visible').trigger('mouseover')
-      cy.contains('Invited: 1')
-      cy.get('[fill="#d7efd4"]').should('be.visible').trigger('mouseover')
-      cy.contains('Accepted: 1')
+      cy.getByDataTestId('statusCounts')
+        .find('[role="img"][aria-label$="Completed"]')
+        .should('have.length', 3)
+      cy.getByDataTestId('statusCounts')
+        .find('[role="img"][aria-label$="Invited"]')
+        .should('have.length', 1)
+      cy.getByDataTestId('statusCounts')
+        .find('[role="img"][aria-label$="Accepted"]')
+        .should('have.length', 1)
+      cy.getByDataTestId('statusCounts')
+        .find('[role="img"][aria-label$="Declined"]')
+        .should('have.length', 1)
 
-      cy.get('[fill="#c23d20"]').should('be.visible').trigger('mouseover')
-      cy.contains('Declined: 1')
-
-      cy.get('[data-testid="control-panel-team"]').click()
+      cy.get('[data-testid="control-link"]').click()
       cy.awaitDisappearSpinner()
       cy.get(
         '[data-testid=kanban] > :nth-child(1) > [data-testid=kanban-cards-wrapper] > [data-testid=kanban-card]',
@@ -92,7 +92,9 @@ const doReview = (name, reviewData) => {
   // Accpet Review Request Workflow
   if (reviewData.verdict === 'accept') {
     DashboardPage.clickAcceptReviewButton()
-    cy.contains('button', 'Do Review').should('exist')
+    cy.contains('Accept this review invitation?').should('be.visible')
+    cy.contains('button', 'OK').click()
+    DashboardPage.getDoReviewButton().should('contain', 'Do Review')
 
     // Only do the review if there'a  comment present
     if (reviewData.comment) {
@@ -116,6 +118,7 @@ const doReview = (name, reviewData) => {
 
       // Verify the review got completed
       cy.get('nav').contains('Dashboard').click()
+      cy.url().should('contain', '/dashboard/reviews')
       DashboardPage.getDoReviewButton().should('contain', 'View')
       cy.getByDataTestId('menu-user').click()
       cy.contains('Logout').click()
@@ -125,6 +128,8 @@ const doReview = (name, reviewData) => {
   // Reject Review Request Workflow
   if (reviewData.verdict === 'reject') {
     DashboardPage.clickRejectReviewButton()
+    cy.contains('Decline this review invitation?').should('be.visible')
+    cy.contains('button', 'OK').click()
     DashboardPage.getDoReviewButton().should('not.exist')
     cy.getByDataTestId('menu-user').click()
     cy.contains('Logout').click()

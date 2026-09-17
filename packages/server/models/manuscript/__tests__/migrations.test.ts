@@ -8,7 +8,21 @@ import {
 } from '@coko/server'
 
 import Manuscript from '../manuscript.model'
+import Team from '../../team/team.model'
+import User from '../../user/user.model'
+
 import oldContent from './content'
+
+const MIGRATION_BEFORE_SEARCH_CHANGES = '1783674872-remove-menu-pinned.ts'
+
+const matchesSearch = async (manuscriptId, term): Promise<boolean> => {
+  const { rows } = await db.raw(
+    `select (search_tsvector @@ to_tsquery('english', ?)) as matched from manuscripts where id = ?`,
+    [term, manuscriptId],
+  )
+
+  return rows[0].matched
+}
 
 // const oldContent = `<h1>title</h1><p>hello<footnote>foot</footnote></p><br/><ul><li><p>yes</p></li><li><p><span class="comment" data-id="6b46da14-ebc3-4398-a243-018d8c0f9c79" data-conversation="[{&quot;content&quot;:&quot;demo comment&quot;,&quot;displayName&quot;:&quot;demo&quot;,&quot;timestamp&quot;:1601559766164}]" data-viewid="main" data-group="main"><bold>item</bold></span></p></li></ul>`
 // const oldContent = `<h1>chapter title</h1><br/><h2>notes with drag and drop</h2><br/><span class="comment" data-id="6b46da14-ebc3-4398-a243-018d8c0f9c79" data-conversation="[{&quot;content&quot;:&quot;demo comment&quot;,&quot;displayName&quot;:&quot;demo&quot;,&quot;timestamp&quot;:1601559766164}]" data-viewid="main" data-group="main"><bold>item</bold></span>`
@@ -24,7 +38,7 @@ describe('Manuscript Migrations', () => {
   })
 
   afterAll(async () => {
-    await DbTestUtils.dropAllTables()
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 
@@ -105,4 +119,46 @@ describe('Manuscript Migrations', () => {
 
     expect(true).toBe(true)
   }, 600000)
+
+  it('restricts search to manuscripts-table data', async () => {
+    await migrationManager.migrate({ to: MIGRATION_BEFORE_SEARCH_CHANGES })
+
+    const manuscript = await Manuscript.insert({
+      submission: { $title: 'Wombat Manuscript Title' },
+    })
+
+    const reviewer = await User.insert({ username: 'quokkaville' })
+
+    const reviewerTeam = await Team.insert({
+      objectId: manuscript.id,
+      objectType: 'manuscript',
+      role: 'reviewer',
+      displayName: 'Reviewers',
+    })
+
+    await Team.addMember(reviewerTeam.id, reviewer.id)
+
+    // The trigger only fires on manuscript insert/update, so re-touch the manuscript now that
+    // the reviewer team member exists, to bring search_tsvector up to date with it.
+    await db.raw('update manuscripts set updated = updated where id = ?', [
+      manuscript.id,
+    ])
+
+    // Before the migration: both the title and the reviewer's username match.
+    expect(await matchesSearch(manuscript.id, 'wombat')).toBe(true)
+    expect(await matchesSearch(manuscript.id, 'quokkaville')).toBe(true)
+
+    await migrationManager.migrate({ step: 1 })
+
+    // After the migration: the title still matches, but the reviewer no longer does, since
+    // matching is now restricted to manuscripts-table data.
+    expect(await matchesSearch(manuscript.id, 'wombat')).toBe(true)
+    expect(await matchesSearch(manuscript.id, 'quokkaville')).toBe(false)
+
+    await migrationManager.rollback({ step: 1 })
+
+    // After rolling back: both match again.
+    expect(await matchesSearch(manuscript.id, 'wombat')).toBe(true)
+    expect(await matchesSearch(manuscript.id, 'quokkaville')).toBe(true)
+  })
 })

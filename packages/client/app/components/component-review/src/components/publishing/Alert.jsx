@@ -10,7 +10,7 @@ const AlertSuccess = styled.div`
   color: ${th('colorSuccessDark')};
   line-height: 1.8;
   padding: 0.5em 1em 0.5em 0.5em;
-  width: 600px;
+  width: 100%;
 `
 
 const AlertError = styled(AlertSuccess)`

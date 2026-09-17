@@ -50,7 +50,7 @@ describe('checking manuscript version', () => {
       cy.wait(1000)
       cy.login(name.role.author, dashboard)
       /* Click on first MySubmission */
-      DashboardPage.getSubmittedManuscript().click()
+      DashboardPage.clickSubmissionActionLink()
 
       /* Verify Decision Content */
       DashboardPage.getDecisionField(0).should('contain', decisionTextContent)
@@ -76,9 +76,7 @@ describe('checking manuscript version', () => {
       SubmissionFormPage.clickSubmitResearch()
       SubmissionFormPage.clickSubmitYourManuscript()
       /* Verify new submission got created */
-      DashboardPage.getSubmittedManuscript()
-        .contains('test pdf')
-        .should('exist')
+      DashboardPage.getSubmissionTitle().contains('test pdf').should('exist')
 
       /* Login as editor and check the new version submission form */
       cy.login(name.role.seniorEditor, dashboard)

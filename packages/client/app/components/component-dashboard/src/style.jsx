@@ -83,6 +83,7 @@ export const Placeholder = styled.div.attrs({
   padding: 4em;
   place-items: center;
 `
+
 export const Centered = styled.div`
   text-align: center;
 `

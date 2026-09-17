@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { convertTimestampToDateString } from '../../../../shared/dateUtils'
 import { UserAvatar } from '../../../component-avatar/src'
 import Modal from '../../../component-modal/src/Modal'
-import { ConfigurableStatus } from '../../../shared'
+import Badge from '../../../../ui/shared/Badge'
 
 const ModalBody = styled.div`
   display: flex;
@@ -61,10 +61,6 @@ const StyledH4 = styled.h4`
   font-weight: 600;
 `
 
-const DeclinedBadge = styled(ConfigurableStatus)`
-  background: #c23d20;
-`
-
 const TextChange = styled.div`
   color: ${props =>
     props.gray ? props.theme.color.brand2.base : props.theme.color.text};
@@ -102,13 +98,13 @@ const InviteDeclineModal = ({ invitation, isOpen, onClose }) => {
         </ModalBodyRow>
         <ModalBodyRow>
           <StyledH4>{t('modals.inviteDeclined.Status')}</StyledH4>
-          <DeclinedBadge lightText>
+          <Badge small variant="error">
             {t('modals.inviteDeclined.declinedBadge')}
-          </DeclinedBadge>
+          </Badge>
           {invitation.declinedReason === 'DO_NOT_CONTACT' && (
-            <DeclinedBadge lightText>
+            <Badge small variant="error">
               {t('modals.inviteDeclined.Opted Out')}
-            </DeclinedBadge>
+            </Badge>
           )}
         </ModalBodyRow>
         <ResponseCommentRow>

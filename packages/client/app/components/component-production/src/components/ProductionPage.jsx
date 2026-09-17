@@ -1,6 +1,6 @@
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
-import React, { useContext } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 
@@ -62,36 +62,40 @@ const ProductionPage = () => {
     data: modalData,
   } = useContext(ModalContext)
 
-  const onAssetManager = manuscriptId =>
-    new Promise(resolve => {
-      const handleImport = async selectedFileIds => {
-        const { data } = await client.query({
-          query: GET_SPECIFIC_FILES,
-          variables: { ids: selectedFileIds },
+  const onAssetManager = useCallback(
+    manuscriptId =>
+      new Promise(resolve => {
+        const handleImport = async selectedFileIds => {
+          const { data } = await client.query({
+            query: GET_SPECIFIC_FILES,
+            variables: { ids: selectedFileIds },
+          })
+
+          const alteredFiles = data.getSpecificFiles.map(file => {
+            const mediumSizeFile = file.storedObjects.find(
+              storedObject => storedObject.type === 'medium',
+            )
+
+            return {
+              source: mediumSizeFile.url,
+              mimetype: mediumSizeFile.mimetype,
+              ...file,
+            }
+          })
+
+          hideModal()
+          resolve(alteredFiles)
+        }
+
+        showModal('assetManagerEditor', {
+          manuscriptId,
+          withImport: true,
+          handleImport,
         })
+      }),
+    [client, showModal, hideModal],
+  )
 
-        const alteredFiles = data.getSpecificFiles.map(file => {
-          const mediumSizeFile = file.storedObjects.find(
-            storedObject => storedObject.type === 'medium',
-          )
-
-          return {
-            source: mediumSizeFile.url,
-            mimetype: mediumSizeFile.mimetype,
-            ...file,
-          }
-        })
-
-        hideModal()
-        resolve(alteredFiles)
-      }
-
-      showModal('assetManagerEditor', {
-        manuscriptId,
-        withImport: true,
-        handleImport,
-      })
-    })
   const [makingPdf, setMakingPdf] = React.useState(false)
   const [makingJats, setMakingJats] = React.useState(false)
   // const [saving, setSaving] = React.useState(false)
@@ -127,19 +131,24 @@ const ProductionPage = () => {
 
   const [updateTempl] = useMutation(UPDATE_TEMPLATE)
 
-  const updateManuscript = async (versionId, manuscriptDelta) => {
-    const newQuery = await update({
-      variables: {
-        id: versionId,
-        input: JSON.stringify(manuscriptDelta),
-      },
-    })
+  const updateManuscript = useCallback(
+    async (versionId, manuscriptDelta) => {
+      const newQuery = await update({
+        variables: {
+          id: versionId,
+          input: JSON.stringify(manuscriptDelta),
+        },
+      })
 
-    return newQuery
-  }
+      return newQuery
+    },
+    [update],
+  )
 
-  const updateTemplate = (id, input) =>
-    updateTempl({ variables: { id, input } })
+  const updateTemplate = useCallback(
+    (id, input) => updateTempl({ variables: { id, input } }),
+    [updateTempl],
+  )
 
   const { data, loading, error } = useQuery(PRODUCTION_MANUSCRIPT, {
     variables: {
@@ -149,124 +158,137 @@ const ProductionPage = () => {
     },
   })
 
-  if (loading) return <Spinner />
-  if (error) return <CommsErrorBanner error={error} />
-
-  const manuscript = {
-    ...data.manuscript,
-    submission: JSON.parse(data.manuscript.submission),
-  }
-
-  const {
-    submissionForm,
-    articleTemplate,
-    manuscript: unparsedManuscript,
-  } = data
-
-  const addNewVersion = async newVersion => {
-    // This adds a new version to the top of the previousVersions stack
-    // console.log('in update version list!')
-    // get current manuscript version list
-    const existing = manuscript?.meta?.previousVersions || []
-
-    if (existing[0]?.source && existing[0].source === newVersion.source) {
-      // if this is the same as the last version, don't resave
-      return false
-    }
-
-    // add new version to the top to the stack
-    const updateDelta = {
-      meta: { previousVersions: [newVersion, ...existing] },
-    }
-
-    // console.log('Delta to send: ', updateDelta)
-
-    // save this as a mutation to the manuscript
-    const newQuery = await update({
-      variables: {
-        id: manuscript.id,
-        input: JSON.stringify(updateDelta),
+  const manuscript = useMemo(
+    () =>
+      data?.manuscript && {
+        ...data.manuscript,
+        submission: JSON.parse(data.manuscript.submission),
       },
-    })
+    [data],
+  )
 
-    // console.log('saved!', newQuery)
-    return newQuery
-  }
+  const addNewVersion = useCallback(
+    async newVersion => {
+      // This adds a new version to the top of the previousVersions stack
+      // console.log('in update version list!')
+      // get current manuscript version list
+      const existing = manuscript?.meta?.previousVersions || []
+
+      if (existing[0]?.source && existing[0].source === newVersion.source) {
+        // if this is the same as the last version, don't resave
+        return false
+      }
+
+      // add new version to the top to the stack
+      const updateDelta = {
+        meta: { previousVersions: [newVersion, ...existing] },
+      }
+
+      // console.log('Delta to send: ', updateDelta)
+
+      // save this as a mutation to the manuscript
+      const newQuery = await update({
+        variables: {
+          id: manuscript.id,
+          input: JSON.stringify(updateDelta),
+        },
+      })
+
+      // console.log('saved!', newQuery)
+      return newQuery
+    },
+    [manuscript, update],
+  )
 
   // Get 'currentUserRole' for the manuscript version isAdmin, isGroupManager, isAuthor, isEditor
-  const currentUserRole = {}
+  const currentUserRole = useMemo(() => {
+    const role = {}
 
-  const { globalRoles = [] } = currentUser
-  currentUserRole.isAdmin = globalRoles.includes('admin')
-  currentUserRole.isGroupAdmin = currentUser.groupRoles.includes('groupAdmin')
-  currentUserRole.isGroupManager =
-    currentUser.groupRoles.includes('groupManager')
+    const { globalRoles = [] } = currentUser
+    role.isAdmin = globalRoles.includes('admin')
+    role.isGroupAdmin = currentUser.groupRoles.includes('groupAdmin')
+    role.isGroupManager = currentUser.groupRoles.includes('groupManager')
 
-  const authorTeam = manuscript.teams.find(team => team.role === 'author')
+    if (!manuscript) return role
 
-  const sortedAuthors = authorTeam?.members
-    .slice()
-    .sort(
-      (a, b) =>
-        Date.parse(new Date(b.created)) - Date.parse(new Date(a.created)),
-    )
+    const authorTeam = manuscript.teams.find(team => team.role === 'author')
 
-  currentUserRole.isAuthor =
-    sortedAuthors && sortedAuthors[0]?.user?.id === currentUser.id // This logic might change in the future! Now it uses the latest created author
+    const sortedAuthors = authorTeam?.members
+      .slice()
+      .sort(
+        (a, b) =>
+          Date.parse(new Date(b.created)) - Date.parse(new Date(a.created)),
+      )
 
-  const editorTeam = manuscript.teams.find(team => team.role === 'editor')
+    role.isAuthor =
+      sortedAuthors && sortedAuthors[0]?.user?.id === currentUser.id // This logic might change in the future! Now it uses the latest created author
 
-  currentUserRole.isEditor = editorTeam?.members[0]?.user?.id === currentUser.id // This will be 'true' only for 'editor' role assigned and not for 'handlingEditor' or 'senoirEditor'
+    const editorTeam = manuscript.teams.find(team => team.role === 'editor')
 
-  const isAuthorProofingMode = showAuthorProofingMode(
-    currentUserRole,
-    manuscript,
-    updateManuscript,
-  ) // If true, we are in author proofing mode
+    role.isEditor = editorTeam?.members[0]?.user?.id === currentUser.id // This will be 'true' only for 'editor' role assigned and not for 'handlingEditor' or 'senoirEditor'
+
+    return role
+  }, [currentUser, manuscript])
+
+  const isAuthorProofingMode = useMemo(
+    () =>
+      manuscript &&
+      showAuthorProofingMode(currentUserRole, manuscript, updateManuscript),
+    [currentUserRole, manuscript, updateManuscript],
+  )
 
   // 'currentUser' is assigned author for proofing and has completed author proofing, we go read-only
   // If the currentUser is editor of the manuscript version, we go read-only (might change in the future!)
   // If the author proofing mode status is 'assigned' or 'inProgress' and currentUser is neither author nor editor, we go read-only
   const isReadOnlyMode =
-    (isAuthorProofingMode && ['completed'].includes(manuscript.status)) ||
-    (['assigned', 'inProgress'].includes(manuscript.status) &&
+    (isAuthorProofingMode && ['completed'].includes(manuscript?.status)) ||
+    (['assigned', 'inProgress'].includes(manuscript?.status) &&
       !isAuthorProofingMode)
+
+  const form = useMemo(
+    () =>
+      data?.submissionForm?.structure ?? {
+        name: '',
+        children: [],
+        description: '',
+        haspopup: 'false',
+      },
+    [data],
+  )
+
+  const queryAI = useCallback(
+    input => {
+      const [userInput, highlightedText] = input.text
+
+      const formattedInput = {
+        text: [`${userInput}.\nHighlighted text: ${highlightedText}`],
+      }
+
+      return new Promise(resolve => {
+        refetch({
+          system: waxAiToolSystem,
+          input: formattedInput,
+          groupId,
+        }).then(({ data: { openAi } }) => {
+          const {
+            message: { content },
+          } = JSON.parse(openAi)
+
+          resolve(content)
+        })
+      })
+    },
+    [refetch, groupId],
+  )
+
+  if (loading) return <Spinner />
+  if (error) return <CommsErrorBanner error={error} />
+
+  const { articleTemplate, manuscript: unparsedManuscript } = data
 
   const canSubmitWithBlankEditor =
     submission.submissionPage?.submitOptions ===
     'allowAuthorSubmitFormWithBlankEditor'
-
-  // console.log('Author proofing mode: ', isAuthorProofingMode)
-  // console.log('Read only mode: ', isReadOnlyMode)
-
-  const form = submissionForm?.structure ?? {
-    name: '',
-    children: [],
-    description: '',
-    haspopup: 'false',
-  }
-
-  const queryAI = input => {
-    const [userInput, highlightedText] = input.text
-
-    const formattedInput = {
-      text: [`${userInput}.\nHighlighted text: ${highlightedText}`],
-    }
-
-    return new Promise(resolve => {
-      refetch({
-        system: waxAiToolSystem,
-        input: formattedInput,
-        groupId,
-      }).then(({ data: { openAi } }) => {
-        const {
-          message: { content },
-        } = JSON.parse(openAi)
-
-        resolve(content)
-      })
-    })
-  }
 
   const ModalComponent = modals?.[modalKey]
 
@@ -284,8 +306,6 @@ const ProductionPage = () => {
           <DownloadPdfComponent
             manuscript={manuscript}
             resetMakingPdf={() => {
-              // refetch({ id: match.params.version, manuscriptId: manuscript.id })
-              // console.log('resetMakingPdf fired!')
               setMakingPdf(false)
             }}
           />
@@ -306,7 +326,6 @@ const ProductionPage = () => {
           canSubmitWithBlankEditor={canSubmitWithBlankEditor}
           client={client}
           currentUser={currentUser}
-          currentUserRole={currentUserRole}
           displayShortIdAsIdentifier={controlPanel?.displayManuscriptShortId}
           file={manuscript.files.find(file => file.tags.includes('manuscript'))}
           form={form}
@@ -319,12 +338,7 @@ const ProductionPage = () => {
           queryAI={queryAI}
           submitAuthorProofingFeedback={submitAuthorProofingFeedback}
           unparsedManuscript={unparsedManuscript}
-          updateManuscript={(a, b) => {
-            // TODO: This might need to be different based on value of isAuthorProofingMode?
-
-            // console.log('in update manuscript!')
-            updateManuscript(a, b)
-          }}
+          updateManuscript={updateManuscript}
           updateTemplate={updateTemplate}
         />
       </div>

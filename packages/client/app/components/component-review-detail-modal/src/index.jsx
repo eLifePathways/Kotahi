@@ -11,14 +11,7 @@ import YjsContext from '../../provider-yjs/YjsProvider'
 import { convertTimestampToDateString } from '../../../shared/dateUtils'
 import { ensureJsonIsParsed } from '../../../shared/objectUtils'
 import Modal, { SecondaryButton } from '../../component-modal/src/Modal'
-import {
-  ConfigurableStatus,
-  UserInfo,
-  UserCombo,
-  Primary,
-  Secondary,
-} from '../../shared'
-import reviewStatuses from '../../../../config/journal/review-status'
+import { UserInfo, UserCombo, Primary, Secondary } from '../../shared'
 import recommendations from '../../../../config/journal/recommendations'
 import { UserAvatar } from '../../component-avatar/src'
 import DeleteReviewerModal from '../../component-review/src/components/reviewers/DeleteReviewerModal'
@@ -26,13 +19,20 @@ import DeleteInvitationModal from '../../component-review/src/components/reviewe
 import ReadonlyFieldData from '../../component-review/src/components/metadata/ReadonlyFieldData'
 import FormTemplate from '../../component-submit/src/components/FormTemplate'
 import { ConfigContext } from '../../config/src'
-import localizeReviewFilterOptions from '../../../shared/localizeReviewFilterOptions'
 import localizeRecommendations from '../../../shared/localizeRecommendations'
+import ReviewerStatus from '../../../ui/shared/ReviewerStatus'
+import Badge from '../../../ui/shared/Badge'
 
 const Header = styled.div`
   font-size: 18px;
   font-weight: 500;
 `
+
+const recommendationVariants = {
+  accept: 'success',
+  revise: 'warning',
+  reject: 'error',
+}
 
 const ReviewItemContainer = styled.div`
   display: flex;
@@ -126,19 +126,10 @@ const ReviewDetailsModal = (
     // }
   }, [review?.id])
 
-  const LocalizedReviewFilterOptions = localizeReviewFilterOptions(
-    reviewStatuses,
-    t,
-  )
-
   const fallbackStatus =
     review?.isCollaborative && review?.isLock === true ? 'closed' : 'completed'
 
   const statusToDisplay = status ?? fallbackStatus
-
-  const statusConfig = LocalizedReviewFilterOptions.find(
-    item => item.value === statusToDisplay,
-  )
 
   let reviewer = null
   let inviteeName = null
@@ -287,12 +278,7 @@ const ReviewDetailsModal = (
       )}
       <StatusContainer>
         <Header>{t('modals.reviewReport.Status')}</Header>
-        <ConfigurableStatus
-          color={statusConfig.color}
-          lightText={statusConfig.lightText}
-        >
-          {statusConfig?.label}
-        </ConfigurableStatus>
+        <ReviewerStatus small status={statusToDisplay} />
       </StatusContainer>
       {review && showForm && (
         <FormTemplate
@@ -459,9 +445,12 @@ const ReviewData = ({
       {recommendationConfig && (
         <StatusContainer>
           <Header>{t('modals.reviewReport.Recommendation')}</Header>
-          <ConfigurableStatus color={recommendationConfig.color} lightText>
+          <Badge
+            small
+            variant={recommendationVariants[recommendationConfig.value]}
+          >
             {recommendationConfig.label}
-          </ConfigurableStatus>
+          </Badge>
         </StatusContainer>
       )}
 

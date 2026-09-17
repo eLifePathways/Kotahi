@@ -1,4 +1,4 @@
-import { describe, beforeAll, afterAll, it, expect } from 'vitest'
+import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
 import cheerio from 'cheerio'
 import {
   uuid,
@@ -7,6 +7,7 @@ import {
   config,
   migrationManager,
   fileStorage,
+  DbTestUtils,
 } from '@coko/server'
 
 import sanitizeWaxImages from '../sanitizeWaxImages'
@@ -22,7 +23,12 @@ describe('Sanitize wax images', () => {
     fileStorage.init()
   })
 
+  beforeEach(async () => {
+    await DbTestUtils.clearDb()
+  })
+
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

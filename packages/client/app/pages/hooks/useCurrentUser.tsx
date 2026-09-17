@@ -1,6 +1,11 @@
 import { createContext, useContext } from 'react'
 
-type CurrentUser = { id: string /* ... */ }
+type CurrentUser = {
+  id: string
+  groupRoles: string[]
+  globalRoles: string[]
+  /* ... */
+}
 
 export const CurrentUserContext = createContext<CurrentUser | null>(null)
 

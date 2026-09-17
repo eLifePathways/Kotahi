@@ -174,7 +174,27 @@ const findCslCitations = (html, refCount, refList) => {
     try {
       parsedStructure = JSON.parse(structure)
 
-      if (structure === '"{}"') {
+      // element-citation must have at least one recognized child - a bare
+      // structure === '"{}"' check only catches when Anystyle/CSL returned
+      // nothing at all, not when it returned a structure with none of the
+      // fields below populated (e.g. only unrecognized metadata), which
+      // would otherwise produce an empty, invalid <element-citation>.
+      const hasRecognizedField = [
+        'citation-number',
+        'author',
+        'title',
+        'container-title',
+        'issued',
+        'volume',
+        'issue',
+        'page',
+        'doi',
+      ].some(field => {
+        const value = parsedStructure[field]
+        return Array.isArray(value) ? value.length > 0 : Boolean(value)
+      })
+
+      if (!hasRecognizedField) {
         // If we are here, we only have the text. Go with that.
         const textContent = $(citation).text()
         thisJatsReference += `<mixed-citation>${textContent}</mixed-citation></ref>`

@@ -1,7 +1,6 @@
 const {
   channelUsersForMention,
   deleteUser,
-  expandChat,
   getCurrentUser,
   getUser,
   getUsers,
@@ -56,10 +55,6 @@ module.exports = {
   Mutation: {
     async deleteUser(_, { id }, ctx) {
       return deleteUser(id, ctx.req.headers['group-id'])
-    },
-
-    async expandChat(_, { state }, ctx) {
-      return expandChat(ctx.userId, state)
     },
 
     async sendEmail(_, { input }, ctx) {

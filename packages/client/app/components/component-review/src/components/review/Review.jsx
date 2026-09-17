@@ -102,7 +102,7 @@ const Review = ({
         <Heading>
           <strong>{review.user.username}</strong>
         </Heading>
-        {review.user.defaultIdentity.identifier}
+        {review.user.defaultIdentity?.identifier}
       </div>
     )
 

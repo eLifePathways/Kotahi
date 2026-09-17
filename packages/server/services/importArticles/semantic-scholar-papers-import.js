@@ -11,6 +11,7 @@ const {
   getLastImportDate,
   getEmptySubmission,
   rawAbstractToSafeHtml,
+  rawTitleToSafeHtml,
 } = require('./importTools')
 
 const semanticScholarServers = require('./semanitc-scholar-servers.json')
@@ -204,7 +205,7 @@ const getData = async (groupId, ctx) => {
         importSourceServer: 'semantic-scholar',
         submission: {
           ...emptySubmission,
-          $title: title,
+          $title: rawTitleToSafeHtml(title),
           firstAuthor: authors[0] ? authors[0].name : '',
           $authors: authors.map(index => ({
             firstName: index.name.split(' ').slice(0, -1).join(' '),

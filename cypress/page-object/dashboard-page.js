@@ -14,7 +14,7 @@ const SUBMISSION_FILE_UPLOAD_INPUT = 'input[type=file]'
 const SUBMISSION_CREATED = 'Submission created'
 
 /* My Submissions */
-const SUBMITTED_MANUSCRIPTS = '[data-testid=clickable-manuscripts-row]'
+const SUBMISSION_ACTION_LINK = 'submission-action-link'
 const CREATE_NEW_VERSION_BUTTON = 'create-new-manuscript-version-button'
 
 /* Submitted Info */
@@ -22,29 +22,25 @@ const DECISION_FIELDS =
   ':nth-child(1) > [data-testid=section] > [data-testid=section] > div'
 
 // 'To Review section'
-const DO_REVIEW_BUTTON = '[data-testid="reviewerLinks"] button'
+const DO_REVIEW_BUTTON = 'review-action-link'
 const ACCEPT_REVIEW_BUTTON = 'accept-review'
 const REJECT_REVIEW_BUTTON = 'reject-review'
 
 // 'Manuscripts I'm editor of' section
-const CONTROL_BUTTON = 'control-panel-team'
+const CONTROL_BUTTON = 'control-link'
 const MANUSCRIPT_NAV_BUTTON = '[href*="/admin/manuscripts"]'
 const INVITED_REVIEWS_STATUS = 'invited'
 const COMPLETED_REVIEWS_STATUS = 'completed'
 const REJECTED_REVIEWS_STATUS = 'rejected'
 const ACCEPTED_REVIEWS_STATUS = 'accepted'
 const VERSION_TITLE = 'VersionTitle__Root-sc'
-const ARTICLE_LINK = '[data-testid="reviewerLinks"] button'
 
 export const DashboardPage = {
-  getSubmittedManuscript() {
-    return cy.get(SUBMITTED_MANUSCRIPTS)
+  getSubmissionActionLink() {
+    return cy.getByDataTestId(SUBMISSION_ACTION_LINK)
   },
-  getSubmittedManuscripts(nth) {
-    return cy.get(SUBMITTED_MANUSCRIPTS).eq(nth)
-  },
-  clickSubmittedManuscript(nth) {
-    this.getSubmittedManuscripts(nth).click()
+  clickSubmissionActionLink() {
+    this.getSubmissionActionLink().click()
   },
   getSubmitButton() {
     return cy.get(BUTTON).contains(SUBMISSION_BUTTON)
@@ -77,7 +73,7 @@ export const DashboardPage = {
     return this.getSubmitButton().click()
   },
   getSectionPlaceholder(nth) {
-    return cy.getByDataTestId('placeholder').eq(nth)
+    return cy.getByDataTestId('empty-manuscripts-table-placeholder').eq(nth)
   },
   getCreateNewVersionButton() {
     return cy.getByDataTestId(CREATE_NEW_VERSION_BUTTON)
@@ -118,10 +114,9 @@ export const DashboardPage = {
   },
   clickRejectReviewButton() {
     this.getRejectReviewButton().click({ force: true })
-    cy.reload()
   },
   getDoReviewButton() {
-    return cy.get(DO_REVIEW_BUTTON)
+    return cy.getByDataTestId(DO_REVIEW_BUTTON)
   },
   clickDoReview() {
     this.getDoReviewButton().click({ force: true })
@@ -147,7 +142,7 @@ export const DashboardPage = {
     return cy.getByContainsClass(VERSION_TITLE)
   },
   getCompletedReviewButton() {
-    return cy.get(ARTICLE_LINK)
+    return this.getDoReviewButton()
   },
   clickCompletedReviewButton() {
     this.getCompletedReviewButton().click({ force: true })

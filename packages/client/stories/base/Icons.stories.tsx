@@ -7,7 +7,7 @@ import * as Icons from '../../app/ui/base/Icons'
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
   gap: 12px;
 `
 
@@ -15,6 +15,7 @@ const IconTile = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 12px;
   padding: 16px;
   border: 1px solid ${th('colorBorder')};
   border-radius: ${th('borderRadius')};

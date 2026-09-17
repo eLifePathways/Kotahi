@@ -1,5 +1,5 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, migrationManager } from '@coko/server'
+import { db, config, migrationManager, DbTestUtils } from '@coko/server'
 
 import Group from '../../group/group.model'
 import Config from '../../config/config.model'
@@ -15,17 +15,11 @@ describe('Email Template Migrations', () => {
   })
 
   beforeEach(async () => {
-    const tables = await db('pg_tables')
-      .select('tablename')
-      .where('schemaname', 'public')
-
-    for (const t of tables) {
-      /* eslint-disable-next-line no-await-in-loop */
-      await db.raw(`DROP TABLE IF EXISTS public.${t.tablename} CASCADE`)
-    }
+    await DbTestUtils.dropAllTables()
   })
 
   afterAll(async () => {
+    await DbTestUtils.clearDb()
     await db.destroy()
   })
 

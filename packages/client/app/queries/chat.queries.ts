@@ -177,12 +177,3 @@ export const GET_UNREAD_MESSAGES_COUNT = gql`
     unreadMessagesCount(channelIds: $channelIds)
   }
 `
-
-export const EXPAND_CHAT = gql`
-  mutation ExpandChat($state: Boolean!) {
-    expandChat(state: $state) {
-      id
-      chatExpanded
-    }
-  }
-`

@@ -23,7 +23,8 @@
     "glob": "7"
   },
   "dependencies": {
-    "@coko/lint": "^3.0.0",
+    "@coko/lint": "^3.1.0",
+    "@playwright/test": "^1.62.1",
     "color": "^4.2.3",
     "cypress": "^15.15.0"
   },
