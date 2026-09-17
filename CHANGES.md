@@ -6,6 +6,17 @@
 
 #### Bug fixes
 
+### Version 2026.09.17-0
+
+#### Features
+
+* A new Manuscripts Table has been introduced, for a more responsive and cleaner UI.
+* Chat toggle button has been refreshed, with a simpler and streamlined look.
+
+#### Bug fixes
+
+* Pipeline fixes to the deployment of Kotahi dev docs.
+
 ### Version 2026.09.03-0
 
 #### Features
