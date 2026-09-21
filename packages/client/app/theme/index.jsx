@@ -229,7 +229,8 @@ export const makeTheme = (
     // Does not exist
     // $borderColor: var($colorFurniture);
 
-    boxShadow200: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+    boxShadow: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+    boxShadow200: '0 2px 6px 0 rgb(0 0 0 / 10%)', // deprecated
 
     /* Transition */
     // transitionDuration: '0.2s', // TODO -- julien: not 0.05s
