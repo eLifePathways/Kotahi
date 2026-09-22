@@ -11,8 +11,6 @@ import { ArrowRight, ChevronLeft, ChevronRight } from '../../base/Icons'
  * - use translations for ui elements
  * - accessibility
  * - css variables
- * - Change "Good morning" to "Welcome back" or "Hi". You don't know the time of day.
- * - Table card data: it shouldn't be dynamic, but fixed to these three tables
  * - I can map submit, review, decide to the tables, but tasks overdue depends
  *    on what role you have on that manuscript. That needs to be derived at the
  *    page lebel.
@@ -118,6 +116,14 @@ const joinWithAnd = (items: string[]): string => {
 
 const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1)
+
+const getTimeBasedGreeting = (): string => {
+  const hour = new Date().getHours()
+
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
 // #endregion constants
 
 // #region styled
@@ -332,11 +338,14 @@ type GreetingProps = {
 const Greeting = (props: GreetingProps): ReactNode => {
   const { userName, actionCardData } = props
   const totalActionCount = actionCardData.length
+  const timeBasedGreeting = getTimeBasedGreeting()
 
   if (totalActionCount === 0) {
     return (
       <GreetingCard>
-        <GreetingSalutation>Good morning, {userName}</GreetingSalutation>
+        <GreetingSalutation>
+          {timeBasedGreeting}, {userName}
+        </GreetingSalutation>
         <GreetingHeadline>You&apos;re all caught up</GreetingHeadline>
         <GreetingDetail>
           There&apos;s nothing that needs your attention right now.
@@ -358,7 +367,9 @@ const Greeting = (props: GreetingProps): ReactNode => {
 
   return (
     <GreetingCard>
-      <GreetingSalutation>Good morning, {userName}</GreetingSalutation>
+      <GreetingSalutation>
+        {timeBasedGreeting}, {userName}
+      </GreetingSalutation>
       <GreetingHeadline>
         You have {totalActionCount} item{totalActionCount === 1 ? '' : 's'} that
         need{totalActionCount === 1 ? 's' : ''} attention
