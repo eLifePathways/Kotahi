@@ -767,7 +767,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
             <Link to={editingQueueData.href}>
               <TableCard
                 attentionCount={editingQueueData.attentionCount}
-                descriptionLabel="Edit"
+                descriptionLabel="Editing Queue"
                 totalCount={editingQueueData.totalCount}
                 typeLabel="Editor"
               />
