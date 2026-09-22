@@ -1,4 +1,5 @@
 import Modal from 'react-modal'
+import { LazyMotion } from 'framer-motion'
 
 import GlobalStyle from './theme/elements/GlobalStyle'
 
@@ -14,18 +15,23 @@ const modals = {
   assetManagerEditor: AssetManager,
 }
 
+const loadDomAnimationFeatures = () =>
+  import('framer-motion').then(res => res.domAnimation)
+
 const DefaultPage = () => {
   Modal.setAppElement('#root')
 
   return (
-    <XpubProvider>
-      <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
-        <ModalProvider modals={modals}>
-          <GlobalStyle />
-          <Router />
-        </ModalProvider>
-      </JournalProvider>
-    </XpubProvider>
+    <LazyMotion features={loadDomAnimationFeatures} strict>
+      <XpubProvider>
+        <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
+          <ModalProvider modals={modals}>
+            <GlobalStyle />
+            <Router />
+          </ModalProvider>
+        </JournalProvider>
+      </XpubProvider>
+    </LazyMotion>
   )
 }
 

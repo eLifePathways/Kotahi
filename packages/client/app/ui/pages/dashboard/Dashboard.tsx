@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import styled from 'styled-components'
+import { AnimatePresence, m } from 'framer-motion'
 import { th, grid, Link as UILink } from '@coko/client'
 
 import Badge from '../../shared/Badge'
-import { ArrowRight, ChevronLeft, ChevronRight } from '../../base/Icons'
+import { ArrowRight, ChevronLeft, ChevronRight, Close } from '../../base/Icons'
 
 /**
  * TO DO
@@ -20,6 +21,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from '../../base/Icons'
  *    - reviewer reject invitation
  *    - reviewer completed review
  *    - decision was made on your manuscript
+ *    - you were added / removed as an editor / author
  */
 
 /**
@@ -29,6 +31,29 @@ import { ArrowRight, ChevronLeft, ChevronRight } from '../../base/Icons'
  * - Review invitation not responded to: TeamMember.status === 'invited' (or Invitation.status === 'UNANSWERED') — there's already a query, manuscriptsUserHasCurrentRoleIn(reviewerStatus: 'invited', wantedRoles: ['reviewer']), built for exactly this.
  * - Review accepted but not completed: same mechanism, reviewerStatus IN ('accepted', 'inProgress').
  * - Task overdue: fully built already — manuscriptHasOverdueTasksForUser / GraphQL field hasOverdueTasksForUser, plus a TaskAlert/userHasTaskAlerts query that's essentially a ready-made "needs attention" signal.
+ */
+
+/**
+ * Notifications table (not yet built) — for events that don't fit "needs
+ * attention" but are still worth surfacing (reviewer accepted/declined,
+ * review completed, decision made). Dismissed via row delete, same idiom
+ * as TaskAlert — no dismissed/read boolean.
+ * - id: uuid, PK
+ * - user_id: uuid, NOT NULL, FK -> users.id, ON DELETE CASCADE (recipient;
+ *    one row per user per event, no uniqueness constraint beyond id, so a
+ *    user can have multiple rows for the same manuscript)
+ * - group_id: uuid, NOT NULL, FK -> groups.id, ON DELETE CASCADE (mirrors
+ *    Task.groupId; needed even when manuscript_id is set, so notifications
+ *    can be scoped/filtered per group without joining through manuscripts)
+ * - manuscript_id: uuid, NULLABLE, FK -> manuscripts.id, ON DELETE CASCADE
+ *    (nullable for future non-manuscript events, mirrors Task.manuscriptId)
+ * - event_type: text, NOT NULL (reviewerAccepted | reviewerDeclined |
+ *    reviewCompleted | decisionMade | ...)
+ * - data: jsonb, NULLABLE, default {} (snapshot of whatever's needed to
+ *    render the message, so it doesn't depend on relations that may have
+ *    since changed, e.g. a reviewer removed from the team)
+ * - created: timestamptz, NOT NULL, default now()
+ * - updated: timestamptz, NULLABLE (kept for convention; nothing mutates a row)
  */
 
 /**
@@ -124,6 +149,8 @@ const getTimeBasedGreeting = (): string => {
   if (hour < 18) return 'Good afternoon'
   return 'Good evening'
 }
+
+const NOTIFICATION_ANIMATION_DURATION = 0.2
 // #endregion constants
 
 // #region styled
@@ -327,6 +354,63 @@ const ScrollButton = styled.button<{ $side: 'left' | 'right' }>`
     font-size: 1.25rem;
   }
 `
+
+const NotificationsWrapper = styled.div`
+  padding: 0 ${grid(1)};
+`
+
+const NotificationSectionLabel = styled.div`
+  font-weight: bold;
+  font-size: ${th('fontSizeHeading6')};
+  margin-bottom: ${grid(2)};
+`
+
+const NotificationList = styled.ul`
+  display: flex;
+  flex-direction: column;
+
+  list-style: none;
+  margin: 0;
+  padding: 0;
+`
+
+const NotificationRow = styled(m.li)`
+  display: flex;
+  align-items: stretch;
+  background-color: ${th('colorBackground')};
+  border-radius: ${th('borderRadius')};
+  box-shadow: ${th('boxShadow')};
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0 0 3px ${th('colorPrimary')};
+  }
+`
+
+const NotificationLink = styled(UILink)`
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  padding: ${grid(3)} 0 ${grid(3)} ${grid(4)};
+`
+
+const DismissButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: ${grid(3)} ${grid(4)} ${grid(3)};
+
+  border: none;
+  background: none;
+  color: ${th('colorTextPlaceholder')};
+  cursor: pointer;
+
+  &:hover {
+    color: ${th('colorText')};
+  }
+`
 // #endregion styled
 
 // #region Greeting
@@ -449,6 +533,90 @@ const TableCard = (props: TableCardProps): ReactNode => {
 }
 // #endregion TableCard
 
+// #region Notification
+type NotificationEventType =
+  | 'reviewerAcceptedInvitation'
+  | 'reviewerRejectedInvitation'
+  | 'reviewerCompletedReview'
+  | 'decisionMade'
+  | 'addedAsReviewer'
+  | 'removedAsReviewer'
+  | 'addedAsEditor'
+  | 'removedAsEditor'
+  | 'addedAsHandlingEditor'
+  | 'removedAsHandlingEditor'
+  | 'addedAsSeniorEditor'
+  | 'removedAsSeniorEditor'
+
+type NotificationMessage = (shortId: string) => string
+
+// TODO: adjust wording, and run through translations
+const notificationMessages: Record<NotificationEventType, NotificationMessage> =
+  {
+    reviewerAcceptedInvitation: shortId =>
+      `A reviewer accepted your invitation for manuscript #${shortId}.`,
+    reviewerRejectedInvitation: shortId =>
+      `A reviewer declined your invitation for manuscript #${shortId}.`,
+    reviewerCompletedReview: shortId =>
+      `A review was completed for manuscript #${shortId}.`,
+    decisionMade: shortId => `A decision was made on manuscript #${shortId}.`,
+    addedAsReviewer: shortId =>
+      `You were added as a reviewer on manuscript #${shortId}.`,
+    removedAsReviewer: shortId =>
+      `You were removed as a reviewer from manuscript #${shortId}.`,
+    addedAsEditor: shortId =>
+      `You were added as an editor on manuscript #${shortId}.`,
+    removedAsEditor: shortId =>
+      `You were removed as an editor from manuscript #${shortId}.`,
+    addedAsHandlingEditor: shortId =>
+      `You were added as the handling editor on manuscript #${shortId}.`,
+    removedAsHandlingEditor: shortId =>
+      `You were removed as the handling editor from manuscript #${shortId}.`,
+    addedAsSeniorEditor: shortId =>
+      `You were added as the senior editor on manuscript #${shortId}.`,
+    removedAsSeniorEditor: shortId =>
+      `You were removed as the senior editor from manuscript #${shortId}.`,
+  }
+
+type NotificationItem = {
+  id: string
+  shortId: string
+  href: string
+  eventType: NotificationEventType
+}
+
+type NotificationProps = NotificationItem & {
+  onDismiss: (id: string) => void
+}
+
+const notificationRowMotionProps = {
+  layout: true,
+  initial: { opacity: 0, height: 0, marginBottom: 0 },
+  animate: { opacity: 1, height: 'auto', marginBottom: '8px' },
+  exit: { opacity: 0, height: 0, marginBottom: 0 },
+  transition: { duration: NOTIFICATION_ANIMATION_DURATION },
+}
+
+const Notification = (props: NotificationProps): ReactNode => {
+  const { id, shortId, href, eventType, onDismiss } = props
+  const message = notificationMessages[eventType](shortId)
+
+  return (
+    <NotificationRow {...notificationRowMotionProps}>
+      <NotificationLink to={href}>{message}</NotificationLink>
+
+      <DismissButton
+        aria-label="Dismiss notification"
+        onClick={(): void => onDismiss(id)}
+        type="button"
+      >
+        <Close aria-hidden />
+      </DismissButton>
+    </NotificationRow>
+  )
+}
+// #endregion Notification
+
 // #region Dashboard
 type ActionCardItem = ActionCardProps & {
   id: string
@@ -467,6 +635,8 @@ type DashboardProps = {
   submissionsData: TableCardData
   reviewData: TableCardData
   editingQueueData: TableCardData
+  notifications: NotificationItem[]
+  onDismissNotification: (id: string) => void
 }
 
 const ACTION_CARD_LIST_SCROLL_STEP = 300
@@ -478,6 +648,8 @@ const Dashboard = (props: DashboardProps): ReactNode => {
     submissionsData,
     reviewData,
     editingQueueData,
+    notifications,
+    onDismissNotification,
   } = props
 
   const actionCardListRef = useRef<HTMLUListElement>(null)
@@ -603,6 +775,23 @@ const Dashboard = (props: DashboardProps): ReactNode => {
           </li>
         </TableCardGrid>
       </div>
+
+      {notifications.length > 0 && (
+        <NotificationsWrapper>
+          <NotificationSectionLabel>Activity</NotificationSectionLabel>
+          <NotificationList>
+            <AnimatePresence initial={false}>
+              {notifications.map(notification => (
+                <Notification
+                  key={notification.id}
+                  {...notification}
+                  onDismiss={onDismissNotification}
+                />
+              ))}
+            </AnimatePresence>
+          </NotificationList>
+        </NotificationsWrapper>
+      )}
     </Wrapper>
   )
 }
