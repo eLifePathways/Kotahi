@@ -11,24 +11,17 @@ import { ArrowRight, ChevronLeft, ChevronRight } from '../../base/Icons'
  * - use translations for ui elements
  * - accessibility
  * - css variables
- */
-
-/**
- * What needs attention means:
- * - submissions that have not been completed
- * - submissions that need revision
- * - decision needs to be made by editor
- * - review invitation not responded to
- * - review accepted but not completed
- * - task overdue
- * - task close to overdue
- */
-
-/**
- * author: finish submission, revise
- * reviewer: respond to invitation, finish review
- * editor: make decision
- * task overdue / close to overdue
+ * - Change "Good morning" to "Welcome back" or "Hi". You don't know the time of day.
+ * - Table card data: it shouldn't be dynamic, but fixed to these three tables
+ * - I can map submit, review, decide to the tables, but tasks overdue depends
+ *    on what role you have on that manuscript. That needs to be derived at the
+ *    page lebel.
+ * - Implement notifications and the ability to dismiss them. Be careful with
+ *    the roles that should have access to these notification.
+ *    - reviewer accepts invitation
+ *    - reviewer reject invitation
+ *    - reviewer completed review
+ *    - decision was made on your manuscript
  */
 
 /**
@@ -451,21 +444,30 @@ type ActionCardItem = ActionCardProps & {
   href: string
 }
 
-type TableCardItem = TableCardProps & {
-  id: string
+type TableCardData = {
+  totalCount: number
+  attentionCount: number
   href: string
 }
 
 type DashboardProps = {
   userName: string
   actionCardData: ActionCardItem[]
-  tableCardData: TableCardItem[]
+  submissionsData: TableCardData
+  reviewData: TableCardData
+  editingQueueData: TableCardData
 }
 
 const ACTION_CARD_LIST_SCROLL_STEP = 300
 
 const Dashboard = (props: DashboardProps): ReactNode => {
-  const { userName, actionCardData, tableCardData } = props
+  const {
+    userName,
+    actionCardData,
+    submissionsData,
+    reviewData,
+    editingQueueData,
+  } = props
 
   const actionCardListRef = useRef<HTMLUListElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -556,17 +558,38 @@ const Dashboard = (props: DashboardProps): ReactNode => {
 
       <div>
         <TableCardGrid>
-          {tableCardData.map((cardData: TableCardItem) => {
-            const { id, href, ...rest } = cardData
+          <li>
+            <Link to={submissionsData.href}>
+              <TableCard
+                attentionCount={submissionsData.attentionCount}
+                descriptionLabel="My submissions"
+                totalCount={submissionsData.totalCount}
+                typeLabel="Author"
+              />
+            </Link>
+          </li>
 
-            return (
-              <li key={id}>
-                <Link to={href}>
-                  <TableCard {...rest} />
-                </Link>
-              </li>
-            )
-          })}
+          <li>
+            <Link to={reviewData.href}>
+              <TableCard
+                attentionCount={reviewData.attentionCount}
+                descriptionLabel="My reviews"
+                totalCount={reviewData.totalCount}
+                typeLabel="Reviewer"
+              />
+            </Link>
+          </li>
+
+          <li>
+            <Link to={editingQueueData.href}>
+              <TableCard
+                attentionCount={editingQueueData.attentionCount}
+                descriptionLabel="Edit"
+                totalCount={editingQueueData.totalCount}
+                typeLabel="Editor"
+              />
+            </Link>
+          </li>
         </TableCardGrid>
       </div>
     </Wrapper>
