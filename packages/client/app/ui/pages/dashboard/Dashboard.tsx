@@ -34,10 +34,10 @@ import { ArrowRight, ChevronLeft, ChevronRight, Close } from '../../base/Icons'
  */
 
 /**
- * Notifications table (not yet built) — for events that don't fit "needs
- * attention" but are still worth surfacing (reviewer accepted/declined,
- * review completed, decision made). Dismissed via row delete, same idiom
- * as TaskAlert — no dismissed/read boolean.
+ * user_notifications table (not yet built) — for events that don't fit
+ * "needs attention" but are still worth surfacing (reviewer accepted/
+ * declined, review completed, decision made). Dismissed via row delete,
+ * same idiom as TaskAlert — no dismissed/read boolean.
  * - id: uuid, PK
  * - user_id: uuid, NOT NULL, FK -> users.id, ON DELETE CASCADE (recipient;
  *    one row per user per event, no uniqueness constraint beyond id, so a
@@ -49,7 +49,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, Close } from '../../base/Icons'
  *    (nullable for future non-manuscript events, mirrors Task.manuscriptId)
  * - event_type: text, NOT NULL (reviewerAccepted | reviewerDeclined |
  *    reviewCompleted | decisionMade | ...)
- * - data: jsonb, NULLABLE, default {} (snapshot of whatever's needed to
+ * - data: jsonb, NOT NULL, default {} (snapshot of whatever's needed to
  *    render the message, so it doesn't depend on relations that may have
  *    since changed, e.g. a reviewer removed from the team)
  * - created: timestamptz, NOT NULL, default now()

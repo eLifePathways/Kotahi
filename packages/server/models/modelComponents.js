@@ -37,6 +37,7 @@ const modelPaths = [
   'threadedDiscussion',
   'token',
   'user',
+  'userNotification',
   'collaborative-doc',
   'notification',
 ].map(name => `./models/${name}`)
