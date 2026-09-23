@@ -4,15 +4,19 @@ const ArticleImportHistory = require('../../models/articleImportHistory/articleI
 const { getSubmissionForm } = require('../../controllers/review.controllers')
 
 const getServerId = async serverLabel => {
-  let [server] = await ArticleImportSources.query().where({
-    server: serverLabel,
-  })
+  let [server] = (
+    await ArticleImportSources.find({
+      server: serverLabel,
+    })
+  ).result
 
   if (server) return server.id
-  await ArticleImportSources.query().insert({ server: serverLabel })
-  ;[server] = await ArticleImportSources.query().where({
-    server: serverLabel,
-  })
+  await ArticleImportSources.insert({ server: serverLabel })
+  ;[server] = (
+    await ArticleImportSources.find({
+      server: serverLabel,
+    })
+  ).result
   return server.id
 }
 

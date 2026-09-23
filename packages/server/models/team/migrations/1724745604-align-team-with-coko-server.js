@@ -13,7 +13,7 @@ exports.up = async knex => {
     if (hasMembers) table.dropColumn('members')
   })
 
-  const teams = await Team.query()
+  const { result: teams } = await Team.find({})
 
   await useTransaction(async trx => {
     return Promise.all(

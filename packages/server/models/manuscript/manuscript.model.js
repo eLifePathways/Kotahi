@@ -113,9 +113,10 @@ class Manuscript extends BaseModel {
 
     const { trx } = options
 
-    const manuscriptWithAuthors = await Manuscript.query(trx)
-      .findById(this.id)
-      .withGraphFetched('teams(onlyAuthors).members(orderByCreatedDesc).user')
+    const manuscriptWithAuthors = await Manuscript.findById(this.id, {
+      trx,
+      related: 'teams(onlyAuthors).members(orderByCreatedDesc).user',
+    })
 
     if (
       !manuscriptWithAuthors.teams.length ||
@@ -136,11 +137,10 @@ class Manuscript extends BaseModel {
 
     const { trx } = options
 
-    const manuscriptWithEditors = await Manuscript.query(trx)
-      .findById(this.id)
-      .withGraphFetched(
-        '[teams(onlyEditors).[members(orderByCreatedDesc).[user]]]',
-      )
+    const manuscriptWithEditors = await Manuscript.findById(this.id, {
+      trx,
+      related: '[teams(onlyEditors).[members(orderByCreatedDesc).[user]]]',
+    })
 
     if (
       !manuscriptWithEditors.teams.length ||
@@ -152,6 +152,43 @@ class Manuscript extends BaseModel {
     const editorTeam = manuscriptWithEditors.teams[0]
     const editor = editorTeam.members[0] // picking the editor that has latest created date
     return editor.user
+  }
+
+  static async userIsReviewerOfAnyVersion(manuscriptId, userId, options = {}) {
+    const { trx } = options
+
+    const manuscript = await Manuscript.query(trx)
+      .findById(manuscriptId)
+      .select('parentId')
+
+    const rootId = manuscript?.parentId || manuscriptId
+
+    const reviewerStatuses = await Manuscript.query(trx)
+      .where(builder =>
+        builder.where('manuscripts.id', rootId).orWhere({ parentId: rootId }),
+      )
+      .joinRelated('teams')
+      .join('team_members', 'team_members.teamId', 'teams.id') // joinRelated doesn't automate the 'teams.members' relation well, so we do it manually
+      .whereIn('teams.role', ['reviewer', 'collaborativeReviewer'])
+      .where('team_members.userId', userId)
+      .select('team_members.status')
+
+    return !!reviewerStatuses.length
+  }
+
+  static async findPublishedById(id, options = {}) {
+    return Manuscript.query(options.trx).findById(id).whereNotNull('published')
+  }
+
+  static async getFirstVersionCreated(manuscript, options = {}) {
+    if (manuscript.created && !manuscript.parentId) return manuscript.created
+    const id = manuscript.parentId || manuscript.id
+
+    const record = await Manuscript.query(options.trx)
+      .findById(id)
+      .select('created')
+
+    return record.created
   }
 
   /** Returns a list of user IDs for editors, handlingEditors and seniorEditors. */
@@ -283,11 +320,10 @@ class Manuscript extends BaseModel {
         '[invitations.[user], teams.members, reviews.user, files, tasks(orderBySequence).[assignee, emailNotifications(orderByCreated)]]',
       )
 
-    const firstManuscript = await Manuscript.query()
-      .findById(id)
-      .withGraphFetched(
+    const firstManuscript = await Manuscript.findById(id, {
+      related:
         '[invitations.[user], teams.members, reviews.user, files, tasks(orderBySequence).[assignee, emailNotifications(orderByCreated)]]',
-      )
+    })
 
     manuscripts.push(firstManuscript)
 
@@ -335,7 +371,7 @@ class Manuscript extends BaseModel {
     const Team = require('../team/team.model')
 
     return useTransaction(async trx => {
-      const manuscript = await Manuscript.query(trx).findById(manuscriptId)
+      const manuscript = await Manuscript.findById(manuscriptId, { trx })
       const status = invitationId ? 'accepted' : 'invited'
 
       const team = isCollaborative
@@ -348,7 +384,10 @@ class Manuscript extends BaseModel {
       let invitationData
 
       if (invitationId) {
-        invitationData = await Invitation.query(trx).findById(invitationId)
+        invitationData = await Invitation.findById(invitationId, {
+          trx,
+          throwIfNotFound: false,
+        })
       }
 
       const existingTeam = await manuscript

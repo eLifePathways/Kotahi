@@ -127,6 +127,22 @@ class Task extends BaseModel {
       },
     }
   }
+
+  static async getEmailNotifications(groupId, status = null, options = {}) {
+    const { trx } = options
+    let taskQuery = Task.query(trx) // no await here because it's a sub-query
+
+    if (status) {
+      taskQuery = taskQuery.where({ status, groupId })
+    }
+
+    return Task.relatedQuery('emailNotifications')
+      .for(taskQuery)
+      .withGraphFetched('task')
+      .withGraphFetched('recipientUser')
+      .withGraphFetched('task.assignee')
+      .withGraphFetched('task.manuscript')
+  }
 }
 
 Task.type = 'UserTask'

@@ -19,7 +19,7 @@ const makeZipFile = async (manuscriptId, jats) => {
   // jats is a string with the semi-processed JATS in it
   // (images have not been dealt with)
 
-  const manuscriptFiles = await File.query().where({
+  const { result: manuscriptFiles } = await File.find({
     objectId: manuscriptId,
   })
 

@@ -7,7 +7,7 @@ const collectionFormDataFile = async collectionFormData => {
   let file = null
 
   if (collectionFormData.image !== '') {
-    file = await File.query().findOne({ id: collectionFormData.image })
+    file = await File.findOne({ id: collectionFormData.image })
   }
 
   return file
@@ -15,7 +15,7 @@ const collectionFormDataFile = async collectionFormData => {
 
 const collectionFormDataImage = async collectionFormData => {
   // Return the image field from the formData object within the parent (metadata) object
-  const file = await File.query().findOne({ id: collectionFormData.image })
+  const file = await File.findOne({ id: collectionFormData.image })
 
   if (file) {
     const data = await getFileWithUrl(file)
@@ -91,7 +91,7 @@ const deleteCollection = async id => {
 }
 
 const getPublishingCollections = async groupId => {
-  const publishingCollection = await PublishingCollection.query().where({
+  const { result: publishingCollection } = await PublishingCollection.find({
     groupId,
   })
 
@@ -101,7 +101,7 @@ const getPublishingCollections = async groupId => {
 }
 
 const updateCollection = async (id, input) => {
-  const collection = await PublishingCollection.query().findOne({
+  const collection = await PublishingCollection.findOne({
     id,
   })
 
@@ -122,14 +122,16 @@ const updateCollection = async (id, input) => {
     await deleteFiles([collection.formData.image])
   }
 
-  const publishingCollection =
-    await PublishingCollection.query().updateAndFetchById(id, {
+  const publishingCollection = await PublishingCollection.updateAndFetchById(
+    id,
+    {
       ...input,
       formData: {
         ...input.formData,
         image: file ? file.id : collection.formData.image,
       },
-    })
+    },
+  )
 
   publishingCollection.formData.active = publishingCollection.active
 

@@ -90,7 +90,9 @@ const getPayload = async (
 
   let processPath = ''
 
-  const manuscriptFiles = await File.query().where({ objectId: manuscriptId })
+  const { result: manuscriptFiles } = await File.find({
+    objectId: manuscriptId,
+  })
 
   if (manuscriptFiles.length) {
     processPath = `${manuscriptFiles[0].meta.bucket || fileStorage.bucket}/${

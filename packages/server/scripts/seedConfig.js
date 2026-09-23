@@ -424,10 +424,13 @@ const seedConfig = async (group, instanceName, index, options) => {
   config.groupId = group.id
   config.formData = JSON.stringify(config.formData)
 
-  const configExists = await Config.query(trx).findOne({
-    groupId: group.id,
-    active: true,
-  })
+  const configExists = await Config.findOne(
+    {
+      groupId: group.id,
+      active: true,
+    },
+    { trx },
+  )
 
   let createdConfig = null
 

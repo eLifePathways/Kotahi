@@ -204,7 +204,7 @@ const getData = async (groupId, ctx) => {
   const subjects = ['biophysics', 'biochemistry']
   const emptySubmission = getEmptySubmission(groupId)
 
-  const manuscripts = await Manuscript.query().where({ groupId })
+  const { result: manuscripts } = await Manuscript.find({ groupId })
 
   const knownDois = new Set(
     manuscripts.map(m => m.submission.$doi).filter(Boolean),
@@ -272,7 +272,7 @@ const getData = async (groupId, ctx) => {
         })
         .where({ sourceId, groupId })
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId,
         groupId,

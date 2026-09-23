@@ -6,7 +6,7 @@ const eventsSource = require('../../../services/notification/eventsSource')
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const configs = await Config.query(trx)
+    const { result: configs } = await Config.find({}, { trx })
 
     if (configs.length > 0) {
       const eventsConfig = Object.keys(eventsSource).reduce((acc, key) => {
@@ -27,7 +27,7 @@ exports.up = async () => {
 
 exports.down = async () => {
   return useTransaction(async trx => {
-    const configs = await Config.query(trx)
+    const { result: configs } = await Config.find({}, { trx })
 
     if (configs.length > 0) {
       await Promise.all(

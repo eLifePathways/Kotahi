@@ -3,7 +3,7 @@ const createToken = async username => {
 
   const { createJWT } = require('@coko/server')
 
-  const user = await User.query().where({ username }).first()
+  const user = await User.findOne({ username })
 
   if (!user) {
     const users = await User.query().select('username')

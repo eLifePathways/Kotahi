@@ -48,9 +48,11 @@ const channelUsersForMention = async (channelId, groupId) => {
       throw new Error('Channel ID is required.')
     }
 
-    const channelWithUsers = await Channel.query(trx)
-      .findById(channelId)
-      .withGraphFetched('users(orderByUsername)')
+    const channelWithUsers = await Channel.findById(channelId, {
+      trx,
+      related: 'users(orderByUsername)',
+      throwIfNotFound: false,
+    })
 
     if (!channelWithUsers) {
       throw new Error('Channel not found.')
@@ -109,7 +111,7 @@ const defaultIdentity = async user => {
 
 const deleteUser = async (id, groupId) => {
   return User.transaction(async trx => {
-    const user = await User.query(trx).findById(id)
+    const user = await User.findById(id, { trx })
 
     await Manuscript.query(trx)
       .update({ submitterId: null })
@@ -122,7 +124,7 @@ const deleteUser = async (id, groupId) => {
       .update({ senderId: null })
       .where({ senderId: id })
 
-    await User.query(trx).where({ id }).delete()
+    await User.deleteById(id, { trx })
 
     logger.info(`User ${id} (${user.username}) deleted.`)
 
@@ -181,9 +183,12 @@ const getGroupAndGlobalRoles = async (userId, groupId, options = {}) => {
 const getReciever = async (selectedEmail, externalName, trx) => {
   if (!selectedEmail) return { name: externalName, id: null }
 
-  const [userReceiver] = await User.query(trx)
-    .where({ email: selectedEmail })
-    .withGraphFetched('[defaultIdentity]')
+  const [userReceiver] = (
+    await User.find(
+      { email: selectedEmail },
+      { trx, related: '[defaultIdentity]' },
+    )
+  ).result
 
   return {
     name: userReceiver.username || userReceiver.defaultIdentity.name || '',
@@ -213,7 +218,7 @@ const getSharedReviewersIds = async (manuscriptId, currentUserId) => {
 
 const getUser = async (id, groupId) => {
   if (id) {
-    const u = await User.query().findById(id)
+    const u = await User.findById(id, { throwIfNotFound: false })
     await addGlobalAndGroupRolesToUserObject(u, groupId)
     return u
   }
@@ -230,7 +235,7 @@ const getUser = async (id, groupId) => {
 const getUserRolesInManuscript = async (userId, manuscriptId, options = {}) => {
   const { trx } = options
   if (!manuscriptId) return {}
-  const manuscript = await Manuscript.query(trx).findById(manuscriptId)
+  const manuscript = await Manuscript.findById(manuscriptId, { trx })
   const { groupId } = manuscript
 
   const userIsAdmin = userId && (await cachedGet(`userIsAdmin:${userId}`))
@@ -296,7 +301,8 @@ const getUsers = async groupId => {
     .withGraphFetched('defaultIdentity')
 }
 
-const getUsersById = async userIds => User.query().findByIds(userIds)
+const getUsersById = async userIds =>
+  User.findByIds(userIds, { throwIfNotFound: false })
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()
@@ -304,7 +310,7 @@ const isUserOnline = async user => {
 }
 
 const paginatedUsers = async (userId, groupId, sort, offset, limit) => {
-  const cu = await User.query().findById(userId)
+  const cu = await User.findById(userId)
   await addGlobalAndGroupRolesToUserObject(cu, groupId)
 
   let query
@@ -360,7 +366,9 @@ const paginatedUsers = async (userId, groupId, sort, offset, limit) => {
 
 const profilePicture = async user => {
   if (!user.profilePicture) return null
-  const file = await File.query().findById(user.profilePicture)
+  const file = await File.findById(user.profilePicture, {
+    throwIfNotFound: false,
+  })
 
   let small
 
@@ -442,15 +450,21 @@ const sendEmailWithPreparedData = async (
   const selectedEmail = (rawSelectedEmail ?? '').toLowerCase()
   const externalEmail = (rawExternalEmail ?? '').toLowerCase()
 
-  const template = await EmailTemplate.query(trx).findById(selectedTemplate)
+  const template = await EmailTemplate.findById(selectedTemplate, {
+    trx,
+    throwIfNotFound: false,
+  })
 
   const to = externalEmail || selectedEmail
   let receiverName = externalName
 
   if (selectedEmail) {
-    const [userReceiver] = await User.query(trx)
-      .where({ email: selectedEmail })
-      .withGraphFetched('[defaultIdentity]')
+    const [userReceiver] = (
+      await User.find(
+        { email: selectedEmail },
+        { trx, related: '[defaultIdentity]' },
+      )
+    ).result
 
     receiverName =
       userReceiver.username || userReceiver.defaultIdentity.name || ''
@@ -604,7 +618,7 @@ const sendInvitation = async input => {
 }
 
 const setGlobalRole = async (userId, groupId, role, shouldEnable) => {
-  const team = await Team.query().findOne({ role, global: true })
+  const team = await Team.findOne({ role, global: true })
   await setUserMembershipInTeam(userId, groupId, team, shouldEnable)
   const user = await User.findById(userId)
   await addGlobalAndGroupRolesToUserObject(user, groupId)
@@ -613,7 +627,7 @@ const setGlobalRole = async (userId, groupId, role, shouldEnable) => {
 }
 
 const setGroupRole = async (userId, groupId, role, shouldEnable) => {
-  const team = await Team.query().findOne({
+  const team = await Team.findOne({
     role,
     objectId: groupId,
   })
@@ -649,9 +663,10 @@ const setUserMembershipInTeam = async (
   } else {
     await TeamMember.transaction(async trx => {
       if (team.role === 'user') {
-        const manuscripts = await Manuscript.query(trx)
-          .where({ groupId })
-          .withGraphFetched('[teams, invitations, tasks]')
+        const { result: manuscripts } = await Manuscript.find(
+          { groupId },
+          { trx, related: '[teams, invitations, tasks]' },
+        )
 
         const manuscriptTeams = manuscripts.flatMap(
           manuscript => manuscript.teams,
@@ -660,14 +675,17 @@ const setUserMembershipInTeam = async (
         // Remove user from assigned manuscript teams be it author, seniorEditor, handlingEditor, editor, reviewer which are not completed
         await Promise.all(
           manuscriptTeams.map(async manuscriptTeam => {
-            const member = await TeamMember.query(trx).findOne({
-              userId,
-              teamId: manuscriptTeam.id,
-            })
+            const member = await TeamMember.findOne(
+              {
+                userId,
+                teamId: manuscriptTeam.id,
+              },
+              { trx },
+            )
 
             // Skips removing reviewer team members with completed reviews
             if (member && (!member.status || member.status !== 'completed')) {
-              await TeamMember.query().deleteById(member.id)
+              await TeamMember.deleteById(member.id)
             }
           }),
         )
@@ -679,15 +697,16 @@ const setUserMembershipInTeam = async (
         // Remove user UNANSWERED invitations and sent out invitations
         await Promise.all(
           manuscriptInvitations.map(async manuscriptInvitation => {
-            const invitation = await Invitation.query(trx).findById(
+            const invitation = await Invitation.findById(
               manuscriptInvitation.id,
+              { trx },
             )
 
             if (
               invitation.userId === userId &&
               invitation.status === 'UNANSWERED'
             ) {
-              await Invitation.query().deleteById(invitation.id)
+              await Invitation.deleteById(invitation.id)
             } else if (invitation.senderId === userId) {
               // TODO: Fix database validation error sender_id is set not null 1647493905-invitations.sql
               // await Invitation.query(
@@ -709,7 +728,7 @@ const setUserMembershipInTeam = async (
         // Remove user from task email notifications
         await Promise.all(
           manuscriptTasks.map(async manuscriptTask => {
-            const task = await Task.query(trx).findById(manuscriptTask.id)
+            const task = await Task.findById(manuscriptTask.id, { trx })
 
             await TaskEmailNotification.query(trx)
               .delete()
@@ -829,7 +848,7 @@ const updateUsername = async (id, username) => {
 }
 
 const userIdentities = async user => {
-  const identities = await Identity.query().where({
+  const { result: identities } = await Identity.find({
     userId: user.id,
   })
 

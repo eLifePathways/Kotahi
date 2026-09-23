@@ -131,7 +131,7 @@ const lockUnlockCollaborativeReview = async id => {
     .findOne({ id })
     .returning('*')
 
-  const team = await Team.query().findOne({
+  const team = await Team.findOne({
     role: 'collaborativeReviewer',
     objectId: updatedReview.manuscriptId,
     objectType: 'manuscript',
@@ -145,9 +145,7 @@ const lockUnlockCollaborativeReview = async id => {
       builder.whereIn('status', ['closed', 'inProgress'])
     })
 
-  const manuscript = await Manuscript.query().findById(
-    updatedReview.manuscriptId,
-  )
+  const manuscript = await Manuscript.findById(updatedReview.manuscriptId)
 
   const eventParam = updatedReview.isLock ? 'lock' : 'unlock'
 
@@ -161,7 +159,7 @@ const lockUnlockCollaborativeReview = async id => {
   await convertFilesToFullObjects(
     updatedReview,
     form,
-    async ids => File.query().findByIds(ids),
+    async ids => File.findByIds(ids, { throwIfNotFound: false }),
     getFilesWithUrl,
   )
 
@@ -174,12 +172,15 @@ const lockUnlockCollaborativeReview = async id => {
 const reviewUser = async review => {
   if (review.user) return review.user
   // TODO redact user if it's an anonymous review and ctx.userId is not editor or admin
-  return review.userId ? User.query().findById(review.userId) : null
+  return review.userId
+    ? User.findById(review.userId, { throwIfNotFound: false })
+    : null
 }
 
 const updateReview = async (id, input, userId) => {
   const reviewDelta = { jsonData: {}, ...input }
-  const existingReview = (await Review.query().findById(id)) || {}
+  const existingReview =
+    (await Review.findById(id, { throwIfNotFound: false })) || {}
 
   const manuscript = await Manuscript.query()
     .findById(existingReview.manuscriptId || input.manuscriptId)
@@ -233,13 +234,13 @@ const updateReview = async (id, input, userId) => {
   review.jsonData = mergedReview.jsonData
 
   const userOfReview = review.userId
-    ? await User.query().findById(review.userId)
+    ? await User.findById(review.userId, { throwIfNotFound: false })
     : null
 
   await convertFilesToFullObjects(
     review,
     form,
-    async ids => File.query().findByIds(ids),
+    async ids => File.findByIds(ids, { throwIfNotFound: false }),
     getFilesWithUrl,
   )
 
@@ -261,9 +262,9 @@ const updateReview = async (id, input, userId) => {
 }
 
 const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .withGraphFetched('[submitter.defaultIdentity, channels.members]')
+  const manuscript = await Manuscript.findById(manuscriptId, {
+    related: '[submitter.defaultIdentity, channels.members]',
+  })
 
   const teams = await manuscript
     .$relatedQuery('teams')
@@ -284,7 +285,7 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
     })
   }
 
-  return member.$query().patchAndFetch({
+  return member.patch({
     status,
     updated: new Date().toISOString(),
   })

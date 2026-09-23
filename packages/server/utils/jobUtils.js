@@ -189,7 +189,7 @@ const sendAutomatedNotifications = async groupId => {
 }
 
 const initiateJobSchedules = async () => {
-  const groups = await Group.query().where({ isArchived: false })
+  const { result: groups } = await Group.find({ isArchived: false })
 
   await Promise.all(
     groups.map(async group => {

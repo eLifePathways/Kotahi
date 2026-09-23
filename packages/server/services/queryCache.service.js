@@ -26,7 +26,7 @@ const queryFunctions = {
     const Review = require('../models/review/review.model')
     const Manuscript = require('../models/manuscript/manuscript.model')
 
-    const file = await File.query().findById(fileId)
+    const file = await File.findById(fileId, { throwIfNotFound: false })
 
     if (!file?.objectId) {
       logger.error('File without objectId encountered:', file)
@@ -34,10 +34,13 @@ const queryFunctions = {
     }
 
     // The file may belong to a review or directly to a manuscript
-    const review = await Review.query().findById(file.objectId)
+    const review = await Review.findById(file.objectId, {
+      throwIfNotFound: false,
+    })
 
-    const manuscript = await Manuscript.query().findById(
+    const manuscript = await Manuscript.findById(
       review ? review.manuscriptId : file.objectId,
+      { throwIfNotFound: false },
     )
 
     return manuscript
@@ -120,7 +123,7 @@ const queryFunctions = {
     // The manuscript this request was made for is NOT a first version manuscript.
     // Find all OTHER versions than this one.
 
-    const parent = await Manuscript.query().findById(thisMs.parentId)
+    const parent = await Manuscript.findById(thisMs.parentId)
 
     const children = await Manuscript.relatedQuery('manuscriptVersions')
       .for(parent.id)
@@ -130,7 +133,7 @@ const queryFunctions = {
   },
   teamsForObject: async objectId => {
     const Team = require('../models/team/team.model')
-    return Team.query().where({ objectId })
+    return (await Team.find({ objectId })).result
   },
   membersOfTeam: async teamId => {
     const Team = require('../models/team/team.model')
@@ -146,7 +149,7 @@ const queryFunctions = {
   },
   form: async (category, purpose, groupId) => {
     const Form = require('../models/form/form.model')
-    const form = await Form.query().where({ category, purpose, groupId })
+    const { result: form } = await Form.find({ category, purpose, groupId })
     if (!form || !form.length) throw new Error(`No form found for "${purpose}"`)
     return form[0]
   },

@@ -5,7 +5,7 @@ const Config = require('../config.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const configs = await Config.query(trx)
+      const { result: configs } = await Config.find({}, { trx })
 
       // logger.info(`Existing Configs count: ${configs.length}`)
 

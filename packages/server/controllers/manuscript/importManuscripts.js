@@ -31,7 +31,7 @@ const importManuscripts = async (groupId, ctx) => {
   let promises
 
   try {
-    const activeConfig = await Config.query().findOne({
+    const activeConfig = await Config.findOne({
       groupId,
       active: true,
     })
@@ -84,7 +84,7 @@ const importManuscriptsFromSemanticScholar = async (groupId, ctx) => {
   let promises
 
   try {
-    const activeConfig = await Config.query().findOne({
+    const activeConfig = await Config.findOne({
       groupId,
       active: true,
     })

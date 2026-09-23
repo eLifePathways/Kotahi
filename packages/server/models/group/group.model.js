@@ -67,6 +67,10 @@ class Group extends BaseModel {
       },
     }
   }
+
+  static async archiveByIds(ids, options = {}) {
+    return Group.query(options.trx).findByIds(ids).patch({ isArchived: true })
+  }
 }
 
 Group.type = 'Group'

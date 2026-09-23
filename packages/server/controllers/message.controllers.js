@@ -10,7 +10,7 @@ const { notify } = require('./notification.controllers')
 const createMessage = async (content, channelId, userId) => {
   const currentUserId = userId
 
-  const savedMessage = await Message.query().insert({
+  const savedMessage = await Message.insert({
     content,
     userId: currentUserId,
     channelId,
@@ -63,9 +63,11 @@ const createMessage = async (content, channelId, userId) => {
 }
 
 const deleteMessage = async messageId => {
-  const deletedMessage = await Message.query().findById(messageId).first()
+  const deletedMessage = await Message.findById(messageId, {
+    throwIfNotFound: false,
+  })
   if (!deletedMessage) throw new Error('Message not found')
-  await Message.query().deleteById(messageId)
+  await Message.deleteById(messageId)
   return deletedMessage
 }
 
@@ -87,7 +89,7 @@ const getMessages = async (channelId, first, before, userId) => {
     .orderBy('messages.created', 'desc')
 
   if (before) {
-    const firstMessage = await Message.query().findById(before)
+    const firstMessage = await Message.findById(before)
     messagesQuery = messagesQuery.where(
       'messages.created',
       '<',

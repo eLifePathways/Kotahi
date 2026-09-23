@@ -1,7 +1,7 @@
 const checkIfInvitationWasAccepted = async ctx => {
   const { Invitation } = require('../../models')
   const { invitation: ctxInvitation } = ctx ?? {}
-  const invitation = await Invitation.query().findById(ctxInvitation?.id)
+  const invitation = await Invitation.findById(ctxInvitation?.id)
 
   const isInvitationAccepted = invitation.status === 'ACCEPTED'
   const cancelReason = isInvitationAccepted && 'Invitation was accepted'

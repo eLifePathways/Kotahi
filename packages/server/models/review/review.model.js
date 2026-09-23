@@ -76,9 +76,7 @@ class Review extends BaseModel {
         let users = null
 
         if (review.isCollaborative) {
-          const manuscript = await Manuscript.query().findById(
-            review.manuscriptId,
-          )
+          const manuscript = await Manuscript.findById(review.manuscriptId)
 
           const existingTeam = await manuscript
             .$relatedQuery('teams')

@@ -73,9 +73,11 @@ const runImports = async (
     let importSource, lastImportDate
 
     try {
-      let [sourceRecord] = await ArticleImportSources.query().where({
-        server: worker.name,
-      })
+      let [sourceRecord] = (
+        await ArticleImportSources.find({
+          server: worker.name,
+        })
+      ).result
       if (!sourceRecord)
         sourceRecord = await ArticleImportSources.query().insertAndFetch({
           server: worker.name,
@@ -178,7 +180,7 @@ const runImports = async (
         .patch({ date: new Date().toISOString() })
         .where({ sourceId: importSource, groupId })
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId: importSource,
         groupId,

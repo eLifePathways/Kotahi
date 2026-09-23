@@ -6,8 +6,11 @@ const Group = require('../../group/group.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const articleImportHistory = await ArticleImportHistory.query(trx)
-      const groups = await Group.query(trx)
+      const { result: articleImportHistory } = await ArticleImportHistory.find(
+        {},
+        { trx },
+      )
+      const { result: groups } = await Group.find({}, { trx })
 
       // logger.info(
       //   `Existing ArticleImportHistory count: ${articleImportHistory.length}`,
