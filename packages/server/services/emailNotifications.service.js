@@ -34,7 +34,7 @@ const getRecipientsEmails = async ({
   const to = ctxRecipient || eventFrom
   const ccWithoutTo = eventCCs.filter(em => em !== to)
   const cc = [...new Set(ccWithoutTo)].flat(2)
-  const recipientUser = await User.query().where({ email: to }).first()
+  const recipientUser = await User.findOne({ email: to })
 
   logger.info(`Recipients: ${to} and CC: ${cc}`)
   logger.info(`Recipient User: ${recipientUser?.username}`)
@@ -55,13 +55,13 @@ const getRecipient = async (recipient, manuscriptId, groupId, getTeam) => {
   if (EMAIL_REGEX.test(recipient?.email)) return recipient.email
 
   if (['groupManager', 'groupAdmin'].includes(recipient)) {
-    const groupManagerTeam = await Team.query().findOne({
+    const groupManagerTeam = await Team.findOne({
       role: recipient,
       objectId: groupId,
       objectType: 'Group',
     })
 
-    const groupManager = await TeamMember.query().findOne({
+    const groupManager = await TeamMember.findOne({
       teamId: groupManagerTeam.id,
     })
 

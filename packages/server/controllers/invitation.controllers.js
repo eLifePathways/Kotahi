@@ -15,7 +15,7 @@ const { addUserToManuscriptChatChannel } = require('./channel.controllers')
 const seekEvent = require('../services/notification.service')
 
 const addEmailToBlacklist = async (email, groupId) => {
-  const result = await BlacklistEmail.query().insert({ email, groupId })
+  const result = await BlacklistEmail.insert({ email, groupId })
 
   return result
 }
@@ -52,7 +52,7 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
         .resultSize()) > 0
 
     if (!authorExists) {
-      await TeamMember.query().insert({
+      await TeamMember.insert({
         teamId: existingTeam.id,
         userId,
       })
@@ -62,14 +62,14 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
   }
 
   // Create a new team of authors if it doesn't exist
-  const newTeam = await Team.query().insert({
+  const newTeam = await Team.insert({
     objectId: manuscriptId,
     objectType: 'manuscript',
     role: 'author',
     displayName: 'Author',
   })
 
-  await TeamMember.query().insert({
+  await TeamMember.insert({
     userId,
     teamId: newTeam.id,
   })
@@ -78,7 +78,7 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
 }
 
 const getBlacklistInformation = async (email, groupId) => {
-  const blacklistData = await BlacklistEmail.query().where({
+  const { result: blacklistData } = await BlacklistEmail.find({
     email,
     groupId,
   })
@@ -174,7 +174,7 @@ const updateInvitationStatus = async (
     .where({ id, status: 'UNANSWERED' })
     .returning('*')
 
-  const relatedUser = await User.query().findOne({
+  const relatedUser = await User.findOne({
     email: result.toEmail,
   })
 

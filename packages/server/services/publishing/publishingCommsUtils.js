@@ -20,7 +20,7 @@ const upsertArtifact = async artifact => {
       id: artifactId,
     })
   } else {
-    await PublishedArtifact.query().insert({
+    await PublishedArtifact.insert({
       ...artifact,
       id: artifactId,
     })

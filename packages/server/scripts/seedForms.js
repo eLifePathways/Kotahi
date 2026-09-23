@@ -17,8 +17,8 @@ const tryAddForm = async (purpose, category, group, seedFilePath, options) => {
   const { trx } = options
 
   const hasForm = !!(
-    await Form.query(trx).where({ purpose, category, groupId: group.id })
-  ).length
+    await Form.find({ purpose, category, groupId: group.id }, { trx })
+  ).result.length
 
   if (hasForm) {
     console.log(
@@ -34,7 +34,7 @@ const tryAddForm = async (purpose, category, group, seedFilePath, options) => {
       groupId: group.id,
     }
 
-    await Form.query(trx).insert(form)
+    await Form.insert(form, { trx })
     console.log(
       `    Added ${category} form from ${seedFilePath} for "${group.name}" group to database.`,
     )

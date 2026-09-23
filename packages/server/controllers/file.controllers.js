@@ -118,7 +118,7 @@ const getEntityFiles = async input => {
       .where({ objectId: entityId })
       .orderBy(orderByParams)
   } else {
-    files = await File.query().where({ objectId: entityId })
+    files = (await File.find({ objectId: entityId })).result
   }
 
   const imageFiles = files.filter(file => file.tags.includes('manuscriptImage'))
@@ -167,7 +167,7 @@ const getFilesByTagOrId = async input => {
   }
 
   if (id) {
-    files = await File.query().where({ id })
+    files = (await File.find({ id })).result
   }
 
   const data = await getFilesWithUrl(files)
@@ -199,7 +199,7 @@ const updateTagsFile = async input => {
     updatedTags = uniq(updatedTags.concat(addTags))
   }
 
-  const updatedFile = await File.query().patchAndFetchById(id, {
+  const updatedFile = await File.patchAndFetchById(id, {
     tags: updatedTags,
   })
 

@@ -227,10 +227,10 @@ const getThreadedDiscussionsForManuscript = async (
 ) =>
   Promise.all(
     (
-      await ThreadedDiscussion.query().where({
+      await ThreadedDiscussion.find({
         manuscriptId: manuscript.parentId || manuscript.id,
       })
-    ).map(discussion =>
+    ).result.map(discussion =>
       addUserObjectsToDiscussion(discussion, getUsersByIdFunc),
     ),
   )
@@ -304,9 +304,10 @@ const stripPendingVersionsExceptByUser = (discussion, userId) => ({
 const threadedDiscussions = async (manuscriptVersionId, userId) => {
   const manuscriptId = await getOriginalVersionManuscriptId(manuscriptVersionId)
 
-  const result = await ThreadedDiscussion.query()
-    .where({ manuscriptId })
-    .orderBy('created', 'desc')
+  const { result: result } = await ThreadedDiscussion.find(
+    { manuscriptId },
+    { orderBy: [{ column: 'created', order: 'desc' }] },
+  )
 
   return Promise.all(
     result.map(async discussion => {

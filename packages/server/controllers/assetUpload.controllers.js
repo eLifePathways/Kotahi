@@ -23,7 +23,7 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
       )
 
       if (fileType === 'javascript' || fileType === 'css') {
-        const file = await File.query().findOne({ id: insertedFile.id })
+        const file = await File.findOne({ id: insertedFile.id })
 
         if (file.storedObjects) {
           const storedObjects = file.storedObjects.map(storedObject => {
@@ -31,7 +31,7 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
             return storedObject
           })
 
-          await File.query().patchAndFetchById(insertedFile.id, {
+          await File.patchAndFetchById(insertedFile.id, {
             storedObjects,
           })
         }

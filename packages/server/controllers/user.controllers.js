@@ -183,9 +183,12 @@ const getGroupAndGlobalRoles = async (userId, groupId, options = {}) => {
 const getReciever = async (selectedEmail, externalName, trx) => {
   if (!selectedEmail) return { name: externalName, id: null }
 
-  const [userReceiver] = await User.query(trx)
-    .where({ email: selectedEmail })
-    .withGraphFetched('[defaultIdentity]')
+  const [userReceiver] = (
+    await User.find(
+      { email: selectedEmail },
+      { trx, related: '[defaultIdentity]' },
+    )
+  ).result
 
   return {
     name: userReceiver.username || userReceiver.defaultIdentity.name || '',
@@ -456,9 +459,12 @@ const sendEmailWithPreparedData = async (
   let receiverName = externalName
 
   if (selectedEmail) {
-    const [userReceiver] = await User.query(trx)
-      .where({ email: selectedEmail })
-      .withGraphFetched('[defaultIdentity]')
+    const [userReceiver] = (
+      await User.find(
+        { email: selectedEmail },
+        { trx, related: '[defaultIdentity]' },
+      )
+    ).result
 
     receiverName =
       userReceiver.username || userReceiver.defaultIdentity.name || ''
@@ -612,7 +618,7 @@ const sendInvitation = async input => {
 }
 
 const setGlobalRole = async (userId, groupId, role, shouldEnable) => {
-  const team = await Team.query().findOne({ role, global: true })
+  const team = await Team.findOne({ role, global: true })
   await setUserMembershipInTeam(userId, groupId, team, shouldEnable)
   const user = await User.findById(userId)
   await addGlobalAndGroupRolesToUserObject(user, groupId)
@@ -621,7 +627,7 @@ const setGlobalRole = async (userId, groupId, role, shouldEnable) => {
 }
 
 const setGroupRole = async (userId, groupId, role, shouldEnable) => {
-  const team = await Team.query().findOne({
+  const team = await Team.findOne({
     role,
     objectId: groupId,
   })
@@ -657,9 +663,10 @@ const setUserMembershipInTeam = async (
   } else {
     await TeamMember.transaction(async trx => {
       if (team.role === 'user') {
-        const manuscripts = await Manuscript.query(trx)
-          .where({ groupId })
-          .withGraphFetched('[teams, invitations, tasks]')
+        const { result: manuscripts } = await Manuscript.find(
+          { groupId },
+          { trx, related: '[teams, invitations, tasks]' },
+        )
 
         const manuscriptTeams = manuscripts.flatMap(
           manuscript => manuscript.teams,
@@ -668,10 +675,13 @@ const setUserMembershipInTeam = async (
         // Remove user from assigned manuscript teams be it author, seniorEditor, handlingEditor, editor, reviewer which are not completed
         await Promise.all(
           manuscriptTeams.map(async manuscriptTeam => {
-            const member = await TeamMember.query(trx).findOne({
-              userId,
-              teamId: manuscriptTeam.id,
-            })
+            const member = await TeamMember.findOne(
+              {
+                userId,
+                teamId: manuscriptTeam.id,
+              },
+              { trx },
+            )
 
             // Skips removing reviewer team members with completed reviews
             if (member && (!member.status || member.status !== 'completed')) {
@@ -838,7 +848,7 @@ const updateUsername = async (id, username) => {
 }
 
 const userIdentities = async user => {
-  const identities = await Identity.query().where({
+  const { result: identities } = await Identity.find({
     userId: user.id,
   })
 

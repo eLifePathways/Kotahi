@@ -3,13 +3,13 @@ const { GraphQLError } = require('graphql')
 const { Docmap, Group } = require('../models')
 
 const docmap = async (externalId, groupName = null) => {
-  const groups = await Group.query().where({ isArchived: false })
+  const { result: groups } = await Group.find({ isArchived: false })
   let group = null
   if (groupName) group = groups.find(g => g.name === groupName)
   else if (groups.length === 1) [group] = groups
   if (!group) throw new Error(`Group with name '${groupName}' not found`)
 
-  const record = await Docmap.query().findOne({
+  const record = await Docmap.findOne({
     externalId,
     groupId: group.id,
   })

@@ -29,15 +29,19 @@ const createGroupAndRelatedData = async (
   options,
 ) => {
   const { trx } = options
-  const groupExists = await Group.query(trx).findOne({ name: groupName })
+  const groupExists = await Group.findOne({ name: groupName }, { trx })
 
   let group = null
 
   if (groupExists && groupExists.isArchived) {
     // Unarchive group that are added back to INSTANCE_GROUPS
-    group = await Group.query(trx).patchAndFetchById(groupExists.id, {
-      isArchived: false,
-    })
+    group = await Group.patchAndFetchById(
+      groupExists.id,
+      {
+        isArchived: false,
+      },
+      { trx },
+    )
 
     logger.info(
       `  Group "${groupName}" already exists in database and has been unarchived.`,
@@ -65,11 +69,14 @@ const createGroupAndRelatedData = async (
   await seedCmsFiles(group, { trx })
 
   // Seed System-wide discussion channel and link it to the created group
-  const channelExists = await Channel.query(trx).findOne({
-    topic: 'System-wide discussion',
-    type: 'editorial',
-    groupId: group.id,
-  })
+  const channelExists = await Channel.findOne(
+    {
+      topic: 'System-wide discussion',
+      type: 'editorial',
+      groupId: group.id,
+    },
+    { trx },
+  )
 
   if (!channelExists) {
     const channel = await Channel.query(trx).insertAndFetch({
@@ -86,12 +93,15 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed user role and link it to the created group
-  const userTeamExists = await Team.query(trx).findOne({
-    role: 'user',
-    global: false,
-    objectId: group.id,
-    objectType: 'Group',
-  })
+  const userTeamExists = await Team.findOne(
+    {
+      role: 'user',
+      global: false,
+      objectId: group.id,
+      objectType: 'Group',
+    },
+    { trx },
+  )
 
   if (!userTeamExists) {
     const userTeam = await Team.query(trx).insertAndFetch({
@@ -110,12 +120,15 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed groupAdmin role and link it to the created group
-  const groupAdminTeamExists = await Team.query(trx).findOne({
-    role: 'groupAdmin',
-    global: false,
-    objectId: group.id,
-    objectType: 'Group',
-  })
+  const groupAdminTeamExists = await Team.findOne(
+    {
+      role: 'groupAdmin',
+      global: false,
+      objectId: group.id,
+      objectType: 'Group',
+    },
+    { trx },
+  )
 
   if (!groupAdminTeamExists) {
     const groupAdminTeam = await Team.query(trx).insertAndFetch({
@@ -136,12 +149,15 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed groupManager role and link it to the created group
-  const groupManagerTeamExists = await Team.query(trx).findOne({
-    role: 'groupManager',
-    global: false,
-    objectId: group.id,
-    objectType: 'Group',
-  })
+  const groupManagerTeamExists = await Team.findOne(
+    {
+      role: 'groupManager',
+      global: false,
+      objectId: group.id,
+      objectType: 'Group',
+    },
+    { trx },
+  )
 
   if (!groupManagerTeamExists) {
     const groupManagerTeam = await Team.query(trx).insertAndFetch({
@@ -162,10 +178,13 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed Group Templates and link it to the created group
-  const existingArticleTemplate = await ArticleTemplate.query(trx).where({
-    groupId: group.id,
-    isCms: false,
-  })
+  const { result: existingArticleTemplate } = await ArticleTemplate.find(
+    {
+      groupId: group.id,
+      isCms: false,
+    },
+    { trx },
+  )
 
   if (existingArticleTemplate.length === 0) {
     const cssTemplate = await generateCss()
@@ -202,10 +221,13 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed Group Templates and link it to the created group for cms
-  const existingCmsArticleTemplate = await ArticleTemplate.query(trx).where({
-    groupId: group.id,
-    isCms: true,
-  })
+  const { result: existingCmsArticleTemplate } = await ArticleTemplate.find(
+    {
+      groupId: group.id,
+      isCms: true,
+    },
+    { trx },
+  )
 
   if (existingCmsArticleTemplate.length === 0) {
     await ArticleTemplate.query(trx).insertGraph({
@@ -217,9 +239,12 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed email templates and link it to the created group
-  const existingEmailTemplates = await EmailTemplate.query(trx).where({
-    groupId: group.id,
-  })
+  const { result: existingEmailTemplates } = await EmailTemplate.find(
+    {
+      groupId: group.id,
+    },
+    { trx },
+  )
 
   if (existingEmailTemplates.length === 0) {
     const emailTemplatesData = defaultEmailTemplates.map(template => ({
@@ -268,7 +293,7 @@ const createGroupAndRelatedData = async (
     newConfig.formData.eventNotification.authorProofingSubmittedEmailTemplate =
       authorProofingSubmittedTemplate.id
 
-    await Config.query(trx).updateAndFetchById(config.id, newConfig)
+    await Config.updateAndFetchById(config.id, newConfig, { trx })
 
     logger.info(
       `    Mapped default email templates in config formdata event notifications.`,

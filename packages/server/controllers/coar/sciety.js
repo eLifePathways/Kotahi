@@ -10,7 +10,7 @@ const {
 const { CoarNotification, Config, Group } = require('../../models')
 
 const getScietyInboxUrl = async groupId => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })
@@ -97,7 +97,7 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
   const payload = JSON.parse(requestData)
 
   try {
-    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+    await CoarNotification.insert({ groupId, manuscriptId, payload })
 
     const response = await request({
       method: 'POST',

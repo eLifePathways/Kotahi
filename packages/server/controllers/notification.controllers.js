@@ -24,7 +24,7 @@ const deleteActionedEntries = async (groupId, options = {}) => {
 }
 
 const getGroupEvents = async groupId => {
-  const config = await Config.query().findOne({ groupId })
+  const config = await Config.findOne({ groupId })
   const { eventsConfig } = config.formData.notification
 
   const events = Object.keys(eventsConfig)
@@ -107,7 +107,7 @@ const notify = async (
       const maxNotificationTime = new Date(time)
       maxNotificationTime.setMinutes(maxNotificationTime.getMinutes() + 30)
 
-      return NotificationDigest.query().insert({
+      return NotificationDigest.insert({
         time,
         maxNotificationTime,
         pathString: path.join('/'),
@@ -254,7 +254,7 @@ const setNotificationActive = async notificationId => {
 }
 
 const setEventActive = async (name, groupId) => {
-  const config = await Config.query().findOne({ groupId })
+  const config = await Config.findOne({ groupId })
   const formData = config.formData || {}
   const notification = { ...formData.notification }
 

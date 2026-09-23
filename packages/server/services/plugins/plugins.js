@@ -51,7 +51,7 @@ const registerPlugins = async () => {
         const { groupName, plugins } = pluginGroup
 
         try {
-          const group = await Group.query().findOne({ name: groupName })
+          const group = await Group.findOne({ name: groupName })
           if (!group) throw new Error('No such group found.')
 
           plugins.forEach(plugin => {

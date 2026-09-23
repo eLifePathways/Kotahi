@@ -49,7 +49,7 @@ const updateConfig = async (id, formData, isActive) => {
     active: isActive,
   }
 
-  let config = await Config.query().updateAndFetchById(id, configInput)
+  let config = await Config.updateAndFetchById(id, configInput)
   await rescheduleJobsOnChange(existingConfig, config)
   config = await hideSensitiveInformation(config)
   config.formData = JSON.stringify(config.formData)

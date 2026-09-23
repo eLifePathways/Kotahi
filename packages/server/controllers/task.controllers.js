@@ -80,7 +80,7 @@ const createNewTaskAlerts = async groupId => {
 }
 
 const createTaskEmailNotificationLog = async taskEmailNotificationLog => {
-  await TaskEmailNotificationLog.query().insert(taskEmailNotificationLog)
+  await TaskEmailNotificationLog.insert(taskEmailNotificationLog)
 
   const associatedTask = await Task.findById(taskEmailNotificationLog.taskId, {
     related:
@@ -114,7 +114,9 @@ const deleteTaskNotification = async id => {
 }
 
 const getTasks = async (manuscriptId, groupId) => {
-  return Task.query().where({ manuscriptId, groupId }).orderBy('sequenceIndex')
+  return (
+    await Task.find({ manuscriptId, groupId }, { orderBy: ['sequenceIndex'] })
+  ).result
 }
 
 const getTeamRecipients = async (emailNotification, roles, options = {}) => {
@@ -150,7 +152,7 @@ const getTeamRecipients = async (emailNotification, roles, options = {}) => {
 
 const logTaskEmailNotificationData = async (logData, options = {}) => {
   const { trx } = options
-  await TaskEmailNotificationLog.query(trx).insert(logData)
+  await TaskEmailNotificationLog.insert(logData, { trx })
 
   const associatedTask = await Task.findById(logData.taskId, {
     trx,
@@ -174,9 +176,10 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
     .orderBy('sequenceIndex')
     .withGraphFetched('emailNotifications(orderByCreated)')
 
-  const existingTasks = await Task.query()
-    .where({ manuscriptId, groupId: manuscript.groupId })
-    .orderBy('sequenceIndex')
+  const { result: existingTasks } = await Task.find(
+    { manuscriptId, groupId: manuscript.groupId },
+    { orderBy: ['sequenceIndex'] },
+  )
 
   const endOfToday = moment()
     .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
@@ -509,7 +512,7 @@ const updateAlertsUponTeamUpdate = async (
 ) => {
   if (!(await manuscriptIsActive(manuscriptId))) return
   const now = new Date()
-  const tasks = await Task.query().where({ manuscriptId })
+  const { result: tasks } = await Task.find({ manuscriptId })
 
   const overdueTaskIds = tasks
     .filter(

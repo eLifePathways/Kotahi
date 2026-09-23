@@ -133,7 +133,7 @@ const queryFunctions = {
   },
   teamsForObject: async objectId => {
     const Team = require('../models/team/team.model')
-    return Team.query().where({ objectId })
+    return (await Team.find({ objectId })).result
   },
   membersOfTeam: async teamId => {
     const Team = require('../models/team/team.model')
@@ -149,7 +149,7 @@ const queryFunctions = {
   },
   form: async (category, purpose, groupId) => {
     const Form = require('../models/form/form.model')
-    const form = await Form.query().where({ category, purpose, groupId })
+    const { result: form } = await Form.find({ category, purpose, groupId })
     if (!form || !form.length) throw new Error(`No form found for "${purpose}"`)
     return form[0]
   },

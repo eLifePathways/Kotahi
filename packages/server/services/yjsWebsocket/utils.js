@@ -91,7 +91,7 @@ const closeConn = (doc, conn) => {
 
 persistence = {
   bindState: async (id, doc) => {
-    const collaborativeForm = await CollaborativeDoc.query().findOne({
+    const collaborativeForm = await CollaborativeDoc.findOne({
       objectId: id,
     })
 
@@ -106,11 +106,11 @@ persistence = {
 
     const timestamp = db.fn.now()
 
-    const docYjs = await CollaborativeDoc.query().findOne({ objectId })
+    const docYjs = await CollaborativeDoc.findOne({ objectId })
 
     if (!docYjs) {
       try {
-        await CollaborativeDoc.query().insert({
+        await CollaborativeDoc.insert({
           yDocState: state,
           ...pick(ydoc.extraData, ['objectId', 'objectType', 'groupId']),
         })
@@ -119,17 +119,19 @@ persistence = {
           const Model = otherModels[ydoc.extraData.objectType]
 
           if (Model) {
-            const object = await Model.query().findOne({
+            const object = await Model.findOne({
               id: objectId,
               isCollaborative: true,
             })
 
             if (object) {
-              const [form] = await Form.query().where({
-                category: ydoc.extraData.category,
-                purpose: ydoc.extraData.purpose,
-                groupId: ydoc.extraData.groupId,
-              })
+              const [form] = (
+                await Form.find({
+                  category: ydoc.extraData.category,
+                  purpose: ydoc.extraData.purpose,
+                  groupId: ydoc.extraData.groupId,
+                })
+              ).result
 
               const collaborativeFields = await CollaborativeDoc.getFormData(
                 objectId,

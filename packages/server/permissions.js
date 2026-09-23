@@ -408,13 +408,11 @@ const userIsAuthorOfTheManuscriptOfTheFile = rule({ cache: 'strict' })(async (
   const manuscript = await cachedGet(`msOfFile:${file.id}`, ctx)
   if (!manuscript) return false
 
-  const team = await Team.query()
-    .where({
-      objectId: manuscript.id,
-      objectType: 'manuscript',
-      role: 'author',
-    })
-    .first()
+  const team = await Team.findOne({
+    objectId: manuscript.id,
+    objectType: 'manuscript',
+    role: 'author',
+  })
 
   if (!team) return false
 
@@ -437,13 +435,11 @@ const userIsTheReviewerOfTheManuscriptOfTheFileAndReviewNotComplete = rule({
   const manuscript = await getLatestVersionOfManuscriptOfFile(file, ctx)
   if (!manuscript) return false
 
-  const team = await Team.query()
-    .where({
-      objectId: manuscript.id,
-      objectType: 'manuscript',
-      role: 'reviewer',
-    })
-    .first()
+  const team = await Team.findOne({
+    objectId: manuscript.id,
+    objectType: 'manuscript',
+    role: 'reviewer',
+  })
 
   if (!team) return false
 
@@ -507,7 +503,7 @@ const userCanPublishManuscript = rule({ cache: 'strict' })(async (
   if (!manuscriptId)
     throw new Error('No manuscriptId for userCanPublishManuscript!')
 
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })

@@ -6,9 +6,9 @@ const seedFormsCypress = async () => {
 
   // eslint-disable-next-line no-console
   console.log('Seeding forms...')
-  const group = await Group.query().findOne({ name: 'kotahi' })
+  const group = await Group.findOne({ name: 'kotahi' })
 
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId: group.id,
     active: true,
   })

@@ -12,7 +12,7 @@ const createEmailTemplate = async (groupId, input) => {
       ccEditors: input.emailContent.ccEditors,
     }
 
-    const createdEmailTemplate = await EmailTemplate.query().insert({
+    const createdEmailTemplate = await EmailTemplate.insert({
       emailContent: emailContents,
       groupId,
     })
@@ -53,7 +53,7 @@ const deleteEmailTemplate = async id => {
 }
 
 const emailTemplates = async groupId => {
-  const templates = await EmailTemplate.query().where({
+  const { result: templates } = await EmailTemplate.find({
     groupId,
   })
 

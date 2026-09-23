@@ -69,7 +69,7 @@ const formatMultipleCitationsFn = async (input, groupId) => {
 }
 
 const getDataciteCslFromDOI = async (input, groupId) => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })
@@ -114,7 +114,7 @@ const getDataciteCslFromDOI = async (input, groupId) => {
 }
 
 const getDataciteCslFromTitle = async (input, groupId) => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })
@@ -147,7 +147,7 @@ const getDataciteCslFromTitle = async (input, groupId) => {
 
 // This returns a reference as CSL with a formatetedCitation property that includes the HTML version of the citation.
 const getFormattedReferences = async (input, groupId) => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })
@@ -180,7 +180,7 @@ const getFormattedReferences = async (input, groupId) => {
 
 // This function just returns a reference as CSL.
 const getMatchingReferences = async (input, groupId) => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })
@@ -242,7 +242,7 @@ const getMatchingReferencesFromCrossRef = async (
 
 // This looks up a citation based on the DOI. Not exposed in the frontend yet.
 const getReferenceFromDoi = async (doi, groupId) => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })

@@ -5,7 +5,7 @@ const { createFile } = require('@coko/server')
 const { CmsFileTemplate } = require('../models')
 
 const uploadCms = async (templateId, files) => {
-  const folder = await CmsFileTemplate.query().findOne({ id: templateId })
+  const folder = await CmsFileTemplate.findOne({ id: templateId })
 
   return Promise.all(
     files.map(async file => {

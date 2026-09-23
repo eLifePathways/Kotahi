@@ -29,7 +29,7 @@ const {
 const sanitizeWaxImages = require('../utils/sanitizeWaxImages')
 
 const addResourceToFolder = async (id, type) => {
-  const parent = await CmsFileTemplate.query().findOne({ id })
+  const parent = await CmsFileTemplate.findOne({ id })
 
   const name = type ? 'new folder' : 'new file.njk'
 
@@ -171,7 +171,7 @@ const createCMSPage = async (groupId, input) => {
   try {
     const cleanedInput = await cleanCMSPageInput(input)
 
-    const savedCmsPage = await CmsPage.query().insert({
+    const savedCmsPage = await CmsPage.insert({
       ...cleanedInput,
       groupId,
     })
@@ -217,11 +217,11 @@ const deleteCMSPage = async id => {
 }
 
 const deleteResource = async id => {
-  const item = await CmsFileTemplate.query().findOne({ id })
+  const item = await CmsFileTemplate.findOne({ id })
 
   if (item.fileId) {
     await CmsFileTemplate.deleteById(id)
-    const file = await File.query().findOne({ id: item.fileId })
+    const file = await File.findOne({ id: item.fileId })
     const keys = file.storedObjects.map(f => f.key)
 
     try {
@@ -233,7 +233,7 @@ const deleteResource = async id => {
       throw new Error(`The was a problem deleting the file: ${e.message}`)
     }
   } else {
-    const hasChildren = await CmsFileTemplate.query().where({
+    const { result: hasChildren } = await CmsFileTemplate.find({
       parentId: item.id,
     })
 
@@ -251,7 +251,7 @@ const deleteResource = async id => {
 }
 
 const getActiveCmsFilesTree = async groupId => {
-  const cmsFileTemplate = await CmsFileTemplate.query().findOne({
+  const cmsFileTemplate = await CmsFileTemplate.findOne({
     groupId,
     rootFolder: true,
   })
@@ -313,7 +313,7 @@ const getFlaxPageConfig = async (configKey, groupId) => {
 const getFoldersList = async groupId => {
   let folderArray = []
 
-  const AllFiles = await CmsFileTemplate.query().where({ groupId })
+  const { result: AllFiles } = await CmsFileTemplate.find({ groupId })
   const folders = AllFiles.filter(file => file.fileId === null)
 
   const rootNodes = AllFiles.filter(f => f.parentId === null).map(f => ({
@@ -345,12 +345,12 @@ const getFoldersList = async groupId => {
 const layoutArticle = async layout => {
   if (layout.article || layout.article === '') return layout.article
 
-  const { article } = await ArticleTemplate.query().findOne({
+  const { article } = await ArticleTemplate.findOne({
     groupId: layout.groupId,
     isCms: true,
   })
 
-  let files = await File.query().where({ objectId: layout.groupId })
+  let { result: files } = await File.find({ objectId: layout.groupId })
   files = await getFilesWithUrl(files)
 
   return replaceImageFromNunjucksTemplate(article, files, 'medium') ?? ''
@@ -359,7 +359,7 @@ const layoutArticle = async layout => {
 const layoutCss = async layout => {
   if (layout.css || layout.css === '') return layout.css
 
-  const { css } = await ArticleTemplate.query().findOne({
+  const { css } = await ArticleTemplate.findOne({
     groupId: layout.groupId,
     isCms: true,
   })
@@ -371,7 +371,7 @@ const layoutFavicon = async layout => {
   try {
     const { groupId } = layout
 
-    const activeConfig = await Config.query().findOne({
+    const activeConfig = await Config.findOne({
       groupId,
       active: true,
     })
@@ -425,10 +425,12 @@ const layoutPublishConfig = async layout => {
 }
 
 const layoutPublishingCollection = async layout => {
-  return PublishingCollection.query().where({
-    groupId: layout.groupId,
-    active: true,
-  })
+  return (
+    await PublishingCollection.find({
+      groupId: layout.groupId,
+      active: true,
+    })
+  ).result
 }
 
 const pageContent = async page => {
@@ -461,7 +463,7 @@ const pageMeta = page => {
 }
 
 const renameResource = async (id, name) => {
-  const item = await CmsFileTemplate.query().findOne({ id })
+  const item = await CmsFileTemplate.findOne({ id })
 
   const updatedItem = await CmsFileTemplate.query()
     .patch({ name })
@@ -479,7 +481,7 @@ const setInitialLayout = async groupId => {
   const { formData } = await Config.getCached(groupId)
   const { primaryColor, secondaryColor } = formData.groupIdentity
 
-  const layout = await CmsLayout.query().insert({
+  const layout = await CmsLayout.insert({
     primaryColor,
     secondaryColor,
     groupId,
@@ -502,8 +504,8 @@ const storedPartnerFile = async storedPartner => {
 
 const updateCMSLayout = async (groupId, input) => {
   const layout = await CmsLayout.query().where('groupId', groupId).first()
-  if (!layout) return CmsLayout.query().insert(input)
-  return CmsLayout.query().updateAndFetchById(layout.id, input)
+  if (!layout) return CmsLayout.insert(input)
+  return CmsLayout.updateAndFetchById(layout.id, input)
 }
 
 const updateCMSPage = async (id, userId, input) => {
@@ -527,7 +529,7 @@ const updateFlaxRootFolder = async (id, groupId) => {
 }
 
 const updateResource = async (id, content) => {
-  const file = await File.query().findOne({ id })
+  const file = await File.findOne({ id })
 
   const { key } = file.storedObjects.find(obj => obj.type === 'original')
 

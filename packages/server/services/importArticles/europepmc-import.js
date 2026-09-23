@@ -14,19 +14,23 @@ const getData = async (groupId, ctx) => {
   const dateTwoWeeksAgo =
     +new Date(new Date(Date.now()).toISOString().split('T')[0]) - 12096e5
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'europepmc',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'europepmc',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'europepmc',
     })
   }
 
-  const [europepmcImportSourceId] = await ArticleImportSources.query().where({
-    server: 'europepmc',
-  })
+  const [europepmcImportSourceId] = (
+    await ArticleImportSources.find({
+      server: 'europepmc',
+    })
+  ).result
 
   const lastImportDate = await ArticleImportHistory.query()
     .select('date')
@@ -202,7 +206,7 @@ const getData = async (groupId, ctx) => {
           groupId,
         })
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId: europepmcImportSourceId.id,
         groupId,

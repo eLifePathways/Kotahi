@@ -26,12 +26,12 @@ const getTemplateArticle = async articleTemplate => {
 
 const getTemplateFiles = async articleTemplate => {
   return getFilesWithUrl(
-    await File.query().where({ objectId: articleTemplate.groupId }),
+    (await File.find({ objectId: articleTemplate.groupId })).result,
   )
 }
 
 const searchArticleTemplate = async groupId => {
-  const groupFiles = await CmsFileTemplate.query().where({
+  const { result: groupFiles } = await CmsFileTemplate.find({
     groupId,
   })
 
@@ -50,7 +50,7 @@ const searchArticleTemplate = async groupId => {
 }
 
 const updateTemplate = async (id, input) => {
-  const result = await ArticleTemplate.query().findOne({ id })
+  const result = await ArticleTemplate.findOne({ id })
 
   // Needs to be revisited. This is a temp Solution
   // In case we want to update the article template of the CMS we need to do that on the S3
@@ -71,7 +71,7 @@ const updateTemplate = async (id, input) => {
     input.article = ''
   }
 
-  return ArticleTemplate.query().patchAndFetchById(id, input).throwIfNotFound()
+  return ArticleTemplate.patchAndFetchById(id, input)
 }
 
 module.exports = {

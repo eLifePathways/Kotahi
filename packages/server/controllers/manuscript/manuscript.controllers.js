@@ -197,7 +197,7 @@ const assignAuthorForProofingManuscript = async (manuscriptId, userId) => {
     assignedOnDate: new Date(),
   })
 
-  const updated = await Manuscript.query().patchAndFetchById(manuscript.id, {
+  const updated = await Manuscript.patchAndFetchById(manuscript.id, {
     status: 'assigned',
     authorFeedback: {
       ...manuscript.authorFeedback,
@@ -350,7 +350,7 @@ const createManuscript = async (userId, input) => {
     manuscript.id,
   )
 
-  const updatedManuscript = await Manuscript.query().updateAndFetchById(
+  const updatedManuscript = await Manuscript.updateAndFetchById(
     manuscript.id,
     manuscript,
   )
@@ -387,7 +387,7 @@ const deleteManuscript = async id => {
   toDeleteList.push(manuscript.id)
 
   if (manuscript.parentId) {
-    const parentManuscripts = await Manuscript.query().where({
+    const { result: parentManuscripts } = await Manuscript.find({
       parent_id: manuscript.parentId,
     })
 
@@ -570,7 +570,7 @@ const getManuscript = async id => {
       !Number.isNaN(embargoTimestamp) &&
       embargoTimestamp <= currentTimestamp
     ) {
-      const updatedManuscript = await Manuscript.query().patchAndFetchById(id, {
+      const updatedManuscript = await Manuscript.patchAndFetchById(id, {
         status: 'embargoReleased',
       })
 
@@ -775,9 +775,11 @@ const makeDecision = async (id, decisionKey, userId) => {
     related: '[submitter.[defaultIdentity], teams.members.user, reviews.user]',
   })
 
-  manuscript.channels = await Channel.query().where({
-    manuscriptId: manuscript.parentId || manuscript.id,
-  })
+  manuscript.channels = (
+    await Channel.find({
+      manuscriptId: manuscript.parentId || manuscript.id,
+    })
+  ).result
 
   const activeConfig = await Config.getCached(manuscript.groupId)
   const currentUser = await User.findOneWithIdentity(userId, 'orcid')
@@ -832,7 +834,7 @@ const makeDecision = async (id, decisionKey, userId) => {
     await sendRejectCoarNotification(manuscript, currentUser, decision)
   }
 
-  return Manuscript.query().updateAndFetchById(id, manuscript)
+  return Manuscript.updateAndFetchById(id, manuscript)
 }
 
 const manuscriptChannels = manuscript => {
@@ -865,7 +867,7 @@ const manuscriptsPublishedSinceDate = async (
   groupName,
   groupIdFromHeader,
 ) => {
-  const groups = await Group.query().where({ isArchived: false })
+  const { result: groups } = await Group.find({ isArchived: false })
   let group = null
 
   if (groupIdFromHeader) group = groups.find(g => g.id === groupIdFromHeader)
@@ -1250,7 +1252,7 @@ const publishedReviewUsers = async review => {
 
     users = await existingTeam.$relatedQuery('users')
   } else {
-    users = await User.query().where({ id: review.userId })
+    users = (await User.find({ id: review.userId })).result
   }
 
   users = await Promise.all(
@@ -1289,7 +1291,7 @@ const publishManuscript = async (id, groupId) => {
   // We update the manuscript in advance, so that external services such as Flax
   // will be able to retrieve it as a "published" manuscript. If all publishing steps
   // fail, we will revert these changes at the end.
-  await Manuscript.query().patchAndFetchById(id, {
+  await Manuscript.patchAndFetchById(id, {
     published: newPublishedDate,
     status: 'published',
   })
@@ -1555,7 +1557,7 @@ const publishManuscript = async (id, groupId) => {
   let updatedManuscript
 
   if (steps.some(step => step.succeeded)) {
-    updatedManuscript = await Manuscript.query().patchAndFetchById(id, update)
+    updatedManuscript = await Manuscript.patchAndFetchById(id, update)
 
     const commentsToPublish = []
 
@@ -1569,9 +1571,10 @@ const publishManuscript = async (id, groupId) => {
       })
     })
 
-    const manuscriptThreadDiscussions = await ThreadedDiscussion.query().where({
-      manuscriptId: updatedManuscript.parentId || updatedManuscript.id,
-    })
+    const { result: manuscriptThreadDiscussions } =
+      await ThreadedDiscussion.find({
+        manuscriptId: updatedManuscript.parentId || updatedManuscript.id,
+      })
 
     await Promise.all(
       manuscriptThreadDiscussions.map(async threadDiscussion => {
@@ -1585,15 +1588,14 @@ const publishManuscript = async (id, groupId) => {
           })),
         }))
 
-        await ThreadedDiscussion.query().patchAndFetchById(
-          threadDiscussion.id,
-          { threads: JSON.stringify(unsetThreads) },
-        )
+        await ThreadedDiscussion.patchAndFetchById(threadDiscussion.id, {
+          threads: JSON.stringify(unsetThreads),
+        })
       }),
     )
   } else {
     // Revert the changes to published date and status
-    updatedManuscript = await Manuscript.query().patchAndFetchById(id, {
+    updatedManuscript = await Manuscript.patchAndFetchById(id, {
       published: prevPublishedDate,
       status: prevStatus,
     })
@@ -1633,7 +1635,7 @@ const updateAda = async (id, adaState) => {
         adaJobId: data.adaJobId,
       })
 
-      updatedManuscript = await Manuscript.query().patchAndFetchById(id, update)
+      updatedManuscript = await Manuscript.patchAndFetchById(id, update)
     } catch (err) {
       logger.error(err)
 
@@ -1713,7 +1715,7 @@ const removeReviewer = async (manuscriptId, userId) => {
     type: 'editorial',
   })
 
-  const reviewerTeam = await Team.query().findOne({
+  const reviewerTeam = await Team.findOne({
     id: deletedTeamMember.teamId,
   })
 
@@ -1763,7 +1765,7 @@ const reviewerResponse = async (action, teamId, userId) => {
   await Promise.all(
     team.members.map(async member => {
       if (member.userId === userId && member.status !== 'completed') {
-        await TeamMember.query().patchAndFetchById(member.id, {
+        await TeamMember.patchAndFetchById(member.id, {
           status: action,
         })
       }
@@ -1778,7 +1780,7 @@ const reviewerResponse = async (action, teamId, userId) => {
     })
   }
 
-  const existingReview = await ReviewModel.query().where({
+  const { result: existingReview } = await ReviewModel.find({
     manuscriptId: team.objectId,
     userId: team.role === 'collaborativeReviewer' ? null : userId,
     isDecision: false,
@@ -1796,7 +1798,7 @@ const reviewerResponse = async (action, teamId, userId) => {
       jsonData: '{}',
     }
 
-    await ReviewModel.query().insert(review)
+    await ReviewModel.insert(review)
   }
 
   const manuscript = await Manuscript.findById(team.objectId, {
@@ -1910,10 +1912,7 @@ const setShouldPublishField = async (
       .filter(ff => ff.fieldsToPublish.length)
   }
 
-  const updated = await Manuscript.query().updateAndFetchById(
-    manuscriptId,
-    manuscript,
-  )
+  const updated = await Manuscript.updateAndFetchById(manuscriptId, manuscript)
 
   return updated
 }
@@ -2001,7 +2000,7 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
       delete manuscript.authorFeedback.submitted
     }
 
-    updated = await Manuscript.query().patchAndFetchById(manuscript.id, {
+    updated = await Manuscript.patchAndFetchById(manuscript.id, {
       authorFeedback: {
         ...manuscript.authorFeedback,
         previousSubmissions: orderBy(
@@ -2192,7 +2191,7 @@ const updateManuscript = async (id, input) => {
   }
 
   // convert to json, otherwise you're bypassing validation
-  return Manuscript.query().updateAndFetchById(id, updatedMs.$toJson())
+  return Manuscript.updateAndFetchById(id, updatedMs.$toJson())
 }
 
 const unarchiveManuscripts = async ids => {
@@ -2214,7 +2213,7 @@ const unarchiveManuscripts = async ids => {
 }
 
 const unreviewedPreprints = async (token, groupName) => {
-  const groups = await Group.query().where({ isArchived: false })
+  const { result: groups } = await Group.find({ isArchived: false })
   let group = null
   if (groupName) group = groups.find(g => g.name === groupName)
   else if (groups.length === 1) [group] = groups

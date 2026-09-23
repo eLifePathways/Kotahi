@@ -10,7 +10,7 @@ const { notify } = require('./notification.controllers')
 const createMessage = async (content, channelId, userId) => {
   const currentUserId = userId
 
-  const savedMessage = await Message.query().insert({
+  const savedMessage = await Message.insert({
     content,
     userId: currentUserId,
     channelId,

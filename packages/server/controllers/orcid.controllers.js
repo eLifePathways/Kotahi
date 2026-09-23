@@ -49,41 +49,50 @@ const addUserToAdminAndGroupAdminTeams = async (
 ) => {
   const { trx } = options
 
-  const groupAdminTeam = await Team.query(trx).findOne({
-    role: 'groupAdmin',
-    objectId: groupId,
-    objectType: 'Group',
-  })
+  const groupAdminTeam = await Team.findOne(
+    {
+      role: 'groupAdmin',
+      objectId: groupId,
+      objectType: 'Group',
+    },
+    { trx },
+  )
 
-  const adminTeam = await Team.query(trx).findOne({
-    role: 'admin',
-    global: true,
-  })
+  const adminTeam = await Team.findOne(
+    {
+      role: 'admin',
+      global: true,
+    },
+    { trx },
+  )
 
-  await TeamMember.query(trx).insert({ userId, teamId: adminTeam.id })
-  await TeamMember.query(trx).insert({ userId, teamId: groupAdminTeam.id })
+  await TeamMember.insert({ userId, teamId: adminTeam.id }, { trx })
+  await TeamMember.insert({ userId, teamId: groupAdminTeam.id }, { trx })
 }
 
 const addUserToUserTeam = async (userId, groupId) => {
-  const userTeam = await Team.query().findOne({
+  const userTeam = await Team.findOne({
     role: 'user',
     objectId: groupId,
     objectType: 'Group',
   })
 
-  await TeamMember.query().insert({ userId, teamId: userTeam.id })
+  await TeamMember.insert({ userId, teamId: userTeam.id })
 }
 
 const addUserToGroupAdminTeam = async (userId, groupId, options = {}) => {
   const { trx } = options
 
-  const groupAdminTeam = await Team.query(trx).findOne({
-    role: 'groupAdmin',
-    objectId: groupId,
-    objectType: 'Group',
-  })
+  const groupAdminTeam = await Team.findOne(
+    {
+      role: 'groupAdmin',
+      objectId: groupId,
+      objectType: 'Group',
+    },
+    { trx },
+  )
 
-  await TeamMember.query(trx).insert({ userId, teamId: groupAdminTeam.id })
+  await TeamMember.insert({ userId, teamId: groupAdminTeam.id }, { trx })
 }
 
 const createOrcidStrategy = () => {
@@ -141,17 +150,23 @@ const createOrcidStrategy = () => {
       try {
         await useTransaction(async trx => {
           if (!user) {
-            user = await User.query(trx).insert({
-              username: params.name,
-            })
+            user = await User.insert(
+              {
+                username: params.name,
+              },
+              { trx },
+            )
 
-            const identity = await Identity.query(trx).insert({
-              identifier: params.orcid,
-              oauth: { accessToken, refreshToken },
-              type: 'orcid',
-              isDefault: true,
-              userId: user.id,
-            })
+            const identity = await Identity.insert(
+              {
+                identifier: params.orcid,
+                oauth: { accessToken, refreshToken },
+                type: 'orcid',
+                isDefault: true,
+                userId: user.id,
+              },
+              { trx },
+            )
 
             if (
               usersCountString === '0' ||
@@ -165,16 +180,22 @@ const createOrcidStrategy = () => {
             // Do another request to the ORCID API for aff/name
             const userDetails = await fetchUserDetails(user, { trx })
 
-            await identity.$query(trx).patchAndFetch({
-              name: `${userDetails.firstName || ''} ${
-                userDetails.lastName || ''
-              }`,
-              aff: userDetails.institution || '',
-            })
+            await identity.patch(
+              {
+                name: `${userDetails.firstName || ''} ${
+                  userDetails.lastName || ''
+                }`,
+                aff: userDetails.institution || '',
+              },
+              { trx },
+            )
 
-            await user.$query(trx).patchAndFetch({
-              email: userDetails.email || null,
-            })
+            await user.patch(
+              {
+                email: userDetails.email || null,
+              },
+              { trx },
+            )
 
             firstLogin = true
           } else if (groupUsersCount === 0) {
@@ -234,10 +255,13 @@ const orcidRequest = (identity, endpoint) => {
 const fetchUserDetails = async (user, options = {}) => {
   const { trx } = options
 
-  const identity = await Identity.query(trx).findOne({
-    userId: user.id,
-    type: 'orcid',
-  })
+  const identity = await Identity.findOne(
+    {
+      userId: user.id,
+      type: 'orcid',
+    },
+    { trx },
+  )
 
   logger.debug('processing response from orcid api')
 
@@ -279,7 +303,7 @@ const handleOrcidOAuthResponse = async user => {
 
   const jwt = createJWT({ id, username })
 
-  const group = await Group.query().findOne({
+  const group = await Group.findOne({
     id: groupId,
     isArchived: false,
   })

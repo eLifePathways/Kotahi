@@ -175,7 +175,7 @@ const tryPublishDocMaps = async manuscript => {
 
   const content = JSON.stringify(docmap)
 
-  const existingDocmap = await Docmap.query().findOne({
+  const existingDocmap = await Docmap.findOne({
     externalId: uri,
     groupId: group.id,
   })
@@ -185,7 +185,7 @@ const tryPublishDocMaps = async manuscript => {
       .update({ content, manuscriptId: manuscript.id })
       .where({ externalId: uri, groupId: group.id })
   else
-    await Docmap.query().insert({
+    await Docmap.insert({
       externalId: uri,
       content,
       manuscriptId: manuscript.id,

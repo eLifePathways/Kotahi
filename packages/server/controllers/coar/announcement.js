@@ -213,7 +213,7 @@ const makeAnnouncementOnCOAR = async (
 
     const { groupId, id: manuscriptId } = manuscript
 
-    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+    await CoarNotification.insert({ groupId, manuscriptId, payload })
 
     return response?.data || false
   } catch (err) {

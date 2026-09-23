@@ -131,7 +131,7 @@ const lockUnlockCollaborativeReview = async id => {
     .findOne({ id })
     .returning('*')
 
-  const team = await Team.query().findOne({
+  const team = await Team.findOne({
     role: 'collaborativeReviewer',
     objectId: updatedReview.manuscriptId,
     objectType: 'manuscript',
@@ -285,7 +285,7 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
     })
   }
 
-  return member.$query().patchAndFetch({
+  return member.patch({
     status,
     updated: new Date().toISOString(),
   })

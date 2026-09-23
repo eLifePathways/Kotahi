@@ -280,7 +280,7 @@ const sendUnprocessableCoarNotification = async (
 }
 
 const createNotification = async (payload, groupId, manuscriptId = null) => {
-  const notification = await CoarNotification.query().insert({
+  const notification = await CoarNotification.insert({
     payload,
     ...(groupId ? { groupId } : {}),
     ...(manuscriptId ? { manuscriptId } : {}),
@@ -295,7 +295,7 @@ const updateNotification = async (
   groupId,
   manuscriptId = null,
 ) => {
-  return reprocessNotification.$query().patchAndFetch({
+  return reprocessNotification.patch({
     groupId,
     payload,
     ...(manuscriptId ? { manuscriptId } : {}),
@@ -418,7 +418,7 @@ const validateAuthToken = async (authHeader, groupId) => {
 const validateIPs = async (requestIP, group) => {
   const groupId = group.id
 
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })

@@ -180,7 +180,7 @@ const updateTeamMember = async (id, input) => {
 }
 
 const updateCollaborativeTeamMembers = async (manuscriptId, input) => {
-  const collaborativeReviewerTeam = await Team.query().findOne({
+  const collaborativeReviewerTeam = await Team.findOne({
     objectId: manuscriptId,
     role: 'collaborativeReviewer',
   })
@@ -189,9 +189,11 @@ const updateCollaborativeTeamMembers = async (manuscriptId, input) => {
     .where({ teamId: collaborativeReviewerTeam.id })
     .update(JSON.parse(input))
 
-  return TeamMember.query().where({
-    teamId: collaborativeReviewerTeam.id,
-  })
+  return (
+    await TeamMember.find({
+      teamId: collaborativeReviewerTeam.id,
+    })
+  ).result
 }
 
 const userTeams = async userId => {

@@ -89,11 +89,9 @@ const getManuscriptById = async id => {
 }
 
 const getGroupAssets = async groupId => {
-  const aData = await ArticleTemplate.query()
-    .where({ groupId, isCms: false })
-    .first()
+  const aData = await ArticleTemplate.findOne({ groupId, isCms: false })
 
-  const files = await File.query().where({ objectId: groupId })
+  const { result: files } = await File.find({ objectId: groupId })
 
   aData.files = await getFilesWithUrl(files)
   return aData
@@ -204,7 +202,7 @@ const pdfHandler = async manuscriptId => {
       .then(async res => {
         const fileStream = res.data
 
-        const files = await File.query().where({
+        const { result: files } = await File.find({
           objectId: manuscriptId,
         })
 
