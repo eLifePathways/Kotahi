@@ -47,7 +47,9 @@ const createTeam = async (input, groupId) => {
   )
 
   if (EDITOR_ROLES.includes(input.role)) {
-    const manuscript = await Manuscript.query().findById(input.objectId)
+    const manuscript = await Manuscript.findById(input.objectId, {
+      throwIfNotFound: false,
+    })
     const handlingEditorIds = input.members.map(m => m.user.id)
 
     if (input.role === 'handlingEditor' && handlingEditorIds.length > 0) {
@@ -86,7 +88,9 @@ const updateTeam = async (id, input, groupId) => {
     )
 
     const { objectId } = await Team.query().select('objectId').findById(id)
-    const manuscript = await Manuscript.query().findById(objectId)
+    const manuscript = await Manuscript.findById(objectId, {
+      throwIfNotFound: false,
+    })
 
     const eventData = {
       manuscript,
@@ -172,7 +176,7 @@ const updateTeam = async (id, input, groupId) => {
 const updateTeamMember = async (id, input) => {
   // somehow updateandfetchbyid was not working here when changing the isShared field, not sure why
   await TeamMember.query().where({ id }).patch(JSON.parse(input))
-  return TeamMember.query().findById(id)
+  return TeamMember.findById(id, { throwIfNotFound: false })
 }
 
 const updateCollaborativeTeamMembers = async (manuscriptId, input) => {

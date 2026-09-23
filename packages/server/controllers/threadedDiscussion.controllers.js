@@ -47,8 +47,9 @@ const completeComment = async (
 ) => {
   const now = new Date().toISOString()
 
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   if (!discussion)
     throw new Error(
@@ -95,8 +96,9 @@ const completeComments = async (threadedDiscussionId, userId) => {
   const now = new Date().toISOString()
   let hasUpdated = false
 
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   if (!discussion)
     throw new Error(
@@ -162,8 +164,9 @@ const deletePendingComment = async (
   commentId,
   userId,
 ) => {
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   if (!discussion)
     throw new Error(
@@ -192,7 +195,7 @@ const deletePendingComment = async (
 const filterDistinct = (id, index, arr) => arr.indexOf(id) === index
 
 const getActiveConfigOfThreadedDiscussion = async discussion => {
-  const { groupId } = await Manuscript.query().findById(discussion.manuscriptId)
+  const { groupId } = await Manuscript.findById(discussion.manuscriptId)
   const config = await Config.getCached(groupId)
 
   return config
@@ -325,8 +328,9 @@ const updatePendingComment = async (
   const now = new Date().toISOString()
   const manuscriptId = await getOriginalVersionManuscriptId(msVersionId)
 
-  let discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  let discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
   if (!discussion)
     discussion = {
       id: threadedDiscussionId,

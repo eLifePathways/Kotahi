@@ -7,7 +7,7 @@ const { createFile, deleteFiles, useTransaction } = require('@coko/server')
 const User = require('../models/user/user.model')
 
 const profileUpload = async (userId, filePath) => {
-  const user = await User.query().findById(userId)
+  const user = await User.findById(userId)
   const previousProfilePictureId = user.profilePicture
 
   await useTransaction(async trx => {
@@ -23,9 +23,11 @@ const profileUpload = async (userId, filePath) => {
       },
     )
 
-    await User.query(trx).findById(userId).patch({
-      profilePicture: createdProfilePicture.id,
-    })
+    await User.patchById(
+      userId,
+      { profilePicture: createdProfilePicture.id },
+      { trx },
+    )
   })
 
   if (previousProfilePictureId) {

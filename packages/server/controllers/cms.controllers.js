@@ -160,7 +160,7 @@ const cmsLayout = async groupId => {
 }
 
 const cmsPageById = async id => {
-  return CmsPage.query().findById(id)
+  return CmsPage.findById(id, { throwIfNotFound: false })
 }
 
 const cmsPages = async groupId => {
@@ -176,7 +176,9 @@ const createCMSPage = async (groupId, input) => {
       groupId,
     })
 
-    const cmsPage = await CmsPage.query().findById(savedCmsPage.id)
+    const cmsPage = await CmsPage.findById(savedCmsPage.id, {
+      throwIfNotFound: false,
+    })
     return { success: true, error: null, cmsPage }
   } catch (e) {
     if (e.constraint === 'cms_pages_url_group_id_key') {
@@ -194,7 +196,7 @@ const createCMSPage = async (groupId, input) => {
 
 const deleteCMSPage = async id => {
   try {
-    const response = await CmsPage.query().delete().where({ id })
+    const response = await CmsPage.deleteById(id)
 
     if (response) {
       return {
@@ -218,14 +220,14 @@ const deleteResource = async id => {
   const item = await CmsFileTemplate.query().findOne({ id })
 
   if (item.fileId) {
-    await CmsFileTemplate.query().findOne({ id }).delete()
+    await CmsFileTemplate.deleteById(id)
     const file = await File.query().findOne({ id: item.fileId })
     const keys = file.storedObjects.map(f => f.key)
 
     try {
       if (keys.length > 0) {
         await fileStorage.delete(keys)
-        await File.query().deleteById(id)
+        await File.deleteById(item.fileId)
       }
     } catch (e) {
       throw new Error(`The was a problem deleting the file: ${e.message}`)
@@ -236,7 +238,7 @@ const deleteResource = async id => {
     })
 
     if (hasChildren.length === 0) {
-      await CmsFileTemplate.query().findOne({ id }).delete()
+      await CmsFileTemplate.deleteById(id)
     }
   }
 
@@ -258,7 +260,7 @@ const getActiveCmsFilesTree = async groupId => {
 }
 
 const getCmsFileContent = async id => {
-  const file = await File.query().findById(id)
+  const file = await File.findById(id)
 
   const fileStorageConfig = config.get('fileStorage')
   const { storedObjects } = await getFileWithUrl(file, {

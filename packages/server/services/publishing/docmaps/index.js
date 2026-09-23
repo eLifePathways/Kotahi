@@ -69,7 +69,7 @@ const expandTemplatesAndRemoveDirectivesRecursive = (
 
 const tryPublishDocMaps = async manuscript => {
   if (!allDocmapsScheme) return false
-  const group = await Group.query().findById(manuscript.groupId)
+  const group = await Group.findById(manuscript.groupId)
 
   // Checks if docmapsScheme has been configured for that group
   const docmapsSchemeExists = allDocmapsScheme.find(

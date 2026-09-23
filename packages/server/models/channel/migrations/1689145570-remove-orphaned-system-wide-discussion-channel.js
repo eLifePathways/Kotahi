@@ -18,7 +18,7 @@ exports.up = async () => {
         })
 
         if (orphanedSystemwideChannelRecord) {
-          await Channel.query().deleteById(orphanedSystemwideChannelRecord.id)
+          await Channel.deleteById(orphanedSystemwideChannelRecord.id)
         }
       }
     })

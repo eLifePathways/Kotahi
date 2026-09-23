@@ -18,7 +18,7 @@ exports.up = async () => {
         })
 
         if (orphanedGroupManagerRecord) {
-          await Team.query().deleteById(orphanedGroupManagerRecord.id)
+          await Team.deleteById(orphanedGroupManagerRecord.id)
         }
       }
     })

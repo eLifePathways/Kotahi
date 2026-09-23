@@ -15,9 +15,10 @@ const upsertArtifact = async artifact => {
   const artifactId = priorArtifact ? priorArtifact.id : uuid()
 
   if (priorArtifact) {
-    await PublishedArtifact.query()
-      .findById(artifactId)
-      .patch({ ...artifact, id: artifactId })
+    await PublishedArtifact.patchById(artifactId, {
+      ...artifact,
+      id: artifactId,
+    })
   } else {
     await PublishedArtifact.query().insert({
       ...artifact,

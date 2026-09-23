@@ -374,9 +374,7 @@ const group = async () => {
           .filter(g => archiveGroupNames.includes(g.name))
           .map(g => g.id)
 
-        await Group.query(trx).findByIds(archiveGroupIds).patch({
-          isArchived: true,
-        })
+        await Group.archiveByIds(archiveGroupIds, { trx })
 
         groups = await Group.query(trx)
         logger.info(

@@ -82,11 +82,11 @@ const createNewTaskAlerts = async groupId => {
 const createTaskEmailNotificationLog = async taskEmailNotificationLog => {
   await TaskEmailNotificationLog.query().insert(taskEmailNotificationLog)
 
-  const associatedTask = await Task.query()
-    .findById(taskEmailNotificationLog.taskId)
-    .withGraphFetched(
+  const associatedTask = await Task.findById(taskEmailNotificationLog.taskId, {
+    related:
       '[assignee, emailNotifications.recipientUser, notificationLogs(orderByCreatedDesc)]',
-    )
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
@@ -98,17 +98,17 @@ const deleteAlertsForManuscript = async manuscriptId => {
 }
 
 const deleteTaskNotification = async id => {
-  const taskEmailNotification = await TaskEmailNotification.query().findById(id)
+  const taskEmailNotification = await TaskEmailNotification.findById(id)
 
   const { taskId } = taskEmailNotification
 
-  await TaskEmailNotification.query().deleteById(id)
+  await TaskEmailNotification.deleteById(id)
 
-  const associatedTask = await Task.query()
-    .findById(taskId)
-    .withGraphFetched(
+  const associatedTask = await Task.findById(taskId, {
+    related:
       '[assignee, emailNotifications(orderByCreated).recipientUser, notificationLogs(orderByCreatedDesc)]',
-    )
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
@@ -171,9 +171,11 @@ const logTaskEmailNotificationData = async (logData, options = {}) => {
   const { trx } = options
   await TaskEmailNotificationLog.query(trx).insert(logData)
 
-  const associatedTask = await Task.query(trx)
-    .findById(logData.taskId)
-    .withGraphFetched('[emailNotifications.recipientUser, notificationLogs]')
+  const associatedTask = await Task.findById(logData.taskId, {
+    trx,
+    related: '[emailNotifications.recipientUser, notificationLogs]',
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
@@ -436,7 +438,7 @@ const sendNotification = async n => {
 
         const emailTemplate =
           /* eslint-disable-next-line no-await-in-loop */
-          await EmailTemplate.query().findById(emailTemplateOption)
+          await EmailTemplate.findById(emailTemplateOption)
 
         const messageBody = `${emailTemplate.emailContent.description} sent by Kotahi to ${recipient.name}`
 
@@ -462,7 +464,10 @@ const sendNotification = async n => {
 }
 
 const taskAssignee = async task => {
-  return task.assignee || User.query().findById(task.assigneeUserId)
+  return (
+    task.assignee ||
+    User.findById(task.assigneeUserId, { throwIfNotFound: false })
+  )
 }
 
 const taskEmailNotification = async task => {
@@ -475,7 +480,7 @@ const taskEmailNotification = async task => {
 const taskEmailNotificationRecipientUser = async notification => {
   return (
     notification.recipientUser ||
-    User.query().findById(notification.recipientUserId)
+    User.findById(notification.recipientUserId, { throwIfNotFound: false })
   )
 }
 
@@ -557,7 +562,7 @@ const updateTask = async task => {
     .where({ manuscriptId: task.manuscriptId, groupId: task.groupId })
     .resultSize()
 
-  const existing = await Task.query().findById(task.id)
+  const existing = await Task.findById(task.id, { throwIfNotFound: false })
 
   // Ensure that we can't switch a task from one manuscript to another
   const manuscriptId = existing ? existing.manuscriptId : task.manuscriptId
@@ -574,11 +579,11 @@ const updateTask = async task => {
 
   await updateAlertsForTask(taskRecord)
 
-  return Task.query()
-    .findById(task.id)
-    .withGraphFetched(
+  return Task.findById(task.id, {
+    related:
       '[assignee, emailNotifications(orderByCreated).recipientUser, notificationLogs(orderByCreatedDesc)]',
-    )
+    throwIfNotFound: false,
+  })
 }
 
 const updateTaskNotification = async taskNotification => {
@@ -587,11 +592,11 @@ const updateTaskNotification = async taskNotification => {
     insertMissing: true,
   })
 
-  const associatedTask = await Task.query()
-    .findById(taskNotification.taskId)
-    .withGraphFetched(
+  const associatedTask = await Task.findById(taskNotification.taskId, {
+    related:
       '[emailNotifications(orderByCreated).recipientUser, notificationLogs(orderByCreatedDesc), assignee]',
-    )
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
@@ -605,7 +610,7 @@ const updateTaskStatus = async task => {
   }
 
   // get task
-  const dbTask = await Task.query().findById(task.id)
+  const dbTask = await Task.findById(task.id)
 
   if (
     dbTask.status === status.NOT_STARTED &&

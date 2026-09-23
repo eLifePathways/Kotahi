@@ -8,7 +8,7 @@ const createForm = async form => {
 }
 
 const deleteForm = async formId => {
-  await Form.query().deleteById(formId)
+  await Form.deleteById(formId)
   return { query: {} }
 }
 

@@ -85,7 +85,7 @@ const serviceHandshake = async () => {
 }
 
 const getManuscriptById = async id => {
-  return Manuscript.query().findById(id).withGraphFetched('[files]')
+  return Manuscript.findById(id, { related: '[files]', throwIfNotFound: false })
 }
 
 const getGroupAssets = async groupId => {

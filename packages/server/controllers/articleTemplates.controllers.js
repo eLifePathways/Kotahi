@@ -14,7 +14,7 @@ const getTemplateArticle = async articleTemplate => {
   if (articleTemplate.isCms === true) {
     const articleFile = await searchArticleTemplate(articleTemplate.groupId)
     if (!articleFile) return ''
-    const file = await File.query().findById(articleFile.fileId)
+    const file = await File.findById(articleFile.fileId)
 
     const originalObject = file.storedObjects.find(f => f.type === 'original')
 
@@ -59,7 +59,7 @@ const updateTemplate = async (id, input) => {
     const articleFile = await searchArticleTemplate(result.groupId)
 
     if (articleFile) {
-      const file = await File.query().findById(articleFile.fileId)
+      const file = await File.findById(articleFile.fileId)
 
       const { key } = file.storedObjects.find(obj => obj.type === 'original')
 

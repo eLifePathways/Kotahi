@@ -21,7 +21,9 @@ const addEmailToBlacklist = async (email, groupId) => {
 }
 
 const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
-  const existingInvite = await Invitation.query().findById(invitationId)
+  const existingInvite = await Invitation.findById(invitationId, {
+    throwIfNotFound: false,
+  })
 
   if (!existingInvite || existingInvite.responseDate) {
     throw new Error('Invalid Invitation ID')
@@ -127,14 +129,17 @@ const invitationStatus = async id => {
 }
 
 const invitationUser = async invitation => {
-  return invitation.user || User.query().findById(invitation.userId)
+  return (
+    invitation.user ||
+    User.findById(invitation.userId, { throwIfNotFound: false })
+  )
 }
 
 const removeInvitation = async id => {
   const invitation = await Invitation.findById(id)
   if (!invitation) return null
 
-  await Invitation.query().findById(id).delete()
+  await Invitation.deleteById(id)
   return invitation
 }
 
@@ -190,7 +195,9 @@ const updateInvitationStatus = async (
       .where({ userId: relatedUser.id, status: 'invited' })
   }
 
-  const manuscript = await Manuscript.query().findById(result.manuscriptId)
+  const manuscript = await Manuscript.findById(result.manuscriptId, {
+    throwIfNotFound: false,
+  })
 
   const eventName = {
     author: 'author',

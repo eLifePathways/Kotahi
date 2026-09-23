@@ -53,7 +53,7 @@ const deleteAsset = async id => {
   try {
     if (keys.length > 0) {
       await fileStorage.delete(keys)
-      await File.query().deleteById(id)
+      await File.deleteById(id)
     }
 
     const templateFiles = await ArticleTemplate.relatedQuery('files').for(

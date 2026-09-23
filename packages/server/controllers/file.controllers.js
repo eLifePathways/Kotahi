@@ -188,7 +188,7 @@ const updateFile = async input => {
 const updateTagsFile = async input => {
   const { removeTags, addTags, id } = input
 
-  const file = await File.query().findById(id)
+  const file = await File.findById(id)
   let updatedTags = file.tags
 
   if (removeTags) {

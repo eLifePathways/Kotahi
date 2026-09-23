@@ -27,7 +27,7 @@ const getScietyInboxUrl = async groupId => {
 }
 
 const getRequestData = async manuscript => {
-  const group = await Group.query().findById(manuscript.groupId).first()
+  const group = await Group.findById(manuscript.groupId)
   const reviewer = await getReviewer(manuscript)
 
   const { payload } =

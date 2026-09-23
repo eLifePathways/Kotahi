@@ -65,7 +65,9 @@ const getRecipient = async (recipient, manuscriptId, groupId, getTeam) => {
       teamId: groupManagerTeam.id,
     })
 
-    const user = await User.query().findById(groupManager.userId)
+    const user = await User.findById(groupManager.userId, {
+      throwIfNotFound: false,
+    })
     return EMAIL_REGEX.test(user?.email) ? user?.email : ''
   }
 
@@ -80,7 +82,7 @@ const getRecipient = async (recipient, manuscriptId, groupId, getTeam) => {
 
     const users = await Promise.all(
       members.map(async member => {
-        const user = User.query().findById(member.userId)
+        const user = User.findById(member.userId, { throwIfNotFound: false })
         return user
       }),
     )

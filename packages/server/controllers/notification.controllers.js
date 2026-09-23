@@ -129,14 +129,14 @@ const sendChatNotification = async ({
   currentUserId = null,
   isMentioned = false,
 }) => {
-  const recipient = await User.query().findById(recipientId)
-  const message = await Message.query().findById(messageId)
-  const channel = await Channel.query().findById(message.channelId)
+  const recipient = await User.findById(recipientId)
+  const message = await Message.findById(messageId)
+  const channel = await Channel.findById(message.channelId)
   if (channel.groupId !== groupId)
     throw new Error(
       `Attempt by group ${groupId} to send chat notification for group ${channel.groupId}`,
     )
-  const group = await Group.query().findById(groupId)
+  const group = await Group.findById(groupId)
 
   // send email notification
   const appUrl = `${clientUrl}/${group.name}`
@@ -170,7 +170,7 @@ const sendChatNotification = async ({
       discussionUrl = `${appUrl}/dashboard`
     }
 
-    manuscript = await Manuscript.query().findById(channel.manuscriptId)
+    manuscript = await Manuscript.findById(channel.manuscriptId)
     const author = await manuscript.getManuscriptAuthor()
     authorName = author ? author.username : ''
   }
@@ -178,7 +178,7 @@ const sendChatNotification = async ({
   let currentUser
 
   if (currentUserId) {
-    currentUser = await User.query().findById(currentUserId)
+    currentUser = await User.findById(currentUserId, { throwIfNotFound: false })
   }
 
   const { id: channelId } = channel

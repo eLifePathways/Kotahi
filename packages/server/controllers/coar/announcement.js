@@ -53,7 +53,7 @@ const getRequestData = async (
 ) => {
   const { payload, groupId } = notification
   const { endorsement, linkedResource } = options
-  const group = await Group.query().findById(groupId).first()
+  const group = await Group.findById(groupId)
   const reviewer = await getReviewer(manuscript)
 
   const { flaxReviewUrl, flaxUrl } = await getFlaxUrl(

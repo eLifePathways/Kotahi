@@ -17,9 +17,7 @@ exports.up = async knex => {
     return Promise.all(
       members.map(async member => {
         if (member.isShared === null) {
-          await TeamMember.query(trx).findById(member.id).patch({
-            isShared: false,
-          })
+          await TeamMember.patchById(member.id, { isShared: false }, { trx })
         }
       }),
     )

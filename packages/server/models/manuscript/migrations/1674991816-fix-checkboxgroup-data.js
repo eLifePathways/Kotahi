@@ -64,9 +64,7 @@ const fixFieldsInAllObjects = async (
       }
 
       // eslint-disable-next-line no-await-in-loop
-      await Model.query(trx)
-        .findById(obj.id)
-        .patch({ [formDataName]: formData })
+      await Model.patchById(obj.id, { [formDataName]: formData }, { trx })
     }
 
     // logger.info(

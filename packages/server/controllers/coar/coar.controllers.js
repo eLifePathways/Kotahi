@@ -441,9 +441,7 @@ const validateIPs = async (requestIP, group) => {
 
 const linkManuscriptToNotification = async (notification, manuscript) => {
   const manuscriptId = manuscript.id
-  await CoarNotification.query()
-    .findById(notification.id)
-    .patch({ manuscriptId })
+  await CoarNotification.patchById(notification.id, { manuscriptId })
 }
 
 const extractDoi = payload => {
@@ -623,9 +621,7 @@ const processNotification = async (
 
   // existing manuscript
   if (!newManuscript) {
-    await CoarNotification.query()
-      .findById(notification.id)
-      .patch({ status: false })
+    await CoarNotification.patchById(notification.id, { status: false })
   } else {
     await linkManuscriptToNotification(notification, newManuscript)
   }

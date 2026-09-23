@@ -32,7 +32,7 @@ const deleteEmailTemplate = async id => {
   try {
     await TaskEmailNotification.query().delete().where('email_template_id', id)
 
-    const response = await EmailTemplate.query().where({ id }).delete()
+    const response = await EmailTemplate.deleteById(id)
 
     if (response) {
       return {
