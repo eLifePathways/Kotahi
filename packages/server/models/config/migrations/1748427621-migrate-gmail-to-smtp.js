@@ -3,7 +3,7 @@ const Config = require('../config.model')
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const configs = await Config.query(trx)
+    const { result: configs } = await Config.find({}, { trx })
 
     await Promise.all(
       configs.map(async config => {
@@ -36,7 +36,7 @@ exports.up = async () => {
 
 exports.down = async () => {
   return useTransaction(async trx => {
-    const configs = await Config.query(trx)
+    const { result: configs } = await Config.find({}, { trx })
 
     await Promise.all(
       configs.map(async config => {

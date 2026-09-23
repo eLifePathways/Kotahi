@@ -678,7 +678,7 @@ exports.up = async () => {
       // Insert email templates into the database
       await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
 
-      const emailTemplateIds = await EmailTemplate.query(trx)
+      const { result: emailTemplateIds } = await EmailTemplate.find({}, { trx })
 
       const taskEmailNotifications =
         await TaskEmailNotification.query(trx).whereNotNull(

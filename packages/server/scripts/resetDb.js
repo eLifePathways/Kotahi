@@ -7,7 +7,7 @@
 
 //   while (!ready) {
 //     try {
-//       const users = await User.query()
+//       const users = await User.find({})
 //       ready = !!users
 //     } catch (e) {
 //       console.error(e)

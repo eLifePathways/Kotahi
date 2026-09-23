@@ -11,7 +11,7 @@ exports.up = async knex => {
     `,
   )
 
-  const members = await TeamMember.query()
+  const { result: members } = await TeamMember.find({})
 
   await useTransaction(async trx => {
     return Promise.all(

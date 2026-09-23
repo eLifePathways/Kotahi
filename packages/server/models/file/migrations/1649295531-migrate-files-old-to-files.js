@@ -12,7 +12,7 @@ const File = require('../file.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const filesOld = await File.query(trx)
+      const { result: filesOld } = await File.find({}, { trx })
 
       // logger.info(`Total Old files: ${filesOld.length}`)
 

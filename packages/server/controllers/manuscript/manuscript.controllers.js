@@ -587,7 +587,7 @@ const getCss = async () => {
 }
 
 const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
-  const forms = await Form.query()
+  const { result: forms } = await Form.find({})
   const formsElements = flatten(forms.map(f => f.structure.children))
 
   const files = (

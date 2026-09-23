@@ -19,7 +19,7 @@ const createFileFn = async (file, meta) => {
   const tags = []
 
   if (meta.formElementId) {
-    const form = await Form.query()
+    const { result: form } = await Form.find({})
 
     const formsElements = flatten(form.map(f => f.structure.children))
 
@@ -76,7 +76,7 @@ const deleteFile = async id => {
     file.meta.formElementId &&
     file.tags.includes('externalAttachmentSource')
   ) {
-    const forms = await Form.query()
+    const { result: forms } = await Form.find({})
     const formsElements = flatten(forms.map(f => f.structure.children))
 
     const element = formsElements.find(el => el.id === file.meta.formElementId)

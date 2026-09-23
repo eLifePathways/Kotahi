@@ -14,7 +14,7 @@ const Form = require('../form.model')
 exports.up = async () => {
   return useTransaction(async trx => {
     // let updatedFormsCount = 0
-    const forms = await Form.query(trx)
+    const { result: forms } = await Form.find({}, { trx })
     // logger.info(`Total forms: ${forms.length}`)
 
     return Promise.all(

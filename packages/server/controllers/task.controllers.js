@@ -113,25 +113,6 @@ const deleteTaskNotification = async id => {
   return associatedTask
 }
 
-const getTaskEmailNotifications = async (
-  { status = null, groupId },
-  options = {},
-) => {
-  const { trx } = options
-  let taskQuery = Task.query(trx) // no await here because it's a sub-query
-
-  if (status) {
-    taskQuery = taskQuery.where({ status, groupId })
-  }
-
-  return Task.relatedQuery('emailNotifications')
-    .for(taskQuery)
-    .withGraphFetched('task')
-    .withGraphFetched('recipientUser')
-    .withGraphFetched('task.assignee')
-    .withGraphFetched('task.manuscript')
-}
-
 const getTasks = async (manuscriptId, groupId) => {
   return Task.query().where({ manuscriptId, groupId }).orderBy('sequenceIndex')
 }
@@ -283,10 +264,10 @@ const sendAutomatedTaskEmailNotifications = async groupId => {
 
   const taskConfigs = config.get('journal').tasks
 
-  const taskEmailNotifications = await getTaskEmailNotifications({
-    status: taskConfigs.status.IN_PROGRESS,
+  const taskEmailNotifications = await Task.getEmailNotifications(
     groupId,
-  })
+    taskConfigs.status.IN_PROGRESS,
+  )
 
   await Promise.all(
     taskEmailNotifications
@@ -701,7 +682,6 @@ module.exports = {
   createTaskEmailNotificationLog,
   deleteAlertsForManuscript,
   deleteTaskNotification,
-  getTaskEmailNotifications,
   getTasks,
   populateTemplatedTasksForManuscript,
   removeTaskAlertsForCurrentUser,

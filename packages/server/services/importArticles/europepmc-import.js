@@ -124,7 +124,7 @@ const getData = async (groupId, ctx) => {
 
   const articlesDetailedInfo = await Promise.all(articlesDetailedInfoPromises)
 
-  const manuscripts = await Manuscript.query()
+  const { result: manuscripts } = await Manuscript.find({})
 
   const currentDOIs = manuscripts.map(({ submission }) => {
     return submission.doi

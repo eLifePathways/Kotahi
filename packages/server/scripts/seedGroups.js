@@ -361,7 +361,7 @@ const group = async () => {
         instanceGroupNames.push(groupName)
       }),
     ).then(async () => {
-      let groups = await Group.query(trx)
+      let { result: groups } = await Group.find({}, { trx })
       const groupNames = groups.map(g => g.name)
 
       if (instanceGroups.length === groups.length) {
@@ -376,7 +376,7 @@ const group = async () => {
 
         await Group.archiveByIds(archiveGroupIds, { trx })
 
-        groups = await Group.query(trx)
+        groups = (await Group.find({}, { trx })).result
         logger.info(
           `  Archived groups: "${
             archiveGroupNames.length > 1

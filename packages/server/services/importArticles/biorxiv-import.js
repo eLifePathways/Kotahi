@@ -86,7 +86,7 @@ const getData = async (groupId, ctx) => {
 
   const importedManuscripts = await requests(0, date, [])
 
-  const manuscripts = await Manuscript.query()
+  const { result: manuscripts } = await Manuscript.find({})
   const currentUris = manuscripts.map(m => m.submission.$sourceUri)
 
   const withoutDuplicates = importedManuscripts.filter(

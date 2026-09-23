@@ -68,7 +68,7 @@ const getFormById = async formId => {
 }
 
 const getForms = async () => {
-  return Form.query()
+  return (await Form.find({})).result
 }
 
 const getFormsByCategory = async (category, groupId) => {

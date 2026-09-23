@@ -78,8 +78,8 @@ exports.up = async () => {
   //   'Deleting spurious CheckboxGroup selections from manuscript submissions, reviews and decisions:',
   // )
 
-  const manuscripts = await Manuscript.query()
-  const reviewsAndDecisions = await Review.query()
+  const { result: manuscripts } = await Manuscript.find({})
+  const { result: reviewsAndDecisions } = await Review.find({})
   const reviews = reviewsAndDecisions.filter(r => !r.isDecision)
   const decisions = reviewsAndDecisions.filter(r => r.isDecision)
 
