@@ -13,6 +13,7 @@ const {
 
 const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 const seekEvent = require('../services/notification.service')
+const { emitEvent } = require('../services/eventManager/eventManager')
 
 const { getUserRolesInManuscript } = require('./user.controllers')
 
@@ -282,6 +283,20 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
       manuscript,
       groupId: manuscript.groupId,
     })
+
+    const editorIds = await Manuscript.getEditorIds(manuscriptId)
+
+    await Promise.all(
+      editorIds.map(editorId =>
+        emitEvent('reviewerCompletedReview', {
+          userId: editorId,
+          groupId: manuscript.groupId,
+          manuscriptId,
+          shortId: manuscript.shortId,
+          reviewerId: userId,
+        }),
+      ),
+    )
   }
 
   return member.$query().patchAndFetch({
