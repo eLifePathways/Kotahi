@@ -13,6 +13,7 @@ const {
 
 const { addUserToManuscriptChatChannel } = require('./channel.controllers')
 const seekEvent = require('../services/notification.service')
+const { emitEvent } = require('../services/eventManager/eventManager')
 
 const addEmailToBlacklist = async (email, groupId) => {
   const result = await BlacklistEmail.query().insert({ email, groupId })
@@ -210,6 +211,35 @@ const updateInvitationStatus = async (
     },
     groupId,
   })
+
+  const isReviewerType =
+    type === 'reviewer' || type === 'collaborative_reviewer'
+
+  const upperStatus = status.toUpperCase()
+
+  if (
+    isReviewerType &&
+    (upperStatus === 'ACCEPTED' || upperStatus === 'REJECTED')
+  ) {
+    const responseEventType =
+      upperStatus === 'ACCEPTED'
+        ? 'reviewerAcceptedInvitation'
+        : 'reviewerRejectedInvitation'
+
+    const editorIds = await Manuscript.getEditorIds(result.manuscriptId)
+
+    await Promise.all(
+      editorIds.map(editorId =>
+        emitEvent(responseEventType, {
+          userId: editorId,
+          groupId,
+          manuscriptId: result.manuscriptId,
+          shortId: manuscript.shortId,
+          reviewerId: userId,
+        }),
+      ),
+    )
+  }
 
   return result
 }

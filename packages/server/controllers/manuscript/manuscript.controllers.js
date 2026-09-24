@@ -34,6 +34,7 @@ const { getActiveForms } = require('../form.controllers')
 const checkIsAbstractValueEmpty = require('../../utils/checkIsAbstractValueEmpty')
 const { cachedGet } = require('../../services/queryCache.service')
 const seekEvent = require('../../services/notification.service')
+const { emitEvent } = require('../../services/eventManager/eventManager')
 const sanitizeWaxImages = require('../../utils/sanitizeWaxImages')
 const { publishToDatacite } = require('../../services/publishing/datacite')
 
@@ -131,12 +132,23 @@ const addReviewer = async (
   invitationId,
   isCollaborative,
 ) => {
-  return Manuscript.addReviewer(
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  const result = await Manuscript.addReviewer(
     manuscriptId,
     userId,
     invitationId,
     isCollaborative,
   )
+
+  emitEvent('addedAsReviewer', {
+    userId,
+    groupId: manuscript.groupId,
+    manuscriptId,
+    shortId: manuscript.shortId,
+  })
+
+  return result
 }
 
 const archiveManuscript = async (id, options = {}) => {
@@ -945,6 +957,14 @@ const makeDecision = async (id, decisionKey, userId) => {
         currentUser: currentUser?.username,
         context: { recipient: recipientEmail, messageContent },
         groupId: manuscript.groupId,
+      })
+
+      emitEvent('decisionMade', {
+        userId: manuscript.submitterId,
+        groupId: manuscript.groupId,
+        manuscriptId: manuscript.id,
+        shortId: manuscript.shortId,
+        decision: decisionKey,
       })
     }
   }
@@ -1798,6 +1818,15 @@ const removeReviewer = async (manuscriptId, userId) => {
     type: 'editorial',
   })
 
+  if (deletedTeamMember) {
+    emitEvent('removedAsReviewer', {
+      userId,
+      groupId: manuscript.groupId,
+      manuscriptId,
+      shortId: manuscript.shortId,
+    })
+  }
+
   const reviewerTeam = await Team.query().findOne({
     id: deletedTeamMember.teamId,
   })
@@ -1914,6 +1943,36 @@ const reviewerResponse = async (action, teamId, userId) => {
     },
     groupId: manuscript.groupId,
   })
+
+  const editorTeams = manuscript.teams.filter(manuscriptTeam =>
+    ['editor', 'handlingEditor', 'seniorEditor'].includes(manuscriptTeam.role),
+  )
+
+  const editorUserIds = [
+    ...new Set(
+      editorTeams.flatMap(editorTeam =>
+        editorTeam.members.map(member => member.userId),
+      ),
+    ),
+  ]
+
+  const responseEventType =
+    action === 'accepted'
+      ? 'reviewerAcceptedInvitation'
+      : 'reviewerRejectedInvitation'
+
+  await Promise.all(
+    editorUserIds.map(editorUserId =>
+      emitEvent(responseEventType, {
+        userId: editorUserId,
+        groupId: manuscript.groupId,
+        manuscriptId: team.objectId,
+        shortId: manuscript.shortId,
+        reviewerId: userId,
+        teamId,
+      }),
+    ),
+  )
 
   return team
 }
