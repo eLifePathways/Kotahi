@@ -15,12 +15,25 @@ const {
 const { evictFromCacheByPrefix } = require('../services/queryCache.service')
 
 const seekEvent = require('../services/notification.service')
+const { emitEvent } = require('../services/eventManager/eventManager')
 
 const {
   sendTentativeAcceptCoarNotification,
 } = require('./coar/coar.controllers')
 
 const EDITOR_ROLES = ['editor', 'handlingEditor', 'seniorEditor']
+
+const ADDED_EVENT_BY_ROLE = {
+  editor: 'addedAsEditor',
+  handlingEditor: 'addedAsHandlingEditor',
+  seniorEditor: 'addedAsSeniorEditor',
+}
+
+const REMOVED_EVENT_BY_ROLE = {
+  editor: 'removedAsEditor',
+  handlingEditor: 'removedAsHandlingEditor',
+  seniorEditor: 'removedAsSeniorEditor',
+}
 
 const createTeam = async (input, groupId) => {
   // TODO Only the relate option appears to be used by insertGraphAndFetch, according to Objection docs?
@@ -60,6 +73,17 @@ const createTeam = async (input, groupId) => {
       role: input.role,
       groupId,
     })
+
+    await Promise.all(
+      handlingEditorIds.map(memberId =>
+        emitEvent(ADDED_EVENT_BY_ROLE[input.role], {
+          userId: memberId,
+          groupId,
+          manuscriptId: input.objectId,
+          shortId: manuscript.shortId,
+        }),
+      ),
+    )
   }
 
   return Team.query().insertGraphAndFetch(input, options)
@@ -102,10 +126,32 @@ const updateTeam = async (id, input, groupId) => {
       }
 
       seekEvent('team-editor-assigned', eventData)
+
+      await Promise.all(
+        membersAdded.map(memberId =>
+          emitEvent(ADDED_EVENT_BY_ROLE[existing.role], {
+            userId: memberId,
+            groupId,
+            manuscriptId: objectId,
+            shortId: manuscript.shortId,
+          }),
+        ),
+      )
     }
 
     if (membersRemoved.length) {
       seekEvent('team-editor-unassigned', eventData)
+
+      await Promise.all(
+        membersRemoved.map(memberId =>
+          emitEvent(REMOVED_EVENT_BY_ROLE[existing.role], {
+            userId: memberId,
+            groupId,
+            manuscriptId: objectId,
+            shortId: manuscript.shortId,
+          }),
+        ),
+      )
     }
 
     await updateAlertsUponTeamUpdate(objectId, membersAdded, membersRemoved)

@@ -38,6 +38,7 @@ const TeamMember = require('./teamMember/teamMember.model')
 const ThreadedDiscussion = require('./threadedDiscussion/threadedDiscussion.model')
 const Token = require('./token/token.model')
 const User = require('./user/user.model')
+const UserNotification = require('./userNotification/userNotification.model')
 
 module.exports = {
   ArticleImportHistory,
@@ -76,4 +77,5 @@ module.exports = {
   ThreadedDiscussion,
   Token,
   User,
+  UserNotification,
 }
