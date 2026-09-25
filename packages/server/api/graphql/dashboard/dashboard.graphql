@@ -1,0 +1,38 @@
+enum DashboardActionType {
+  authorSubmit
+  authorRevise
+  reviewerRespond
+  reviewerSubmit
+  editorDecide
+  taskOverdue
+  taskAlmostOverdue
+}
+
+enum DashboardBucket {
+  submissions
+  review
+  editingQueue
+}
+
+type DashboardActionCardItem {
+  id: ID!
+  type: DashboardActionType!
+  bucket: DashboardBucket!
+  shortId: String!
+  title: String!
+}
+
+type DashboardTableCardData {
+  totalCount: Int!
+}
+
+type DashboardData {
+  actionCardData: [DashboardActionCardItem!]!
+  submissionsData: DashboardTableCardData!
+  reviewData: DashboardTableCardData!
+  editingQueueData: DashboardTableCardData!
+}
+
+extend type Query {
+  dashboardData: DashboardData!
+}
