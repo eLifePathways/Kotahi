@@ -30,6 +30,17 @@ class UserNotification extends BaseModel {
     }
   }
 
+  static async findForUser(
+    userId: string,
+    groupId: string,
+  ): Promise<UserNotification[]> {
+    return this.query().where({ userId, groupId }).orderBy('created', 'desc')
+  }
+
+  static async dismissById(id: string): Promise<number> {
+    return this.query().deleteById(id)
+  }
+
   static get relationMappings(): RelationMappings {
     const User = require('../user/user.model')
     const Group = require('../group/group.model')

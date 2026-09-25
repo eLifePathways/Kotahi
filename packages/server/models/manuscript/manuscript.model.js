@@ -8,6 +8,8 @@ const { BaseModel, useTransaction } = require('@coko/server')
 // REFACTOR: models
 const { evictFromCache } = require('../../services/queryCache.service')
 
+const EDITOR_ROLES = ['editor', 'handlingEditor', 'seniorEditor']
+
 class Manuscript extends BaseModel {
   static get tableName() {
     return 'manuscripts'
@@ -321,6 +323,86 @@ class Manuscript extends BaseModel {
       .distinct()
 
     return records.map(r => r.topLevelId)
+  }
+
+  /**
+   * For each manuscript where the user has one of the given roles on any
+   * version, returns that manuscript's latest version - one row per
+   * manuscript, not one per version.
+   */
+  static async getLatestVersionsOfManuscriptsUserHasRolesIn(
+    userId,
+    groupId,
+    roles,
+    options = {},
+  ) {
+    const { trx } = options
+
+    const matchingVersions = await Manuscript.query(trx)
+      .select('manuscripts.id', 'manuscripts.parent_id')
+      .join('teams', 'manuscripts.id', '=', 'teams.object_id')
+      .join('team_members', 'teams.id', '=', 'team_members.team_id')
+      .where('team_members.user_id', userId)
+      .where('teams.object_type', 'manuscript')
+      .whereIn('teams.role', roles)
+      .where('is_hidden', false)
+      .where('group_id', groupId)
+      .distinct()
+
+    if (matchingVersions.length === 0) return []
+
+    const topLevelIds = [
+      ...new Set(matchingVersions.map(m => m.parentId || m.id)),
+    ]
+
+    const topLevelManuscripts = await Manuscript.query(trx)
+      .whereIn('id', topLevelIds)
+      .withGraphFetched('manuscriptVersions(orderByCreatedDesc)')
+
+    return topLevelManuscripts.map(
+      manuscript => manuscript.manuscriptVersions[0] || manuscript,
+    )
+  }
+
+  static async findManuscriptsWithOverdueTasksForUser(
+    userId,
+    groupId,
+    options = {},
+  ) {
+    const { trx, dueBefore = new Date() } = options
+    const Team = require('../team/team.model')
+
+    const editorOfTaskManuscriptSubquery = Team.query(trx)
+      .join('teamMembers', 'teamMembers.teamId', 'teams.id')
+      .whereColumn('teams.objectId', 'tasks.manuscriptId')
+      .where({ 'teams.objectType': 'manuscript' })
+      .whereIn('teams.role', EDITOR_ROLES)
+      .where('teamMembers.userId', userId)
+
+    return Manuscript.query(trx)
+      .select('manuscripts.*')
+      .min('tasks.dueDate as nextTaskDueDate')
+      .groupBy('manuscripts.id')
+      .join('tasks', 'tasks.manuscriptId', 'manuscripts.id')
+      .where('tasks.groupId', groupId)
+      .where('tasks.status', 'In progress')
+      .whereNotNull('tasks.dueDate')
+      .where('tasks.dueDate', '<', dueBefore)
+      .whereNotExists(
+        // latest manuscript versions only
+        Manuscript.query(trx)
+          .from('manuscripts as later_versions')
+          .whereRaw(
+            'coalesce(later_versions.parent_id, later_versions.id) = coalesce(manuscripts.parent_id, manuscripts.id)',
+          )
+          .whereRaw('later_versions.created > manuscripts.created'),
+      )
+      .where(builder => {
+        // where user is either the assignee or an editor
+        builder
+          .where('tasks.assigneeUserId', userId)
+          .orWhereExists(editorOfTaskManuscriptSubquery)
+      })
   }
 
   static async addReviewer(

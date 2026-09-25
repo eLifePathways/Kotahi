@@ -22,6 +22,8 @@ import { ArrowRight, ChevronLeft, ChevronRight, Close } from '../../base/Icons'
  *    - reviewer completed review
  *    - decision was made on your manuscript
  *    - you were added / removed as an editor / author
+ * - New submission button
+ * - Is there any configuration related to the dashboard?
  */
 
 /**
