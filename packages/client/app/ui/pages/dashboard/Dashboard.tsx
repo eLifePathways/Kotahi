@@ -24,11 +24,9 @@ import {
  * - worth reusing code between this and card grid?
  * - use translations for ui elements
  * - accessibility
- * - css variables
- * - New submission button
  * - Is there any configuration related to the dashboard?
- * - Back to dashboard links
  * - Limit activity list
+ * - dead code
  */
 
 /**
