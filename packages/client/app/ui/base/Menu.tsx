@@ -148,7 +148,7 @@ const LinkItems = styled.ul`
 const hoverFade = '0.3s ease'
 
 const active = css`
-  background-color: rgb(255 255 255 / 12%);
+  background-color: ${th('colorOverlayWhiteHover')};
 `
 
 const LinkItem = styled.div<{ $active: boolean }>`

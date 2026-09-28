@@ -88,13 +88,13 @@ const StyledButton = styled(CokoButton)<{
       &:focus {
         color: ${th('colorTextReverse')} !important;
         border-color: ${th('colorTextReverse')} !important;
-        background-color: rgb(255 255 255 / 12%) !important;
+        background-color: ${th('colorOverlayWhiteHover')} !important;
       }
 
       &:active {
         color: ${th('colorTextReverse')} !important;
         border-color: ${th('colorTextReverse')} !important;
-        background-color: rgb(255 255 255 / 20%) !important;
+        background-color: ${th('colorOverlayWhitePressed')} !important;
       }
 
       &:focus-visible {
@@ -116,13 +116,23 @@ const StyledButton = styled(CokoButton)<{
       &:focus {
         color: ${th('colorPrimary')} !important;
         border-color: ${th('colorTextReverse')} !important;
-        background-color: ${th('colorWallpaper')} !important;
+        background:
+          linear-gradient(
+            ${th('colorOverlayBlackHover')},
+            ${th('colorOverlayBlackHover')}
+          ),
+          ${th('colorTextReverse')} !important;
       }
 
       &:active {
         color: ${th('colorPrimary')} !important;
         border-color: ${th('colorTextReverse')} !important;
-        background-color: ${th('colorBackgroundHue')} !important;
+        background:
+          linear-gradient(
+            ${th('colorOverlayBlackPressed')},
+            ${th('colorOverlayBlackPressed')}
+          ),
+          ${th('colorTextReverse')} !important;
       }
 
       &:focus-visible {
