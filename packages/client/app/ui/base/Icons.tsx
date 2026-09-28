@@ -2,6 +2,7 @@ import { type AriaAttributes, type ReactNode } from 'react'
 import styled from 'styled-components'
 
 export {
+  ArrowLeftOutlined as ArrowLeft,
   ArrowRightOutlined as ArrowRight,
   BarChartOutlined as Report,
   ClearOutlined as Broom,

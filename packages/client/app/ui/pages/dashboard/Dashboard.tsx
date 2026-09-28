@@ -838,7 +838,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                 <Link to={submissionsData.href}>
                   <TableCard
                     attentionCount={submissionsData.attentionCount}
-                    descriptionLabel="My submissions"
+                    descriptionLabel="My Submissions"
                     totalCount={submissionsData.totalCount}
                     typeLabel="Author"
                   />
@@ -849,7 +849,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                 <Link to={reviewData.href}>
                   <TableCard
                     attentionCount={reviewData.attentionCount}
-                    descriptionLabel="My reviews"
+                    descriptionLabel="Review Assignments"
                     totalCount={reviewData.totalCount}
                     typeLabel="Reviewer"
                   />
