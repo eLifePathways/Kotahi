@@ -818,6 +818,7 @@ const permissions = {
     setNotificationActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setEventActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     dismissUserNotification: userOwnsUserNotification,
+    dismissAllUserNotifications: isAuthenticated,
   },
   Subscription: {
     fileUpdated: isAuthenticated,

@@ -180,6 +180,7 @@ export const makeTheme = (
     colorSuccessLight: '#d2ffcc',
     colorText: '#111111',
     colorTextHeading: '#111111',
+    colorTextMuted: '#666666',
     colorTextPlaceholder: '#666666',
     colorTextReverse: colorTextReverse,
     colorWallpaper: '#f2f2f2',

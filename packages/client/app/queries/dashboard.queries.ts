@@ -7,6 +7,7 @@ export const GET_DASHBOARD_DATA = gql`
         id
         type
         bucket
+        manuscriptId
         shortId
         title
       }
@@ -38,5 +39,11 @@ export const GET_USER_NOTIFICATIONS = gql`
 export const DISMISS_USER_NOTIFICATION = gql`
   mutation DismissUserNotification($id: ID!) {
     dismissUserNotification(id: $id)
+  }
+`
+
+export const DISMISS_ALL_USER_NOTIFICATIONS = gql`
+  mutation DismissAllUserNotifications {
+    dismissAllUserNotifications
   }
 `

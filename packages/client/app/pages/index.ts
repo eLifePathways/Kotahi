@@ -1,5 +1,6 @@
 export { default as AuthenticatedPage } from './Authenticated.page'
 export { default as CMSPage } from './CMS.page'
+export { default as DashboardPage } from './Dashboard.page'
 export { default as FormsPage } from './Forms.page'
 export { default as GroupPage } from './Group.page'
 export { default as MenuPage } from './Menu.page'

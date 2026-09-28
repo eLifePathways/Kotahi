@@ -257,11 +257,6 @@ const CoarIcon = styled(Coar)`
 const TitleAbstractButton = styled.button`
   display: inline-flex;
   align-items: center;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: pointer;
 `
 
 const TitleAbstractTooltipContent = styled.div`
@@ -885,9 +880,6 @@ const FilterChipsWrapper = styled.div`
 const FilterChipCloseButton = styled.button`
   display: inline-flex;
   margin-left: ${grid(2)};
-  background: none;
-  color: inherit;
-  cursor: pointer;
 `
 
 const formatChipDate = (value: string): string =>
@@ -1216,11 +1208,6 @@ const SearchBarWrapper = styled.div`
 const SearchInfoButton = styled.button`
   display: inline-flex;
   align-items: center;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: pointer;
 `
 
 const SearchTipsList = styled.ul`

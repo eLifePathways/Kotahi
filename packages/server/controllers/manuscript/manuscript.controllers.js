@@ -2150,6 +2150,21 @@ const submitManuscript = async (id, input, userId) => {
     groupId: manuscript.groupId,
   })
 
+  if (manuscript.parentId) {
+    const editorIds = await Manuscript.getEditorIds(id)
+
+    await Promise.all(
+      editorIds.map(editorId =>
+        emitEvent('revisionSubmitted', {
+          userId: editorId,
+          groupId: manuscript.groupId,
+          manuscriptId: id,
+          shortId: manuscript.shortId,
+        }),
+      ),
+    )
+  }
+
   return updateManuscript(id, input)
 }
 

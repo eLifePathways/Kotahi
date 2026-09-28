@@ -50,6 +50,13 @@ const globalStyles = css`
     text-decoration: none !important;
   }
 
+  button {
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+  }
+
   strong,
   b {
     font-weight: bold;

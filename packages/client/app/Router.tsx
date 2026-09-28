@@ -42,6 +42,7 @@ import { XpubContext } from './components/xpub-with-context/src'
 import {
   AuthenticatedPage,
   CMSPage,
+  DashboardPage,
   FormsPage,
   GroupPage,
   MenuPage,
@@ -219,6 +220,8 @@ const Router = (): ReactNode => {
                 element={<ProductionPage />}
                 path="versions/:version/production"
               />
+
+              <Route element={<DashboardPage />} path="dashboard" />
 
               <Route
                 element={
