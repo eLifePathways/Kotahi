@@ -10,3 +10,10 @@ export const getUserNotifications = async (
 export const dismissUserNotification = async (id: string): Promise<number> => {
   return UserNotification.dismissById(id)
 }
+
+export const dismissAllUserNotifications = async (
+  userId: string,
+  groupId: string,
+): Promise<number> => {
+  return UserNotification.dismissAllForUser(userId, groupId)
+}

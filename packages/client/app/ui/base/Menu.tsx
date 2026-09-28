@@ -1,12 +1,21 @@
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import {
+  type MouseEvent,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled, { css, RuleSet } from 'styled-components'
 import { grid, th, Link as UILink } from '@coko/client'
+import { Tooltip } from 'antd'
 
 import { collapseTransition } from '../constants'
 import Avatar from '../shared/Avatar'
 import Badge from '../shared/Badge'
+import Button from '../shared/Button'
 import {
   Home,
   File,
@@ -18,6 +27,7 @@ import {
   ExpandMenu,
   Book,
   Coar,
+  Plus,
 } from './Icons'
 
 // #region styled
@@ -48,8 +58,9 @@ const Wrapper = styled.nav<{ $menuCollapsed: boolean }>`
   flex-direction: column;
   overflow: hidden;
 
-  && a:focus {
+  && a:focus-visible {
     outline: 1px solid ${th('colorTextReverse')};
+    outline-offset: -1px;
   }
 `
 
@@ -111,6 +122,11 @@ const Separator = styled.div`
   border-top: 1.5px solid ${th('colorBackground')};
 `
 
+const NewSubmissionSection = styled.div<{ $menuCollapsed: boolean }>`
+  padding: 0 ${grid(2)};
+  margin-bottom: ${grid(4)};
+`
+
 const LinkSection = styled.div`
   padding: 0 ${grid(2)};
   user-select: none;
@@ -132,11 +148,11 @@ const LinkItems = styled.ul`
 const hoverFade = '0.3s ease'
 
 const active = css`
-  background-color: ${th('colorTextReverse')};
-  color: ${th('colorText')};
+  background-color: rgb(255 255 255 / 12%);
 `
 
 const LinkItem = styled.div<{ $active: boolean }>`
+  position: relative;
   color: ${th('colorTextReverse')};
   cursor: pointer;
   font-size: ${th('fontSizeBase')};
@@ -154,11 +170,31 @@ const LinkItem = styled.div<{ $active: boolean }>`
     margin-right: ${grid(2)};
   }
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background-color: ${th('colorTextReverse')};
+    opacity: 0;
+    transition: opacity ${hoverFade};
+  }
+
   &:hover {
     ${active}
   }
 
   ${(props): RuleSet | false => props.$active && active};
+
+  ${(props): RuleSet | false =>
+    props.$active &&
+    css`
+      &::before {
+        opacity: 1;
+      }
+    `};
 `
 
 const Link = styled(UILink)`
@@ -233,11 +269,7 @@ const UserLabel = styled(Badge)`
 
 const CollapseIconWrapper = css`
   align-self: center;
-  background: none;
-  border: none;
   color: ${th('colorTextReverse')};
-  cursor: pointer;
-  padding: 0;
 
   opacity: 1;
   visibility: visible;
@@ -345,6 +377,7 @@ const Menu = (props: MenuProps): ReactNode => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const { groupName } = useParams()
+  const navigate = useNavigate()
   const wrapperRef = useRef<HTMLElement>(null)
   const [menuCollapsed, setMenuCollapsed] = useState(initialMenuCollapsed)
   const [labelsWrap, setLabelsWrap] = useState(!initialMenuCollapsed)
@@ -462,6 +495,36 @@ const Menu = (props: MenuProps): ReactNode => {
     isUserGroupManager,
   ])
 
+  const handleNewSubmissionClick = (event: MouseEvent<HTMLElement>): void => {
+    event.currentTarget.blur()
+    navigate(`/${groupName}/newSubmission`)
+  }
+
+  let newSubmissionButton = (
+    <Button
+      block
+      icon={<Plus aria-hidden />}
+      onClick={handleNewSubmissionClick}
+      reverse
+    >
+      {t('newSubmission.New submission')}
+    </Button>
+  )
+
+  if (menuCollapsed) {
+    newSubmissionButton = (
+      <Tooltip placement="right" title={t('newSubmission.New submission')}>
+        <Button
+          aria-label={t('newSubmission.New submission')}
+          block
+          icon={<Plus aria-hidden />}
+          onClick={handleNewSubmissionClick}
+          reverse
+        />
+      </Tooltip>
+    )
+  }
+
   return (
     <Wrapper
       $menuCollapsed={menuCollapsed}
@@ -480,6 +543,10 @@ const Menu = (props: MenuProps): ReactNode => {
       </GroupSection>
 
       <Separator />
+
+      <NewSubmissionSection $menuCollapsed={menuCollapsed}>
+        {newSubmissionButton}
+      </NewSubmissionSection>
 
       <LinkSection>
         <LinkItems>

@@ -14,6 +14,7 @@ declare module 'styled-components' {
     colorText: string
     colorTextReverse: string
     colorTextPlaceholder: string
+    colorTextMuted: string
     colorWarning: string
     colorWarningLight: string
     colorWarningDark: string

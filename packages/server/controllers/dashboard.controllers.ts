@@ -10,6 +10,7 @@ const ALMOST_OVERDUE_THRESHOLD_DAYS = 2
 type ActionType =
   | 'authorSubmit'
   | 'authorRevise'
+  | 'authorSubmitRevision'
   | 'reviewerRespond'
   | 'reviewerSubmit'
   | 'editorDecide'
@@ -22,6 +23,7 @@ type ActionCardItem = {
   id: string
   type: ActionType
   bucket: Bucket
+  manuscriptId: string
   shortId: string
   title: string
 }
@@ -96,6 +98,8 @@ export const getDashboardData = async (
       type = 'authorSubmit'
     } else if (manuscript.status === 'revise') {
       type = 'authorRevise'
+    } else if (manuscript.status === 'revising') {
+      type = 'authorSubmitRevision'
     }
 
     if (type) {
@@ -103,6 +107,7 @@ export const getDashboardData = async (
         id: `${type}-${manuscript.id}`,
         type,
         bucket: 'submissions',
+        manuscriptId: manuscript.id,
         shortId: String(manuscript.shortId),
         title: getManuscriptTitle(manuscript),
       })
@@ -124,6 +129,7 @@ export const getDashboardData = async (
         id: `${type}-${manuscript.id}`,
         type,
         bucket: 'review',
+        manuscriptId: manuscript.id,
         shortId: String(manuscript.shortId),
         title: getManuscriptTitle(manuscript),
       })
@@ -136,6 +142,7 @@ export const getDashboardData = async (
         id: `editorDecide-${manuscript.id}`,
         type: 'editorDecide',
         bucket: 'editingQueue',
+        manuscriptId: manuscript.id,
         shortId: String(manuscript.shortId),
         title: getManuscriptTitle(manuscript),
       })
@@ -171,6 +178,7 @@ export const getDashboardData = async (
         id: `${type}-${manuscript.id}`,
         type,
         bucket,
+        manuscriptId: manuscript.id,
         shortId: String(manuscript.shortId),
         title: getManuscriptTitle(manuscript),
       })

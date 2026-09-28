@@ -11,6 +11,7 @@ export const eventTypes = [
   'reviewerAcceptedInvitation',
   'reviewerCompletedReview',
   'reviewerRejectedInvitation',
+  'revisionSubmitted',
 ] as const
 
 export type Event = (typeof eventTypes)[number]

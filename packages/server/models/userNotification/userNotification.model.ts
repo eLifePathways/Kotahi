@@ -41,6 +41,13 @@ class UserNotification extends BaseModel {
     return this.query().deleteById(id)
   }
 
+  static async dismissAllForUser(
+    userId: string,
+    groupId: string,
+  ): Promise<number> {
+    return this.query().delete().where({ userId, groupId })
+  }
+
   static get relationMappings(): RelationMappings {
     const User = require('../user/user.model')
     const Group = require('../group/group.model')

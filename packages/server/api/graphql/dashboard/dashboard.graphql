@@ -1,6 +1,7 @@
 enum DashboardActionType {
   authorSubmit
   authorRevise
+  authorSubmitRevision
   reviewerRespond
   reviewerSubmit
   editorDecide
@@ -18,6 +19,7 @@ type DashboardActionCardItem {
   id: ID!
   type: DashboardActionType!
   bucket: DashboardBucket!
+  manuscriptId: ID!
   shortId: String!
   title: String!
 }

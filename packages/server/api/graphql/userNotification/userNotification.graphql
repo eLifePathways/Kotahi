@@ -11,6 +11,7 @@ enum UserNotificationEventType {
   reviewerAcceptedInvitation
   reviewerCompletedReview
   reviewerRejectedInvitation
+  revisionSubmitted
 }
 
 type UserNotification {
@@ -27,4 +28,5 @@ extend type Query {
 
 extend type Mutation {
   dismissUserNotification(id: ID!): Boolean!
+  dismissAllUserNotifications: Boolean!
 }

@@ -19,6 +19,7 @@ const triggers: Record<Event, Trigger[]> = {
   reviewerAcceptedInvitation: ['userNotification'],
   reviewerCompletedReview: ['userNotification'],
   reviewerRejectedInvitation: ['userNotification'],
+  revisionSubmitted: ['userNotification'],
 }
 
 const handleUserNotification = async (
