@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { AnimatePresence, m } from 'framer-motion'
 import { th, grid, Link as UILink, Result } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -20,11 +21,12 @@ import {
 
 /**
  * TO DO
- * - use translations for ui elements
- *
  * - test task action cards
+ * - dead code / dead translations
  * - worth reusing code between this and card grid?
- * - dead code
+ * - server-side tests
+ * - fix cypress tests
+ * - playwright tests
  */
 
 // #region constants
@@ -41,81 +43,74 @@ type ActionType =
 type ActionColor = 'colorPrimary' | 'colorWarning' | 'colorError'
 
 type ActionTypeData = {
-  label: string
+  labelKey: string
   color: ActionColor
 }
 
 const actionTypes: Record<ActionType, ActionTypeData> = {
   authorSubmit: {
-    label: 'Submit',
+    labelKey: 'dashboardPage.actionCards.types.authorSubmit',
     color: 'colorPrimary',
   },
   authorRevise: {
-    label: 'Revise',
+    labelKey: 'dashboardPage.actionCards.types.authorRevise',
     color: 'colorWarning',
   },
   authorSubmitRevision: {
-    label: 'Submit revision',
+    labelKey: 'dashboardPage.actionCards.types.authorSubmitRevision',
     color: 'colorWarning',
   },
   reviewerRespond: {
-    label: 'Review invitation',
+    labelKey: 'dashboardPage.actionCards.types.reviewerRespond',
     color: 'colorWarning',
   },
   reviewerSubmit: {
-    label: 'Review',
+    labelKey: 'dashboardPage.actionCards.types.reviewerSubmit',
     color: 'colorPrimary',
   },
   editorDecide: {
-    label: 'Decide on',
+    labelKey: 'dashboardPage.actionCards.types.editorDecide',
     color: 'colorPrimary',
   },
   taskAlmostOverdue: {
-    label: 'Task almost overdue',
+    labelKey: 'dashboardPage.actionCards.types.taskAlmostOverdue',
     color: 'colorWarning',
   },
   taskOverdue: {
-    label: 'Task overdue',
+    labelKey: 'dashboardPage.actionCards.types.taskOverdue',
     color: 'colorError',
   },
 }
 
-type ActionSummaryPhrase = (count: number) => string
-
-const actionSummaryPhrases: Record<ActionType, ActionSummaryPhrase> = {
-  authorSubmit: count =>
-    `${count} submission${count === 1 ? '' : 's'} pending completion`,
-  authorRevise: count =>
-    `${count} manuscript${count === 1 ? '' : 's'} pending revision`,
-  authorSubmitRevision: count =>
-    `${count} revision${count === 1 ? '' : 's'} pending submission`,
-  reviewerRespond: count =>
-    `${count} reviewer invitation${count === 1 ? '' : 's'} waiting on you`,
-  reviewerSubmit: count => `${count} review${count === 1 ? '' : 's'} pending`,
-  editorDecide: count =>
-    `${count} editor decision${count === 1 ? '' : 's'} pending`,
-  taskAlmostOverdue: count =>
-    `${count} task${count === 1 ? '' : 's'} almost overdue`,
-  taskOverdue: count => `${count} task${count === 1 ? '' : 's'} overdue`,
+const actionSummaryKeys: Record<ActionType, string> = {
+  authorSubmit: 'dashboardPage.greeting.actionSummary.authorSubmit',
+  authorRevise: 'dashboardPage.greeting.actionSummary.authorRevise',
+  authorSubmitRevision:
+    'dashboardPage.greeting.actionSummary.authorSubmitRevision',
+  reviewerRespond: 'dashboardPage.greeting.actionSummary.reviewerRespond',
+  reviewerSubmit: 'dashboardPage.greeting.actionSummary.reviewerSubmit',
+  editorDecide: 'dashboardPage.greeting.actionSummary.editorDecide',
+  taskAlmostOverdue: 'dashboardPage.greeting.actionSummary.taskAlmostOverdue',
+  taskOverdue: 'dashboardPage.greeting.actionSummary.taskOverdue',
 }
 
-const joinWithAnd = (items: string[]): string => {
+const joinWithAnd = (items: string[], andWord: string): string => {
   if (items.length === 0) return ''
   if (items.length === 1) return items[0]
-  if (items.length === 2) return items.join(' and ')
+  if (items.length === 2) return items.join(` ${andWord} `)
 
-  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
+  return `${items.slice(0, -1).join(', ')} ${andWord} ${items[items.length - 1]}`
 }
 
 const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1)
 
-const getTimeBasedGreeting = (): string => {
+const getTimeBasedGreetingKey = (): string => {
   const hour = new Date().getHours()
 
-  if (hour < 12) return 'Good morning'
-  if (hour < 18) return 'Good afternoon'
-  return 'Good evening'
+  if (hour < 12) return 'dashboardPage.greeting.goodMorning'
+  if (hour < 18) return 'dashboardPage.greeting.goodAfternoon'
+  return 'dashboardPage.greeting.goodEvening'
 }
 
 dayjs.extend(relativeTime)
@@ -197,8 +192,9 @@ type GreetingProps = {
 
 const Greeting = (props: GreetingProps): ReactNode => {
   const { userName, actionCardData } = props
+  const { t } = useTranslation()
   const totalActionCount = actionCardData.length
-  const timeBasedGreeting = getTimeBasedGreeting()
+  const timeBasedGreeting = t(getTimeBasedGreetingKey())
 
   if (totalActionCount === 0) {
     return (
@@ -206,9 +202,11 @@ const Greeting = (props: GreetingProps): ReactNode => {
         <GreetingSalutation>
           {timeBasedGreeting}, {userName}
         </GreetingSalutation>
-        <GreetingHeadline>You&apos;re all caught up</GreetingHeadline>
+        <GreetingHeadline>
+          {t('dashboardPage.greeting.allCaughtUp')}
+        </GreetingHeadline>
         <GreetingDetail>
-          There&apos;s nothing that needs your attention right now.
+          {t('dashboardPage.greeting.nothingNeedsAttention')}
         </GreetingDetail>
       </GreetingCard>
     )
@@ -223,7 +221,11 @@ const Greeting = (props: GreetingProps): ReactNode => {
 
   const summarySentences = (
     Object.entries(countsByType) as [ActionType, number][]
-  ).map(([type, count]) => actionSummaryPhrases[type](count))
+  ).map(([type, count]) => t(actionSummaryKeys[type], { count }))
+
+  const summarySentence = capitalize(
+    joinWithAnd(summarySentences, t('dashboardPage.greeting.and')),
+  )
 
   return (
     <GreetingCard>
@@ -231,12 +233,11 @@ const Greeting = (props: GreetingProps): ReactNode => {
         {timeBasedGreeting}, {userName}
       </GreetingSalutation>
       <GreetingHeadline>
-        You have {totalActionCount} item{totalActionCount === 1 ? '' : 's'} that
-        need{totalActionCount === 1 ? 's' : ''} attention
+        {t('dashboardPage.greeting.itemsNeedAttention', {
+          count: totalActionCount,
+        })}
       </GreetingHeadline>
-      <GreetingDetail>
-        {capitalize(joinWithAnd(summarySentences))}.
-      </GreetingDetail>
+      <GreetingDetail>{`${summarySentence}.`}</GreetingDetail>
     </GreetingCard>
   )
 }
@@ -364,7 +365,9 @@ const TITLE_LENGTH_LIMIT = 55
 
 const ActionCard = (props: ActionCardProps): ReactNode => {
   const { type, shortId, title } = props
-  const { label, color } = actionTypes[type]
+  const { t } = useTranslation()
+  const { labelKey, color } = actionTypes[type]
+  const label = t(labelKey)
 
   const trimmedTitle =
     title.length > TITLE_LENGTH_LIMIT
@@ -420,6 +423,7 @@ type TableCardProps = {
 
 const TableCard = (props: TableCardProps): ReactNode => {
   const { typeLabel, descriptionLabel, totalCount, attentionCount } = props
+  const { t } = useTranslation()
 
   return (
     <Card>
@@ -432,7 +436,9 @@ const TableCard = (props: TableCardProps): ReactNode => {
       <TableCardCount>{totalCount}</TableCardCount>
       <TableCardDescription>{descriptionLabel}</TableCardDescription>
       <TableCardAttention>
-        {attentionCount} need{attentionCount === 1 && 's'} attention
+        {t('dashboardPage.tableCards.needsAttention', {
+          count: attentionCount,
+        })}
       </TableCardAttention>
 
       <IconWrapper>
@@ -616,20 +622,27 @@ type NotificationEventType =
   | 'reviewerRejectedInvitation'
   | 'revisionSubmitted'
 
-const notificationMessages: Record<NotificationEventType, string> = {
-  addedAsEditor: 'You were added as an editor on',
-  addedAsHandlingEditor: 'You were added as the handling editor on',
-  addedAsReviewer: 'You were added as a reviewer on',
-  addedAsSeniorEditor: 'You were added as the senior editor on',
-  decisionMade: 'A decision was made on',
-  removedAsEditor: 'You were removed as an editor from',
-  removedAsHandlingEditor: 'You were removed as the handling editor from',
-  removedAsReviewer: 'You were removed as a reviewer from',
-  removedAsSeniorEditor: 'You were removed as the senior editor from',
-  reviewerAcceptedInvitation: 'A reviewer accepted your invitation for',
-  reviewerCompletedReview: 'A review was completed for',
-  reviewerRejectedInvitation: 'A reviewer declined your invitation for',
-  revisionSubmitted: 'A revision was submitted for',
+const notificationMessageKeys: Record<NotificationEventType, string> = {
+  addedAsEditor: 'dashboardPage.activity.notifications.addedAsEditor',
+  addedAsHandlingEditor:
+    'dashboardPage.activity.notifications.addedAsHandlingEditor',
+  addedAsReviewer: 'dashboardPage.activity.notifications.addedAsReviewer',
+  addedAsSeniorEditor:
+    'dashboardPage.activity.notifications.addedAsSeniorEditor',
+  decisionMade: 'dashboardPage.activity.notifications.decisionMade',
+  removedAsEditor: 'dashboardPage.activity.notifications.removedAsEditor',
+  removedAsHandlingEditor:
+    'dashboardPage.activity.notifications.removedAsHandlingEditor',
+  removedAsReviewer: 'dashboardPage.activity.notifications.removedAsReviewer',
+  removedAsSeniorEditor:
+    'dashboardPage.activity.notifications.removedAsSeniorEditor',
+  reviewerAcceptedInvitation:
+    'dashboardPage.activity.notifications.reviewerAcceptedInvitation',
+  reviewerCompletedReview:
+    'dashboardPage.activity.notifications.reviewerCompletedReview',
+  reviewerRejectedInvitation:
+    'dashboardPage.activity.notifications.reviewerRejectedInvitation',
+  revisionSubmitted: 'dashboardPage.activity.notifications.revisionSubmitted',
 }
 
 type NotificationItem = {
@@ -654,9 +667,13 @@ const notificationRowMotionProps = {
 
 const Notification = (props: NotificationProps): ReactNode => {
   const { id, shortId, href, eventType, created, onDismiss } = props
-  const messagePrefix = notificationMessages[eventType]
+  const { t } = useTranslation()
+  const messagePrefix = t(notificationMessageKeys[eventType])
 
-  let manuscriptReference: ReactNode = `manuscript #${shortId}`
+  let manuscriptReference: ReactNode = t(
+    'dashboardPage.activity.manuscriptReference',
+    { shortId },
+  )
 
   if (href) {
     manuscriptReference = (
@@ -685,7 +702,7 @@ const Notification = (props: NotificationProps): ReactNode => {
         {messageElement}
 
         <DismissButton
-          aria-label="Dismiss notification"
+          aria-label={t('dashboardPage.activity.dismissNotification')}
           onClick={(): void => onDismiss(id)}
           type="button"
         >
@@ -744,6 +761,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
     onDismissAllNotifications,
   } = props
 
+  const { t } = useTranslation()
   const actionCardListRef = useRef<HTMLUListElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -782,7 +800,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
   }
 
   return (
-    <Page title="Dashboard">
+    <Page title={t('dashboardPage.Dashboard')}>
       {loading && <Spinner />}
       {error && <CommsErrorBanner error={error} />}
       {!loading && !error && (
@@ -810,7 +828,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                   <ScrollFade $side="left" />
                   <ScrollButton
                     $side="left"
-                    aria-label="Scroll action list left"
+                    aria-label={t('dashboardPage.actionCards.scrollLeft')}
                     onClick={scrollActionListLeft}
                     type="button"
                   >
@@ -824,7 +842,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                   <ScrollFade $side="right" />
                   <ScrollButton
                     $side="right"
-                    aria-label="Scroll action list right"
+                    aria-label={t('dashboardPage.actionCards.scrollRight')}
                     onClick={scrollActionListRight}
                     type="button"
                   >
@@ -843,9 +861,9 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                     <Link to={submissionsData.href}>
                       <TableCard
                         attentionCount={submissionsData.attentionCount}
-                        descriptionLabel="My Submissions"
+                        descriptionLabel={t('dashboardPage.My Submissions')}
                         totalCount={submissionsData.totalCount}
-                        typeLabel="Author"
+                        typeLabel={t('dashboardPage.tableCards.author')}
                       />
                     </Link>
                   </li>
@@ -856,9 +874,9 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                     <Link to={reviewData.href}>
                       <TableCard
                         attentionCount={reviewData.attentionCount}
-                        descriptionLabel="Review Assignments"
+                        descriptionLabel={t('dashboardPage.To Review')}
                         totalCount={reviewData.totalCount}
-                        typeLabel="Reviewer"
+                        typeLabel={t('dashboardPage.tableCards.reviewer')}
                       />
                     </Link>
                   </li>
@@ -869,9 +887,11 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                     <Link to={editingQueueData.href}>
                       <TableCard
                         attentionCount={editingQueueData.attentionCount}
-                        descriptionLabel="Editing Queue"
+                        descriptionLabel={t(
+                          "dashboardPage.Manuscripts I'm editor of",
+                        )}
                         totalCount={editingQueueData.totalCount}
-                        typeLabel="Editor"
+                        typeLabel={t('dashboardPage.tableCards.editor')}
                       />
                     </Link>
                   </li>
@@ -882,7 +902,9 @@ const Dashboard = (props: DashboardProps): ReactNode => {
 
           <NotificationsWrapper>
             <NotificationsHeader>
-              <NotificationsHeaderLabel>Activity</NotificationsHeaderLabel>
+              <NotificationsHeaderLabel>
+                {t('dashboardPage.activity.title')}
+              </NotificationsHeaderLabel>
 
               {notifications.length > 0 && (
                 <ClearAllButton
@@ -890,7 +912,9 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                   type="button"
                 >
                   <Broom aria-hidden />
-                  <ClearAllLabel>Clear all</ClearAllLabel>
+                  <ClearAllLabel>
+                    {t('dashboardPage.activity.clearAll')}
+                  </ClearAllLabel>
                 </ClearAllButton>
               )}
             </NotificationsHeader>
@@ -921,7 +945,10 @@ const Dashboard = (props: DashboardProps): ReactNode => {
               !notificationsError &&
               notificationsTotalCount > notifications.length && (
                 <NotificationsOverflowNote>
-                  Showing {notifications.length} of {notificationsTotalCount}
+                  {t('dashboardPage.activity.showingOfTotal', {
+                    shown: notifications.length,
+                    total: notificationsTotalCount,
+                  })}
                 </NotificationsOverflowNote>
               )}
 
@@ -934,8 +961,8 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                       <Activity aria-hidden />
                     </NotificationsEmptyIcon>
                   }
-                  subTitle="Updates on your manuscripts will appear here."
-                  title="No activity yet"
+                  subTitle={t('dashboardPage.activity.activityWillAppearHere')}
+                  title={t('dashboardPage.activity.noActivityYet')}
                 />
               )}
           </NotificationsWrapper>

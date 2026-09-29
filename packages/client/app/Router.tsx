@@ -1,6 +1,7 @@
 import { type ReactNode, useContext } from 'react'
 import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
+import { useTranslation } from 'react-i18next'
 
 import AcceptArticleOwnershipPage from './components/component-dashboard/src/components/AcceptArticleOwnershipPage'
 import ArticleArtifactPage from './components/component-published-artifact/components/ArticleArtifactPage'
@@ -100,6 +101,7 @@ const RoleGate = (props: RoleGateProps): ReactNode => {
 const Router = (): ReactNode => {
   // TO DO - look into how to get rid of these two
   const [conversion] = useContext(XpubContext)
+  const { t } = useTranslation()
 
   return (
     <Routes>
@@ -190,7 +192,7 @@ const Router = (): ReactNode => {
               <Route
                 element={
                   <DashboardManuscriptsPage
-                    title="My Submissions"
+                    title={t('dashboardPage.My Submissions')}
                     variant="submitter"
                   />
                 }
@@ -200,7 +202,7 @@ const Router = (): ReactNode => {
               <Route
                 element={
                   <DashboardManuscriptsPage
-                    title="Review Assignments"
+                    title={t('dashboardPage.To Review')}
                     variant="reviewer"
                   />
                 }
@@ -210,7 +212,7 @@ const Router = (): ReactNode => {
               <Route
                 element={
                   <DashboardManuscriptsPage
-                    title="Editing Queue"
+                    title={t("dashboardPage.Manuscripts I'm editor of")}
                     variant="editor"
                   />
                 }
