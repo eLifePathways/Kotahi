@@ -10,7 +10,6 @@ declare class User extends BaseModel {
   passwordResetTimestamp: string | Record<string, unknown> | null
   profilePicture: string | null
   lastOnline: string | Record<string, unknown> | null
-  recentTab: string | null
   preferredLanguage: string | null
 }
 

@@ -248,7 +248,6 @@ const ru = {
       Dashboard: 'Панель управления',
       backToDashboard: 'Назад на панель управления',
       'New submission': 'Загрузить новую статью',
-      'New Alerts': 'Новые оповещения',
       'My Submissions': 'Мои статьи',
       'To Review': 'Обзор назначений',
       "Manuscripts I'm editor of": 'Очередь редактирования',

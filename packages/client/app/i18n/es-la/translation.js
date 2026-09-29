@@ -246,7 +246,6 @@ const esLa = {
       Dashboard: 'Tablero',
       backToDashboard: 'Volver al Tablero',
       'New submission': '+ Nueva presentación',
-      'New Alerts': 'Nuevas Alertas',
       'My Submissions': 'Mis presentaciones',
       'To Review': 'Asignaciones de revisión',
       "Manuscripts I'm editor of": 'Cola de edición',

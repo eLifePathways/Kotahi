@@ -22,7 +22,6 @@ import {
 /**
  * TO DO
  * - test task action cards
- * - dead code / dead translations
  * - worth reusing code between this and card grid?
  * - server-side tests
  * - fix cypress tests

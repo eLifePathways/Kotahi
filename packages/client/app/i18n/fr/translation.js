@@ -246,7 +246,6 @@ const fr = {
       Dashboard: 'Tableau de bord',
       backToDashboard: 'Retour au tableau de bord',
       'New submission': '+ Nouvelle soumission',
-      'New Alerts': 'Nouvelles alertes',
       'My Submissions': 'Mes soumissions',
       'To Review': 'Affectations de révision',
       "Manuscripts I'm editor of": "File d'attente d'édition",

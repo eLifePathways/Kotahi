@@ -112,7 +112,6 @@ class User extends BaseModel {
             { type: 'null' },
           ],
         },
-        recentTab: { type: ['string', 'null'] },
         preferredLanguage: { type: ['string', 'null'] },
       },
     }

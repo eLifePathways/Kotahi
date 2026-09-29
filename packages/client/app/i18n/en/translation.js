@@ -245,7 +245,6 @@ const en = {
       Dashboard: 'Dashboard',
       backToDashboard: 'Back to Dashboard',
       'New submission': '+ New submission',
-      'New Alerts': 'New Alerts',
       'My Submissions': 'My Submissions',
       'To Review': 'Review Assignments',
       "Manuscripts I'm editor of": 'Editing Queue',

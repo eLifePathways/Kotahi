@@ -20,7 +20,6 @@ export const CURRENT_USER = gql`
       globalRoles
       groupRoles
       email
-      recentTab
       preferredLanguage
       defaultIdentity {
         identifier
