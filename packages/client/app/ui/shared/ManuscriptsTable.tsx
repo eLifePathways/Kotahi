@@ -9,6 +9,7 @@
 import {
   type ReactNode,
   type MouseEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
   Fragment,
   useEffect,
   useMemo,
@@ -26,6 +27,7 @@ import {
   ButtonGroup,
   Radio as RadioGroupInput,
   Switch,
+  type ThemeValue,
 } from '@coko/client'
 import {
   ConfigProvider,
@@ -44,6 +46,7 @@ import Avatar from './Avatar'
 import {
   Close,
   Coar,
+  Filter,
   Help,
   Info,
   SemanticScholar,
@@ -631,6 +634,63 @@ const ColumnTitleWithTooltip = ({
 )
 // #endregion column-header-help
 
+// #region filter-icon
+const FilterIconWrapper = styled.span<{ $active: boolean }>`
+  display: inline-flex;
+
+  &:focus-visible {
+    /* when active, both outline and background would be white, so use colorPrimary */
+    outline: 2px solid
+      ${(props): ThemeValue =>
+        props.$active
+          ? th('colorPrimary')(props)
+          : th('colorTextReverse')(props)};
+    outline-offset: 2px;
+  }
+`
+
+const focusFirstFilterDropdownElement = (): void => {
+  const target = document.querySelector<HTMLElement>(
+    '.ant-table-filter-dropdown input, .ant-table-filter-dropdown button, .ant-table-filter-dropdown [tabindex]:not([tabindex="-1"])',
+  )
+
+  target?.focus()
+}
+
+/**
+ * antd's own filter-trigger element hardcodes `tabIndex={-1}`, which takes
+ * it out of the tab order entirely - column filters are otherwise
+ * unreachable by keyboard. This inner element is a real tab stop that
+ * forwards Enter/Space to that ancestor to open the dropdown, then moves
+ * focus into the now-open dropdown (antd never does this itself, since it
+ * only expects a mouse click - which leaves focus wherever it already was).
+ */
+const FocusableFilterIcon = ({
+  filtered,
+}: {
+  filtered: boolean
+}): ReactNode => {
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLSpanElement>): void => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    event.currentTarget.parentElement?.click()
+    // the dropdown mounts asynchronously (portal + open-animation), so its
+    // content isn't focusable until the next tick
+    setTimeout(focusFirstFilterDropdownElement, 0)
+  }
+
+  return (
+    <FilterIconWrapper
+      $active={filtered}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+    >
+      <Filter />
+    </FilterIconWrapper>
+  )
+}
+// #endregion filter-icon
+
 // #region reviewer-grid
 const ReviewerStatusColumnHeaderWrapper = styled.div`
   display: flex;
@@ -880,6 +940,11 @@ const FilterChipsWrapper = styled.div`
 const FilterChipCloseButton = styled.button`
   display: inline-flex;
   margin-left: ${grid(2)};
+
+  &:focus-visible {
+    outline: 2px solid ${th('colorTextReverse')};
+    outline-offset: 2px;
+  }
 `
 
 const formatChipDate = (value: string): string =>
@@ -1125,6 +1190,9 @@ const resolveColumn = (
         value,
       })),
       filteredValue: context.columnFilters?.[column.key] ?? null,
+      filterIcon: (filtered: boolean): ReactNode => (
+        <FocusableFilterIcon filtered={filtered} />
+      ),
     }
   }
 
@@ -1135,6 +1203,9 @@ const resolveColumn = (
         <DateRangeFilterDropdown {...props} />
       ),
       filteredValue: context.columnFilters?.[column.key] ?? null,
+      filterIcon: (filtered: boolean): ReactNode => (
+        <FocusableFilterIcon filtered={filtered} />
+      ),
     }
   }
 
@@ -1208,6 +1279,16 @@ const SearchBarWrapper = styled.div`
 const SearchInfoButton = styled.button`
   display: inline-flex;
   align-items: center;
+
+  &:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+    outline-offset: 2px;
+  }
+
+  /* inside a table header (colorPrimary background), colorPrimary would blend in */
+  .ant-table-thead &:focus-visible {
+    outline-color: ${th('colorTextReverse')};
+  }
 `
 
 const SearchTipsList = styled.ul`
@@ -1333,6 +1414,51 @@ const ManuscriptsTable = ({
   const { t } = useTranslation()
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([])
   const searchBarRef = useRef<HTMLDivElement>(null)
+  const lastFilterTriggerRef = useRef<HTMLElement | null>(null)
+
+  // returns focus to the filter icon that opened a dropdown once it closes,
+  // instead of leaving keyboard users stranded on <body>
+  useEffect(() => {
+    const handleFocusIn = (event: FocusEvent): void => {
+      const target = event.target
+
+      if (
+        target instanceof HTMLElement &&
+        target.closest('.ant-table-filter-trigger')
+      ) {
+        lastFilterTriggerRef.current = target
+      }
+    }
+
+    const handleFocusOut = (event: FocusEvent): void => {
+      const target = event.target
+      if (!(target instanceof HTMLElement)) return
+      if (!target.closest('.ant-table-filter-dropdown')) return
+
+      // closing isn't synchronous with this event, so check after it
+      // settles - and confirm the dropdown is actually gone, since arrow-key
+      // navigation within it also blurs to <body> for a tick
+      setTimeout(() => {
+        const dropdown = document.querySelector<HTMLElement>(
+          '.ant-table-filter-dropdown',
+        )
+
+        const isOpen = !!dropdown && dropdown.offsetParent !== null
+
+        if (!isOpen && document.activeElement === document.body) {
+          lastFilterTriggerRef.current?.focus()
+        }
+      }, 0)
+    }
+
+    document.addEventListener('focusin', handleFocusIn)
+    document.addEventListener('focusout', handleFocusOut)
+
+    return (): void => {
+      document.removeEventListener('focusin', handleFocusIn)
+      document.removeEventListener('focusout', handleFocusOut)
+    }
+  }, [])
 
   // effect handles keyboard shortcuts
   useEffect(() => {
@@ -1350,22 +1476,100 @@ const ManuscriptsTable = ({
         return
       }
 
-      if (event.key !== '/') return
+      if (event.key === 'Tab') {
+        // antd's filter dropdown menu moves real DOM focus onto whichever
+        // item is active as you arrow through it (all items are
+        // tabIndex=-1, so that focus isn't reachable by Tab on its own),
+        // and letting Tab fall through natively from inside this popup to
+        // move between Reset/OK closes the dropdown outright - so we take
+        // over the whole sequence (menu -> Reset -> OK) ourselves.
+        const dropdown = document.querySelector<HTMLElement>(
+          '.ant-table-filter-dropdown',
+        )
 
-      const isEditableElementFocused =
-        activeElement instanceof HTMLElement &&
-        (activeElement.tagName === 'INPUT' ||
-          activeElement.tagName === 'TEXTAREA' ||
-          activeElement.isContentEditable)
+        // rc-trigger hides the popup on close rather than unmounting it, so
+        // it's still queryable - offsetParent is null while it (or an
+        // ancestor) is display:none, which is how we tell closed from open
+        if (!dropdown || dropdown.offsetParent === null) return
 
-      if (isEditableElementFocused) return
+        const menu = dropdown.querySelector<HTMLElement>('[role="menu"]')
 
-      event.preventDefault()
-      searchBarRef.current?.querySelector('input')?.focus()
+        const buttons = Array.from(
+          dropdown.querySelectorAll<HTMLButtonElement>(
+            '.ant-table-filter-dropdown-btns button:not(:disabled)',
+          ),
+        )
+
+        const stops = [menu, ...buttons].filter(
+          (element): element is HTMLElement => element != null,
+        )
+
+        const focusIsInDropdown =
+          activeElement instanceof HTMLElement &&
+          dropdown.contains(activeElement)
+
+        const currentIndex = focusIsInDropdown
+          ? stops.findIndex(
+              stop => stop === activeElement || stop.contains(activeElement),
+            )
+          : -1
+
+        // Clicking Reset disables it immediately (it's only enabled once
+        // something's selected), and a focused element that becomes
+        // disabled has its focus forced to <body> by the browser - recover
+        // by treating that the same as having been on the last stop
+        const focusWasLost =
+          !focusIsInDropdown && document.activeElement === document.body
+
+        if (currentIndex === -1 && !focusWasLost) return
+
+        // capture phase, and stopped here so nothing downstream (antd/
+        // rc-trigger) ever sees this keydown and closes the dropdown on it
+        event.preventDefault()
+        event.stopPropagation()
+
+        if (focusWasLost) {
+          const target = event.shiftKey ? stops[0] : stops[stops.length - 1]
+          target?.focus()
+          return
+        }
+
+        const nextIndex = currentIndex + (event.shiftKey ? -1 : 1)
+        const nextStop = stops[nextIndex]
+
+        if (nextStop) {
+          nextStop.focus()
+        } else {
+          // past the last stop (or first, on shift+tab) - exit via the trigger
+          const trigger = lastFilterTriggerRef.current
+          trigger?.parentElement?.click()
+          trigger?.focus()
+        }
+
+        return
+      }
+
+      if (event.key === '/') {
+        const isEditableElementFocused =
+          activeElement instanceof HTMLElement &&
+          (activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.isContentEditable)
+
+        if (isEditableElementFocused) return
+
+        event.preventDefault()
+        searchBarRef.current?.querySelector('input')?.focus()
+      }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    return (): void => document.removeEventListener('keydown', handleKeyDown)
+    // capture phase: something inside the antd filter dropdown appears to
+    // stop propagation of Tab/Shift+Tab before it reaches a bubble-phase
+    // document listener, closing the dropdown instead of moving focus
+    document.addEventListener('keydown', handleKeyDown, true)
+
+    return (): void =>
+      document.removeEventListener('keydown', handleKeyDown, true)
   }, [])
 
   const filterChips = [

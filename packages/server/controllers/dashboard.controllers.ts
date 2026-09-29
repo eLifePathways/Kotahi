@@ -1,5 +1,6 @@
 import TeamMember from '../models/teamMember/teamMember.model'
 import Manuscript from '../models/manuscript/manuscript.model'
+import Config from '../models/config/config.model'
 
 const AUTHOR_ROLE = 'author'
 const REVIEWER_ROLES = ['reviewer', 'collaborativeReviewer']
@@ -34,9 +35,9 @@ type TableCardData = {
 
 type DashboardData = {
   actionCardData: ActionCardItem[]
-  submissionsData: TableCardData
-  reviewData: TableCardData
-  editingQueueData: TableCardData
+  submissionsData: TableCardData | null
+  reviewData: TableCardData | null
+  editingQueueData: TableCardData | null
 }
 
 const getManuscriptTitle = (manuscript: Manuscript): string =>
@@ -73,6 +74,12 @@ export const getDashboardData = async (
     now.getTime() + ALMOST_OVERDUE_THRESHOLD_DAYS * 24 * 60 * 60 * 1000,
   )
 
+  const config = await Config.getActive(groupId)
+  const showSections: string[] = config?.formData?.dashboard?.showSections ?? []
+  const showSubmissions = showSections.includes('submission')
+  const showReviews = showSections.includes('review')
+  const showEdits = showSections.includes('editor')
+
   const [
     authorManuscripts,
     reviewerManuscripts,
@@ -80,13 +87,17 @@ export const getDashboardData = async (
     reviewerStatusesByManuscriptId,
     dueTaskManuscripts,
   ] = await Promise.all([
-    manuscriptsForRole(userId, groupId, [AUTHOR_ROLE]),
-    manuscriptsForRole(userId, groupId, REVIEWER_ROLES),
-    manuscriptsForRole(userId, groupId, EDITOR_ROLES),
-    getReviewerStatusesByManuscriptId(userId, groupId),
-    Manuscript.findManuscriptsWithOverdueTasksForUser(userId, groupId, {
-      dueBefore: almostOverdueThreshold,
-    }),
+    showSubmissions ? manuscriptsForRole(userId, groupId, [AUTHOR_ROLE]) : [],
+    showReviews ? manuscriptsForRole(userId, groupId, REVIEWER_ROLES) : [],
+    showEdits ? manuscriptsForRole(userId, groupId, EDITOR_ROLES) : [],
+    showReviews
+      ? getReviewerStatusesByManuscriptId(userId, groupId)
+      : new Map<string, string>(),
+    showSubmissions || showReviews || showEdits
+      ? Manuscript.findManuscriptsWithOverdueTasksForUser(userId, groupId, {
+          dueBefore: almostOverdueThreshold,
+        })
+      : [],
   ])
 
   const actionCardData: ActionCardItem[] = []
@@ -187,8 +198,12 @@ export const getDashboardData = async (
 
   return {
     actionCardData,
-    submissionsData: { totalCount: authorManuscripts.length },
-    reviewData: { totalCount: reviewerManuscripts.length },
-    editingQueueData: { totalCount: editorManuscripts.length },
+    submissionsData: showSubmissions
+      ? { totalCount: authorManuscripts.length }
+      : null,
+    reviewData: showReviews ? { totalCount: reviewerManuscripts.length } : null,
+    editingQueueData: showEdits
+      ? { totalCount: editorManuscripts.length }
+      : null,
   }
 }

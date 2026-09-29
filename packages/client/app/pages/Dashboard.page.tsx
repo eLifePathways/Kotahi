@@ -15,6 +15,13 @@ import Dashboard from '../ui/pages/dashboard/Dashboard'
 const NOTIFICATIONS_POLL_INTERVAL =
   process.env.NODE_ENV === 'production' ? 30000 : 1000
 
+const NOTIFICATIONS_LIMIT = 30
+
+const notificationsQuery = {
+  query: GET_USER_NOTIFICATIONS,
+  variables: { limit: NOTIFICATIONS_LIMIT },
+}
+
 const BUCKET_PATHS: Record<string, string> = {
   submissions: 'submissions',
   review: 'reviews',
@@ -62,17 +69,18 @@ const DashboardPage = (): ReactNode => {
     error: notificationsError,
     data: notificationsResult,
   } = useQuery(GET_USER_NOTIFICATIONS, {
+    variables: notificationsQuery.variables,
     pollInterval: NOTIFICATIONS_POLL_INTERVAL,
   })
 
   const [dismissUserNotification] = useMutation(DISMISS_USER_NOTIFICATION, {
-    refetchQueries: [{ query: GET_USER_NOTIFICATIONS }],
+    refetchQueries: [notificationsQuery],
   })
 
   const [dismissAllUserNotifications] = useMutation(
     DISMISS_ALL_USER_NOTIFICATIONS,
     {
-      refetchQueries: [{ query: GET_USER_NOTIFICATIONS }],
+      refetchQueries: [notificationsQuery],
     },
   )
 
@@ -89,8 +97,13 @@ const DashboardPage = (): ReactNode => {
 
   // @ts-ignore
   const dashboardData = dashboardResult?.dashboardData
-  // @ts-ignore
-  const userNotifications = notificationsResult?.userNotifications
+  const userNotifications =
+    // @ts-ignore
+    notificationsResult?.userNotifications?.notifications
+
+  const notificationsTotalCount =
+    // @ts-ignore
+    notificationsResult?.userNotifications?.totalCount ?? 0
 
   // only true for the initial load - not for the background poll/refetch
   const notificationsFirstLoad = notificationsLoading && !notificationsResult
@@ -136,31 +149,44 @@ const DashboardPage = (): ReactNode => {
       }
     }) ?? []
 
+  const submissionsData = dashboardData?.submissionsData
+    ? {
+        totalCount: dashboardData.submissionsData.totalCount,
+        attentionCount: attentionCountForBucket('submissions'),
+        href: dashboardPath('submissions'),
+      }
+    : undefined
+
+  const reviewData = dashboardData?.reviewData
+    ? {
+        totalCount: dashboardData.reviewData.totalCount,
+        attentionCount: attentionCountForBucket('review'),
+        href: dashboardPath('review'),
+      }
+    : undefined
+
+  const editingQueueData = dashboardData?.editingQueueData
+    ? {
+        totalCount: dashboardData.editingQueueData.totalCount,
+        attentionCount: attentionCountForBucket('editingQueue'),
+        href: dashboardPath('editingQueue'),
+      }
+    : undefined
+
   return (
     <Dashboard
       actionCardData={actionCardData}
-      editingQueueData={{
-        totalCount: dashboardData?.editingQueueData.totalCount ?? 0,
-        attentionCount: attentionCountForBucket('editingQueue'),
-        href: dashboardPath('editingQueue'),
-      }}
+      editingQueueData={editingQueueData}
       error={dashboardError}
       loading={dashboardLoading}
       notifications={notifications}
       notificationsError={notificationsError}
       notificationsLoading={notificationsFirstLoad}
+      notificationsTotalCount={notificationsTotalCount}
       onDismissAllNotifications={handleDismissAllNotifications}
       onDismissNotification={handleDismissNotification}
-      reviewData={{
-        totalCount: dashboardData?.reviewData.totalCount ?? 0,
-        attentionCount: attentionCountForBucket('review'),
-        href: dashboardPath('review'),
-      }}
-      submissionsData={{
-        totalCount: dashboardData?.submissionsData.totalCount ?? 0,
-        attentionCount: attentionCountForBucket('submissions'),
-        href: dashboardPath('submissions'),
-      }}
+      reviewData={reviewData}
+      submissionsData={submissionsData}
       userName={username}
     />
   )

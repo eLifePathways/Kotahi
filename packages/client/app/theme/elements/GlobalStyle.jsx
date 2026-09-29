@@ -104,6 +104,19 @@ const globalStyles = css`
   .ant-notification-notice-info {
     border-left: 5px solid ${th('colorInfo')};
   }
+
+  /* Ant table filter dropdown - portaled outside the table, so this can't
+     live in Table.tsx's scoped styles */
+
+  .ant-table-filter-dropdown-btns .ant-btn:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+    outline-offset: 2px;
+  }
+
+  .ant-table-filter-dropdown [role='menu']:focus-visible {
+    outline: 3px solid ${th('colorPrimary')};
+    outline-offset: -2px;
+  }
 `
 
 export default createGlobalStyle`${globalStyles}`

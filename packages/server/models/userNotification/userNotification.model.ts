@@ -33,8 +33,12 @@ class UserNotification extends BaseModel {
   static async findForUser(
     userId: string,
     groupId: string,
-  ): Promise<UserNotification[]> {
-    return this.query().where({ userId, groupId }).orderBy('created', 'desc')
+    limit: number,
+  ): Promise<{ results: UserNotification[]; total: number }> {
+    return this.query()
+      .where({ userId, groupId })
+      .orderBy('created', 'desc')
+      .range(0, limit - 1)
   }
 
   static async dismissById(id: string): Promise<number> {
@@ -46,6 +50,10 @@ class UserNotification extends BaseModel {
     groupId: string,
   ): Promise<number> {
     return this.query().delete().where({ userId, groupId })
+  }
+
+  static async deleteOlderThan(date: Date): Promise<number> {
+    return this.query().delete().where('created', '<', date)
   }
 
   static get relationMappings(): RelationMappings {

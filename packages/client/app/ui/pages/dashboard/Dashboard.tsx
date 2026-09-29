@@ -20,22 +20,11 @@ import {
 
 /**
  * TO DO
+ * - use translations for ui elements
+ *
  * - test task action cards
  * - worth reusing code between this and card grid?
- * - use translations for ui elements
- * - accessibility
- * - Is there any configuration related to the dashboard?
- * - Limit activity list
  * - dead code
- */
-
-/**
- * Future cases:
- * - when an invitation expires or a reviewer declines an invitation, the editor might need to invite someone else, which is an action to take
- * - if we add the concept of minimum amount of reviews, we could tell an editor that there aren't enough reviews pending / reviewers invited for this manuscript
- * - if we add review deadlines, we could tell a reviwer that their review is overdue or close to overdue (can this functionality be done as a task?)
- * - stale manuscripts: no activity for N days
- * - unread chat messages (if we keep chat)
  */
 
 // #region constants
@@ -487,6 +476,11 @@ const ClearAllButton = styled.button`
   &:hover {
     color: ${th('colorPrimary')};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+    outline-offset: 2px;
+  }
 `
 
 const ClearAllLabel = styled.span`
@@ -536,6 +530,13 @@ const NotificationList = styled.ul`
   padding: 0;
 `
 
+const NotificationsOverflowNote = styled.div`
+  padding: ${grid(2)} ${grid(1)} 0;
+  text-align: right;
+  color: ${th('colorTextMuted')};
+  font-size: ${th('fontSizeBaseSmall')};
+`
+
 const NotificationRow = styled(m.li)`
   overflow: hidden;
 `
@@ -551,6 +552,11 @@ const DismissButton = styled.button`
 
   opacity: 0;
   transition: opacity 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+    outline-offset: 2px;
+  }
 `
 
 const NotificationRowContent = styled.div`
@@ -562,9 +568,6 @@ const NotificationRowContent = styled.div`
   &:hover,
   &:focus-within {
     background-color: ${th('colorBackgroundHue')};
-  }
-
-  &:hover {
     ${DismissButton} {
       opacity: 1;
       cursor: pointer;
@@ -711,12 +714,13 @@ type DashboardProps = {
   error?: unknown
   userName: string
   actionCardData: ActionCardItem[]
-  submissionsData: TableCardData
-  reviewData: TableCardData
-  editingQueueData: TableCardData
+  submissionsData?: TableCardData
+  reviewData?: TableCardData
+  editingQueueData?: TableCardData
   notifications: NotificationItem[]
   notificationsLoading?: boolean
   notificationsError?: unknown
+  notificationsTotalCount: number
   onDismissNotification: (id: string) => void
   onDismissAllNotifications: () => void
 }
@@ -735,6 +739,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
     notifications,
     notificationsLoading,
     notificationsError,
+    notificationsTotalCount,
     onDismissNotification,
     onDismissAllNotifications,
   } = props
@@ -830,42 +835,50 @@ const Dashboard = (props: DashboardProps): ReactNode => {
             </ActionCardListWrapper>
           )}
 
-          <div>
-            <TableCardGrid>
-              <li>
-                <Link to={submissionsData.href}>
-                  <TableCard
-                    attentionCount={submissionsData.attentionCount}
-                    descriptionLabel="My Submissions"
-                    totalCount={submissionsData.totalCount}
-                    typeLabel="Author"
-                  />
-                </Link>
-              </li>
+          {(submissionsData || reviewData || editingQueueData) && (
+            <div>
+              <TableCardGrid>
+                {submissionsData && (
+                  <li>
+                    <Link to={submissionsData.href}>
+                      <TableCard
+                        attentionCount={submissionsData.attentionCount}
+                        descriptionLabel="My Submissions"
+                        totalCount={submissionsData.totalCount}
+                        typeLabel="Author"
+                      />
+                    </Link>
+                  </li>
+                )}
 
-              <li>
-                <Link to={reviewData.href}>
-                  <TableCard
-                    attentionCount={reviewData.attentionCount}
-                    descriptionLabel="Review Assignments"
-                    totalCount={reviewData.totalCount}
-                    typeLabel="Reviewer"
-                  />
-                </Link>
-              </li>
+                {reviewData && (
+                  <li>
+                    <Link to={reviewData.href}>
+                      <TableCard
+                        attentionCount={reviewData.attentionCount}
+                        descriptionLabel="Review Assignments"
+                        totalCount={reviewData.totalCount}
+                        typeLabel="Reviewer"
+                      />
+                    </Link>
+                  </li>
+                )}
 
-              <li>
-                <Link to={editingQueueData.href}>
-                  <TableCard
-                    attentionCount={editingQueueData.attentionCount}
-                    descriptionLabel="Editing Queue"
-                    totalCount={editingQueueData.totalCount}
-                    typeLabel="Editor"
-                  />
-                </Link>
-              </li>
-            </TableCardGrid>
-          </div>
+                {editingQueueData && (
+                  <li>
+                    <Link to={editingQueueData.href}>
+                      <TableCard
+                        attentionCount={editingQueueData.attentionCount}
+                        descriptionLabel="Editing Queue"
+                        totalCount={editingQueueData.totalCount}
+                        typeLabel="Editor"
+                      />
+                    </Link>
+                  </li>
+                )}
+              </TableCardGrid>
+            </div>
+          )}
 
           <NotificationsWrapper>
             <NotificationsHeader>
@@ -902,6 +915,14 @@ const Dashboard = (props: DashboardProps): ReactNode => {
                     ))}
                   </AnimatePresence>
                 </NotificationList>
+              )}
+
+            {!notificationsLoading &&
+              !notificationsError &&
+              notificationsTotalCount > notifications.length && (
+                <NotificationsOverflowNote>
+                  Showing {notifications.length} of {notificationsTotalCount}
+                </NotificationsOverflowNote>
               )}
 
             {!notificationsLoading &&

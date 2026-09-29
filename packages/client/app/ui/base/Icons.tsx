@@ -9,6 +9,7 @@ export {
   CloseOutlined as Close,
   ControlOutlined as Settings,
   FileTextOutlined as File,
+  FilterFilled as Filter,
   FormOutlined as Form,
   HomeOutlined as Home,
   InfoCircleOutlined as Info,
