@@ -25,13 +25,16 @@ export const GET_DASHBOARD_DATA = gql`
 `
 
 export const GET_USER_NOTIFICATIONS = gql`
-  query GetUserNotifications {
-    userNotifications {
-      id
-      manuscriptId
-      eventType
-      data
-      created
+  query GetUserNotifications($limit: Int) {
+    userNotifications(limit: $limit) {
+      notifications {
+        id
+        manuscriptId
+        eventType
+        data
+        created
+      }
+      totalCount
     }
   }
 `

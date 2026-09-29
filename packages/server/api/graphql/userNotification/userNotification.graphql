@@ -22,8 +22,13 @@ type UserNotification {
   created: DateTime!
 }
 
+type UserNotificationsResponse {
+  notifications: [UserNotification!]!
+  totalCount: Int!
+}
+
 extend type Query {
-  userNotifications: [UserNotification!]!
+  userNotifications(limit: Int = 50): UserNotificationsResponse!
 }
 
 extend type Mutation {

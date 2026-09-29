@@ -30,9 +30,9 @@ type DashboardTableCardData {
 
 type DashboardData {
   actionCardData: [DashboardActionCardItem!]!
-  submissionsData: DashboardTableCardData!
-  reviewData: DashboardTableCardData!
-  editingQueueData: DashboardTableCardData!
+  submissionsData: DashboardTableCardData
+  reviewData: DashboardTableCardData
+  editingQueueData: DashboardTableCardData
 }
 
 extend type Query {

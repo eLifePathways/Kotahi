@@ -6,9 +6,9 @@ const {
 
 module.exports = {
   Query: {
-    userNotifications: async (_, __, ctx) => {
+    userNotifications: async (_, { limit }, ctx) => {
       const groupId = ctx.req.headers['group-id']
-      return getUserNotifications(ctx.userId, groupId)
+      return getUserNotifications(ctx.userId, groupId, limit)
     },
   },
   Mutation: {

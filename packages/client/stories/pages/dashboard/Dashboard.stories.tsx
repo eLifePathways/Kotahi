@@ -9,27 +9,40 @@ type DashboardProps = ComponentProps<typeof Dashboard>
 
 type DemoProps = Omit<
   DashboardProps,
-  'notifications' | 'onDismissNotification' | 'onDismissAllNotifications'
+  | 'notifications'
+  | 'notificationsTotalCount'
+  | 'onDismissNotification'
+  | 'onDismissAllNotifications'
 > & {
   initialNotifications: DashboardProps['notifications']
+  initialNotificationsTotalCount?: number
 }
 
 const Demo = (props: DemoProps): ReactNode => {
-  const { initialNotifications, ...rest } = props
+  const { initialNotifications, initialNotificationsTotalCount, ...rest } =
+    props
+
   const [notifications, setNotifications] = useState(initialNotifications)
+
+  const [totalCount, setTotalCount] = useState(
+    initialNotificationsTotalCount ?? initialNotifications.length,
+  )
 
   const handleDismiss = (id: string): void => {
     setNotifications(current => current.filter(item => item.id !== id))
+    setTotalCount(current => current - 1)
   }
 
   const handleDismissAll = (): void => {
     setNotifications([])
+    setTotalCount(0)
   }
 
   return (
     <Dashboard
       {...rest}
       notifications={notifications}
+      notificationsTotalCount={totalCount}
       onDismissAllNotifications={handleDismissAll}
       onDismissNotification={handleDismiss}
     />
@@ -119,6 +132,38 @@ const initialNotifications: DashboardProps['notifications'] = [
   },
 ]
 
+const notificationEventTypes: DashboardProps['notifications'][number]['eventType'][] =
+  [
+    'addedAsEditor',
+    'addedAsHandlingEditor',
+    'addedAsReviewer',
+    'addedAsSeniorEditor',
+    'decisionMade',
+    'removedAsEditor',
+    'removedAsHandlingEditor',
+    'removedAsReviewer',
+    'removedAsSeniorEditor',
+    'reviewerAcceptedInvitation',
+    'reviewerCompletedReview',
+    'reviewerRejectedInvitation',
+    'revisionSubmitted',
+  ]
+
+const NOTIFICATIONS_LIMIT = 30
+
+const manyNotifications: DashboardProps['notifications'] = Array.from(
+  { length: NOTIFICATIONS_LIMIT },
+  (_, index) => ({
+    id: `notification-many-${index}`,
+    shortId: String(1001 + index),
+    href: '/',
+    eventType: notificationEventTypes[index % notificationEventTypes.length],
+    created: dayjs()
+      .subtract(index * 5, 'hours')
+      .toISOString(),
+  }),
+)
+
 const meta = preview.meta({
   component: Dashboard,
 })
@@ -129,6 +174,21 @@ export const Base = meta.story({
       actionCardData={actionCardData}
       editingQueueData={{ totalCount: 8, attentionCount: 4, href: '/' }}
       initialNotifications={initialNotifications}
+      loading={false}
+      reviewData={{ totalCount: 12, attentionCount: 2, href: '/' }}
+      submissionsData={{ totalCount: 14, attentionCount: 1, href: '/' }}
+      userName="Priya"
+    />
+  ),
+})
+
+export const MoreNotificationsThanLimit = meta.story({
+  render: () => (
+    <Demo
+      actionCardData={actionCardData}
+      editingQueueData={{ totalCount: 8, attentionCount: 4, href: '/' }}
+      initialNotifications={manyNotifications}
+      initialNotificationsTotalCount={NOTIFICATIONS_LIMIT + 17}
       loading={false}
       reviewData={{ totalCount: 12, attentionCount: 2, href: '/' }}
       submissionsData={{ totalCount: 14, attentionCount: 1, href: '/' }}
