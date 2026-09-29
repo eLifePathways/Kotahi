@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client/react'
 
 import {
@@ -94,6 +94,24 @@ const DashboardPage = (): ReactNode => {
   const handleDismissAllNotifications = useCallback((): void => {
     dismissAllUserNotifications()
   }, [dismissAllUserNotifications])
+
+  // AcceptArticleOwnershipPage/DeclineArticleOwnershipPage stash a pending
+  // invitation in localStorage and send a logged-out user to /login;
+  // config.dashboard.loginRedirectUrl (usually here) sends them back
+  // afterwards, so this is where that invitation gets picked back up and
+  // actually completed
+  const invitationId = localStorage.getItem('invitationId')
+
+  if (invitationId) {
+    const inviteAction = localStorage.getItem('inviteAction')
+
+    const redirectPath =
+      inviteAction === 'decline'
+        ? `/${groupName}/decline/${invitationId}`
+        : `/${groupName}/invitation/accepted`
+
+    return <Navigate replace to={redirectPath} />
+  }
 
   // @ts-ignore
   const dashboardData = dashboardResult?.dashboardData
