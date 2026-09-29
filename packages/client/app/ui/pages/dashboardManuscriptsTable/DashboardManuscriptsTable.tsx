@@ -1,5 +1,6 @@
 import { type ComponentProps, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { Spinner } from '../../../components/shared/Spinner'
 import CommsErrorBanner from '../../../components/shared/CommsErrorBanner'
@@ -20,10 +21,14 @@ const DashboardManuscriptsTable = (
 ): ReactNode => {
   const { title, loading, error, ...tableProps } = props
   const { groupName } = useParams()
+  const { t } = useTranslation()
 
   return (
     <Page title={title}>
-      <BackLink href={`/${groupName}/dashboard`} label="Back to Dashboard" />
+      <BackLink
+        href={`/${groupName}/dashboard`}
+        label={t('dashboardPage.backToDashboard')}
+      />
 
       {loading && <Spinner />}
       {error && <CommsErrorBanner error={error} />}
