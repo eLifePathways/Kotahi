@@ -35,9 +35,17 @@ const ACTION_TYPE_MANUSCRIPT_PATHS: Record<string, string> = {
   // reviewerRespond - special case: see actionCardHref
   reviewerSubmit: 'review',
   editorDecide: 'decision',
-  taskOverdue: 'manuscript',
-  taskAlmostOverdue: 'manuscript',
+  // taskOverdue/taskAlmostOverdue - special case: see actionCardHref. These
+  // can land in any bucket, so they route by bucket instead of by type.
 }
+
+const BUCKET_MANUSCRIPT_PATHS: Record<string, string> = {
+  submissions: 'submit',
+  review: 'review',
+  editingQueue: 'decision',
+}
+
+const TASK_ACTION_TYPES = ['taskOverdue', 'taskAlmostOverdue']
 
 const NOTIFICATION_EVENT_TYPE_PATHS: Record<string, string> = {
   addedAsEditor: 'decision',
@@ -129,10 +137,21 @@ const DashboardPage = (): ReactNode => {
   const dashboardPath = (bucket: string): string =>
     `/${groupName}/dashboard/${BUCKET_PATHS[bucket]}`
 
-  const actionCardHref = (type: string, manuscriptId: string): string =>
-    type === 'reviewerRespond'
-      ? `${dashboardPath('review')}?reviewerStatusBadge=invited`
-      : `/${groupName}/versions/${manuscriptId}/${ACTION_TYPE_MANUSCRIPT_PATHS[type]}`
+  const actionCardHref = (
+    type: string,
+    manuscriptId: string,
+    bucket: string,
+  ): string => {
+    if (type === 'reviewerRespond') {
+      return `${dashboardPath('review')}?reviewerStatusBadge=invited`
+    }
+
+    const path = TASK_ACTION_TYPES.includes(type)
+      ? BUCKET_MANUSCRIPT_PATHS[bucket]
+      : ACTION_TYPE_MANUSCRIPT_PATHS[type]
+
+    return `/${groupName}/versions/${manuscriptId}/${path}`
+  }
 
   const attentionCountForBucket = (bucket: string): number =>
     dashboardData?.actionCardData.filter(item => item.bucket === bucket)
@@ -144,7 +163,7 @@ const DashboardPage = (): ReactNode => {
       type: item.type,
       shortId: item.shortId,
       title: item.title,
-      href: actionCardHref(item.type, item.manuscriptId),
+      href: actionCardHref(item.type, item.manuscriptId, item.bucket),
     })) ?? []
 
   const notifications =
