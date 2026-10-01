@@ -93,7 +93,6 @@ describe('checkCrossRefValidation', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('valid references', async () => {

@@ -21,11 +21,11 @@ import {
 
 /**
  * TO DO
- * - test task action cards
  * - worth reusing code between this and card grid?
  * - server-side tests
  * - fix cypress tests
- * - playwright tests
+ * - playwright tests - dashboard & keyboard navigation
+ * = playwright tests - table keyboard navigation
  */
 
 // #region constants

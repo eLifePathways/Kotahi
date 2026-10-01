@@ -64,7 +64,6 @@ describe('Manuscript API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('reads wax comments', async () => {

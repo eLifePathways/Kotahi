@@ -39,7 +39,6 @@ describe('Manuscript Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('Move wax comments to separate field', async () => {
