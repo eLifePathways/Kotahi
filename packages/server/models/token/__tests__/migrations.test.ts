@@ -16,7 +16,6 @@ describe('Token Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('creates and drops tokens table', async () => {

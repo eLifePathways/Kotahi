@@ -29,7 +29,6 @@ describe('Sanitize wax images', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('converts and uploads base64 images', async () => {

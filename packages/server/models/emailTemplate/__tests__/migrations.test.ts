@@ -20,7 +20,6 @@ describe('Email Template Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('adds collaborative review email template', async () => {

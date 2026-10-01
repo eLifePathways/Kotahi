@@ -146,6 +146,7 @@ services:
       - ./packages/server/vitest.config.ts:/home/node/app/vitest.config.ts
       - ./packages/server/vitest.setup.ts:/home/node/app/vitest.setup.ts
       - ./packages/server/vitest.workerDb.ts:/home/node/app/vitest.workerDb.ts
+      - ./packages/server/vitest.tsNodeRegister.ts:/home/node/app/vitest.tsNodeRegister.ts
     healthcheck:
       test: ['CMD', '/bin/sh', '/home/node/app/scripts/server_healthy.sh']
       interval: 1s

@@ -70,6 +70,7 @@
     "@types/pg": "^8.23.0",
     "@vitest/coverage-v8": "^4.1.10",
     "pg": "^8.23.0",
+    "ts-node": "^10.9.2",
     "vitest": "^4.1.10"
   },
   "resolutions": {

@@ -32,7 +32,6 @@ describe('User migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('Make profile picture a file id foreign key', async () => {

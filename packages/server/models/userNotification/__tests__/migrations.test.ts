@@ -13,7 +13,6 @@ describe('UserNotification Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('creates and drops user_notifications table', async () => {

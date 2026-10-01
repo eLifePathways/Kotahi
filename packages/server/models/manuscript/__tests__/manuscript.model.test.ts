@@ -7,6 +7,8 @@ import Team from '../../team/team.model'
 import User from '../../user/user.model'
 import TeamMember from '../../teamMember/teamMember.model'
 import Invitation from '../../invitation/invitation.model'
+import Group from '../../group/group.model'
+import Task from '../../task/task.model'
 
 describe('Manuscript model', () => {
   beforeAll(async () => {
@@ -21,7 +23,6 @@ describe('Manuscript model', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('gets reviews', async () => {
@@ -150,5 +151,393 @@ describe('Manuscript model', () => {
 
     expect(reviewerTeamThreeMembers.length).toBe(1)
     expect(reviewerTeamThreeMembers[0].status).toBe('accepted')
+  })
+
+  it('returns the latest version of a manuscript family for a role held on an earlier version', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+
+    const rootManuscript = await Manuscript.insert({ groupId: group.id })
+
+    const latestManuscript = await Manuscript.insert({
+      groupId: group.id,
+      parentId: rootManuscript.id,
+    })
+
+    await db('manuscripts')
+      .where({ id: rootManuscript.id })
+      .update({ created: '2000-01-01T00:00:00.000Z' })
+
+    const reviewerTeam = await Team.insert({
+      objectId: rootManuscript.id,
+      objectType: 'manuscript',
+      role: 'reviewer',
+      displayName: 'Reviewers',
+    })
+
+    await Team.addMember(reviewerTeam.id, user.id, { status: 'accepted' })
+
+    const results =
+      await Manuscript.getLatestVersionsOfManuscriptsUserHasRolesIn(
+        user.id,
+        group.id,
+        ['reviewer'],
+      )
+
+    expect(results).toHaveLength(1)
+    expect(results[0].id).toBe(latestManuscript.id)
+  })
+
+  it('falls back to the manuscript itself when there are no further versions', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    const editorTeam = await Team.insert({
+      objectId: manuscript.id,
+      objectType: 'manuscript',
+      role: 'editor',
+      displayName: 'Editor',
+    })
+
+    await Team.addMember(editorTeam.id, user.id)
+
+    const results =
+      await Manuscript.getLatestVersionsOfManuscriptsUserHasRolesIn(
+        user.id,
+        group.id,
+        ['editor'],
+      )
+
+    expect(results).toHaveLength(1)
+    expect(results[0].id).toBe(manuscript.id)
+  })
+
+  it('excludes manuscripts where the user does not have one of the given roles', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    const authorTeam = await Team.insert({
+      objectId: manuscript.id,
+      objectType: 'manuscript',
+      role: 'author',
+      displayName: 'Author',
+    })
+
+    await Team.addMember(authorTeam.id, user.id, { status: 'accepted' })
+
+    const results =
+      await Manuscript.getLatestVersionsOfManuscriptsUserHasRolesIn(
+        user.id,
+        group.id,
+        ['editor'],
+      )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('excludes manuscripts belonging to a different group', async () => {
+    const group = await Group.insert({})
+    const otherGroup = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: otherGroup.id })
+
+    const editorTeam = await Team.insert({
+      objectId: manuscript.id,
+      objectType: 'manuscript',
+      role: 'editor',
+      displayName: 'Editor',
+    })
+
+    await Team.addMember(editorTeam.id, user.id)
+
+    const results =
+      await Manuscript.getLatestVersionsOfManuscriptsUserHasRolesIn(
+        user.id,
+        group.id,
+        ['editor'],
+      )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('excludes hidden manuscripts', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+
+    const manuscript = await Manuscript.insert({
+      groupId: group.id,
+      isHidden: true,
+    })
+
+    const editorTeam = await Team.insert({
+      objectId: manuscript.id,
+      objectType: 'manuscript',
+      role: 'editor',
+      displayName: 'Editor',
+    })
+
+    await Team.addMember(editorTeam.id, user.id)
+
+    const results =
+      await Manuscript.getLatestVersionsOfManuscriptsUserHasRolesIn(
+        user.id,
+        group.id,
+        ['editor'],
+      )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('returns a manuscript with an in-progress overdue task assigned to the user', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+    const dueDate = new Date('2020-01-01T00:00:00.000Z')
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: dueDate.toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(1)
+    expect(results[0].id).toBe(manuscript.id)
+
+    expect(new Date(results[0].nextTaskDueDate).toISOString()).toBe(
+      dueDate.toISOString(),
+    )
+  })
+
+  it('excludes tasks that are not in progress', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'Not started',
+      dueDate: new Date('2020-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('excludes tasks with no due date', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: null,
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('only returns tasks due before the given dueBefore option', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: new Date('2030-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+      { dueBefore: new Date('2020-01-01T00:00:00.000Z') },
+    )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('excludes tasks belonging to a different group', async () => {
+    const group = await Group.insert({})
+    const otherGroup = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: otherGroup.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: new Date('2020-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('includes a manuscript when the user is an editor, even if not the assignee', async () => {
+    const group = await Group.insert({})
+    const editorUser = await User.insert({})
+    const assignee = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    const editorTeam = await Team.insert({
+      objectId: manuscript.id,
+      objectType: 'manuscript',
+      role: 'editor',
+      displayName: 'Editor',
+    })
+
+    await Team.addMember(editorTeam.id, editorUser.id)
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: assignee.id,
+      status: 'In progress',
+      dueDate: new Date('2020-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      editorUser.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(1)
+    expect(results[0].id).toBe(manuscript.id)
+  })
+
+  it('excludes a manuscript when the user is neither the assignee nor an editor', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const assignee = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: assignee.id,
+      status: 'In progress',
+      dueDate: new Date('2020-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(0)
+  })
+
+  it('only surfaces the latest version of a manuscript family', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+
+    const olderVersion = await Manuscript.insert({ groupId: group.id })
+
+    const latestVersion = await Manuscript.insert({
+      groupId: group.id,
+      parentId: olderVersion.id,
+    })
+
+    await db('manuscripts')
+      .where({ id: olderVersion.id })
+      .update({ created: '2000-01-01T00:00:00.000Z' })
+
+    await Task.insert({
+      manuscriptId: olderVersion.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: new Date('2020-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    await Task.insert({
+      manuscriptId: latestVersion.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: new Date('2021-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(1)
+    expect(results[0].id).toBe(latestVersion.id)
+  })
+
+  it('returns the earliest due date across multiple in-progress tasks on the same manuscript', async () => {
+    const group = await Group.insert({})
+    const user = await User.insert({})
+    const manuscript = await Manuscript.insert({ groupId: group.id })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: new Date('2020-06-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 0,
+    })
+
+    await Task.insert({
+      manuscriptId: manuscript.id,
+      groupId: group.id,
+      assigneeUserId: user.id,
+      status: 'In progress',
+      dueDate: new Date('2020-01-01T00:00:00.000Z').toISOString(),
+      sequenceIndex: 1,
+    })
+
+    const results = await Manuscript.findManuscriptsWithOverdueTasksForUser(
+      user.id,
+      group.id,
+    )
+
+    expect(results).toHaveLength(1)
+
+    expect(new Date(results[0].nextTaskDueDate).toISOString()).toBe(
+      new Date('2020-01-01T00:00:00.000Z').toISOString(),
+    )
   })
 })
