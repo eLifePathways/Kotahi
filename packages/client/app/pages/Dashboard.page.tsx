@@ -12,8 +12,7 @@ import {
 import { useCurrentUser } from './hooks/useCurrentUser'
 import Dashboard from '../ui/pages/dashboard/Dashboard'
 
-const NOTIFICATIONS_POLL_INTERVAL =
-  process.env.NODE_ENV === 'production' ? 30000 : 1000
+const NOTIFICATIONS_POLL_INTERVAL = import.meta.env.PROD ? 30000 : 1000
 
 const NOTIFICATIONS_LIMIT = 30
 
