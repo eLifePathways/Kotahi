@@ -425,7 +425,8 @@ const esLa = {
     },
     editorSection: {
       noFileLoaded: 'No se ha cargado ningún archivo de manuscrito',
-      noSupportedView: 'No hay vista admitida del archivo',
+      noSupportedView:
+        'Se cargó un archivo no admitido o el editor no está habilitado',
     },
     reviewDecisionSection: {
       noDecisionUpdated:
@@ -545,7 +546,8 @@ const esLa = {
       submittedOn: '{{submitterName}} presentado el {{date}}',
       'read-only': ' (solo lectura)',
       'Previous Feedback Submissions': 'Envíos de comentarios anteriores',
-      'No supported view of the file': 'No hay una vista admitida del archivo',
+      noSupportedView:
+        'Se cargó un archivo no admitido o el editor no está habilitado',
       'No feedback submissions': 'No hay envíos de comentarios',
       Download: 'Descargar',
       Editor: 'Editor',
@@ -764,11 +766,10 @@ const esLa = {
       editorsDeleteReviews:
         'Los editores pueden eliminar las revisiones enviadas.',
       Reports: 'Reportes',
-      reportShowInMenu:
-        'El Gerente de Grupo y el administrador pueden acceder a los Reportes',
+      reportShowInMenu: 'Mostrar la opción Informes en el menú',
       'User Management': 'Gestión de Usuarios',
       userIsAdmin:
-        'Todos los usuarios tienen roles de Gerente de Grupo y Administrador',
+        'Todos los usuarios tienen roles de Administrador y Administrador de grupo',
       kotahiApis: 'API de Kotahi',
       tokens: 'Tokens',
       Update: 'Actualizar',
@@ -1404,7 +1405,8 @@ const esLa = {
         'Tipos de archivo aceptados: pdf, epub, zip, docx, latex',
       converting:
         'Tu manuscrito se está convirtiendo en una versión directamente editable. Esto podría tomar unos segundos.',
-      'Submit a URL instead': 'Enviar una URL en su lugar',
+      skipManuscriptUpload:
+        'Omitir la carga del manuscrito y continuar al formulario de envío',
       errorUploading: '{{error}}',
     },
     formBuilder: {

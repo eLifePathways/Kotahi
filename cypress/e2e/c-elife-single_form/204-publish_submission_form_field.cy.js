@@ -4,6 +4,7 @@
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
+import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
 import { dashboard } from '../../support/routes2'
 
@@ -42,7 +43,7 @@ describe('Update the submission form field', () => {
     ManuscriptsPage.clickSubmit()
     // Upload manuscript
 
-    cy.get('button').contains('Submit a URL instead').click()
+    NewSubmissionPage.clickSubmitURL()
 
     cy.fixture('submission_form_data').then(data => {
       SubmissionFormPage.fillInArticleId(data.articleId)

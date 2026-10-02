@@ -155,7 +155,7 @@ const SubInfo = styled.div`
 const UploadManuscript = ({
   acceptFiles,
   description,
-  showSubmitUrl,
+  showSkipManuscriptUpload,
   showUploadManuscript,
   ...props
 }) => {
@@ -208,18 +208,22 @@ const UploadManuscript = ({
   const openDropzoneRef = useRef(null)
 
   useEffect(() => {
-    if (!showUploadManuscript && showSubmitUrl) {
+    if (!showUploadManuscript && showSkipManuscriptUpload) {
       uploadManuscript()
     }
   }, [])
 
   useEffect(() => {
-    if (showUploadManuscript && !showSubmitUrl && openDropzoneRef.current) {
+    if (
+      showUploadManuscript &&
+      !showSkipManuscriptUpload &&
+      openDropzoneRef.current
+    ) {
       openDropzoneRef.current()
     }
   }, [])
 
-  if (!showUploadManuscript && showSubmitUrl) {
+  if (!showUploadManuscript && showSkipManuscriptUpload) {
     return <Spinner />
   }
 
@@ -276,9 +280,12 @@ const UploadManuscript = ({
           }}
         </Dropzone>
       )}
-      {showSubmitUrl && (
-        <Action data-testid="submitUrl" onClick={() => uploadManuscript()}>
-          {t('newSubmission.Submit a URL instead')}
+      {showSkipManuscriptUpload && (
+        <Action
+          data-testid="skipManuscriptUploadButton"
+          onClick={() => uploadManuscript()}
+        >
+          {t('newSubmission.skipManuscriptUpload')}
         </Action>
       )}
     </>
