@@ -7,7 +7,7 @@ import { SubmissionFormPage } from './submission-form-page'
  * submission through uploading a manuscript or through using an URL.
  */
 const UPLOAD_MANUSCRIPT_BUTTON = 'UploadManuscript__Info'
-const SUBMIT_URL_BUTTON = 'submitUrl'
+const SUBMIT_URL_BUTTON = 'skipManuscriptUploadButton'
 const SUBMISSION_MESSAGE = 'body'
 
 export const NewSubmissionPage = {

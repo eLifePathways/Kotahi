@@ -428,7 +428,8 @@ const ru = {
     },
     editorSection: {
       noFileLoaded: 'Файл рукописи не загружен',
-      noSupportedView: 'Файл не поддерживается для отображения',
+      noSupportedView:
+        'Загружен неподдерживаемый файл, или редактор не включён',
     },
     reviewDecisionSection: {
       noDecisionUpdated: 'Решение по этому рукописи пока не обновлено',
@@ -548,8 +549,8 @@ const ru = {
       'read-only': ' (только для чтения)',
       'Previous Feedback Submissions': 'Предыдущие отзывы',
       'No feedback submissions': 'Нет отправок отзывов авторов',
-      'No supported view of the file':
-        'Нет поддерживаемого представления файла',
+      noSupportedView:
+        'Загружен неподдерживаемый файл, или редактор не включён',
       Download: 'Загрузить',
       Editor: 'Редактор',
       'PDF CSS': 'CSS для PDF',
@@ -760,11 +761,10 @@ const ru = {
       editorsCanPublish: 'Редакторы могут публиковать статьи/обзоры.',
       editorsDeleteReviews: 'Редакторы могут удалять отправленные отзывы',
       Reports: 'Аналитика',
-      reportShowInMenu:
-        'Администратору и редактору доступен раздел “Аналитика”',
+      reportShowInMenu: 'Показывать раздел “Аналитика” в меню',
       'User Management': 'Управление пользователями',
       userIsAdmin:
-        'Всем пользователям назначаются роли администратора и редактора',
+        'Всем пользователям назначаются роли редактора и администратора группы',
       kotahiApis: 'Котахи API',
       tokens: 'Токены',
       Update: 'Обновлять',
@@ -1394,7 +1394,8 @@ const ru = {
       acceptedFiletypes: 'Принимаемые форматы файлов: pdf,epub,zip,docx,latex',
       converting:
         'Ваша рукопись преобразуется в редактируемую версию. Это может занять некоторое время.',
-      'Submit a URL instead': 'Вставить URL-адрес вместо файла',
+      skipManuscriptUpload:
+        'Пропустить загрузку рукописи и перейти к форме подачи',
       errorUploading: 'Файл не распознан',
     },
     formBuilder: {

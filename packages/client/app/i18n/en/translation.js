@@ -421,7 +421,8 @@ const en = {
     },
     editorSection: {
       noFileLoaded: 'No manuscript file loaded',
-      noSupportedView: 'No supported view of the file',
+      noSupportedView:
+        'Unsupported file uploaded, or editor has not been enabled',
     },
     reviewDecisionSection: {
       noDecisionUpdated: 'No decision has been updated for this manuscript yet',
@@ -547,7 +548,8 @@ const en = {
       'read-only': ' (read-only)',
       'Previous Feedback Submissions': 'Previous Feedback Submissions',
       'No feedback submissions': 'No feedback submissions',
-      'No supported view of the file': 'No supported view of the file',
+      noSupportedView:
+        'Unsupported file uploaded, or editor has not been enabled',
       Download: 'Download',
       Editor: 'Editor',
       'PDF CSS': 'PDF CSS',
@@ -750,9 +752,9 @@ const en = {
       editorsCanPublish: 'Editors can Publish articles/reviews',
       editorsDeleteReviews: 'Editors can delete submitted reviews',
       Reports: 'Reports',
-      reportShowInMenu: 'Group Manager and admin can access Reports',
+      reportShowInMenu: 'Show Reports option in the menu',
       'User Management': 'User Management',
-      userIsAdmin: 'All users are assigned Group Manager and Admin roles',
+      userIsAdmin: 'All users are assigned Admin and Group Admin roles',
       kotahiApis: 'Kotahi APIs',
       tokens: 'Tokens',
       Update: 'Update',
@@ -1374,7 +1376,8 @@ const en = {
       acceptedFiletypes: 'Accepted file types: pdf, epub, zip, docx, latex',
       converting:
         'Your manuscript is being converted into a directly editable version. This might take a few seconds.',
-      'Submit a URL instead': 'Submit a URL instead',
+      skipManuscriptUpload:
+        'Skip manuscript upload, and proceed to the submission form',
       errorUploading: '{{error}}',
     },
     formBuilder: {

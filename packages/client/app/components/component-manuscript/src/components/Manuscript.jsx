@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import FullWaxEditor from '../../../wax-collab/src/FullWaxEditor'
 
 const Info = styled.span`
@@ -39,6 +40,8 @@ const ManuscriptContainer = styled.div`
 `
 
 const Manuscript = ({ file, content, currentUser, manuscript }) => {
+  const { t } = useTranslation()
+
   return (
     <Columns>
       {file &&
@@ -53,7 +56,7 @@ const Manuscript = ({ file, content, currentUser, manuscript }) => {
           />
         </ManuscriptContainer>
       ) : (
-        <Info>No supported view of the file</Info>
+        <Info>{t('editorSection.noSupportedView')}</Info>
       )}
     </Columns>
   )
