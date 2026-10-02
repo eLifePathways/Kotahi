@@ -30,7 +30,7 @@ describe('Update the submission form field', () => {
     cy.contains('Submission').click()
 
     // For Submission field
-    FormsPage.getFormTitleTab(0).should('contain', 'eLife Submission Form')
+    FormsPage.getFormTitleTab(0).should('contain', 'Submission Form')
     FormsPage.clickFormOption(3)
     FormsPage.getFieldValidate()
 
