@@ -81,24 +81,24 @@ describe('User migrations', () => {
       .where({ id: userWithPic.id })
       .update({ profile_picture: url })
 
-    userWithoutPic = (await User.query().findById(userWithoutPic.id)) as User
-    userWithPic = (await User.query().findById(userWithPic.id)) as User
+    userWithoutPic = (await User.findById(userWithoutPic.id)) as User
+    userWithPic = (await User.findById(userWithPic.id)) as User
 
     expect(userWithoutPic.profilePicture).toBe(defaultProfilePic)
     expect(userWithPic.profilePicture).toBe(url)
 
     await migrationManager.migrate({ step: 1 })
 
-    userWithoutPic = (await User.query().findById(userWithoutPic.id)) as User
-    userWithPic = (await User.query().findById(userWithPic.id)) as User
+    userWithoutPic = (await User.findById(userWithoutPic.id)) as User
+    userWithPic = (await User.findById(userWithPic.id)) as User
 
     expect(userWithoutPic.profilePicture).toBe(null)
     expect(userWithPic.profilePicture).toBe(file.id)
 
     await migrationManager.rollback({ step: 1 })
 
-    userWithoutPic = (await User.query().findById(userWithoutPic.id)) as User
-    userWithPic = (await User.query().findById(userWithPic.id)) as User
+    userWithoutPic = (await User.findById(userWithoutPic.id)) as User
+    userWithPic = (await User.findById(userWithPic.id)) as User
 
     expect(userWithoutPic.profilePicture).toBe(null)
     expect(withoutQuery(userWithPic.profilePicture as string)).toBe(

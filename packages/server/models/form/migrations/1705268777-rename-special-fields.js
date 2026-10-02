@@ -206,7 +206,7 @@ const updateConfig = async (config, instanceType, trx) => {
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const groups = await Group.query(trx)
+    const { result: groups } = await Group.find({}, { trx })
 
     for (const group of groups) {
       const { id: groupId, name: groupName } = group

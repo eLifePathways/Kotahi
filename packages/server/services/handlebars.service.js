@@ -150,7 +150,7 @@ const processData = async (data, groupId) => {
   } = data
 
   const { submission } = manuscript || {}
-  const group = await Group.query().findById(groupId)
+  const group = await Group.findById(groupId)
   const appUrl = `${clientUrl}/${group.name}`
 
   const manuscriptLink = await getManuscriptLink(

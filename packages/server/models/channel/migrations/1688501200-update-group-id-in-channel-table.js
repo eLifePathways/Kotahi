@@ -6,8 +6,8 @@ const Group = require('../../group/group.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const channels = await Channel.query(trx)
-      const groups = await Group.query(trx)
+      const { result: channels } = await Channel.find({}, { trx })
+      const { result: groups } = await Group.find({}, { trx })
 
       // Existing instances migrating to multi-tenancy groups
       if (groups.length >= 1 && channels.length >= 1 && !channels[0].group_id) {

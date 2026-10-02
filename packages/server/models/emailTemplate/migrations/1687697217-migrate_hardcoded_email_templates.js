@@ -678,7 +678,7 @@ exports.up = async () => {
       // Insert email templates into the database
       await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
 
-      const emailTemplateIds = await EmailTemplate.query(trx)
+      const { result: emailTemplateIds } = await EmailTemplate.find({}, { trx })
 
       const taskEmailNotifications =
         await TaskEmailNotification.query(trx).whereNotNull(
@@ -692,9 +692,11 @@ exports.up = async () => {
         )?.id
 
         // eslint-disable-next-line no-await-in-loop
-        await TaskEmailNotification.query(trx).findById(notification.id).patch({
-          emailTemplateId,
-        })
+        await TaskEmailNotification.patchById(
+          notification.id,
+          { emailTemplateId },
+          { trx },
+        )
       }
 
       const emailTemplateIdsx = await EmailTemplate.query(trx)
@@ -718,11 +720,11 @@ exports.up = async () => {
         )?.id
 
         // eslint-disable-next-line no-await-in-loop
-        await TaskEmailNotificationLog.query(trx)
-          .findById(notification.id)
-          .patch({
-            emailTemplateId,
-          })
+        await TaskEmailNotificationLog.patchById(
+          notification.id,
+          { emailTemplateId },
+          { trx },
+        )
       }
 
       await trx.schema.alterTable(EmailTemplate.tableName, table => {

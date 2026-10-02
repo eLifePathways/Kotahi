@@ -151,4 +151,149 @@ describe('Manuscript model', () => {
     expect(reviewerTeamThreeMembers.length).toBe(1)
     expect(reviewerTeamThreeMembers[0].status).toBe('accepted')
   })
+
+  describe('userIsReviewerOfAnyVersion', () => {
+    it('is true for a reviewer of the manuscript', async () => {
+      const manuscript = await Manuscript.insert({})
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(manuscript.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(manuscript.id, reviewer.id),
+      ).toBe(true)
+    })
+
+    it('is true for a collaborative reviewer of the manuscript', async () => {
+      const manuscript = await Manuscript.insert({})
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(manuscript.id, reviewer.id, null, true)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(manuscript.id, reviewer.id),
+      ).toBe(true)
+    })
+
+    // regression check
+    it('is false for a first version when the user only reviews another first version', async () => {
+      const manuscriptA = await Manuscript.insert({})
+      const manuscriptB = await Manuscript.insert({})
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(manuscriptA.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(
+          manuscriptB.id,
+          reviewer.id,
+        ),
+      ).toBe(false)
+    })
+
+    it('is true for a first version when the user reviews a later version', async () => {
+      const firstVersion = await Manuscript.insert({})
+
+      const secondVersion = await Manuscript.insert({
+        parentId: firstVersion.id,
+      })
+
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(secondVersion.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(
+          firstVersion.id,
+          reviewer.id,
+        ),
+      ).toBe(true)
+    })
+
+    it('is true for a later version when the user reviews the first version', async () => {
+      const firstVersion = await Manuscript.insert({})
+
+      const secondVersion = await Manuscript.insert({
+        parentId: firstVersion.id,
+      })
+
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(firstVersion.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(
+          secondVersion.id,
+          reviewer.id,
+        ),
+      ).toBe(true)
+    })
+
+    it('is true for a later version when the user reviews a sibling version', async () => {
+      const firstVersion = await Manuscript.insert({})
+
+      const secondVersion = await Manuscript.insert({
+        parentId: firstVersion.id,
+      })
+
+      const thirdVersion = await Manuscript.insert({
+        parentId: firstVersion.id,
+      })
+
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(secondVersion.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(
+          thirdVersion.id,
+          reviewer.id,
+        ),
+      ).toBe(true)
+    })
+
+    it('is false for a later version of a different manuscript', async () => {
+      const manuscriptA = await Manuscript.insert({})
+      const manuscriptB = await Manuscript.insert({})
+
+      const manuscriptBSecondVersion = await Manuscript.insert({
+        parentId: manuscriptB.id,
+      })
+
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(manuscriptA.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(
+          manuscriptBSecondVersion.id,
+          reviewer.id,
+        ),
+      ).toBe(false)
+    })
+
+    it('is false for a member of a non-reviewer team', async () => {
+      const manuscript = await Manuscript.insert({})
+      const author = await User.insert({})
+
+      const authorTeam = await Team.insert({
+        objectId: manuscript.id,
+        objectType: 'manuscript',
+        role: 'author',
+        displayName: 'Author',
+      })
+
+      await Team.addMember(authorTeam.id, author.id)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(manuscript.id, author.id),
+      ).toBe(false)
+    })
+
+    it('is false when the manuscript does not exist', async () => {
+      const manuscript = await Manuscript.insert({})
+      const reviewer = await User.insert({})
+      await Manuscript.addReviewer(manuscript.id, reviewer.id, null, false)
+
+      expect(
+        await Manuscript.userIsReviewerOfAnyVersion(
+          '00000000-0000-0000-0000-000000000000',
+          reviewer.id,
+        ),
+      ).toBe(false)
+    })
+  })
 })

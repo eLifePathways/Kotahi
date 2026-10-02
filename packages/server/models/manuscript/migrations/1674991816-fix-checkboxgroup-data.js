@@ -64,9 +64,7 @@ const fixFieldsInAllObjects = async (
       }
 
       // eslint-disable-next-line no-await-in-loop
-      await Model.query(trx)
-        .findById(obj.id)
-        .patch({ [formDataName]: formData })
+      await Model.patchById(obj.id, { [formDataName]: formData }, { trx })
     }
 
     // logger.info(
@@ -80,8 +78,8 @@ exports.up = async () => {
   //   'Deleting spurious CheckboxGroup selections from manuscript submissions, reviews and decisions:',
   // )
 
-  const manuscripts = await Manuscript.query()
-  const reviewsAndDecisions = await Review.query()
+  const { result: manuscripts } = await Manuscript.find({})
+  const { result: reviewsAndDecisions } = await Review.find({})
   const reviews = reviewsAndDecisions.filter(r => !r.isDecision)
   const decisions = reviewsAndDecisions.filter(r => r.isDecision)
 

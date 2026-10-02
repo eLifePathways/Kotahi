@@ -37,7 +37,7 @@ exports.up = async knex => {
   }
 
   return useTransaction(async trx => {
-    const groups = await Group.query(trx)
+    const { result: groups } = await Group.find({}, { trx })
 
     await Promise.all(
       groups.map(async group => {

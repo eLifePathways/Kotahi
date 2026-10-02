@@ -47,7 +47,7 @@ const pubmedQueries = {
 const joinToStringIfArray = x => (Array.isArray(x) ? x.join(' ') : x)
 
 const getData = async (groupId, ctx) => {
-  const manuscripts = await Manuscript.query().where({ groupId })
+  const { result: manuscripts } = await Manuscript.find({ groupId })
   const currentArticleURLs = manuscripts.map(m => m.submission.$sourceUri)
 
   const dateTwoWeeksAgoFormatted = new Date(Date.now() - 12096e5)
@@ -60,19 +60,23 @@ const getData = async (groupId, ctx) => {
     .split('T')[0]
     .replace(/-/g, '/')
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'pubmed',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'pubmed',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'pubmed',
     })
   }
 
-  const [pubmedImportSourceId] = await ArticleImportSources.query().where({
-    server: 'pubmed',
-  })
+  const [pubmedImportSourceId] = (
+    await ArticleImportSources.find({
+      server: 'pubmed',
+    })
+  ).result
 
   const lastImportDate = await ArticleImportHistory.query()
     .select('date')
@@ -427,7 +431,7 @@ const getData = async (groupId, ctx) => {
         groupId,
       })
   } else {
-    await ArticleImportHistory.query().insert({
+    await ArticleImportHistory.insert({
       date: new Date().toISOString(),
       sourceId: pubmedImportSourceId.id,
       groupId,

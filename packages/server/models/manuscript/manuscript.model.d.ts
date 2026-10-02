@@ -82,6 +82,19 @@ declare class Manuscript extends BaseModel {
     isCollaborative: boolean,
     options?: Options,
   ): Promise<Team>
+  static findPublishedById(
+    id: string,
+    options?: Options,
+  ): Promise<Manuscript | undefined>
+  static getFirstVersionCreated(
+    manuscript: Pick<Manuscript, 'id' | 'created' | 'parentId'>,
+    options?: Options,
+  ): Promise<string>
+  static userIsReviewerOfAnyVersion(
+    manuscriptId: string,
+    userId: string,
+    options?: Options,
+  ): Promise<boolean>
 }
 
 export = Manuscript

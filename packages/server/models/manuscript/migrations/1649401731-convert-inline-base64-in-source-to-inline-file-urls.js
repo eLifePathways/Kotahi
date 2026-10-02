@@ -213,7 +213,7 @@ const uploadImage = async (image, manuscriptId) => {
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const manuscripts = await Manuscript.query(trx)
+      const { result: manuscripts } = await Manuscript.find({}, { trx })
 
       return Promise.all(
         manuscripts.map(async manuscript => {

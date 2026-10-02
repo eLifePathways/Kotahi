@@ -9,7 +9,7 @@ const notificationOption = async (userId, groupId, path) => {
 
   const objectId = tryGetObjectIdFromPath(path)
 
-  return NotificationUserOption.query().findOne({
+  return NotificationUserOption.findOne({
     userId,
     path: `{${path.join(',')}}`,
     groupId,
@@ -63,14 +63,14 @@ const updateNotificationOption = async (userId, groupId, path, option) => {
     .first()
 
   if (existingOption) {
-    return NotificationUserOption.query().patchAndFetchById(existingOption.id, {
+    return NotificationUserOption.patchAndFetchById(existingOption.id, {
       option,
     })
   }
 
   // If no existing record, create a new one
 
-  return await NotificationUserOption.query().insert({
+  return await NotificationUserOption.insert({
     userId,
     path,
     groupId,

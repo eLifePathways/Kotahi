@@ -69,7 +69,7 @@ const expandTemplatesAndRemoveDirectivesRecursive = (
 
 const tryPublishDocMaps = async manuscript => {
   if (!allDocmapsScheme) return false
-  const group = await Group.query().findById(manuscript.groupId)
+  const group = await Group.findById(manuscript.groupId)
 
   // Checks if docmapsScheme has been configured for that group
   const docmapsSchemeExists = allDocmapsScheme.find(
@@ -175,7 +175,7 @@ const tryPublishDocMaps = async manuscript => {
 
   const content = JSON.stringify(docmap)
 
-  const existingDocmap = await Docmap.query().findOne({
+  const existingDocmap = await Docmap.findOne({
     externalId: uri,
     groupId: group.id,
   })
@@ -185,7 +185,7 @@ const tryPublishDocMaps = async manuscript => {
       .update({ content, manuscriptId: manuscript.id })
       .where({ externalId: uri, groupId: group.id })
   else
-    await Docmap.query().insert({
+    await Docmap.insert({
       externalId: uri,
       content,
       manuscriptId: manuscript.id,

@@ -28,7 +28,7 @@ const prepareAndSendToQueue = async ({ notification, data }) => {
     notification
 
   const templateId = context?.templateId || emailTemplateId
-  const template = await EmailTemplate.query().findById(templateId)
+  const template = await EmailTemplate.findById(templateId)
   const { subject: templateSubject, body } = template.emailContent
 
   const { to, cc, recipientUser } = await getRecipientsEmails({

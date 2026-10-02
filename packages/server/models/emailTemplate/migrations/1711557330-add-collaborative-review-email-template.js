@@ -6,7 +6,7 @@ const defaultEmailTemplates = require('../../../config/defaultEmailTemplates')
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const configs = await Config.query(trx)
+    const { result: configs } = await Config.find({}, { trx })
 
     const allEmailTemplatesData = []
 

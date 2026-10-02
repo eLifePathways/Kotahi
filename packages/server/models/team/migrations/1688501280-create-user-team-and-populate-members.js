@@ -8,7 +8,7 @@ const Group = require('../../group/group.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const groups = await Group.query(trx)
+      const { result: groups } = await Group.find({}, { trx })
 
       // Existing instances migrating to multi-tenancy groups
       if (groups.length >= 1) {
@@ -28,7 +28,7 @@ exports.up = async () => {
             objectType: 'Group',
           })
 
-          const users = await User.query(trx)
+          const { result: users } = await User.find({}, { trx })
 
           await Promise.all(
             users.map(async user => {

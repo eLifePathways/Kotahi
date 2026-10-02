@@ -17,7 +17,7 @@ const fieldsToAlwaysPublishByDefault = [
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const forms = await Form.query(trx)
+    const { result: forms } = await Form.find({}, { trx })
 
     for (const form of forms) {
       form.structure.children = form.structure.children.map(field => {

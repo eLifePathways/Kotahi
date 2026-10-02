@@ -100,7 +100,7 @@ const formatCitation = async (cslObject, groupId) => {
     csl['page-first'] = getFirstPageFromPageRange(csl.page)
   if (csl.doi && !csl.DOI) csl.DOI = csl.doi
 
-  const activeConfig = await Config.query().findOne({ groupId, active: true })
+  const activeConfig = await Config.findOne({ groupId, active: true })
 
   const localeName =
     activeConfig.formData.production?.citationStyles?.localeName || 'en-US'
@@ -244,7 +244,7 @@ const formatMultipleCitations = async (
     }
   })
 
-  const activeConfig = await Config.query().findOne({ groupId, active: true })
+  const activeConfig = await Config.findOne({ groupId, active: true })
 
   const localeName =
     activeConfig.formData.production?.citationStyles?.localeName || 'en-US'

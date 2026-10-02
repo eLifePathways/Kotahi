@@ -8,7 +8,7 @@ const createForm = async form => {
 }
 
 const deleteForm = async formId => {
-  await Form.query().deleteById(formId)
+  await Form.deleteById(formId)
   return { query: {} }
 }
 
@@ -20,7 +20,7 @@ const deleteFormElement = async (formId, elementId) => {
     child => child.id !== elementId,
   )
 
-  const formRes = await Form.query().patchAndFetchById(formId, {
+  const formRes = await Form.patchAndFetchById(formId, {
     structure: form.structure,
   })
 
@@ -28,7 +28,7 @@ const deleteFormElement = async (formId, elementId) => {
 }
 
 const formForPurposeAndCategory = async (purpose, category, groupId) => {
-  const form = await Form.query().findOne({
+  const form = await Form.findOne({
     purpose,
     category,
     groupId,
@@ -68,14 +68,16 @@ const getFormById = async formId => {
 }
 
 const getForms = async () => {
-  return Form.query()
+  return (await Form.find({})).result
 }
 
 const getFormsByCategory = async (category, groupId) => {
-  return Form.query().where({
-    category,
-    groupId,
-  })
+  return (
+    await Form.find({
+      category,
+      groupId,
+    })
+  ).result
 }
 
 const notFoundError = (property, value, className) =>
@@ -105,7 +107,7 @@ const updateForm = async form => {
     return c
   })
 
-  const result = await Form.query().patchAndFetchById(form.id, form)
+  const result = await Form.patchAndFetchById(form.id, form)
 
   const purposeIndicatingActiveForm =
     result.category === 'submission' ? 'submit' : result.category
@@ -177,7 +179,7 @@ const updateFormElement = async (element, formId) => {
         : element
   }
 
-  return Form.query().patchAndFetchById(formId, {
+  return Form.patchAndFetchById(formId, {
     structure: form.structure,
   })
 }

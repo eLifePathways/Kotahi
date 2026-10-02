@@ -9,22 +9,18 @@ const addUserToManuscriptChatChannel = async ({
     .findById(manuscriptId)
     .select('parentId')
 
-  const channel = await Channel.query()
-    .where({
-      manuscriptId: manuscript.parentId || manuscriptId,
-      type,
-    })
-    .first()
+  const channel = await Channel.findOne({
+    manuscriptId: manuscript.parentId || manuscriptId,
+    type,
+  })
 
-  const channelMember = await ChannelMember.query()
-    .where({
-      channelId: channel.id,
-      userId,
-    })
-    .first()
+  const channelMember = await ChannelMember.findOne({
+    channelId: channel.id,
+    userId,
+  })
 
   if (!channelMember) {
-    await ChannelMember.query().insert({
+    await ChannelMember.insert({
       channelId: channel.id,
       userId,
       lastViewed: new Date(),
@@ -49,7 +45,7 @@ const addUsersToChatChannel = async (channelId, userIds) => {
 }
 
 const getChannelMemberByChannel = async (channelId, userId) => {
-  return ChannelMember.query().findOne({ channelId, userId })
+  return ChannelMember.findOne({ channelId, userId })
 }
 
 const getSystemWideDiscussionChannel = async groupId => {
@@ -77,7 +73,7 @@ const updateChannelLastViewed = async (channelId, userId) => {
     .patch({ lastViewed: new Date(), lastAlertTriggeredTime: null })
     .where({ channelId, userId })
 
-  return ChannelMember.query().findOne({ channelId, userId })
+  return ChannelMember.findOne({ channelId, userId })
 }
 
 module.exports = {

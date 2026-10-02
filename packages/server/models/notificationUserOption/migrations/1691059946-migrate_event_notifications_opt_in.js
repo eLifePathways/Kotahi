@@ -6,8 +6,8 @@ const Group = require('../../group/group.model')
 
 exports.up = async () => {
   await useTransaction(async trx => {
-    const users = await User.query(trx)
-    const groups = await Group.query(trx)
+    const { result: users } = await User.find({}, { trx })
+    const { result: groups } = await Group.find({}, { trx })
 
     if (users.length > 0 && groups.length > 0) {
       const path = ['chat']

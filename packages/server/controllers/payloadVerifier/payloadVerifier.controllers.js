@@ -22,7 +22,7 @@ const checkApiPayload = async (id, api) => {
     })
   }
 
-  const manuscript = await Manuscript.query().findById(id)
+  const manuscript = await Manuscript.findById(id)
   const { submission, groupId } = manuscript
   const activeConfig = await Config.getCached(groupId)
   const { formData } = activeConfig

@@ -6,7 +6,7 @@ const Group = require('../../group/group.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const groups = await Group.query(trx)
+      const { result: groups } = await Group.find({}, { trx })
 
       if (groups.length === 0) {
         const orphanedGroupManagerRecord = await Team.query(trx).findOne({
@@ -18,7 +18,7 @@ exports.up = async () => {
         })
 
         if (orphanedGroupManagerRecord) {
-          await Team.query().deleteById(orphanedGroupManagerRecord.id)
+          await Team.deleteById(orphanedGroupManagerRecord.id)
         }
       }
     })

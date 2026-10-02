@@ -43,7 +43,7 @@ const seed = async (dumpSql, opts) => {
 
     try {
       // eslint-disable-next-line
-      const users = await User.query()
+      const { result: users } = await User.find({})
       ready = !!users
     } catch (e) {
       // eslint-disable-next-line

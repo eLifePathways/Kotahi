@@ -60,10 +60,13 @@ const seed = async (group, { trx }) => {
     return insertedResource.id
   }
 
-  const existFolder = await CMSFileTemplate.query(trx).findOne({
-    name: group.name,
-    groupId: group.id,
-  })
+  const existFolder = await CMSFileTemplate.findOne(
+    {
+      name: group.name,
+      groupId: group.id,
+    },
+    { trx },
+  )
 
   if (!existFolder) {
     const insertedRootFolderId = await insertResource(

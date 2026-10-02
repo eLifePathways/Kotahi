@@ -12,7 +12,7 @@ const createEmailTemplate = async (groupId, input) => {
       ccEditors: input.emailContent.ccEditors,
     }
 
-    const createdEmailTemplate = await EmailTemplate.query().insert({
+    const createdEmailTemplate = await EmailTemplate.insert({
       emailContent: emailContents,
       groupId,
     })
@@ -32,7 +32,7 @@ const deleteEmailTemplate = async id => {
   try {
     await TaskEmailNotification.query().delete().where('email_template_id', id)
 
-    const response = await EmailTemplate.query().where({ id }).delete()
+    const response = await EmailTemplate.deleteById(id)
 
     if (response) {
       return {
@@ -53,7 +53,7 @@ const deleteEmailTemplate = async id => {
 }
 
 const emailTemplates = async groupId => {
-  const templates = await EmailTemplate.query().where({
+  const { result: templates } = await EmailTemplate.find({
     groupId,
   })
 

@@ -13,7 +13,7 @@ exports.up = async knex => {
       table.index(['object_id', 'object_type'])
     })
 
-    const teams = await Team.query()
+    const { result: teams } = await Team.find({})
 
     // logger.info(`Total Teams: ${teams.length}`)
 

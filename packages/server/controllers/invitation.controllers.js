@@ -15,13 +15,15 @@ const { addUserToManuscriptChatChannel } = require('./channel.controllers')
 const seekEvent = require('../services/notification.service')
 
 const addEmailToBlacklist = async (email, groupId) => {
-  const result = await BlacklistEmail.query().insert({ email, groupId })
+  const result = await BlacklistEmail.insert({ email, groupId })
 
   return result
 }
 
 const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
-  const existingInvite = await Invitation.query().findById(invitationId)
+  const existingInvite = await Invitation.findById(invitationId, {
+    throwIfNotFound: false,
+  })
 
   if (!existingInvite || existingInvite.responseDate) {
     throw new Error('Invalid Invitation ID')
@@ -50,7 +52,7 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
         .resultSize()) > 0
 
     if (!authorExists) {
-      await TeamMember.query().insert({
+      await TeamMember.insert({
         teamId: existingTeam.id,
         userId,
       })
@@ -60,14 +62,14 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
   }
 
   // Create a new team of authors if it doesn't exist
-  const newTeam = await Team.query().insert({
+  const newTeam = await Team.insert({
     objectId: manuscriptId,
     objectType: 'manuscript',
     role: 'author',
     displayName: 'Author',
   })
 
-  await TeamMember.query().insert({
+  await TeamMember.insert({
     userId,
     teamId: newTeam.id,
   })
@@ -76,7 +78,7 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
 }
 
 const getBlacklistInformation = async (email, groupId) => {
-  const blacklistData = await BlacklistEmail.query().where({
+  const { result: blacklistData } = await BlacklistEmail.find({
     email,
     groupId,
   })
@@ -127,14 +129,17 @@ const invitationStatus = async id => {
 }
 
 const invitationUser = async invitation => {
-  return invitation.user || User.query().findById(invitation.userId)
+  return (
+    invitation.user ||
+    User.findById(invitation.userId, { throwIfNotFound: false })
+  )
 }
 
 const removeInvitation = async id => {
   const invitation = await Invitation.findById(id)
   if (!invitation) return null
 
-  await Invitation.query().findById(id).delete()
+  await Invitation.deleteById(id)
   return invitation
 }
 
@@ -169,7 +174,7 @@ const updateInvitationStatus = async (
     .where({ id, status: 'UNANSWERED' })
     .returning('*')
 
-  const relatedUser = await User.query().findOne({
+  const relatedUser = await User.findOne({
     email: result.toEmail,
   })
 
@@ -190,7 +195,9 @@ const updateInvitationStatus = async (
       .where({ userId: relatedUser.id, status: 'invited' })
   }
 
-  const manuscript = await Manuscript.query().findById(result.manuscriptId)
+  const manuscript = await Manuscript.findById(result.manuscriptId, {
+    throwIfNotFound: false,
+  })
 
   const eventName = {
     author: 'author',

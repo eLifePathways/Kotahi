@@ -37,19 +37,23 @@ const getData = async (groupId, ctx) => {
     Pharmaceutical_interventions: pharmaceuticalInterventions,
   }
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'biorxiv',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'biorxiv',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'biorxiv',
     })
   }
 
-  const [biorxivImportSourceId] = await ArticleImportSources.query().where({
-    server: 'biorxiv',
-  })
+  const [biorxivImportSourceId] = (
+    await ArticleImportSources.find({
+      server: 'biorxiv',
+    })
+  ).result
 
   const lastImportDate = await ArticleImportHistory.query()
     .select('date')
@@ -86,7 +90,7 @@ const getData = async (groupId, ctx) => {
 
   const importedManuscripts = await requests(0, date, [])
 
-  const manuscripts = await Manuscript.query()
+  const { result: manuscripts } = await Manuscript.find({})
   const currentUris = manuscripts.map(m => m.submission.$sourceUri)
 
   const withoutDuplicates = importedManuscripts.filter(
@@ -219,7 +223,7 @@ const getData = async (groupId, ctx) => {
           groupId,
         })
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId: biorxivImportSourceId.id,
         groupId,

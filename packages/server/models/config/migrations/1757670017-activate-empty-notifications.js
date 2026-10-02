@@ -3,7 +3,7 @@ const { Config, Notification } = require('../..')
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const configs = await Config.query(trx)
+    const { result: configs } = await Config.find({}, { trx })
 
     if (configs.length > 0) {
       await Promise.all(

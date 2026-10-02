@@ -47,8 +47,9 @@ const completeComment = async (
 ) => {
   const now = new Date().toISOString()
 
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   if (!discussion)
     throw new Error(
@@ -95,8 +96,9 @@ const completeComments = async (threadedDiscussionId, userId) => {
   const now = new Date().toISOString()
   let hasUpdated = false
 
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   if (!discussion)
     throw new Error(
@@ -162,8 +164,9 @@ const deletePendingComment = async (
   commentId,
   userId,
 ) => {
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   if (!discussion)
     throw new Error(
@@ -192,7 +195,7 @@ const deletePendingComment = async (
 const filterDistinct = (id, index, arr) => arr.indexOf(id) === index
 
 const getActiveConfigOfThreadedDiscussion = async discussion => {
-  const { groupId } = await Manuscript.query().findById(discussion.manuscriptId)
+  const { groupId } = await Manuscript.findById(discussion.manuscriptId)
   const config = await Config.getCached(groupId)
 
   return config
@@ -224,10 +227,10 @@ const getThreadedDiscussionsForManuscript = async (
 ) =>
   Promise.all(
     (
-      await ThreadedDiscussion.query().where({
+      await ThreadedDiscussion.find({
         manuscriptId: manuscript.parentId || manuscript.id,
       })
-    ).map(discussion =>
+    ).result.map(discussion =>
       addUserObjectsToDiscussion(discussion, getUsersByIdFunc),
     ),
   )
@@ -301,9 +304,10 @@ const stripPendingVersionsExceptByUser = (discussion, userId) => ({
 const threadedDiscussions = async (manuscriptVersionId, userId) => {
   const manuscriptId = await getOriginalVersionManuscriptId(manuscriptVersionId)
 
-  const result = await ThreadedDiscussion.query()
-    .where({ manuscriptId })
-    .orderBy('created', 'desc')
+  const { result: result } = await ThreadedDiscussion.find(
+    { manuscriptId },
+    { orderBy: [{ column: 'created', order: 'desc' }] },
+  )
 
   return Promise.all(
     result.map(async discussion => {
@@ -325,8 +329,9 @@ const updatePendingComment = async (
   const now = new Date().toISOString()
   const manuscriptId = await getOriginalVersionManuscriptId(msVersionId)
 
-  let discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  let discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
   if (!discussion)
     discussion = {
       id: threadedDiscussionId,

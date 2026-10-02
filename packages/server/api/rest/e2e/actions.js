@@ -330,9 +330,13 @@ const createGroup = async groupName => {
     formData.eventNotification.authorProofingSubmittedEmailTemplate =
       findTemplateByType('authorProofingSubmitted').id
 
-    const updatedConfig = await Config.query(trx).patchAndFetchById(config.id, {
-      formData,
-    })
+    const updatedConfig = await Config.patchAndFetchById(
+      config.id,
+      {
+        formData,
+      },
+      { trx },
+    )
 
     // Mirrors scripts/seedGroups.js: creates the active Notification (event
     // -> template) rows a real group gets, so eg. sending an "Author

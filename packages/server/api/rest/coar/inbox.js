@@ -20,7 +20,7 @@ module.exports = async app => {
     let message = ''
     let hasError = false
 
-    const group = await Group.query().findOne({ name: groupName })
+    const group = await Group.findOne({ name: groupName })
     const groupId = group?.id || null
 
     if (!group) {

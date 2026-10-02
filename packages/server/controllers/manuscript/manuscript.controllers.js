@@ -174,9 +174,9 @@ const archiveManuscripts = async ids => {
 }
 
 const assignAuthorForProofingManuscript = async (manuscriptId, userId) => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .withGraphFetched('[channels]')
+  const manuscript = await Manuscript.findById(manuscriptId, {
+    related: '[channels]',
+  })
 
   const { groupId } = manuscript
   const author = await manuscript.getManuscriptAuthor()
@@ -197,7 +197,7 @@ const assignAuthorForProofingManuscript = async (manuscriptId, userId) => {
     assignedOnDate: new Date(),
   })
 
-  const updated = await Manuscript.query().patchAndFetchById(manuscript.id, {
+  const updated = await Manuscript.patchAndFetchById(manuscript.id, {
     status: 'assigned',
     authorFeedback: {
       ...manuscript.authorFeedback,
@@ -250,8 +250,9 @@ const assignAuthorForProofingManuscript = async (manuscriptId, userId) => {
 
 const authorFeedback = async manuscript => {
   if (manuscript.authorFeedback && manuscript.authorFeedback.submitterId) {
-    const submitter = await User.query().findById(
+    const submitter = await User.findById(
       manuscript.authorFeedback.submitterId,
+      { throwIfNotFound: false },
     )
 
     return {
@@ -265,7 +266,7 @@ const authorFeedback = async manuscript => {
 
 const createManuscript = async (userId, input) => {
   const { meta, files, groupId } = input
-  const group = await Group.query().findById(groupId)
+  const group = await Group.findById(groupId, { throwIfNotFound: false })
   if (!group)
     throw new Error(`Cannot create manuscript for unknown group ${groupId}`)
   const submissionForm = await getSubmissionForm(group.id)
@@ -349,7 +350,7 @@ const createManuscript = async (userId, input) => {
     manuscript.id,
   )
 
-  const updatedManuscript = await Manuscript.query().updateAndFetchById(
+  const updatedManuscript = await Manuscript.updateAndFetchById(
     manuscript.id,
     manuscript,
   )
@@ -367,7 +368,7 @@ const createManuscript = async (userId, input) => {
 }
 
 const createNewVersion = async id => {
-  const manuscript = await Manuscript.query().findById(id)
+  const manuscript = await Manuscript.findById(id)
 
   seekEvent('manuscript-new-version', {
     manuscript,
@@ -386,7 +387,7 @@ const deleteManuscript = async id => {
   toDeleteList.push(manuscript.id)
 
   if (manuscript.parentId) {
-    const parentManuscripts = await Manuscript.query().where({
+    const { result: parentManuscripts } = await Manuscript.find({
       parent_id: manuscript.parentId,
     })
 
@@ -427,7 +428,7 @@ const deleteManuscript = async id => {
 const deleteManuscripts = async ids => {
   if (ids.length > 0) {
     await Promise.all(
-      ids.map(toDeleteItem => Manuscript.query().deleteById(toDeleteItem)),
+      ids.map(toDeleteItem => Manuscript.deleteById(toDeleteItem)),
     )
   }
 
@@ -544,17 +545,11 @@ const extractReviewData = (reviews, isDecision) =>
       jsonData: JSON.stringify(review.jsonData),
     }))
 
-const firstVersionCreated = async manuscript => {
-  if (manuscript.created && !manuscript.parentId) return manuscript.created
-  const id = manuscript.parentId || manuscript.id
-
-  const record = await Manuscript.query().findById(id).select('created')
-
-  return record.created
-}
+const firstVersionCreated = async manuscript =>
+  Manuscript.getFirstVersionCreated(manuscript)
 
 const getManuscript = async id => {
-  const manuscript = await Manuscript.query().findById(id)
+  const manuscript = await Manuscript.findById(id)
 
   const submission =
     typeof manuscript.submission === 'string'
@@ -575,7 +570,7 @@ const getManuscript = async id => {
       !Number.isNaN(embargoTimestamp) &&
       embargoTimestamp <= currentTimestamp
     ) {
-      const updatedManuscript = await Manuscript.query().patchAndFetchById(id, {
+      const updatedManuscript = await Manuscript.patchAndFetchById(id, {
         status: 'embargoReleased',
       })
 
@@ -592,7 +587,7 @@ const getCss = async () => {
 }
 
 const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
-  const forms = await Form.query()
+  const { result: forms } = await Form.find({})
   const formsElements = flatten(forms.map(f => f.structure.children))
 
   const files = (
@@ -628,9 +623,9 @@ const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
 }
 
 const getManuscriptsData = async selectedManuscripts => {
-  const foundManuscripts = await Manuscript.query()
-    .findByIds(selectedManuscripts)
-    .withGraphFetched('[reviews.[user], teams.[members]]')
+  const foundManuscripts = await Manuscript.findByIds(selectedManuscripts, {
+    related: '[reviews.[user], teams.[members]]',
+  })
 
   const exportData = []
 
@@ -716,7 +711,7 @@ const getRelatedReviews = async (
     await convertFilesToFullObjects(
       review,
       review.isDecision ? decisionForm : reviewForm,
-      async ids => File.query().findByIds(ids),
+      async ids => File.findByIds(ids, { throwIfNotFound: false }),
     )
   }
 
@@ -776,15 +771,15 @@ const importManuscripts = async (groupId, ctx) => {
 }
 
 const makeDecision = async (id, decisionKey, userId) => {
-  const manuscript = await Manuscript.query()
-    .findById(id)
-    .withGraphFetched(
-      '[submitter.[defaultIdentity], teams.members.user, reviews.user]',
-    )
-
-  manuscript.channels = await Channel.query().where({
-    manuscriptId: manuscript.parentId || manuscript.id,
+  const manuscript = await Manuscript.findById(id, {
+    related: '[submitter.[defaultIdentity], teams.members.user, reviews.user]',
   })
+
+  manuscript.channels = (
+    await Channel.find({
+      manuscriptId: manuscript.parentId || manuscript.id,
+    })
+  ).result
 
   const activeConfig = await Config.getCached(manuscript.groupId)
   const currentUser = await User.findOneWithIdentity(userId, 'orcid')
@@ -839,7 +834,7 @@ const makeDecision = async (id, decisionKey, userId) => {
     await sendRejectCoarNotification(manuscript, currentUser, decision)
   }
 
-  return Manuscript.query().updateAndFetchById(id, manuscript)
+  return Manuscript.updateAndFetchById(id, manuscript)
 }
 
 const manuscriptChannels = manuscript => {
@@ -872,7 +867,7 @@ const manuscriptsPublishedSinceDate = async (
   groupName,
   groupIdFromHeader,
 ) => {
-  const groups = await Group.query().where({ isArchived: false })
+  const { result: groups } = await Group.find({ isArchived: false })
   let group = null
 
   if (groupIdFromHeader) group = groups.find(g => g.id === groupIdFromHeader)
@@ -1077,7 +1072,7 @@ const paginatedManuscripts = async (
     totalCount = parseInt(rawQResult.rows[0].full_count, 10)
 
   const ids = rawQResult.rows.map(row => row.id)
-  const found = await Manuscript.query().findByIds(ids)
+  const found = await Manuscript.findByIds(ids)
 
   const result = rawQResult.rows.map(row => ({
     ...found.find(m => m.id === row.id),
@@ -1132,7 +1127,7 @@ const getPublishableSubmissionFiles = async manuscript => {
 }
 
 const publishedManuscript = async id => {
-  return Manuscript.query().findById(id).whereNotNull('published')
+  return Manuscript.findPublishedById(id)
 }
 
 const publishedManuscriptDecisions = async (manuscript, userId) => {
@@ -1171,7 +1166,7 @@ const publishedManuscriptEditors = async manuscript => {
 
   const editorAndRoles = await Promise.all(
     teamMembers.map(async member => {
-      const user = await User.query().findById(member.userId)
+      const user = await User.findById(member.userId)
       const team = teams.find(t => t.id === member.teamId)
       return {
         name: user.username,
@@ -1248,7 +1243,7 @@ const publishedReviewUsers = async review => {
   let users = []
 
   if (review.isCollaborative) {
-    const manuscript = await Manuscript.query().findById(review.manuscriptId)
+    const manuscript = await Manuscript.findById(review.manuscriptId)
 
     const existingTeam = await manuscript
       .$relatedQuery('teams')
@@ -1257,7 +1252,7 @@ const publishedReviewUsers = async review => {
 
     users = await existingTeam.$relatedQuery('users')
   } else {
-    users = await User.query().where({ id: review.userId })
+    users = (await User.find({ id: review.userId })).result
   }
 
   users = await Promise.all(
@@ -1275,9 +1270,9 @@ const publishedReviewUsers = async review => {
 
 // TODO: useTransaction to handle rollbacks
 const publishManuscript = async (id, groupId) => {
-  const manuscript = await Manuscript.query()
-    .findById(id)
-    .withGraphFetched('[publishedArtifacts]')
+  const manuscript = await Manuscript.findById(id, {
+    related: '[publishedArtifacts]',
+  })
 
   manuscript.reviews = await manuscript.getReviews('completed')
   const decisions = await manuscript.getDecisions()
@@ -1296,7 +1291,7 @@ const publishManuscript = async (id, groupId) => {
   // We update the manuscript in advance, so that external services such as Flax
   // will be able to retrieve it as a "published" manuscript. If all publishing steps
   // fail, we will revert these changes at the end.
-  await Manuscript.query().patchAndFetchById(id, {
+  await Manuscript.patchAndFetchById(id, {
     published: newPublishedDate,
     status: 'published',
   })
@@ -1562,7 +1557,7 @@ const publishManuscript = async (id, groupId) => {
   let updatedManuscript
 
   if (steps.some(step => step.succeeded)) {
-    updatedManuscript = await Manuscript.query().patchAndFetchById(id, update)
+    updatedManuscript = await Manuscript.patchAndFetchById(id, update)
 
     const commentsToPublish = []
 
@@ -1576,9 +1571,10 @@ const publishManuscript = async (id, groupId) => {
       })
     })
 
-    const manuscriptThreadDiscussions = await ThreadedDiscussion.query().where({
-      manuscriptId: updatedManuscript.parentId || updatedManuscript.id,
-    })
+    const { result: manuscriptThreadDiscussions } =
+      await ThreadedDiscussion.find({
+        manuscriptId: updatedManuscript.parentId || updatedManuscript.id,
+      })
 
     await Promise.all(
       manuscriptThreadDiscussions.map(async threadDiscussion => {
@@ -1592,15 +1588,14 @@ const publishManuscript = async (id, groupId) => {
           })),
         }))
 
-        await ThreadedDiscussion.query().patchAndFetchById(
-          threadDiscussion.id,
-          { threads: JSON.stringify(unsetThreads) },
-        )
+        await ThreadedDiscussion.patchAndFetchById(threadDiscussion.id, {
+          threads: JSON.stringify(unsetThreads),
+        })
       }),
     )
   } else {
     // Revert the changes to published date and status
-    updatedManuscript = await Manuscript.query().patchAndFetchById(id, {
+    updatedManuscript = await Manuscript.patchAndFetchById(id, {
       published: prevPublishedDate,
       status: prevStatus,
     })
@@ -1615,7 +1610,7 @@ const publishManuscript = async (id, groupId) => {
 }
 
 const updateAda = async (id, adaState) => {
-  const manuscript = await Manuscript.query().findById(id)
+  const manuscript = await Manuscript.findById(id)
   const activeConfig = await Config.getCached(manuscript.groupId)
   let updatedManuscript = manuscript
 
@@ -1640,7 +1635,7 @@ const updateAda = async (id, adaState) => {
         adaJobId: data.adaJobId,
       })
 
-      updatedManuscript = await Manuscript.query().patchAndFetchById(id, update)
+      updatedManuscript = await Manuscript.patchAndFetchById(id, update)
     } catch (err) {
       logger.error(err)
 
@@ -1720,7 +1715,7 @@ const removeReviewer = async (manuscriptId, userId) => {
     type: 'editorial',
   })
 
-  const reviewerTeam = await Team.query().findOne({
+  const reviewerTeam = await Team.findOne({
     id: deletedTeamMember.teamId,
   })
 
@@ -1760,14 +1755,17 @@ const reviewerResponse = async (action, teamId, userId) => {
       `Invalid action (reviewerResponse): Must be either "accepted" or "rejected"`,
     )
 
-  const team = await Team.query().findById(teamId).withGraphFetched('members')
+  const team = await Team.findById(teamId, {
+    related: 'members',
+    throwIfNotFound: false,
+  })
 
   if (!team) throw new Error('No team was found')
 
   await Promise.all(
     team.members.map(async member => {
       if (member.userId === userId && member.status !== 'completed') {
-        await TeamMember.query().patchAndFetchById(member.id, {
+        await TeamMember.patchAndFetchById(member.id, {
           status: action,
         })
       }
@@ -1782,7 +1780,7 @@ const reviewerResponse = async (action, teamId, userId) => {
     })
   }
 
-  const existingReview = await ReviewModel.query().where({
+  const { result: existingReview } = await ReviewModel.find({
     manuscriptId: team.objectId,
     userId: team.role === 'collaborativeReviewer' ? null : userId,
     isDecision: false,
@@ -1800,14 +1798,14 @@ const reviewerResponse = async (action, teamId, userId) => {
       jsonData: '{}',
     }
 
-    await ReviewModel.query().insert(review)
+    await ReviewModel.insert(review)
   }
 
-  const manuscript = await Manuscript.query()
-    .findById(team.objectId)
-    .withGraphFetched(
+  const manuscript = await Manuscript.findById(team.objectId, {
+    related:
       '[teams.[members.[user.[defaultIdentity]]], submitter.[defaultIdentity], channels]',
-    )
+    throwIfNotFound: false,
+  })
 
   const editorialChannel = manuscript?.channels.find(
     channel => channel.topic === 'Editorial discussion',
@@ -1883,9 +1881,9 @@ const setShouldPublishField = async (
   fieldName,
   shouldPublish,
 ) => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .withGraphFetched('[teams, channels, files, reviews.user]')
+  const manuscript = await Manuscript.findById(manuscriptId, {
+    related: '[teams, channels, files, reviews.user]',
+  })
 
   if (shouldPublish) {
     // Add
@@ -1914,10 +1912,7 @@ const setShouldPublishField = async (
       .filter(ff => ff.fieldsToPublish.length)
   }
 
-  const updated = await Manuscript.query().updateAndFetchById(
-    manuscriptId,
-    manuscript,
-  )
+  const updated = await Manuscript.updateAndFetchById(manuscriptId, manuscript)
 
   return updated
 }
@@ -1980,7 +1975,9 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
     }
 
     const submitter = manuscript.authorFeedback.submitterId
-      ? await User.query().findById(manuscript.authorFeedback.submitterId)
+      ? await User.findById(manuscript.authorFeedback.submitterId, {
+          throwIfNotFound: false,
+        })
       : null
 
     if (manuscript.authorFeedback.submitted) {
@@ -2003,7 +2000,7 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
       delete manuscript.authorFeedback.submitted
     }
 
-    updated = await Manuscript.query().patchAndFetchById(manuscript.id, {
+    updated = await Manuscript.patchAndFetchById(manuscript.id, {
       authorFeedback: {
         ...manuscript.authorFeedback,
         previousSubmissions: orderBy(
@@ -2015,7 +2012,7 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
     })
   }
 
-  const author = await User.query().findById(userId)
+  const author = await User.findById(userId, { throwIfNotFound: false })
 
   const editorTeam = manuscript?.teams?.find(team => {
     return team.role.includes('editor')
@@ -2056,11 +2053,11 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
 
 const submitManuscript = async (id, input, userId) => {
   // Automated email submissionConfirmation on submission
-  const manuscript = await Manuscript.query()
-    .findById(id)
-    .withGraphFetched('[submitter.defaultIdentity, channels]')
+  const manuscript = await Manuscript.findById(id, {
+    related: '[submitter.defaultIdentity, channels]',
+  })
 
-  const recipient = await User.query().findById(userId)
+  const recipient = await User.findById(userId, { throwIfNotFound: false })
 
   let channelId
 
@@ -2134,9 +2131,9 @@ const updateManuscript = async (id, input) => {
     msDelta.submission.$doi =
       msDelta.submission.$doi.split('https://doi.org/')[1]
 
-  const ms = await Manuscript.query()
-    .findById(id)
-    .withGraphFetched('[reviews.user, files, tasks]')
+  const ms = await Manuscript.findById(id, {
+    related: '[reviews.user, files, tasks]',
+  })
 
   const activeConfig = await Config.getCached(ms.groupId)
 
@@ -2194,7 +2191,7 @@ const updateManuscript = async (id, input) => {
   }
 
   // convert to json, otherwise you're bypassing validation
-  return Manuscript.query().updateAndFetchById(id, updatedMs.$toJson())
+  return Manuscript.updateAndFetchById(id, updatedMs.$toJson())
 }
 
 const unarchiveManuscripts = async ids => {
@@ -2216,7 +2213,7 @@ const unarchiveManuscripts = async ids => {
 }
 
 const unreviewedPreprints = async (token, groupName) => {
-  const groups = await Group.query().where({ isArchived: false })
+  const { result: groups } = await Group.find({ isArchived: false })
   let group = null
   if (groupName) group = groups.find(g => g.name === groupName)
   else if (groups.length === 1) [group] = groups
@@ -2273,7 +2270,7 @@ const versionsOfManuscriptCurrentUserIsReviewerOf = async (
   userId,
 ) => {
   const otherVersions = await (
-    await Manuscript.query().findById(manuscriptId)
+    await Manuscript.findById(manuscriptId)
   ).getManuscriptVersions()
 
   const versionIds = [manuscriptId, ...otherVersions.map(v => v.id)]

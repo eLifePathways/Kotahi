@@ -53,7 +53,7 @@ const getRequestData = async (
 ) => {
   const { payload, groupId } = notification
   const { endorsement, linkedResource } = options
-  const group = await Group.query().findById(groupId).first()
+  const group = await Group.findById(groupId)
   const reviewer = await getReviewer(manuscript)
 
   const { flaxReviewUrl, flaxUrl } = await getFlaxUrl(
@@ -213,7 +213,7 @@ const makeAnnouncementOnCOAR = async (
 
     const { groupId, id: manuscriptId } = manuscript
 
-    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+    await CoarNotification.insert({ groupId, manuscriptId, payload })
 
     return response?.data || false
   } catch (err) {

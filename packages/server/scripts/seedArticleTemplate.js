@@ -13,10 +13,13 @@ const seed = async (group, options = {}) => {
     async trx => {
       const groupId = group.id
 
-      const existingTemplate = await ArticleTemplate.query(trx).findOne({
-        groupId,
-        isCms: true,
-      })
+      const existingTemplate = await ArticleTemplate.findOne(
+        {
+          groupId,
+          isCms: true,
+        },
+        { trx },
+      )
 
       if (existingTemplate?.article) {
         console.log(
@@ -28,23 +31,27 @@ const seed = async (group, options = {}) => {
       const article = (await fs.readFile(ARTICLE_TEMPLATE_PATH)).toString()
 
       if (existingTemplate) {
-        await ArticleTemplate.query(trx).patchAndFetchById(
+        await ArticleTemplate.patchAndFetchById(
           existingTemplate.id,
           {
             article,
           },
+          { trx },
         )
         console.log(`    Patched CMS article template for ${group.name}`)
         return
       }
 
       // Record is missing entirely; create it.
-      await ArticleTemplate.query(trx).insert({
-        groupId,
-        isCms: true,
-        article,
-        css: '',
-      })
+      await ArticleTemplate.insert(
+        {
+          groupId,
+          isCms: true,
+          article,
+          css: '',
+        },
+        { trx },
+      )
 
       console.log(`    Created CMS article template for ${group.name}`)
     },
