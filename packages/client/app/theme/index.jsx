@@ -171,6 +171,10 @@ export const makeTheme = (
     colorFurniture: '#E8E8E8',
     colorIconPrimary: '#666666',
     colorInfo: '#666666',
+    colorOverlayBlackHover: 'rgb(0 0 0 / 12%)',
+    colorOverlayBlackPressed: 'rgb(0 0 0 / 20%)',
+    colorOverlayWhiteHover: 'rgb(255 255 255 / 12%)',
+    colorOverlayWhitePressed: 'rgb(255 255 255 / 20%)',
     colorPrimary: colorBrand1,
     colorPrimaryVeryLight: colorPrimaryVeryLight,
     colorSecondary: colorBrand2,
@@ -180,6 +184,7 @@ export const makeTheme = (
     colorSuccessLight: '#d2ffcc',
     colorText: '#111111',
     colorTextHeading: '#111111',
+    colorTextMuted: '#666666',
     colorTextPlaceholder: '#666666',
     colorTextReverse: colorTextReverse,
     colorWallpaper: '#f2f2f2',
@@ -229,7 +234,8 @@ export const makeTheme = (
     // Does not exist
     // $borderColor: var($colorFurniture);
 
-    boxShadow200: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+    boxShadow: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+    boxShadow200: '0 2px 6px 0 rgb(0 0 0 / 10%)', // deprecated
 
     /* Transition */
     // transitionDuration: '0.2s', // TODO -- julien: not 0.05s

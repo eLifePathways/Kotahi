@@ -42,6 +42,11 @@ class Config extends BaseModel {
     return config
   }
 
+  static async getActive(groupId, options = {}) {
+    const { trx } = options
+    return this.query(trx).findOne({ groupId, active: true })
+  }
+
   static async beforeUpdate() {
     this.cachedConfigsByGroupId = {}
   }

@@ -10,20 +10,21 @@ const {
   CoarNotification,
 } = require('../../models')
 
-const flaxConfig = config.get('flax-site')
-
 // TODO: What is the purpose of this?
 const isReviewDoi = () => {
   return false
 }
 
 const isFlaxSetup = () => {
+  const flaxConfig = config.get('flax-site')
   return flaxConfig.clientFlaxSiteUrl !== ''
 }
 
 const getFlaxUrl = async (groupName, shortId) => {
   let flaxReviewUrl = ''
   let flaxUrl = ''
+
+  const flaxConfig = config.get('flax-site')
 
   if (!flaxConfig) return { flaxReviewUrl, flaxUrl }
 

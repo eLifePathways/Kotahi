@@ -1,5 +1,6 @@
 export * from './chat.queries'
 export * from './cms.queries'
+export * from './dashboard.queries'
 export * from './email.queries'
 export * from './file.queries'
 export * from './form.queries'

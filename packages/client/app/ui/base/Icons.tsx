@@ -2,15 +2,21 @@ import { type AriaAttributes, type ReactNode } from 'react'
 import styled from 'styled-components'
 
 export {
+  ArrowLeftOutlined as ArrowLeft,
   ArrowRightOutlined as ArrowRight,
   BarChartOutlined as Report,
+  ClearOutlined as Broom,
   CloseOutlined as Close,
   ControlOutlined as Settings,
   FileTextOutlined as File,
+  FilterFilled as Filter,
   FormOutlined as Form,
   HomeOutlined as Home,
   InfoCircleOutlined as Info,
+  LeftOutlined as ChevronLeft,
   MessageOutlined as Chat,
+  PlusOutlined as Plus,
+  RightOutlined as ChevronRight,
   QuestionCircleOutlined as Help,
   ReadOutlined as Book,
   TableOutlined as Table,
@@ -90,6 +96,29 @@ export const SemanticScholar = ({
         <path
           d="M27.9 41.1c1.2 1 2.4 1.9 3.4 2.6 2.6-12.7.4-26.4-6.5-38.3 11.7-.2 23.4-.3 35-.5 2.6 5.8 4.1 12 4.5 18.4 1-.5 2-1 3.1-1.5-.5-6.6-2.3-13.6-5.8-21.8H13.7c10.4 12.3 15.1 27.2 14.2 41.1z"
           fill="currentColor"
+        />
+      </svg>
+    </IconWrapper>
+  )
+}
+
+// https://www.svgrepo.com/svg/347817/pulse
+export const Activity = ({
+  className,
+  'aria-hidden': ariaHidden,
+}: IconProps): ReactNode => {
+  return (
+    <IconWrapper
+      aria-hidden={ariaHidden}
+      aria-label="activity"
+      className={className}
+      role="img"
+    >
+      <svg height="1em" viewBox="0 0 24 24" width="1em">
+        <path
+          d="M9.002 2.5a.75.75 0 01.691.464l6.302 15.305 2.56-6.301a.75.75 0 01.695-.468h4a.75.75 0 010 1.5h-3.495l-3.06 7.532a.75.75 0 01-1.389.004L8.997 5.21l-3.054 7.329A.75.75 0 015.25 13H.75a.75.75 0 010-1.5h4l3.558-8.538a.75.75 0 01.694-.462z"
+          fill="currentColor"
+          fillRule="evenodd"
         />
       </svg>
     </IconWrapper>

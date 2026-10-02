@@ -13,13 +13,13 @@ const { runImports } = require('../../services/plugins/imports')
 
 const importsInProgress = new Set()
 
-const shouldRunDefaultImportsForColab = [true, 'true'].includes(
-  config.get('import-for-prc').default_import,
-)
-
 const importManuscripts = async (groupId, ctx) => {
   logger.info(`Importing manuscripts. Triggered by ${ctx.userId ?? 'system'}`)
   const key = `${groupId}-imports`
+
+  const shouldRunDefaultImportsForColab = [true, 'true'].includes(
+    config.get('import-for-prc').default_import,
+  )
 
   if (importsInProgress.has(key)) {
     logger.info('Import already in progress. Aborting new import')

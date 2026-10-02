@@ -70,10 +70,7 @@ const FillHeightTabs = styled(Tabs)`
 `
 
 const CollapseButton = styled.button`
-  background: none;
-  border: none;
   color: ${th('colorText')};
-  cursor: pointer;
   margin-left: ${grid(4)};
 
   > span[role='img'] {

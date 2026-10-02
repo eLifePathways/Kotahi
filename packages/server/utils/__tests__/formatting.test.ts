@@ -45,7 +45,6 @@ describe('checkFormatting', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   // Note that this test is dependent on the styleguide & locale passed to formatCitation being what was

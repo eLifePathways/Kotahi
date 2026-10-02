@@ -183,7 +183,6 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   const titleOnlyForm = {

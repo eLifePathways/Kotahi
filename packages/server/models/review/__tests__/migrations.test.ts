@@ -17,7 +17,6 @@ describe('Review Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('adds `is_imported` column', async () => {

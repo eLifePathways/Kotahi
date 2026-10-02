@@ -18,7 +18,6 @@ describe('Config Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('moves gmail credentials to generic smtp', async () => {

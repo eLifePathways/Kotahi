@@ -8,6 +8,7 @@ const channelResolvers = require('./channel/channel.resolvers')
 const cmsResolvers = require('./cms/cms.resolvers')
 const coarResolvers = require('./coar/coar.resolvers')
 const configResolvers = require('./config/config.resolvers')
+const dashboardResolvers = require('./dashboard/dashboard.resolvers')
 const docmapResolvers = require('./docmap/docmap.resolvers')
 const emailTemplateResolvers = require('./emailTemplate/emailTemplate.resolvers')
 const fileResolvers = require('./file/file.resolvers')
@@ -37,6 +38,7 @@ const teamResolvers = require('./team/team.resolvers')
 const threadedDiscussionResolvers = require('./threadedDiscussion/threadedDiscussion.resolvers')
 const tokenResolvers = require('./token/token.resolvers')
 const userResolvers = require('./user/user.resolvers')
+const userNotificationResolvers = require('./userNotification/userNotification.resolvers')
 const xsweetResolvers = require('./xsweet/xsweet.resolvers')
 
 const typeDefFilePaths = [
@@ -48,6 +50,7 @@ const typeDefFilePaths = [
   'cms/cms.graphql',
   'coar/coar.graphql',
   'config/config.graphql',
+  'dashboard/dashboard.graphql',
   'docmap/docmap.graphql',
   'emailTemplate/emailTemplate.graphql',
   'file/file.graphql',
@@ -77,6 +80,7 @@ const typeDefFilePaths = [
   'threadedDiscussion/threadedDiscussion.graphql',
   'token/token.graphql',
   'user/user.graphql',
+  'userNotification/userNotification.graphql',
   'xsweet/xsweet.graphql',
 ]
 
@@ -96,6 +100,7 @@ const resolvers = merge(
   cmsResolvers,
   coarResolvers,
   configResolvers,
+  dashboardResolvers,
   docmapResolvers,
   emailTemplateResolvers,
   fileResolvers,
@@ -125,6 +130,7 @@ const resolvers = merge(
   threadedDiscussionResolvers,
   tokenResolvers,
   userResolvers,
+  userNotificationResolvers,
   xsweetResolvers,
 )
 

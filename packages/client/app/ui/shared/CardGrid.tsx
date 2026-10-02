@@ -35,7 +35,7 @@ const IconWrapper = styled.div`
 const Card = styled.div`
   min-height: ${grid(76)};
   border-radius: ${th('borderRadius')};
-  box-shadow: ${th('boxShadow200')};
+  box-shadow: ${th('boxShadow')};
   padding: ${grid(12)} ${grid(8)} 0;
   cursor: pointer;
   background-color: ${th('colorBackground')};
@@ -56,7 +56,7 @@ const Card = styled.div`
 
 const Wrapper = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fill, ${grid(110)});
+  grid-template-columns: repeat(auto-fit, minmax(${grid(110)}, 1fr));
   gap: ${grid(8)};
   list-style: none;
   margin: 0 auto;

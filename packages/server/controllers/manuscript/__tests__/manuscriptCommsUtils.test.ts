@@ -18,7 +18,6 @@ describe('archiveOldManuscripts', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('archivedOldManuscripts does not crash when archivePeriodDays is not set in the config', async () => {

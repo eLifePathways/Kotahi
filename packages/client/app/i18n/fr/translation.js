@@ -244,8 +244,8 @@ const fr = {
     },
     dashboardPage: {
       Dashboard: 'Tableau de bord',
+      backToDashboard: 'Retour au tableau de bord',
       'New submission': '+ Nouvelle soumission',
-      'New Alerts': 'Nouvelles alertes',
       'My Submissions': 'Mes soumissions',
       'To Review': 'Affectations de révision',
       "Manuscripts I'm editor of": "File d'attente d'édition",
@@ -254,6 +254,92 @@ const fr = {
           'Fournir des commentaires sur la production',
         'View production feedback':
           'Afficher les commentaires sur la production',
+      },
+      greeting: {
+        goodMorning: 'Bonjour',
+        goodAfternoon: 'Bon après-midi',
+        goodEvening: 'Bonsoir',
+        and: 'et',
+        allCaughtUp: 'Vous êtes à jour',
+        nothingNeedsAttention:
+          "Rien ne nécessite votre attention pour l'instant.",
+        itemsNeedAttention:
+          'Vous avez {{count}} élément qui nécessite votre attention',
+        itemsNeedAttention_plural:
+          'Vous avez {{count}} éléments qui nécessitent votre attention',
+        actionSummary: {
+          authorSubmit: '{{count}} soumission en attente de finalisation',
+          authorSubmit_plural:
+            '{{count}} soumissions en attente de finalisation',
+          authorRevise: '{{count}} manuscrit en attente de révision',
+          authorRevise_plural: '{{count}} manuscrits en attente de révision',
+          authorSubmitRevision: '{{count}} révision en attente de soumission',
+          authorSubmitRevision_plural:
+            '{{count}} révisions en attente de soumission',
+          reviewerRespond:
+            '{{count}} invitation de réviseur en attente de votre réponse',
+          reviewerRespond_plural:
+            '{{count}} invitations de réviseur en attente de votre réponse',
+          reviewerSubmit: '{{count}} révision en attente',
+          reviewerSubmit_plural: '{{count}} révisions en attente',
+          editorDecide: "{{count}} décision d'édition en attente",
+          editorDecide_plural: "{{count}} décisions d'édition en attente",
+          taskAlmostOverdue: '{{count}} tâche presque en retard',
+          taskAlmostOverdue_plural: '{{count}} tâches presque en retard',
+          taskOverdue: '{{count}} tâche en retard',
+          taskOverdue_plural: '{{count}} tâches en retard',
+        },
+      },
+      actionCards: {
+        scrollLeft: "Faire défiler la liste d'actions vers la gauche",
+        scrollRight: "Faire défiler la liste d'actions vers la droite",
+        types: {
+          authorSubmit: 'Soumettre',
+          authorRevise: 'Réviser',
+          authorSubmitRevision: 'Soumettre la révision',
+          reviewerRespond: 'Invitation à réviser',
+          reviewerSubmit: 'Réviser',
+          editorDecide: 'Décider de',
+          taskAlmostOverdue: 'Tâche presque en retard',
+          taskOverdue: 'Tâche en retard',
+        },
+      },
+      tableCards: {
+        needsAttention: '{{count}} nécessite votre attention',
+        needsAttention_plural: '{{count}} nécessitent votre attention',
+        author: 'Auteur',
+        reviewer: 'Réviseur',
+        editor: 'Éditeur',
+      },
+      activity: {
+        title: 'Activité',
+        clearAll: 'Tout effacer',
+        dismissNotification: 'Ignorer la notification',
+        showingOfTotal: 'Affichage de {{shown}} sur {{total}}',
+        noActivityYet: "Pas encore d'activité",
+        activityWillAppearHere:
+          'Les mises à jour de vos manuscrits apparaîtront ici.',
+        manuscriptReference: 'manuscrit #{{shortId}}',
+        notifications: {
+          addedAsEditor: 'Vous avez été ajouté comme éditeur de',
+          addedAsHandlingEditor:
+            'Vous avez été ajouté comme éditeur en charge de',
+          addedAsReviewer: 'Vous avez été ajouté comme réviseur de',
+          addedAsSeniorEditor: 'Vous avez été ajouté comme éditeur senior de',
+          decisionMade: 'Une décision a été prise concernant',
+          removedAsEditor: "Vous avez été retiré en tant qu'éditeur de",
+          removedAsHandlingEditor:
+            "Vous avez été retiré en tant qu'éditeur en charge de",
+          removedAsReviewer: 'Vous avez été retiré en tant que réviseur de',
+          removedAsSeniorEditor:
+            "Vous avez été retiré en tant qu'éditeur senior de",
+          reviewerAcceptedInvitation:
+            'Un réviseur a accepté votre invitation pour',
+          reviewerCompletedReview: 'Une révision a été complétée pour',
+          reviewerRejectedInvitation:
+            'Un réviseur a décliné votre invitation pour',
+          revisionSubmitted: 'Une révision a été soumise pour',
+        },
       },
     },
     submitPage: {

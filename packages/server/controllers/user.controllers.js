@@ -802,14 +802,6 @@ const updateLanguage = async (id, preferredLanguage) => {
   return User.query().patchAndFetchById(id, { preferredLanguage })
 }
 
-const updateRecentTab = async (userId, tab) => {
-  const user = await User.query().patchAndFetchById(userId, {
-    recentTab: tab,
-  })
-
-  return user
-}
-
 const updateUser = async (id, input) => {
   if (input.password) {
     input.passwordHash = await User.hashPassword(input.password)
@@ -856,7 +848,6 @@ module.exports = {
   setGroupRole,
   updateEmail,
   updateLanguage,
-  updateRecentTab,
   updateUser,
   updateUsername,
   userIdentities,
