@@ -87,6 +87,24 @@ type Api = {
     manuscriptId: string
     created: string
   }) => Promise<unknown>
+  addManuscriptFile: (opts: {
+    manuscriptId: string
+    filename?: string
+  }) => Promise<{ id: string }>
+  createThreadedDiscussion: (opts: {
+    manuscriptId: string
+    fieldName: string
+    comments?: { username: string; comment: string }[]
+    pendingComments?: {
+      username: string
+      comment: string
+      commentIndex?: number
+    }[]
+  }) => Promise<{
+    threadedDiscussionId: string
+    threadId: string
+    commentIds: string[]
+  }>
 }
 
 export const test = base.extend<{
@@ -231,6 +249,22 @@ export const test = base.extend<{
         jsonOrThrow(
           request.post(
             `${apiUrl}/setManuscriptCreated/${manuscriptId}?created=${encodeURIComponent(created)}`,
+          ),
+        ),
+
+      addManuscriptFile: ({ manuscriptId, filename }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/addManuscriptFile/${manuscriptId}${
+              filename ? `?filename=${encodeURIComponent(filename)}` : ''
+            }`,
+          ),
+        ),
+
+      createThreadedDiscussion: ({ manuscriptId, ...discussion }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/createThreadedDiscussion/${manuscriptId}?discussion=${encodeURIComponent(JSON.stringify(discussion))}`,
           ),
         ),
     })

@@ -154,7 +154,8 @@ const reviewIsByUser = rule({ cache: 'contextual' })(async (
   const user = await User.query().findById(ctx.userId)
 
   const rows =
-    user && user.$relatedQuery('teams').where({ role: 'reviewer' }).resultSize()
+    user &&
+    (await user.$relatedQuery('teams').where({ role: 'reviewer' }).resultSize())
 
   return !!rows
 })
@@ -840,6 +841,7 @@ const permissions = {
     userIsEditorOfAnyManuscript,
     reviewIsByUser,
     userIsGm,
+    userIsGroupAdmin,
     userIsAdmin,
   ),
   FileNotInDb: allow,
