@@ -94,7 +94,7 @@ const ModalContainer = styled.div`
 const SimpleWaxEditorWrapper = styled.div`
   margin-top: 10px;
   ${props =>
-    props.collapse
+    props.$collapse
       ? css`
           max-height: 100px;
           overflow: hidden;
@@ -121,7 +121,7 @@ const CollapseOverlay = styled.div`
   bottom: 0;
   height: 50px;
   ${props =>
-    props.collapse
+    props.$collapse
       ? css`
           background: linear-gradient(
             180deg,
