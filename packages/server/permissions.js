@@ -154,8 +154,7 @@ const reviewIsByUser = rule({ cache: 'contextual' })(async (
   const user = await User.query().findById(ctx.userId)
 
   const rows =
-    user &&
-    (await user.$relatedQuery('teams').where({ role: 'reviewer' }).resultSize())
+    user && user.$relatedQuery('teams').where({ role: 'reviewer' }).resultSize()
 
   return !!rows
 })
