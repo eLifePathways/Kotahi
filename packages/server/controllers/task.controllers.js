@@ -91,8 +91,10 @@ const createTaskEmailNotificationLog = async taskEmailNotificationLog => {
   return associatedTask
 }
 
-const deleteAlertsForManuscript = async manuscriptId => {
-  await TaskAlert.query()
+const deleteAlertsForManuscript = async (manuscriptId, options = {}) => {
+  const { trx } = options
+
+  await TaskAlert.query(trx)
     .delete()
     .whereIn('taskId', Task.query().select('id').where({ manuscriptId }))
 }

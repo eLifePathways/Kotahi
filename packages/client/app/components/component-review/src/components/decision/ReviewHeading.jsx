@@ -167,6 +167,7 @@ const ReviewHeading = ({
         <UsersList>
           {users.map(user => (
             <Reviewer
+              // TODO: cleanup these three props up, as this feature has been removed
               canBePublishedPublicly={canBePublishedPublicly}
               currentUser={currentUser}
               currentUserIsEditor={currentUserIsEditor}

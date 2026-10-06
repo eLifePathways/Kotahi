@@ -22,6 +22,8 @@ const {
   patchManuscript,
   setManuscriptCreated,
   deleteSharedUsers,
+  addManuscriptFile,
+  createThreadedDiscussion,
 } = require('./actions')
 
 const dumpFile = name => path.join(__dirname, 'dumps', `${name}.sql`)
@@ -285,4 +287,42 @@ module.exports = app => {
       res.status(500).json({ error: err.message })
     }
   })
+
+  app.post('/api/e2e/addManuscriptFile/:manuscriptId', async (req, res) => {
+    const { manuscriptId } = req.params
+    const { filename } = req.query
+
+    try {
+      const result = await addManuscriptFile({ manuscriptId, filename })
+      res.status(200).json(result)
+    } catch (err) {
+      logger.error(err)
+      res.status(500).json({ error: err.message })
+    }
+  })
+
+  app.post(
+    '/api/e2e/createThreadedDiscussion/:manuscriptId',
+    async (req, res) => {
+      const { manuscriptId } = req.params
+
+      try {
+        const { fieldName, comments, pendingComments } = JSON.parse(
+          req.query.discussion,
+        )
+
+        const result = await createThreadedDiscussion({
+          manuscriptId,
+          fieldName,
+          comments,
+          pendingComments,
+        })
+
+        res.status(200).json(result)
+      } catch (err) {
+        logger.error(err)
+        res.status(500).json({ error: err.message })
+      }
+    },
+  )
 }

@@ -840,6 +840,7 @@ const permissions = {
     userIsEditorOfAnyManuscript,
     reviewIsByUser,
     userIsGm,
+    userIsGroupAdmin,
     userIsAdmin,
   ),
   FileNotInDb: allow,

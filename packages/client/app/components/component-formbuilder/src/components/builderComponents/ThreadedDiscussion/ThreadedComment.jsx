@@ -91,6 +91,7 @@ const ThreadedComment = ({
       commentBelongsToDifferentManuscriptVersion={
         commentBelongsToDifferentManuscriptVersion
       }
+      data-testid="threaded-comment"
     >
       <CommentWrapper
         commentBelongsToDifferentManuscriptVersion={
@@ -120,7 +121,8 @@ const ThreadedComment = ({
                     JSON.parse(formData).controlPanel
                       ?.editorsEditDiscussionPostsEnabled &&
                     updatedAt &&
-                    updatedAt !== createdAt && (
+                    updatedAt !== createdAt &&
+                    updatedBy && (
                       <div>
                         {`${updatedBy.username} ${t('formBuilder.updatedAt')}`}{' '}
                         &nbsp;
@@ -152,7 +154,11 @@ const ThreadedComment = ({
             />
           )}
           {shouldShowEditIcon && (
-            <Icon noPadding onClick={() => setOpenModal(true)}>
+            <Icon
+              data-testid="edit-comment"
+              noPadding
+              onClick={() => setOpenModal(true)}
+            >
               edit
             </Icon>
           )}
@@ -167,7 +173,7 @@ const ThreadedComment = ({
           </Collapse>
         </ActionWrapper>
       </CommentWrapper>
-      <SimpleWaxEditorWrapper collapse={collapse}>
+      <SimpleWaxEditorWrapper $collapse={collapse ?? null}>
         <SimpleWaxEditor
           {...simpleWaxEditorProps}
           key={counter}
@@ -178,7 +184,7 @@ const ThreadedComment = ({
               : 'Comment is either deleted or is unsubmitted'
           }
         />
-        <CollapseOverlay collapse={collapse} />
+        <CollapseOverlay $collapse={collapse ?? null} />
       </SimpleWaxEditorWrapper>
       <Modal isOpen={openModal}>
         <ModalContainer>
