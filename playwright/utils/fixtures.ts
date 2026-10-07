@@ -62,12 +62,22 @@ type Api = {
     manuscriptId: string
     username: string
     status: string
+    isShared?: boolean
   }) => Promise<unknown>
   createReview: (opts: {
     manuscriptId: string
     username: string
     isHiddenFromAuthor?: boolean
     isHiddenReviewerName?: boolean
+    jsonData?: Record<string, unknown>
+  }) => Promise<{ id: string }>
+  // A user with no role outside this test's group - see createGroupUser in
+  // packages/server/api/rest/e2e/actions.js
+  createGroupUser: (name: string) => Promise<{ username: string }>
+  createDecision: (opts: {
+    manuscriptId: string
+    username: string
+    jsonData?: Record<string, unknown>
   }) => Promise<{ id: string }>
   updateGroupConfig: (patch: Record<string, unknown>) => Promise<unknown>
   updateFormFields: (opts: {
@@ -197,20 +207,27 @@ export const test = base.extend<{
           ),
         ),
 
-      setReviewerStatus: ({ manuscriptId, username, status }) =>
-        jsonOrThrow(
+      setReviewerStatus: ({ manuscriptId, username, status, isShared }) => {
+        const params = new URLSearchParams({ status })
+        if (isShared !== undefined) params.set('isShared', String(isShared))
+
+        return jsonOrThrow(
           request.post(
-            `${apiUrl}/setReviewerStatus/${manuscriptId}/${encodeURIComponent(username)}?status=${encodeURIComponent(status)}`,
+            `${apiUrl}/setReviewerStatus/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
           ),
-        ),
+        )
+      },
 
       createReview: ({
         manuscriptId,
         username,
         isHiddenFromAuthor,
         isHiddenReviewerName,
+        jsonData,
       }) => {
         const params = new URLSearchParams()
+        if (jsonData) params.set('jsonData', JSON.stringify(jsonData))
+
         if (isHiddenFromAuthor !== undefined)
           params.set('isHiddenFromAuthor', String(isHiddenFromAuthor))
 
@@ -220,6 +237,24 @@ export const test = base.extend<{
         return jsonOrThrow(
           request.post(
             `${apiUrl}/createReview/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
+          ),
+        )
+      },
+
+      createGroupUser: name =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/groupUser/${testGroup.groupName}/${encodeURIComponent(name)}`,
+          ),
+        ),
+
+      createDecision: ({ manuscriptId, username, jsonData }) => {
+        const params = new URLSearchParams()
+        if (jsonData) params.set('jsonData', JSON.stringify(jsonData))
+
+        return jsonOrThrow(
+          request.post(
+            `${apiUrl}/createDecision/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
           ),
         )
       },

@@ -1,6 +1,5 @@
 const { authorization } = require('@coko/server')
 
-const { File } = require('@coko/server')
 const { cachedGet } = require('./services/queryCache.service')
 
 const Channel = require('./models/channel/channel.model')
@@ -70,17 +69,6 @@ const userOwnsMessage = rule({ cache: 'contextual' })(async (
   return message?.userId === ctx.userId
 })
 
-const getLatestVersionOfManuscriptOfFile = async (file, ctx) => {
-  const manuscript = await cachedGet(`msOfFile:${file.id}`)
-
-  if (!manuscript) return null
-
-  const firstVersionId = manuscript.parentId || manuscript.id
-  const latestVersion = await getLatestVersionOfManuscript(ctx, firstVersionId)
-
-  return latestVersion
-}
-
 const getLatestVersionOfManuscript = async (ctx, manuscriptVersionId) => {
   const latestVersion = await Manuscript.query()
     .where({ parentId: manuscriptVersionId })
@@ -131,6 +119,18 @@ const isExportTemplatingFile = rule({ cache: 'strict' })(async parent => {
   return parent.tags && parent.tags.includes('templateGroupAsset')
 })
 
+// Files owned by the group itself (eg. export template assets, listed on the
+// production page for authors doing proofing too)
+const isFileOfCurrentGroup = rule({ cache: 'strict' })(async (
+  parent,
+  args,
+  ctx,
+) => {
+  const groupId = ctx.req?.headers['group-id']
+  if (!ctx.userId || !groupId || groupId === 'undefined') return false
+  return !!parent.objectId && parent.objectId === groupId
+})
+
 const isPublicReviewFromPublishedManuscript = rule({ cache: 'strict' })(
   async parent => {
     if (parent.isHiddenFromAuthor || !parent.manuscriptId) return false
@@ -143,20 +143,16 @@ const isPublicReviewFromPublishedManuscript = rule({ cache: 'strict' })(
   },
 )
 
-// TODO This appears only to check if the user is a reviewer of ANY manuscript!??
-const reviewIsByUser = rule({ cache: 'contextual' })(async (
-  parent,
+// Authors, reviewers and editors of the manuscript (any version) can see its reviews.
+// Which reviews, and which of their fields, each of them gets is decided by
+// stripConfidentialDataFromReviews when the reviews are fetched.
+const userHasRoleInManuscriptOfReview = rule({ cache: 'strict' })(async (
+  review,
   args,
   ctx,
 ) => {
-  if (!ctx.userId) return false
-
-  const user = await User.query().findById(ctx.userId)
-
-  const rows =
-    user && user.$relatedQuery('teams').where({ role: 'reviewer' }).resultSize()
-
-  return !!rows
+  if (!ctx.userId || !review.manuscriptId) return false
+  return cachedGet(`userHasRoleInMsFamily:${ctx.userId}:${review.manuscriptId}`)
 })
 
 const isAuthenticated = rule({ cache: 'contextual' })(async (
@@ -407,7 +403,9 @@ const userIsAuthorOfManuscript = rule({ cache: 'strict' })(async (
 //   return false
 // })
 
-const userIsAuthorOfTheManuscriptOfTheFile = rule({ cache: 'strict' })(async (
+// Authors, reviewers and editors of the manuscript (any version) can see its files,
+// including files attached to its reviews.
+const userHasRoleInManuscriptOfFile = rule({ cache: 'strict' })(async (
   file,
   args,
   ctx,
@@ -416,54 +414,11 @@ const userIsAuthorOfTheManuscriptOfTheFile = rule({ cache: 'strict' })(async (
 
   if (file.storedObjects && !file.id) return true // only on uploading manuscript docx this will be validated
 
-  const manuscript = await cachedGet(`msOfFile:${file.id}`, ctx)
+  if (!file.id) return false
+  const manuscript = await cachedGet(`msOfFile:${file.id}`)
   if (!manuscript) return false
 
-  const team = await Team.query()
-    .where({
-      objectId: manuscript.id,
-      objectType: 'manuscript',
-      role: 'author',
-    })
-    .first()
-
-  if (!team) return false
-
-  const members = await team
-    .$relatedQuery('members')
-    .where('userId', ctx.userId)
-
-  if (members && members[0]) return true
-  return false
-})
-
-// ¯\_(ツ)_/¯
-const userIsTheReviewerOfTheManuscriptOfTheFileAndReviewNotComplete = rule({
-  cache: 'strict',
-})(async (parent, args, ctx) => {
-  if (!ctx.userId) return false
-  if (!parent.id) return false
-
-  const file = await File.query().findById(parent.id)
-  const manuscript = await getLatestVersionOfManuscriptOfFile(file, ctx)
-  if (!manuscript) return false
-
-  const team = await Team.query()
-    .where({
-      objectId: manuscript.id,
-      objectType: 'manuscript',
-      role: 'reviewer',
-    })
-    .first()
-
-  if (!team) return false
-
-  const members = await team
-    .$relatedQuery('members')
-    .where('userId', ctx.userId)
-
-  if (members && members[0] && members[0].status !== 'completed') return true
-  return false
+  return cachedGet(`userHasRoleInMsFamily:${ctx.userId}:${manuscript.id}`)
 })
 
 const manuscriptIsPublished = rule({
@@ -835,10 +790,9 @@ const permissions = {
     isLogoFile,
     isFaviconFile,
     isPublicFileFromPublishedManuscript,
-    userIsAuthorOfTheManuscriptOfTheFile,
-    userIsTheReviewerOfTheManuscriptOfTheFileAndReviewNotComplete,
+    isFileOfCurrentGroup,
+    userHasRoleInManuscriptOfFile,
     userIsEditorOfAnyManuscript,
-    reviewIsByUser,
     userIsGm,
     userIsGroupAdmin,
     userIsAdmin,
@@ -851,7 +805,7 @@ const permissions = {
   FormElementValidation: allow,
   Review: or(
     isPublicReviewFromPublishedManuscript,
-    reviewIsByUser,
+    userHasRoleInManuscriptOfReview,
     userIsEditorOfAnyManuscript,
     userIsGm,
     userIsGroupAdmin,
