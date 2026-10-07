@@ -77,12 +77,15 @@ const findOrCreate = async (Model, findQuery, insertData) => {
   }
 }
 
-const deleteAllMatching = async (Model, filter, trx) => {
-  const { result } = await Model.find(filter, { trx })
-  if (result.length === 0) return
+const deleteAllMatching = async (Model, rowsOrFilter, trx) => {
+  const rows = Array.isArray(rowsOrFilter)
+    ? rowsOrFilter
+    : (await Model.find(rowsOrFilter, { trx })).result
+
+  if (rows.length === 0) return
 
   await Model.deleteByIds(
-    result.map(row => row.id),
+    rows.map(row => row.id),
     { trx },
   )
 }
@@ -179,6 +182,12 @@ const deleteGroupData = async (group, trx) => {
   }
 
   await deleteAllMatching(Manuscript, { groupId: group.id }, trx)
+  // Users made by createGroupUser
+  await deleteAllMatching(
+    User,
+    await User.findByUsernamePrefix(`${group.name}-`, { trx }),
+    trx,
+  )
   await deleteAllMatching(Team, { objectId: group.id }, trx)
   await deleteAllMatching(Config, { groupId: group.id }, trx)
   await deleteAllMatching(Channel, { groupId: group.id }, trx)
@@ -644,7 +653,14 @@ const setManuscriptCreated = async ({ manuscriptId, created }) => {
   return Manuscript.findById(manuscriptId)
 }
 
-const setReviewerStatus = async ({ manuscriptId, username, status }) => {
+// isShared: whether this reviewer's review is shared with the other shared
+// reviewers (left unchanged when omitted)
+const setReviewerStatus = async ({
+  manuscriptId,
+  username,
+  status,
+  isShared,
+}) => {
   const user = await User.findOne({ username })
 
   if (!user) {
@@ -668,7 +684,10 @@ const setReviewerStatus = async ({ manuscriptId, username, status }) => {
     )
   }
 
-  return TeamMember.patchAndFetchById(teamMember.id, { status })
+  return TeamMember.patchAndFetchById(teamMember.id, {
+    status,
+    ...(isShared !== undefined && { isShared }),
+  })
 }
 
 const createReview = async ({
@@ -676,6 +695,7 @@ const createReview = async ({
   username,
   isHiddenFromAuthor = true,
   isHiddenReviewerName = true,
+  jsonData = {},
 }) => {
   const user = await User.findOne({ username })
 
@@ -708,7 +728,55 @@ const createReview = async ({
     isDecision: false,
     isHiddenFromAuthor,
     isHiddenReviewerName,
-    jsonData: '{}',
+    jsonData: JSON.stringify(jsonData),
+  })
+}
+
+// A user belonging only to this group, for tests that need someone with no
+// role anywhere else - the shared pw-user-* users pick up manuscript roles
+// across every suite. Deleted along with the group.
+const createGroupUser = async ({ groupName, name }) => {
+  const group = await Group.findOne({ name: groupName })
+
+  if (!group) {
+    throw new Error(`No group found named "${groupName}"`)
+  }
+
+  const username = `${groupName}-${name}`
+
+  return useTransaction(async trx => {
+    const user = await User.insert(
+      { username, email: `${username}@example.com` },
+      { trx },
+    )
+
+    const userTeam = await Team.findOne(
+      { objectId: group.id, role: 'user' },
+      { trx },
+    )
+
+    await TeamMember.insert({ userId: user.id, teamId: userTeam.id }, { trx })
+
+    return { username }
+  })
+}
+
+// The editor's decision on a manuscript, as the decision form saves it. Set
+// the manuscript's decision/status separately (eg. with patchManuscript).
+const createDecision = async ({ manuscriptId, username, jsonData = {} }) => {
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  return Review.insert({
+    manuscriptId,
+    userId: user.id,
+    isDecision: true,
+    isHiddenFromAuthor: false,
+    isHiddenReviewerName: false,
+    jsonData: JSON.stringify(jsonData),
   })
 }
 
@@ -901,6 +969,8 @@ module.exports = {
   assignRole,
   setReviewerStatus,
   createReview,
+  createDecision,
+  createGroupUser,
   updateGroupConfig,
   updateFormFields,
   updateManuscriptSubmission,

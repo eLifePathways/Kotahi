@@ -75,6 +75,11 @@ declare class Manuscript extends BaseModel {
     userId: string,
     groupId: string,
   ): Promise<string[]>
+  static userHasRoleInAnyVersion(
+    userId: string,
+    manuscriptId: string,
+    options?: Options,
+  ): Promise<boolean>
   static addReviewer(
     manuscriptId: string,
     userId: string,
