@@ -173,7 +173,7 @@ describe('File and Review permissions', () => {
 
     const group = await Group.insert({ name: 'permissions-test' })
 
-    const groupConfig = await Config.query().insert({
+    const groupConfig = await Config.insert({
       active: true,
       groupId: group.id,
       formData: { instanceName: 'journal' },
@@ -316,21 +316,21 @@ describe('File and Review permissions', () => {
       jsonData: '{}',
     })
 
-    const manuscriptFile = await File.query().insert({
+    const manuscriptFile = await File.insert({
       name: 'manuscript.txt',
       objectId: ms,
       tags: ['supplementary'],
       storedObjects: [],
     })
 
-    const reviewFile = await File.query().insert({
+    const reviewFile = await File.insert({
       name: 'review-attachment.txt',
       objectId: review.id,
       tags: ['reviewAttachment'],
       storedObjects: [],
     })
 
-    const groupFile = await File.query().insert({
+    const groupFile = await File.insert({
       name: 'template.css',
       objectId: group.id,
       tags: [],
