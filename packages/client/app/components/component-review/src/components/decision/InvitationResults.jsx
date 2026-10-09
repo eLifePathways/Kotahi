@@ -5,9 +5,14 @@ import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
-import { Button } from '../../../../pubsweet'
 import { SectionRow } from '../style'
-import { UserCombo, Primary, Secondary, UserInfo } from '../../../../shared'
+import {
+  ActionButton,
+  UserCombo,
+  Primary,
+  Secondary,
+  UserInfo,
+} from '../../../../shared'
 import { UserAvatar } from '../../../../component-avatar/src'
 import { convertTimestampToDateString } from '../../../../../shared/dateUtils'
 
@@ -25,10 +30,6 @@ const Name = styled.span`
   display: flex;
   margin-left: 1em;
 `
-
-const ToggleInvitation = ({ open, toggle }) => (
-  <Button onClick={toggle}>{open ? 'Hide' : 'Show'}</Button>
-)
 
 const Bullet = styled.span`
   background-color: black;
@@ -173,11 +174,11 @@ const InvitationResult = ({ invitation }) => {
           </Name>
           {responseComment && (
             <Controls>
-              <Button onClick={toggleOpen}>
+              <ActionButton onClick={toggleOpen}>
                 {open
                   ? t('decisionPage.decisionTab.reviewModalHide')
                   : t('decisionPage.decisionTab.reviewModalShow')}
-              </Button>
+              </ActionButton>
             </Controls>
           )}
         </InvitacionHeadingRoot>
@@ -237,11 +238,6 @@ const InvitationResults = ({ invitations }) => {
         })}
     </>
   )
-}
-
-ToggleInvitation.propTypes = {
-  open: PropTypes.bool.isRequired,
-  toggle: PropTypes.func.isRequired,
 }
 
 Bullet.propTypes = {

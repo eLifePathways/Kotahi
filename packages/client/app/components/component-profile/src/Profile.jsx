@@ -11,11 +11,11 @@ import Popup from 'reactjs-popup'
 
 import { th, grid, serverUrl } from '@coko/client'
 
-import { Button, Checkbox } from '../../pubsweet'
+import { Checkbox } from '../../pubsweet'
 import Modal from '../../component-modal/src/ConfirmationModal'
 import { convertCamelCaseToTitleCase } from '../../../shared/textUtils'
 
-import { SectionContent, SectionRow } from '../../shared'
+import { ActionButton, SectionContent, SectionRow } from '../../shared'
 import Page from '../../../ui/shared/Page'
 import ChangeUsername from './ChangeUsername'
 import { BigProfileImage } from './ProfileImage'
@@ -31,10 +31,18 @@ const VersionText = styled.div`
   right: ${grid(6)};
 `
 
+// space-between leaves SpecialRoles left-aligned when it's the only child
 const RolesRow = styled.div`
-  display: flex;
   align-items: end;
+  display: flex;
+  justify-content: space-between;
   margin-bottom: ${grid(2)};
+`
+
+const DropzoneRoot = styled.div`
+  align-items: center;
+  display: inline-flex;
+  gap: ${grid(2)};
 `
 
 const StyledCheckbox = styled(Checkbox)`
@@ -111,18 +119,18 @@ const ProfileDropzone = ({ profilePicture, replaceAvatarImage, t }) => {
   })
 
   return (
-    <div {...getRootProps()}>
+    <DropzoneRoot {...getRootProps()}>
       <input {...getInputProps()} />
       <BigProfileImage src={profilePicture} />
-      <Button>
+      <ActionButton>
         {isDragActive
           ? t('profilePage.Drop it here')
           : t('profilePage.Change profile picture')}
-      </Button>
+      </ActionButton>
       <Popup closeOnDocumentClick closeOnEscape modal open={isErrorOpen}>
         <ErrorContainer>Invalid file! Please use an image!</ErrorContainer>
       </Popup>
-    </div>
+    </DropzoneRoot>
   )
 }
 
@@ -208,13 +216,9 @@ const Profile = ({
           user={user}
         />
         {isCurrentUsersOwnProfile && (
-          <Button
-            $primary
-            onClick={() => logoutUser()}
-            style={{ marginLeft: 'auto' }}
-          >
+          <ActionButton onClick={() => logoutUser()} primary>
             {t('profilePage.Logout')}
-          </Button>
+          </ActionButton>
         )}
       </RolesRow>
 

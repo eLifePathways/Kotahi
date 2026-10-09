@@ -38,6 +38,7 @@ const esLa = {
       No: 'No',
       Save: 'Guardar',
       Update: 'Actualizar',
+      next: 'Siguiente',
       Activate: 'Activar',
       Deactivate: 'Desactivar',
       Modified: 'Modificado',
@@ -159,6 +160,8 @@ const esLa = {
       Email: 'Correo Electrónico',
       Language: 'Idioma',
       Change: 'Cambiar',
+      enterEmail: 'Ingresar correo electrónico',
+      enterYourEmail: 'Ingrese su correo electrónico',
       usernameWarn:
         'No puede comenzar con un número ni empezar o terminar con espacios en blanco',
       userPrivilegeAlert: `Se Requieren Privilegios de Usuario
@@ -244,7 +247,7 @@ const esLa = {
     },
     dashboardPage: {
       Dashboard: 'Tablero',
-      'New submission': '+ Nueva presentación',
+      'New submission': 'Nueva presentación',
       'New Alerts': 'Nuevas Alertas',
       'My Submissions': 'Mis presentaciones',
       'To Review': 'Asignaciones de revisión',

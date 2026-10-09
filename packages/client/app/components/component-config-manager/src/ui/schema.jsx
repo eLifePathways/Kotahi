@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 // NOTE: If you're modifying the schema here, ensure updating those changes to the files 'packages/client/config/sampleConfigFormData.js' and 'packages/server/scripts/seedConfig.js' as well.
-import React from 'react'
+
 import BrandIcon from './BrandIcon'
 import ListSubmissionFields from './ListSubmissionFields'
 
-import { Button, Select, TextField } from '../../../pubsweet'
-import { ActionButton, ColorPicker } from '../../../shared'
+import { Select } from '../../../pubsweet'
+import { ColorPicker } from '../../../shared'
 import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
 import CoarAuthToken from './CoarAuthToken'
 

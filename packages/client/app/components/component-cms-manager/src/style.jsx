@@ -198,19 +198,6 @@ export const ErrorMessage = styled.div`
   line-height: ${th('lineHeightBaseSmall')};
 `
 
-export const InfoBlock = styled.div`
-  background-color: ${th('colorSecondaryBackground')};
-  border: 1px solid ${th('colorBorder')};
-  border-radius: ${grid(2)};
-  padding: ${grid(4)};
-  width: 100%;
-`
-
-export const WarningBlock = styled(InfoBlock)`
-  background-color: ${th('colorWarning')};
-  border: 1px solid ${th('colorWarningDark')};
-`
-
 export const LayoutHeaderListContainer = styled.div`
   width: 30%;
 `

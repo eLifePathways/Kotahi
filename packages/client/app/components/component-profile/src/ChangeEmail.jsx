@@ -7,12 +7,19 @@ import PropTypes from 'prop-types'
 import { grid } from '@coko/client'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { TextField, Button } from '../../pubsweet'
+import { TextField } from '../../pubsweet'
+import { ActionButton } from '../../shared'
 
 const InlineTextField = styled(TextField)`
   border-color: ${props => (props.$error ? '#ff2d1a' : '#AAA')};
   display: inline;
   width: ${grid(48)};
+`
+
+const Row = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${grid(2)};
 `
 
 const UpdateEmailError = styled.p`
@@ -48,14 +55,17 @@ const ChangeEmail = ({ user, updateUserEmail }) => {
 
   return (
     <>
-      <InlineTextField
-        $error={updateEmailError}
-        onChange={e => setEmail(e.target.value)}
-        value={email}
-      />
-      <Button onClick={() => updateEmail(user.id, email)}>
-        {t('profilePage.Change')}
-      </Button>
+      <Row>
+        <InlineTextField
+          $error={updateEmailError}
+          inline
+          onChange={e => setEmail(e.target.value)}
+          value={email}
+        />
+        <ActionButton onClick={() => updateEmail(user.id, email)} primary>
+          {t('profilePage.Change')}
+        </ActionButton>
+      </Row>
       {updateEmailError && (
         <UpdateEmailError>{updateEmailError}</UpdateEmailError>
       )}

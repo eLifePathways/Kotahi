@@ -4,7 +4,8 @@ import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { FieldArray } from 'formik'
 import { cloneDeep, set, get } from 'lodash'
-import { TextField, Button, ValidatedFieldFormik } from '../../../pubsweet'
+import { TextField, ValidatedFieldFormik } from '../../../pubsweet'
+import { ActionButton, AddLabel } from '../../../shared'
 
 const Inline = styled.div`
   display: inline-block;
@@ -46,17 +47,19 @@ const LinksInput = ({ form, remove, push, value, name, onChange }) => {
     <ul>
       <UnbulletedList>
         <li>
-          <Button
-            $primary
+          <ActionButton
             onClick={() =>
               push({
                 url: '',
               })
             }
+            primary
             type="button"
           >
-            {value && value.length ? 'Add another link' : 'Add a link'}
-          </Button>
+            <AddLabel>
+              {value && value.length ? 'Add another link' : 'Add a link'}
+            </AddLabel>
+          </ActionButton>
         </li>
         {(value || []).map((link, index) => (
           // TODO: Use a different key.
@@ -67,14 +70,14 @@ const LinksInput = ({ form, remove, push, value, name, onChange }) => {
               <Link>
                 Link:&nbsp;
                 {value.length > 1 && (
-                  <Button
+                  <ActionButton
                     onClick={() => {
                       remove(index)
                     }}
                     type="button"
                   >
                     Remove
-                  </Button>
+                  </ActionButton>
                 )}
               </Link>
               <div>

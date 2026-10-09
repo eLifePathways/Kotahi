@@ -5,8 +5,12 @@ import PropTypes from 'prop-types'
 import { grid, th, uuid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 
-import { DeleteControl, TextInput } from '../../../shared'
-import { Button } from '../../../pubsweet'
+import {
+  ActionButton,
+  AddLabel,
+  DeleteControl,
+  TextInput,
+} from '../../../shared'
 import { fields, validateDoiField } from '../../../../shared/doiFieldDefinition'
 
 const Doi = styled.div`
@@ -97,7 +101,7 @@ const DoisInput = ({ onChange, value, overrideButtonLabel = undefined }) => {
           />
         </DoiContainer>
       ))}
-      <Button
+      <ActionButton
         disabled={validateDoiField(cleanedVal)}
         onClick={() => {
           const newVal = [
@@ -110,12 +114,15 @@ const DoisInput = ({ onChange, value, overrideButtonLabel = undefined }) => {
 
           onChange(newVal)
         }}
+        primary
         type="button"
       >
-        {!overrideButtonLabel
-          ? t('decisionPage.Add another doi')
-          : overrideButtonLabel}
-      </Button>
+        <AddLabel>
+          {!overrideButtonLabel
+            ? t('decisionPage.Add another doi')
+            : overrideButtonLabel}
+        </AddLabel>
+      </ActionButton>
     </div>
   )
 }

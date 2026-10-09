@@ -8,8 +8,8 @@ import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import i18next from 'i18next'
 import { useDropzone } from 'react-dropzone'
-import { TextField, ValidatedFieldFormik, Button } from '../../../../pubsweet'
-import { DeleteControl } from '../../../../shared'
+import { TextField, ValidatedFieldFormik } from '../../../../pubsweet'
+import { ActionButton, AddLabel, DeleteControl } from '../../../../shared'
 import { meetsWcagAA } from '../../../../../shared/colorContrast'
 
 const Inline = styled.div`
@@ -172,9 +172,9 @@ const FileReaderComponent = ({ push, setFieldValue }) => {
       <div className="container">
         <div {...getRootProps({ className: 'dropzone' })}>
           <input {...getInputProps()} />
-          <Button onClick={open} type="button">
-            {t('formBuilder.Add options from a JSON file')}
-          </Button>
+          <ActionButton onClick={open} type="button">
+            <AddLabel>{t('formBuilder.Add options from a JSON file')}</AddLabel>
+          </ActionButton>
         </div>
       </div>
       {error && <ErrorMessageWrapper>{error}</ErrorMessageWrapper>}
@@ -276,9 +276,13 @@ const RenderOptions = ({ form: { values, setFieldValue }, push, remove }) => {
         </li>
       ))}
       <LiControlOptions>
-        <Button disabled={hasNewOption} onClick={() => push()} type="button">
-          {t('formBuilder.Add another option')}
-        </Button>
+        <ActionButton
+          disabled={hasNewOption}
+          onClick={() => push()}
+          type="button"
+        >
+          <AddLabel>{t('formBuilder.Add another option')}</AddLabel>
+        </ActionButton>
         <FileReaderComponent push={push} setFieldValue={setFieldValue} />
       </LiControlOptions>
     </UnbulletedList>
