@@ -36,7 +36,7 @@ export const VerticalBar = styled.div`
 `
 
 export const NewEditText = styled.p`
-  color: ${props => props.theme.color.additional.green};
+  color: ${th('color.success.shade15')};
 `
 
 export const Heading2 = styled(Heading)`

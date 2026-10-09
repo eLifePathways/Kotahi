@@ -567,6 +567,11 @@ const ru = {
       accepted: '{{invitationType}} принял приглашение',
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Недостаточная доступность цвета',
+        poorContrastDescription:
+          'Выбранный цвет не соответствует стандарту доступности WCAG AA. Пользователям может быть сложно пользоваться интерфейсом и ориентироваться в нём. Пожалуйста, выберите другой цвет.',
+      },
       generalTab: 'Общие',
       workflowTab: 'Рабочий процесс',
       productionTab: 'Производство',

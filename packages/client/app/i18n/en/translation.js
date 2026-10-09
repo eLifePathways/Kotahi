@@ -566,6 +566,11 @@ const en = {
       accepted: 'Accepted {{invitationType}} invitation',
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Colour has poor accessibility',
+        poorContrastDescription:
+          'Colour selected fails to meet WCAG AA accessibility standard. Users may have difficulty with usability and navigation. Please consider a different colour.',
+      },
       generalTab: 'General',
       workflowTab: 'Workflow',
       productionTab: 'Production',

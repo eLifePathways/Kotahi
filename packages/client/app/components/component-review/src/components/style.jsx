@@ -72,7 +72,7 @@ export const ErrorWrap = styled.div`
   }
 `
 export const ErrorText = styled.div`
-  color: red;
+  color: ${th('color.error.base')};
 `
 
 export const RecommendationInputContainer = styled.div`

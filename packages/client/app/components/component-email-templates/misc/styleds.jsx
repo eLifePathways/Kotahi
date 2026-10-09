@@ -201,7 +201,7 @@ export const OptionListItem = styled.li`
 `
 
 export const OptionListItemButton = styled(CleanButton)`
-  color: ${p => (p.$warning ? p.theme.color.warning.base : '#555')};
+  color: ${p => (p.$warning ? p.theme.color.warning.shade25 : '#555')};
   gap: ${grid(3)};
   width: 100%;
 

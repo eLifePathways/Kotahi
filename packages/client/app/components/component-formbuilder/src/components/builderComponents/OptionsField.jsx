@@ -10,6 +10,7 @@ import i18next from 'i18next'
 import { useDropzone } from 'react-dropzone'
 import { TextField, ValidatedFieldFormik, Button } from '../../../../pubsweet'
 import { DeleteControl } from '../../../../shared'
+import { meetsWcagAA } from '../../../../../shared/colorContrast'
 
 const Inline = styled.div`
   display: inline-block;
@@ -98,14 +99,25 @@ const ValueInput = props => (
   />
 )
 
+const ContrastWarning = styled.div`
+  color: ${th('color.warning.shade25')};
+  font-size: ${th('fontSizeBaseSmall')};
+  max-width: ${grid(30)};
+`
+
+// Option colours are used as text on white (e.g. radio labels), so warn below AA
 const ColorPicker = ({ name, value, onChange }) => {
+  const color = value || defaultLabelColor
+
   return (
-    <input
-      name={name}
-      onChange={onChange}
-      type="color"
-      value={value || defaultLabelColor}
-    />
+    <>
+      <input name={name} onChange={onChange} type="color" value={color} />
+      {!meetsWcagAA(color) && (
+        <ContrastWarning role="status">
+          {i18next.t('configPage.colorPicker.poorContrastTitle')}
+        </ContrastWarning>
+      )}
+    </>
   )
 }
 

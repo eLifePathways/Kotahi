@@ -25,7 +25,7 @@ import ChangeLanguage from './ChangeLanguage'
 import { getLanguages } from '../../../i18n'
 
 const VersionText = styled.div`
-  color: #757575;
+  color: ${th('color.gray50')};
   position: fixed;
   bottom: ${grid(4)};
   right: ${grid(6)};
@@ -42,7 +42,7 @@ const StyledCheckbox = styled(Checkbox)`
 `
 
 const SpecialRolesLabel = styled.div`
-  color: ${th('colorPrimary')};
+  color: ${th('color.brand1.shade25')};
 `
 
 const UserPrivilegeAlert = styled.div`

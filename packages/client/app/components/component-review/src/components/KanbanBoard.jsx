@@ -4,6 +4,7 @@
 /* stylelint-disable alpha-value-notation, color-function-notation */
 
 import styled from 'styled-components'
+import { th } from '@coko/client'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import { AdminSection } from './style'
@@ -55,7 +56,7 @@ const BoardStatusHeader = styled.div`
 `
 
 const VersionNumber = styled.div`
-  color: rgb(0 0 0 / 50%);
+  color: ${th('color.gray50')};
 `
 
 // TODO standardise all statuses to camelCase and 'invited' instead

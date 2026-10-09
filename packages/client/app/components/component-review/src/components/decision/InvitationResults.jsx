@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../../../pubsweet'
 import { SectionRow } from '../style'
@@ -52,7 +52,7 @@ export const Ordinal = styled.span`
   ${props =>
     props.status === 'REJECTED'
       ? css`
-          color: red;
+          color: ${th('color.error.base')};
         `
       : css`
           color: green;

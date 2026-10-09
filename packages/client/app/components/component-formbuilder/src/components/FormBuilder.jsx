@@ -76,7 +76,7 @@ const SmallIcon = withTheme(({ children }) => (
 ))
 
 const FieldTypeLabel = styled.span`
-  color: ${th('color.brand1.tint50')};
+  color: ${th('color.brand1.base')};
   font-size: ${th('fontSizeBaseSmall')};
   margin-left: 0.5em;
 `

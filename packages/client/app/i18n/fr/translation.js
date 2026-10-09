@@ -570,6 +570,11 @@ const fr = {
       accepted: "A accepté l'invitation {{invitationType}}",
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Couleur peu accessible',
+        poorContrastDescription:
+          'La couleur sélectionnée ne respecte pas la norme d’accessibilité WCAG AA. Les utilisateurs peuvent rencontrer des difficultés d’utilisation et de navigation. Veuillez envisager une autre couleur.',
+      },
       generalTab: 'Général',
       workflowTab: 'Flux de travail',
       productionTab: 'Production',

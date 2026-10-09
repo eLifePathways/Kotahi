@@ -565,6 +565,11 @@ const esLa = {
       accepted: 'Invitación {{invitationType}} aceptada',
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'El color tiene baja accesibilidad',
+        poorContrastDescription:
+          'El color seleccionado no cumple con el estándar de accesibilidad WCAG AA. Los usuarios pueden tener dificultades de uso y navegación. Considere elegir otro color.',
+      },
       generalTab: 'General',
       workflowTab: 'Flujo de trabajo',
       productionTab: 'Producción',

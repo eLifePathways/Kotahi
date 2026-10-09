@@ -144,7 +144,7 @@ const CommentWrapper = styled.div`
   ${props =>
     props.commentBelongsToDifferentManuscriptVersion
       ? css`
-          color: ${th('color.gray60')};
+          color: ${th('color.gray50')};
         `
       : ``}
 
@@ -192,7 +192,7 @@ const CommentContainer = styled.div`
     ${props =>
       props.commentBelongsToDifferentManuscriptVersion
         ? css`
-            color: ${th('color.gray60')};
+            color: ${th('color.gray50')};
             background-color: ${th('color.backgroundA')};
           `
         : ``}

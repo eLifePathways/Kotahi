@@ -37,8 +37,12 @@ export default css`
   min-width: ${grid(32)};
   ${props => !props.$primary && secondary};
 
-  &:focus,
-  &:hover {
-    background-color: ${th('color.brand1.tint25')};
-  }
+  ${props =>
+    props.$primary &&
+    css`
+      &:focus,
+      &:hover {
+        background-color: ${th('color.brand1.shade25')};
+      }
+    `}
 `
