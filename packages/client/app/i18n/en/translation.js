@@ -160,7 +160,7 @@ const en = {
       Email: 'Email',
       Language: 'Language',
       Change: 'Change',
-      enterEmail: 'Enter email',
+      enterEmail: 'Enter Email',
       enterYourEmail: 'Enter your email',
       usernameWarn:
         'Cannot begin with a numeral or start or end with space characters',
