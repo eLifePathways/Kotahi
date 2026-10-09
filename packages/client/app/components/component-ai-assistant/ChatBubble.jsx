@@ -84,7 +84,6 @@ const UnStyledButton = styled.button`
   color: #000422;
   cursor: pointer;
   font-size: 12px;
-  outline: none;
   padding: 0;
   text-align: left;
   text-decoration: underline;

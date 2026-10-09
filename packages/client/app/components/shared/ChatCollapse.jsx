@@ -29,7 +29,7 @@ const DragIcon = styled.div`
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
-  /* color: linear-gradient(134deg, #3aae2a, hsl(112.7, 61.1%, 59.6%)); */
+  /* color: linear-gradient(134deg, #4a7c59, hsl(138, 25.3%, 56%)); */
   cursor: pointer;
   left: 0;
   padding: 10px 20px;

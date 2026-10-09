@@ -3,7 +3,6 @@
 import { useContext, useState } from 'react'
 import { DateParser } from '@coko/client'
 import { useTranslation } from 'react-i18next'
-import { Button } from '../../../../../pubsweet'
 import Tooltip from '../../../../../component-reporting/src/Tooltip'
 import {
   CommentMetaWrapper,
@@ -14,10 +13,13 @@ import {
   ActionWrapper,
   Collapse,
   ModalContainer,
-  CancelButton,
   CommentContainer,
 } from '../../style'
-import { FieldPublishingSelector, Icon } from '../../../../../shared'
+import {
+  ActionButton,
+  FieldPublishingSelector,
+  Icon,
+} from '../../../../../shared'
 import { UserAvatar } from '../../../../../component-avatar/src'
 import Modal from '../../../../../component-modal/src/ConfirmationModal'
 import SimpleWaxEditor from '../../../../../wax-collab/src/SimpleWaxEditor'
@@ -196,24 +198,24 @@ const ThreadedComment = ({
             }}
             value={modalFieldValue}
           />
-          <Button
-            $primary
+          <ActionButton
             onClick={() => {
               onSubmitClick()
             }}
+            primary
           >
             {t('modals.editDiscussion.saveEdit')}
-          </Button>
+          </ActionButton>
           &nbsp;
-          <CancelButton
+          <ActionButton
             onClick={() => {
               setOpenModal(false)
               setModalFieldValue(existingComment?.comment || value)
               onCancel()
             }}
           >
-            {t('modals.editDiscussion.cancel')}
-          </CancelButton>
+            {t('modals.editDiscussion.canwecel')}
+          </ActionButton>
         </ModalContainer>
       </Modal>
     </CommentContainer>

@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
-import { Button } from '../../../pubsweet'
 
 export const Section = styled.div`
   margin: ${grid(8)} 0;
@@ -144,7 +143,7 @@ const CommentWrapper = styled.div`
   ${props =>
     props.commentBelongsToDifferentManuscriptVersion
       ? css`
-          color: ${th('color.gray60')};
+          color: ${th('color.gray50')};
         `
       : ``}
 
@@ -174,16 +173,6 @@ const ActionWrapper = styled.div`
   }
 `
 
-const CancelButton = styled(Button)`
-  background-color: ${th('color.gray90')};
-  padding: 8px;
-  text-decoration: none;
-
-  &:hover {
-    background-color: ${th('color.gray80')};
-  }
-`
-
 const CommentContainer = styled.div`
   border-bottom: 1px ${th('borderStyle')} ${th('color.gray80')};
   padding-bottom: 25px;
@@ -192,7 +181,7 @@ const CommentContainer = styled.div`
     ${props =>
       props.commentBelongsToDifferentManuscriptVersion
         ? css`
-            color: ${th('color.gray60')};
+            color: ${th('color.gray50')};
             background-color: ${th('color.backgroundA')};
           `
         : ``}
@@ -214,7 +203,6 @@ export {
   CommentWrapper,
   ActionWrapper,
   Collapse,
-  CancelButton,
   CommentContainer,
   ErrorMessageWrapper,
 }

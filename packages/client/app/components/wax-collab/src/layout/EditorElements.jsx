@@ -55,7 +55,7 @@ const EditorStyles = css`
     vertical-align: top;
 
     &:hover {
-      background: ${th('color.brand1.tint25')};
+      background: ${th('color.brand1.tint50')};
     }
 
     ::after {
@@ -98,7 +98,7 @@ const EditorStyles = css`
 
   /* placeholder */
   .empty-node::before {
-    color: ${th('color.gray60')};
+    color: ${th('color.gray50')};
     float: left;
     font-style: italic;
     height: 0;

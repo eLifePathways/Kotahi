@@ -294,7 +294,7 @@ To see what languages are currently available in Kotahi, visit your profile page
 
 ### How do I set the logo and branding colours?
 
-Branding colours, logos, and information can be set in Configuration > General Tab > Group Identity. Colours must be specified in hex format, e.g. "#9e9e9e".
+Branding colours, logos, and information can be set in Configuration > General Tab > Group Identity. Colours must be specified in hex format, e.g. "#6b7280".
 
 ## INSTANCE_GROUPS and Multitenancy
 

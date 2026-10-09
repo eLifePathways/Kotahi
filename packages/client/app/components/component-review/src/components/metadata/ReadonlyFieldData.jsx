@@ -12,6 +12,7 @@ import { Attachment } from '../../../../shared'
 import ThreadedDiscussion from '../../../../component-formbuilder/src/components/builderComponents/ThreadedDiscussion/ThreadedDiscussion'
 import LocalContext from '../../../../component-submit/src/components/LocalContext'
 import Badge from '../../../../../ui/shared/Badge'
+import { getReadableTextColor } from '../../../../../shared/colorContrast'
 
 const parseIdentifierAndName = id => {
   const lastIndex = id.lastIndexOf('-')
@@ -237,7 +238,10 @@ const ReadonlyFieldData = ({
                 <Badge
                   key={option.id}
                   small
-                  style={{ backgroundColor: option.labelColor }}
+                  style={{
+                    backgroundColor: option.labelColor,
+                    color: getReadableTextColor(option.labelColor),
+                  }}
                 >
                   {option.label}
                 </Badge>

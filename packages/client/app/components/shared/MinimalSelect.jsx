@@ -71,7 +71,7 @@ const styles = theme => ({
         },
   multiValue: (provided, state) => {
     return state.data.isFixed
-      ? { ...provided, backgroundColor: 'gray' }
+      ? { ...provided, backgroundColor: theme.color.gray50 }
       : provided
   },
   multiValueLabel: (provided, state) => {

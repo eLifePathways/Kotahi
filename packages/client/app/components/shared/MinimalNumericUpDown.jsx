@@ -14,7 +14,7 @@ const UpDownButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  color: ${th('color.gray60')};
+  color: ${th('color.gray50')};
   height: ${grid(4)};
   justify-content: center;
   padding: 0 ${grid(1)};

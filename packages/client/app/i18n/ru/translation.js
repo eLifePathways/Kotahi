@@ -38,6 +38,7 @@ const ru = {
       No: 'Нет',
       Save: 'Сохранить',
       Update: 'Обновить',
+      next: 'Далее',
       Activate: 'Активировать',
       Deactivate: 'Деактивировать',
       Modified: 'Изменено',
@@ -160,6 +161,8 @@ const ru = {
       Email: 'Email',
       Language: 'Язык',
       Change: 'Изменить',
+      enterEmail: 'Введите адрес электронной почты',
+      enterYourEmail: 'Введите ваш адрес электронной почты',
       usernameWarn:
         'Не может начинаться с цифры или начинаться или заканчиваться пробелами',
       userPrivilegeAlert: `Требуются права пользователя
@@ -567,6 +570,11 @@ const ru = {
       accepted: '{{invitationType}} принял приглашение',
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Недостаточная доступность цвета',
+        poorContrastDescription:
+          'Выбранный цвет не соответствует стандарту доступности WCAG AA. Пользователям может быть сложно пользоваться интерфейсом и ориентироваться в нём. Пожалуйста, выберите другой цвет.',
+      },
       generalTab: 'Общие',
       workflowTab: 'Рабочий процесс',
       productionTab: 'Производство',

@@ -38,6 +38,7 @@ const en = {
       No: 'No',
       Save: 'Save',
       Update: 'Update',
+      next: 'Next',
       Activate: 'Activate',
       Create: 'Create',
       Deactivate: 'Deactivate',
@@ -159,6 +160,8 @@ const en = {
       Email: 'Email',
       Language: 'Language',
       Change: 'Change',
+      enterEmail: 'Enter Email',
+      enterYourEmail: 'Enter your email',
       usernameWarn:
         'Cannot begin with a numeral or start or end with space characters',
       userPrivilegeAlert: `User Privileges Required
@@ -243,7 +246,7 @@ const en = {
     },
     dashboardPage: {
       Dashboard: 'Dashboard',
-      'New submission': '+ New submission',
+      'New submission': 'New submission',
       'New Alerts': 'New Alerts',
       'My Submissions': 'My Submissions',
       'To Review': 'Review Assignments',
@@ -566,6 +569,11 @@ const en = {
       accepted: 'Accepted {{invitationType}} invitation',
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Colour has poor accessibility',
+        poorContrastDescription:
+          'Colour selected fails to meet WCAG AA accessibility standard. Users may have difficulty with usability and navigation. Please consider a different colour.',
+      },
       generalTab: 'General',
       workflowTab: 'Workflow',
       productionTab: 'Production',

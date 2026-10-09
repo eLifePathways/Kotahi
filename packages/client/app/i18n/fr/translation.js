@@ -38,6 +38,7 @@ const fr = {
       No: 'Non',
       Save: 'Enregistrer',
       Update: 'Mettre à jour',
+      next: 'Suivant',
       Activate: 'Activer',
       Deactivate: 'Désactiver',
       Create: 'Créer',
@@ -159,6 +160,8 @@ const fr = {
       Email: 'Email',
       Language: 'Langue',
       Change: 'Changer',
+      enterEmail: 'Saisir l’adresse e-mail',
+      enterYourEmail: 'Saisissez votre adresse e-mail',
       usernameWarn:
         'Ne peut pas commencer par un chiffre ou débuter ou finir par des espaces',
       userPrivilegeAlert: `Droits d'utilisateur requis
@@ -244,7 +247,7 @@ const fr = {
     },
     dashboardPage: {
       Dashboard: 'Tableau de bord',
-      'New submission': '+ Nouvelle soumission',
+      'New submission': 'Nouvelle soumission',
       'New Alerts': 'Nouvelles alertes',
       'My Submissions': 'Mes soumissions',
       'To Review': 'Affectations de révision',
@@ -570,6 +573,11 @@ const fr = {
       accepted: "A accepté l'invitation {{invitationType}}",
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Couleur peu accessible',
+        poorContrastDescription:
+          'La couleur sélectionnée ne respecte pas la norme d’accessibilité WCAG AA. Les utilisateurs peuvent rencontrer des difficultés d’utilisation et de navigation. Veuillez envisager une autre couleur.',
+      },
       generalTab: 'Général',
       workflowTab: 'Flux de travail',
       productionTab: 'Production',

@@ -6,7 +6,9 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { th } from '@coko/client'
 import styled from 'styled-components'
-import { TextField, Button } from '../../pubsweet'
+import { useTranslation } from 'react-i18next'
+import { TextField } from '../../pubsweet'
+import { ActionButton } from '../../shared'
 
 const ModalContainer = styled.div`
   background: ${th('colorBackground')};
@@ -45,6 +47,7 @@ const EnterEmailLabel = styled.label`
 `
 
 const EnterEmail = ({ updateUserEmail, user }) => {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [updateEmailError, setUpdateEmailError] = useState('')
 
@@ -67,21 +70,23 @@ const EnterEmail = ({ updateUserEmail, user }) => {
           e.preventDefault()
         }}
       >
-        <EnterEmailLabel htmlFor="enter-email">Enter Email</EnterEmailLabel>
+        <EnterEmailLabel htmlFor="enter-email">
+          {t('profilePage.enterEmail')}
+        </EnterEmailLabel>
         <InlineTextField
           $error={updateEmailError}
           autoFocus
           id="enter-email"
           onChange={e => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          placeholder={t('profilePage.enterYourEmail')}
           value={email}
         />
         <br />
         <UpdateEmailError>{updateEmailError}</UpdateEmailError>
         <ButtonContainer>
-          <Button $primary onClick={() => updateEmail(user.id, email)}>
-            Next
-          </Button>
+          <ActionButton onClick={() => updateEmail(user.id, email)} primary>
+            {t('common.next')}
+          </ActionButton>
         </ButtonContainer>
       </form>
     </ModalContainer>

@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Field, Formik } from 'formik'
 
-import { Button, Checkbox, Spinner, TextArea } from '../../../pubsweet'
+import { Checkbox, Spinner, TextArea } from '../../../pubsweet'
 import {
   ADD_EMAIL_TO_BLACKLIST,
   UPDATE_INVITATION_RESPONSE,
@@ -29,7 +29,7 @@ import {
 
 import AuthorsInput from '../../../component-submit/src/components/AuthorsInput'
 import { validateAuthors } from '../../../../shared/authorsFieldDefinitions'
-import { InvalidLabel, LinkAction } from '../../../shared'
+import { ActionButton, InvalidLabel, LinkAction } from '../../../shared'
 import InvitationError from './InvitationError'
 
 const SuggestedReviewersContainer = styled.div`
@@ -312,9 +312,9 @@ const DeclineArticleOwnershipPage = () => {
                         />
                       </StyledFormInput>
                       <ButtonWrapper>
-                        <Button $primary type="submit">
+                        <ActionButton primary type="submit">
                           {t('declineReviewPage.Decline Invitation')}
-                        </Button>
+                        </ActionButton>
                       </ButtonWrapper>
                     </FeedbackForm>
                   </form>

@@ -46,8 +46,6 @@ export const validateColor = colorCode => {
 // warm, dark gray like #2C2A29
 // or #333230
 
-// const defaultBrandColor1 = '#3aae2a'
-// const defaultBrandColor2 = '#9e9e9e'
 const defaultBrandColor1 = '#4a7c59'
 const defaultBrandColor2 = '#6b7280'
 
@@ -72,7 +70,7 @@ export const makeTheme = (
       gray30: '#4F4F4F', // 30%
       // gray35: '#595959', // 35%: colorTextPlaceholder
       gray40: '#666666', // 40%: colorIconPrimary
-      gray50: '#888888', // 53%
+      gray50: '#6E6E6E', // 43%: passes 4.5:1 as text on white, gray97 and backgroundC
       gray60: '#A5A5A5', // 65%: near colorBorder:#AAAAAA
       gray70: '#BFBFBF', // 75%
       gray80: '#DEDEDE', // 87%: colorContainerBorder
@@ -93,8 +91,9 @@ export const makeTheme = (
       backgroundC: '#f2f2f2',
 
       brand1: {
-        shade50: Color(colorBrand1).darken(0.52),
-        shade25: Color(colorBrand1).darken(0.27),
+        // .hex(): styled-components drops Color objects, so these must be strings
+        shade50: Color(colorBrand1).darken(0.52).hex(),
+        shade25: Color(colorBrand1).darken(0.27).hex(),
         // shade15: Color(colorBrand1).darken(0.17),
         // shade10: Color(colorBrand1).darken(0.11),
         base: colorBrand1,
@@ -120,7 +119,7 @@ export const makeTheme = (
       success: {
         // shade50: '#133a0e',
         // shade25: '#1b5414',
-        // shade15: '#25721c',
+        shade15: '#25721c', // text on white: 6:1
         // shade10: '#2c8a21',
         base: '#329a25',
         // tint10: '#3bb32b',
@@ -131,7 +130,7 @@ export const makeTheme = (
       },
       warning: {
         shade50: '#6f3f00',
-        // shade25: '#8e5000',
+        shade25: '#8e5000', // text on white: 6.4:1
         // shade15: '#ae6200',
         shade10: '#c56f00',
         base: '#e48100',
@@ -144,7 +143,7 @@ export const makeTheme = (
       error: {
         // shade50: '#6f1919',
         // shade25: '#8a1e1e',
-        // shade15: '#a52424',
+        shade15: '#a52424', // text on colorFurniture: 6:1
         // shade10: '#bf2828',
         base: '#d22b2b',
         // tint10: '#d94747',
@@ -164,7 +163,7 @@ export const makeTheme = (
 
     colorBackground: '#FFFFFF',
     colorBackgroundHue,
-    colorBorder: '#A5A5A5',
+    colorBorder: '#8F8F8F', // 3:1 minimum for input borders (WCAG 1.4.11)
     colorContainerBorder: '#DEDEDE',
     colorDisabled: '#bfbfbf',
     colorError: '#B53930',

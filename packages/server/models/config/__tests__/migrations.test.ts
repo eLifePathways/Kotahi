@@ -101,8 +101,8 @@ describe('Config Migrations', () => {
     const smtpConfig = await Config.findById(gmailConfig.id)
 
     expect(smtpConfig.formData.notification.gmailAuthEmail).toBeUndefined()
-    expect(gmailConfig.formData.notification.gmailAuthPassword).toBeUndefined()
-    expect(gmailConfig.formData.notification.gmailSenderName).toBeUndefined()
+    expect(smtpConfig.formData.notification.gmailAuthPassword).toBeUndefined()
+    expect(smtpConfig.formData.notification.gmailSenderName).toBeUndefined()
     expect(smtpConfig.formData.emailNotification.user).toBeUndefined()
     expect(smtpConfig.formData.emailNotification.pass).toBeUndefined()
     expect(smtpConfig.formData.emailNotification.from).toBeUndefined()
@@ -259,5 +259,202 @@ describe('Config Migrations', () => {
       .forEach(e => {
         expect(config1.formData.notification.eventsConfig[e].active).toBe(true)
       })
+  })
+
+  it('changes the default group identity colours', async () => {
+    await migrationManager.migrate({ to: '1789019316-remove-chat-expanded.ts' })
+
+    const noncompliantGroupIdentity = {
+      primaryColor: '#3aae2a',
+      secondaryColor: '#9e9e9e',
+    }
+
+    const compliantGroupIdentity = {
+      primaryColor: '#4a7c59',
+      secondaryColor: '#6b7280',
+    }
+
+    // non-compliant
+    const group1 = await Group.insert({})
+
+    let config1ForGroup1 = await Config.insert({
+      active: true,
+      groupId: group1.id,
+      formData: {
+        groupIdentity: noncompliantGroupIdentity,
+      },
+    })
+
+    let config2ForGroup1 = await Config.insert({
+      active: false,
+      groupId: group1.id,
+      formData: {
+        groupIdentity: noncompliantGroupIdentity,
+      },
+    })
+
+    // mixed
+    const group2 = await Group.insert({})
+
+    let configForGroup2 = await Config.insert({
+      active: true,
+      groupId: group2.id,
+      formData: {
+        groupIdentity: {
+          primaryColor: noncompliantGroupIdentity.primaryColor,
+          secondaryColor: compliantGroupIdentity.secondaryColor,
+        },
+      },
+    })
+
+    // compliant
+    const group3 = await Group.insert({})
+
+    let configForGroup3 = await Config.insert({
+      active: true,
+      groupId: group3.id,
+      formData: {
+        groupIdentity: compliantGroupIdentity,
+      },
+    })
+
+    // non-compliant, uppercase (as stored by 1678694877-create-config-data-from-env)
+    const group4 = await Group.insert({})
+
+    let configForGroup4 = await Config.insert({
+      active: true,
+      groupId: group4.id,
+      formData: {
+        groupIdentity: {
+          primaryColor: noncompliantGroupIdentity.primaryColor.toUpperCase(),
+          secondaryColor:
+            noncompliantGroupIdentity.secondaryColor.toUpperCase(),
+        },
+      },
+    })
+
+    // mixed, the other way round
+    const group5 = await Group.insert({})
+
+    let configForGroup5 = await Config.insert({
+      active: true,
+      groupId: group5.id,
+      formData: {
+        groupIdentity: {
+          primaryColor: compliantGroupIdentity.primaryColor,
+          secondaryColor: noncompliantGroupIdentity.secondaryColor,
+        },
+      },
+    })
+
+    // no group identity
+    const group6 = await Group.insert({})
+
+    let configForGroup6 = await Config.insert({
+      active: true,
+      groupId: group6.id,
+      formData: {},
+    })
+
+    await migrationManager.migrate({ step: 1 })
+
+    config1ForGroup1 = await Config.findById(config1ForGroup1.id)
+    config2ForGroup1 = await Config.findById(config2ForGroup1.id)
+    configForGroup2 = await Config.findById(configForGroup2.id)
+    configForGroup3 = await Config.findById(configForGroup3.id)
+    configForGroup4 = await Config.findById(configForGroup4.id)
+    configForGroup5 = await Config.findById(configForGroup5.id)
+    configForGroup6 = await Config.findById(configForGroup6.id)
+
+    expect(config1ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(config1ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(config2ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(config2ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup2.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup2.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup3.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup3.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup4.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup4.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup5.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup5.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup6.formData.groupIdentity).toBeUndefined()
+
+    await migrationManager.rollback({ step: 1 })
+
+    config1ForGroup1 = await Config.findById(config1ForGroup1.id)
+    config2ForGroup1 = await Config.findById(config2ForGroup1.id)
+    configForGroup2 = await Config.findById(configForGroup2.id)
+    configForGroup3 = await Config.findById(configForGroup3.id)
+    configForGroup5 = await Config.findById(configForGroup5.id)
+    configForGroup6 = await Config.findById(configForGroup6.id)
+
+    expect(config1ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(config1ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(config2ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(config2ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup2.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup2.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    // what uses the compliant defaults should now be non-compliant
+    expect(configForGroup3.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup3.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup5.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup5.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup6.formData.groupIdentity).toBeUndefined()
   })
 })
