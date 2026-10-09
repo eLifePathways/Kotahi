@@ -46,8 +46,6 @@ export const validateColor = colorCode => {
 // warm, dark gray like #2C2A29
 // or #333230
 
-// const defaultBrandColor1 = '#3aae2a'
-// const defaultBrandColor2 = '#9e9e9e'
 const defaultBrandColor1 = '#4a7c59'
 const defaultBrandColor2 = '#6b7280'
 

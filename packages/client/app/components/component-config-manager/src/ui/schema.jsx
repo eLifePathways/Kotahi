@@ -108,12 +108,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -1323,12 +1323,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -2558,12 +2558,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -3823,12 +3823,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {

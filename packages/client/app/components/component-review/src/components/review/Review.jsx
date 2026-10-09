@@ -136,7 +136,7 @@ const Review = ({
 
           <LooseRow>
             <Icon
-              color="#9e9e9e"
+              color="#6b7280"
               onClick={() => setOpen(prevOpen => !prevOpen)}
             >
               {open ? 'chevron-up' : 'chevron-down'}

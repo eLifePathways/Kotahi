@@ -49,7 +49,7 @@ const ReviewersDeclined = ({ members }) => {
               ? t('decisionPage.Hide Declined')
               : t('decisionPage.See Declined', { count: declinations.length })}
           </UserAction>
-          <Icon color="#9e9e9e">{open ? 'chevron-up' : 'chevron-down'}</Icon>
+          <Icon color="#6b7280">{open ? 'chevron-up' : 'chevron-down'}</Icon>
         </DropdownTitleContainer>
       </SectionHeader>
 
