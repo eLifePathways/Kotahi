@@ -16,12 +16,6 @@ const CheckboxContainer = styled.div`
     color: white;
     padding: 14px 9px;
 
-    &:active,
-    &:focus-visible {
-      /* border: 1px solid ${th('color.gray70')}; */
-      outline: none;
-    }
-
     &:hover {
       accent-color: ${th('color.brand1.shade25')};
       border: none;

@@ -14,7 +14,6 @@ const secondary = css`
     background: none;
     border: none;
     color: ${th('color.brand1.shade25')};
-    outline: none;
   }
 
   &[disabled] {

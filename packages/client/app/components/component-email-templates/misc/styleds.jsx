@@ -19,7 +19,6 @@ export const CleanButton = styled.button.attrs({ type: 'button' })`
   gap: ${grid(2)};
   justify-content: flex-start;
   opacity: ${p => (p.$disabled ? 0.5 : 1)};
-  outline: none;
 `
 
 // #region EmailTemplates -----------------------------------------------------------------------

@@ -76,7 +76,6 @@ const CssAssistantUi = styled.div`
       background: none;
       border: none;
       cursor: pointer;
-      outline: none;
       padding: 0;
 
       > svg {
