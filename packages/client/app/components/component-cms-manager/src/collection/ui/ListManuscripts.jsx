@@ -56,7 +56,7 @@ const SortableManuscriptItem = ({ it, onDelete, t }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    backgroundColor: isDragging ? '#3aae2a' : '#fff',
+    backgroundColor: isDragging ? '#4a7c59' : '#fff',
   }
 
   return (

@@ -4,14 +4,14 @@
 import { useState, useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import i18next from 'i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Formik } from 'formik'
 
 import { ConfigContext } from '../../../config/src'
 import { RadioBox } from '../../../component-formbuilder/src/components/builderComponents'
 import { Legend } from '../../../component-formbuilder/src/components/style'
-import { Button, ValidatedFieldFormik } from '../../../pubsweet'
+import { ValidatedFieldFormik } from '../../../pubsweet'
 import {
   Title,
   SectionHeader,
@@ -19,7 +19,7 @@ import {
   SectionActionInfo,
   SectionAction,
 } from './style'
-import { SectionContent } from '../../../shared'
+import { ActionButton, SectionContent } from '../../../shared'
 import Alert from './publishing/Alert'
 import PublishingResponse from './publishing/PublishingResponse'
 import { getLanguages } from '../../../../i18n'
@@ -27,23 +27,20 @@ import { FlexRow } from '../../../../globals'
 
 const ActionButtonsWrapper = styled(FlexRow)`
   gap: 8px;
-`
 
-const UnpublishButton = styled(Button)`
-  background: #fff;
-  color: ${th('color.error.base')};
-  cursor: pointer;
-  outline: 1px solid ${th('color.error.base')};
-
-  &:hover,
-  &:focus,
-  &:active {
-    background: ${th('color.error.base')};
-    color: #fff;
+  /* Keep labels on one line when a status icon is added */
+  > * {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 `
 
-const PublishButton = styled(Button)`
+const UnpublishButton = styled(ActionButton)`
+  cursor: pointer;
+  outline: 1px solid ${th('color.error.base')};
+`
+
+const PublishButton = styled(ActionButton)`
   cursor: pointer;
   outline: 1px solid ${th('color.brand1.base')};
 `
@@ -51,6 +48,11 @@ const PublishButton = styled(Button)`
 const PublishWrapper = styled.div`
   div {
     margin-bottom: ${grid(4)};
+  }
+
+  /* ActionButton's spinner/status icons are divs; don't push them off-centre */
+  button div {
+    margin-bottom: 0;
   }
 `
 
@@ -72,7 +74,11 @@ const Publish = ({
 }) => {
   // Hooks from the old world
   const config = useContext(ConfigContext)
+  const theme = useTheme()
   const [isPublishing, setIsPublishing] = useState(false)
+  const [isUnpublishing, setIsUnpublishing] = useState(false)
+  // Which button the current response/error belongs to
+  const [lastAction, setLastAction] = useState(null)
   const [publishResponse, setPublishResponse] = useState(null)
   const [publishAdaResponse, setPublishAdaResponse] = useState(null)
   const [publishingError, setPublishingError] = useState(null)
@@ -106,6 +112,8 @@ const Publish = ({
   }
 
   const handlePublish = () => {
+    setLastAction('publish')
+    setPublishingError(null)
     setIsPublishing(true)
 
     publishManuscript({ variables: { id: manuscript.id } })
@@ -121,6 +129,10 @@ const Publish = ({
   }
 
   const handleUnpublish = () => {
+    setLastAction('unpublish')
+    setPublishingError(null)
+    setIsUnpublishing(true)
+
     unpublish(manuscript.id)
       .then(() => {
         setPublishResponse({ steps: [{ unpublished: true }] })
@@ -129,6 +141,7 @@ const Publish = ({
         console.error(error)
         setPublishingError(error.message)
       })
+      .finally(() => setIsUnpublishing(false))
   }
 
   const handleRefreshAdaStatus = () => {
@@ -147,6 +160,17 @@ const Publish = ({
 
   const adaJobFailed = adaJobStatus === 'Failed' && !!adaJobDetails
   const adaDisplayStatus = adaJobFailed ? adaJobStatus : adaProcessStatus
+
+  const getActionStatus = (action, isInProgress) => {
+    if (isInProgress) return 'pending'
+    if (lastAction !== action) return undefined
+    if (publishingError) return 'failure'
+    if (publishResponse) return 'success'
+    return undefined
+  }
+
+  const publishingStatus = getActionStatus('publish', isPublishing)
+  const unpublishingStatus = getActionStatus('unpublish', isUnpublishing)
 
   return (
     <PublishWrapper>
@@ -189,17 +213,25 @@ const Publish = ({
           <SectionAction>
             <ActionButtonsWrapper>
               {manuscript.published && manuscript.status !== 'unpublished' && (
-                <UnpublishButton $primary onClick={handleUnpublish}>
+                <UnpublishButton
+                  color={theme.color.error.base}
+                  data-testid="unpublish-button"
+                  disabled={isPublishing}
+                  onClick={handleUnpublish}
+                  status={unpublishingStatus}
+                >
                   {t('decisionPage.decisionTab.Unpublish')}
                 </UnpublishButton>
               )}
               <PublishButton
-                $primary
                 data-testid="publish-button"
+                // Not disabled while pending, so the spinner shows (ActionButton ignores clicks then)
                 disabled={
-                  (notAccepted && areVerdictOptionsComplete) || isPublishing
+                  (notAccepted && areVerdictOptionsComplete) || isUnpublishing
                 }
                 onClick={handlePublish}
+                primary
+                status={publishingStatus}
               >
                 {manuscript.published && manuscript.status !== 'unpublished'
                   ? t('decisionPage.decisionTab.Republish')
@@ -245,13 +277,13 @@ const Publish = ({
                       {adaJobFailed && (
                         <Alert type="error">{adaJobDetails}</Alert>
                       )}
-                      <Button
-                        $primary
+                      <ActionButton
                         disabled={isRefreshingAdaStatus}
                         onClick={handleRefreshAdaStatus}
+                        primary
                       >
                         {t('decisionPage.decisionTab.refreshAdaStatus')}
-                      </Button>
+                      </ActionButton>
                     </AdaStatusWrapper>
                   )}
                   <ValidatedFieldFormik
@@ -290,15 +322,15 @@ const Publish = ({
                     ]}
                     value={values.adaState}
                   />
-                  <Button
-                    $primary
+                  <ActionButton
                     disabled={
                       (notAccepted && areVerdictOptionsComplete) || isPublishing
                     }
                     onClick={handleSubmit}
+                    primary
                   >
                     {t('decisionPage.decisionTab.UpdateAda')}
-                  </Button>
+                  </ActionButton>
                   {publishAdaResponse && (
                     <PublishingResponse response={publishAdaResponse} />
                   )}

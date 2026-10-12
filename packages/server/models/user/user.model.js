@@ -185,6 +185,14 @@ class User extends BaseModel {
     return user
   }
 
+  static async findByUsernamePrefix(prefix, options = {}) {
+    const { trx } = options
+    // Escape LIKE wildcards so the prefix is matched literally
+    const escapedPrefix = prefix.replace(/[\\%_]/g, '\\$&')
+
+    return this.query(trx).where('username', 'like', `${escapedPrefix}%`)
+  }
+
   static get modifiers() {
     return {
       orderByUsername(builder) {

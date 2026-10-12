@@ -136,15 +136,16 @@ const addReviewer = async (
   )
 }
 
-const archiveManuscript = async id => {
-  await deleteAlertsForManuscript(id)
-  const manuscript = await Manuscript.findById(id)
+const archiveManuscript = async (id, options = {}) => {
+  await deleteAlertsForManuscript(id, options)
+  const manuscript = await Manuscript.findById(id, options)
+  const { trx } = options
 
   // getting the ID of the firstVersion for all manuscripts.
   const firstVersionId = manuscript.parentId || manuscript.id
 
   // Archive Manuscript
-  const archivedManuscript = await Manuscript.query()
+  const archivedManuscript = await Manuscript.query(trx)
     .returning('id')
     .update({ isHidden: true })
     .where('id', firstVersionId)

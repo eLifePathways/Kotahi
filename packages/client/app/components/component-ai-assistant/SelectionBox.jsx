@@ -61,7 +61,6 @@ const RelativeContainer = styled.div`
       inset 0 0 8px #fff4;
     color: #eee;
     cursor: pointer;
-    outline: none;
     padding: 5px 5px 3px;
     pointer-events: all;
 

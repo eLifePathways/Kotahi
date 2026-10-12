@@ -5,9 +5,8 @@ import { last } from 'lodash'
 import styled from 'styled-components'
 import { grid, th, uuid } from '@coko/client'
 
-import { Spinner } from '../../../shared'
+import { ActionButton, Spinner } from '../../../shared'
 import { ConfigContext } from '../../../config/src'
-import { Button } from '../../../pubsweet'
 import { SubNote } from '../style'
 import { SEARCH_LOCAL_CONTEXT } from '../../../../queries'
 
@@ -31,16 +30,10 @@ const Input = styled.input`
   }
 `
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(ActionButton)`
   cursor: pointer;
-  display: flex;
-  gap: ${grid(2)};
-  margin-bottom: ${grid(4)};
-  padding-left: ${grid(2)};
-
-  &[disabled] {
-    cursor: not-allowed;
-  }
+  display: block;
+  margin: ${grid(2)} 0 ${grid(4)};
 `
 
 const TitleLabel = styled.div`
@@ -160,12 +153,7 @@ const LocalContext = ({
             value={localContextValue}
           />
           <SubNote>Insert your Local Contexts URL</SubNote>
-          <StyledButton
-            disabled={false}
-            onClick={retrieveData}
-            title=""
-            type="button"
-          >
+          <StyledButton onClick={retrieveData} type="button">
             Update
           </StyledButton>
         </div>

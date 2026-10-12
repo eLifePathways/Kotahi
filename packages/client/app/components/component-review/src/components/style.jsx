@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { th, grid } from '@coko/client'
-import { Button, Action } from '../../../pubsweet'
+import { Action } from '../../../pubsweet'
 
 export const AdminSection = styled.div`
   margin-bottom: ${grid(6)};
@@ -72,16 +72,11 @@ export const ErrorWrap = styled.div`
   }
 `
 export const ErrorText = styled.div`
-  color: red;
+  color: ${th('color.error.base')};
 `
 
 export const RecommendationInputContainer = styled.div`
   line-height: ${grid(10)};
-`
-
-export const StyledNotifyButton = styled(Button)`
-  cursor: pointer;
-  height: 40px;
 `
 
 export const Heading = styled.span`

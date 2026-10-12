@@ -12,6 +12,7 @@ import { HeadingCell } from '../../../component-production/src/components/styles
 import {
   Action,
   ActionButton,
+  AddLabel,
   PaddedContent,
   SectionContent,
 } from '../../../shared'
@@ -227,7 +228,7 @@ const CollectionList = ({
             <PaddedContent>
               <CmsHeadStyled>
                 <Action onClick={addUiCollection}>
-                  + {t('cmsPage.metadata.addCollection')}
+                  <AddLabel>{t('cmsPage.metadata.addCollection')}</AddLabel>
                 </Action>
               </CmsHeadStyled>
               <CollectionsHeading>

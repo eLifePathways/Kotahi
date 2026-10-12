@@ -1,4 +1,4 @@
-const { uuid } = require('@coko/server')
+const { uuid, useTransaction } = require('@coko/server')
 
 const { Config, Manuscript, ThreadedDiscussion } = require('../models')
 
@@ -10,9 +10,13 @@ const { getUsersById, getUserRolesInManuscript } = require('./user.controllers')
 const seekEvent = require('../services/notification.service')
 
 /** Get the threaded discussion with "author" user object added to each commentVersion and pendingVersion */
-const addUserObjectsToDiscussion = async (discussion, getUsersByIdFunc) => {
+const addUserObjectsToDiscussion = async (
+  discussion,
+  getUsersByIdFunc,
+  options = {},
+) => {
   const userIds = getAllUserIdsInDiscussion(discussion)
-  const users = await getUsersByIdFunc(userIds)
+  const users = await getUsersByIdFunc(userIds, options)
   const usersMap = {}
 
   users.forEach(u => {
@@ -38,6 +42,41 @@ const addUserObjectsToDiscussion = async (discussion, getUsersByIdFunc) => {
   }
 }
 
+const completeCommentInLockedDiscussion = async (
+  threadedDiscussionId,
+  threadId,
+  commentId,
+  userId,
+  permissions,
+  options = {},
+) => {
+  const { trx } = options
+  const now = new Date().toISOString()
+  const lockedDiscussion = await lockDiscussion(threadedDiscussionId, { trx })
+
+  const thread = lockedDiscussion.threads.find(t => t.id === threadId)
+  if (!thread) throw new Error(`thread with ID ${threadId} not found`)
+  const comment = thread.comments.find(c => c.id === commentId)
+  if (!comment) throw new Error(`comment with ID ${commentId} not found`)
+
+  if (!userMayWriteComment(comment, userId, permissions))
+    throw new Error('Not Authorised!')
+
+  const converted = convertUsersPendingVersionsToCommentVersions(
+    userId,
+    comment,
+    now,
+  )
+
+  if (converted) {
+    thread.updated = now
+    lockedDiscussion.updated = now
+    await saveThreads(lockedDiscussion, { trx })
+  }
+
+  return { discussion: lockedDiscussion, hasUpdated: converted }
+}
+
 const completeComment = async (
   threadedDiscussionId,
   threadId,
@@ -45,32 +84,26 @@ const completeComment = async (
   groupId,
   userId,
 ) => {
-  const now = new Date().toISOString()
-
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
-
-  if (!discussion)
-    throw new Error(
-      `threadedDiscussion with ID ${threadedDiscussionId} not found`,
+  const { discussion, hasUpdated } = await useTransaction(async trx => {
+    const permissions = await getUserCommentPermissions(
+      await getManuscriptIdOfDiscussion(threadedDiscussionId, { trx }),
+      userId,
+      { trx },
     )
 
-  const thread = discussion.threads.find(t => t.id === threadId)
-  if (!thread) throw new Error(`thread with ID ${threadId} not found`)
-  const comment = thread.comments.find(c => c.id === commentId)
-  if (!comment) throw new Error(`comment with ID ${commentId} not found`)
+    return completeCommentInLockedDiscussion(
+      threadedDiscussionId,
+      threadId,
+      commentId,
+      userId,
+      permissions,
+      { trx },
+    )
+  })
 
-  if (convertUsersPendingVersionsToCommentVersions(userId, comment, now)) {
-    thread.updated = now
-    discussion.updated = now
-
-    await ThreadedDiscussion.query()
-      .update({
-        updated: discussion.updated,
-        threads: JSON.stringify(discussion.threads),
-      })
-      .where({ id: threadedDiscussionId })
-
+  // Only once committed, so the notification can't go out for a change that
+  // was rolled back, and anything it reads sees the new comment.
+  if (hasUpdated) {
     const manuscript = await Manuscript.findById(discussion.manuscriptId)
 
     seekEvent('decision-form-complete-comment', {
@@ -92,34 +125,36 @@ const completeComment = async (
 }
 
 const completeComments = async (threadedDiscussionId, userId) => {
-  const now = new Date().toISOString()
-  let hasUpdated = false
+  const discussion = await useTransaction(async trx => {
+    const now = new Date().toISOString()
 
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
-
-  if (!discussion)
-    throw new Error(
-      `threadedDiscussion with ID ${threadedDiscussionId} not found`,
+    const permissions = await getUserCommentPermissions(
+      await getManuscriptIdOfDiscussion(threadedDiscussionId, { trx }),
+      userId,
+      { trx },
     )
 
-  for (const thread of discussion.threads) {
-    for (const comment of thread.comments) {
-      if (convertUsersPendingVersionsToCommentVersions(userId, comment, now)) {
-        hasUpdated = true
-        thread.updated = now
-        discussion.updated = now
+    const lockedDiscussion = await lockDiscussion(threadedDiscussionId, { trx })
+    let hasUpdated = false
+
+    for (const thread of lockedDiscussion.threads) {
+      for (const comment of thread.comments) {
+        // Skip rather than throw: this runs on decision form submission, which shouldn't fail over a stray pending comment
+        if (
+          userMayWriteComment(comment, userId, permissions) &&
+          convertUsersPendingVersionsToCommentVersions(userId, comment, now)
+        ) {
+          hasUpdated = true
+          thread.updated = now
+          lockedDiscussion.updated = now
+        }
       }
     }
-  }
 
-  if (hasUpdated)
-    await ThreadedDiscussion.query()
-      .update({
-        updated: discussion.updated,
-        threads: JSON.stringify(discussion.threads),
-      })
-      .where({ id: threadedDiscussionId })
+    if (hasUpdated) await saveThreads(lockedDiscussion, { trx })
+
+    return lockedDiscussion
+  })
 
   return stripHiddenAndAddUserInfo(discussion, userId, getUsersById)
 }
@@ -162,38 +197,80 @@ const deletePendingComment = async (
   commentId,
   userId,
 ) => {
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await useTransaction(async trx => {
+    const lockedDiscussion = await lockDiscussion(threadedDiscussionId, { trx })
+
+    const thread = lockedDiscussion.threads.find(t => t.id === threadId)
+    if (!thread) throw new Error(`thread with ID ${threadId} not found`)
+    const comment = thread.comments.find(c => c.id === commentId)
+    if (!comment) throw new Error(`comment with ID ${commentId} not found`)
+
+    comment.pendingVersions = comment.pendingVersions.filter(
+      pv => pv.userId !== userId,
+    )
+
+    await saveThreads(lockedDiscussion, { trx })
+
+    return lockedDiscussion
+  })
+
+  return stripHiddenAndAddUserInfo(discussion, userId, getUsersById)
+}
+
+/** Every comment mutation rewrites the whole threads array, so concurrent ones
+ * (eg. an editor's debounced save landing alongside "Save edit") would
+ * otherwise overwrite each other. Locks the row for the rest of the transaction.
+ * Callers return the discussion from the transaction and only then run
+ * stripHiddenAndAddUserInfo, so the lock isn't held through its lookups. */
+const lockDiscussion = async (threadedDiscussionId, options = {}) => {
+  const { trx } = options
+  const discussion = await ThreadedDiscussion.query(trx)
+    .forUpdate()
+    .findById(threadedDiscussionId)
 
   if (!discussion)
     throw new Error(
       `threadedDiscussion with ID ${threadedDiscussionId} not found`,
     )
 
-  const thread = discussion.threads.find(t => t.id === threadId)
-  if (!thread) throw new Error(`thread with ID ${threadId} not found`)
-  const comment = thread.comments.find(c => c.id === commentId)
-  if (!comment) throw new Error(`comment with ID ${commentId} not found`)
+  return discussion
+}
 
-  comment.pendingVersions = comment.pendingVersions.filter(
-    pv => pv.userId !== userId,
-  )
-
-  await ThreadedDiscussion.query()
+const saveThreads = (discussion, options = {}) =>
+  ThreadedDiscussion.query(options.trx)
     .update({
       updated: discussion.updated,
       threads: JSON.stringify(discussion.threads),
     })
-    .where({ id: threadedDiscussionId })
+    .where({ id: discussion.id })
 
-  return stripHiddenAndAddUserInfo(discussion, userId, getUsersById)
+const getManuscriptIdOfDiscussion = async (
+  threadedDiscussionId,
+  options = {},
+) => {
+  const discussion = await ThreadedDiscussion.query(options.trx)
+    .select('manuscriptId')
+    .findById(threadedDiscussionId)
+
+  if (!discussion)
+    throw new Error(
+      `threadedDiscussion with ID ${threadedDiscussionId} not found`,
+    )
+
+  return discussion.manuscriptId
 }
 
 const filterDistinct = (id, index, arr) => arr.indexOf(id) === index
 
-const getActiveConfigOfThreadedDiscussion = async discussion => {
-  const { groupId } = await Manuscript.query().findById(discussion.manuscriptId)
-  const config = await Config.getCached(groupId)
+const getActiveConfigOfThreadedDiscussion = async (
+  discussion,
+  options = {},
+) => {
+  const { groupId } = await Manuscript.findById(
+    discussion.manuscriptId,
+    options,
+  )
+  const config = await Config.getCached(groupId, options)
 
   return config
 }
@@ -211,8 +288,10 @@ const getAllUserIdsInDiscussion = discussion =>
     .flat(2)
     .filter(filterDistinct)
 
-const getOriginalVersionManuscriptId = async manuscriptId => {
-  const ms = await Manuscript.query().select('parentId').findById(manuscriptId)
+const getOriginalVersionManuscriptId = async (manuscriptId, options = {}) => {
+  const ms = await Manuscript.query(options.trx)
+    .select('parentId')
+    .findById(manuscriptId)
 
   const parentId = ms ? ms.parentId : null
   return parentId || manuscriptId
@@ -245,23 +324,47 @@ const stripHiddenAndAddUserInfo = async (
   discussion,
   userId,
   getUsersByIdFunc,
+  options = {},
 ) => {
   const discussionWithUsers = await addUserObjectsToDiscussion(
     discussion,
     getUsersByIdFunc,
+    options,
   )
 
-  const { formData } = await getActiveConfigOfThreadedDiscussion(discussion)
+  return {
+    ...stripPendingVersionsExceptByUser(discussionWithUsers, userId),
+    ...(await getUserCommentPermissions(
+      discussion.manuscriptId,
+      userId,
+      options,
+    )),
+  }
+}
+
+/** What the user may do in threaded discussions on this manuscript.
+ * Global admins are deliberately not granted anything here. */
+const getUserCommentPermissions = async (
+  manuscriptId,
+  userId,
+  options = {},
+) => {
+  const { formData } = await getActiveConfigOfThreadedDiscussion(
+    {
+      manuscriptId,
+    },
+    options,
+  )
 
   const { editorsEditDiscussionPostsEnabled = false } = formData.controlPanel
 
   const userRoles = await getUserRolesInManuscript(
     userId,
-    await getIdOfLatestVersionOfManuscript(discussion.manuscriptId),
+    await getIdOfLatestVersionOfManuscript(manuscriptId, options),
+    options,
   )
 
   return {
-    ...stripPendingVersionsExceptByUser(discussionWithUsers, userId),
     userCanAddComment:
       userRoles.author ||
       userRoles.anyEditor ||
@@ -274,6 +377,18 @@ const stripHiddenAndAddUserInfo = async (
       !!editorsEditDiscussionPostsEnabled &&
       (userRoles.anyEditor || userRoles.groupManager || userRoles.groupAdmin),
   }
+}
+
+/** Whether the user may write to this comment: adding it if it has no submitted
+ * versions yet, otherwise editing it (own comment = they wrote the first version). */
+const userMayWriteComment = (comment, userId, permissions) => {
+  if (!comment?.commentVersions?.length) return !!permissions.userCanAddComment
+
+  return (
+    !!permissions.userCanEditAnyComment ||
+    (!!permissions.userCanEditOwnComment &&
+      comment.commentVersions[0].userId === userId)
+  )
 }
 
 /** Return a copy of the discussion with all pendingVersions of comments by other users stripped out.
@@ -299,17 +414,24 @@ const stripPendingVersionsExceptByUser = (discussion, userId) => ({
 })
 
 const threadedDiscussions = async (manuscriptVersionId, userId) => {
-  const manuscriptId = await getOriginalVersionManuscriptId(manuscriptVersionId)
+  return useTransaction(async trx => {
+    const manuscriptId = await getOriginalVersionManuscriptId(
+      manuscriptVersionId,
+      { trx },
+    )
 
-  const result = await ThreadedDiscussion.query()
-    .where({ manuscriptId })
-    .orderBy('created', 'desc')
+    const result = await ThreadedDiscussion.query(trx)
+      .where({ manuscriptId })
+      .orderBy('created', 'desc')
 
-  return Promise.all(
-    result.map(async discussion => {
-      return stripHiddenAndAddUserInfo(discussion, userId, getUsersById)
-    }),
-  )
+    return Promise.all(
+      result.map(async discussion => {
+        return stripHiddenAndAddUserInfo(discussion, userId, getUsersById, {
+          trx,
+        })
+      }),
+    )
+  })
 }
 
 const updatePendingComment = async (
@@ -321,57 +443,80 @@ const updatePendingComment = async (
   msCurrentVersionId,
   userId,
 ) => {
-  // TODO ensure that the current user is permitted to comment
-  const now = new Date().toISOString()
-  const manuscriptId = await getOriginalVersionManuscriptId(msVersionId)
+  const discussion = await useTransaction(async trx => {
+    const now = new Date().toISOString()
 
-  let discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
-  if (!discussion)
-    discussion = {
-      id: threadedDiscussionId,
-      manuscriptId,
-      threads: [],
-      created: now,
+    const manuscriptId = await getOriginalVersionManuscriptId(msVersionId, {
+      trx,
+    })
+
+    const permissions = await getUserCommentPermissions(manuscriptId, userId, {
+      trx,
+    })
+
+    // Not lockDiscussion: the discussion may not exist yet
+    let lockedDiscussion = await ThreadedDiscussion.query(trx)
+      .forUpdate()
+      .findById(threadedDiscussionId)
+
+    const existingComment = lockedDiscussion?.threads
+      .find(t => t.id === threadId)
+      ?.comments.find(c => c.id === commentId)
+
+    if (!userMayWriteComment(existingComment, userId, permissions))
+      throw new Error('Not Authorised!')
+
+    if (!lockedDiscussion)
+      lockedDiscussion = {
+        id: threadedDiscussionId,
+        manuscriptId,
+        threads: [],
+        created: now,
+      }
+
+    let thread = lockedDiscussion.threads.find(t => t.id === threadId)
+
+    if (!thread) {
+      thread = { id: threadId, comments: [], created: now }
+      lockedDiscussion.threads.push(thread)
     }
 
-  let thread = discussion.threads.find(t => t.id === threadId)
+    let commnt = thread.comments.find(c => c.id === commentId)
 
-  if (!thread) {
-    thread = { id: threadId, comments: [], created: now }
-    discussion.threads.push(thread)
-  }
-
-  let commnt = thread.comments.find(c => c.id === commentId)
-
-  if (!commnt) {
-    commnt = {
-      id: commentId,
-      manuscriptVersionId: msCurrentVersionId,
-      commentVersions: [],
-      pendingVersions: [],
-      created: now,
+    if (!commnt) {
+      commnt = {
+        id: commentId,
+        manuscriptVersionId: msCurrentVersionId,
+        commentVersions: [],
+        pendingVersions: [],
+        created: now,
+      }
+      thread.comments.push(commnt)
     }
-    thread.comments.push(commnt)
-  }
 
-  let pendingVersion = commnt.pendingVersions.find(pv => pv.userId === userId)
+    let pendingVersion = commnt.pendingVersions.find(pv => pv.userId === userId)
 
-  if (!pendingVersion) {
-    pendingVersion = {
-      userId,
-      created: now,
+    if (!pendingVersion) {
+      pendingVersion = {
+        userId,
+        created: now,
+      }
+      commnt.pendingVersions.push(pendingVersion)
     }
-    commnt.pendingVersions.push(pendingVersion)
-  }
 
-  pendingVersion.updated = now
-  pendingVersion.comment = comment
+    pendingVersion.updated = now
+    pendingVersion.comment = comment
 
-  await ThreadedDiscussion.query().upsertGraphAndFetch(
-    { ...discussion, threads: JSON.stringify(discussion.threads) },
-    { insertMissing: true },
-  )
+    await ThreadedDiscussion.query(trx).upsertGraphAndFetch(
+      {
+        ...lockedDiscussion,
+        threads: JSON.stringify(lockedDiscussion.threads),
+      },
+      { insertMissing: true },
+    )
+
+    return lockedDiscussion
+  })
 
   return stripHiddenAndAddUserInfo(discussion, userId, getUsersById)
 }

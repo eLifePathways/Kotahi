@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
-import { Button } from '../../pubsweet'
 import { Action } from '../../shared'
 
 export const SelectAllField = styled.div`
@@ -33,10 +32,6 @@ export const BulkActionModalContainer = styled.div`
 export const BulkActionModalButtons = styled.div`
   display: flex;
   justify-content: space-between;
-`
-
-export const BulkActionModalButton = styled(Button)`
-  cursor: pointer;
 `
 
 export const ViewArchivedAction = styled(Action)`

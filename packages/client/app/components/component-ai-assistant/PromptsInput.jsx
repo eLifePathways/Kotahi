@@ -31,6 +31,11 @@ const StyledForm = styled.form`
   transition: all 0.5s;
   width: 500px;
 
+  &:focus-within {
+    outline: 2px solid var(--color);
+    outline-offset: 2px;
+  }
+
   textarea {
     --height: ${p => p.height || `24px`};
     background: none;
@@ -70,7 +75,6 @@ const SendButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  outline: none;
   padding: 0;
   width: 24px;
 

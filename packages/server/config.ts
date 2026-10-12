@@ -153,7 +153,6 @@ export default {
     teamTimezone: env('TEAM_TIMEZONE') || 'Etc/UTC',
     autoImportHourUtc: env('AUTO_IMPORT_HOUR_UTC'),
     archivePeriodDays: env('ARCHIVE_PERIOD_DAYS'),
-    allowManualImport: env('ALLOW_MANUAL_IMPORT', { type: 'boolean' }) || false,
     semanticScholarImportsRecencyPeriodDays:
       env('SEMANTIC_SCHOLAR_IMPORTS_RECENCY_PERIOD_DAYS', { type: 'number' }) ||
       42,

@@ -36,7 +36,7 @@ export const VerticalBar = styled.div`
 `
 
 export const NewEditText = styled.p`
-  color: ${props => props.theme.color.additional.green};
+  color: ${th('color.success.shade15')};
 `
 
 export const Heading2 = styled(Heading)`
@@ -196,19 +196,6 @@ export const ErrorMessage = styled.div`
   font-size: ${th('fontSizeBaseSmall')};
   font-weight: normal;
   line-height: ${th('lineHeightBaseSmall')};
-`
-
-export const InfoBlock = styled.div`
-  background-color: ${th('colorSecondaryBackground')};
-  border: 1px solid ${th('colorBorder')};
-  border-radius: ${grid(2)};
-  padding: ${grid(4)};
-  width: 100%;
-`
-
-export const WarningBlock = styled(InfoBlock)`
-  background-color: ${th('colorWarning')};
-  border: 1px solid ${th('colorWarningDark')};
 `
 
 export const LayoutHeaderListContainer = styled.div`

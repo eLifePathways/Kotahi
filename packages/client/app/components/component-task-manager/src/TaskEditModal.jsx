@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { th, grid, uuid } from '@coko/client'
-import { ActionButton, TextInput } from '../../shared'
+import { ActionButton, AddLabel, TextInput } from '../../shared'
 import FormWaxEditor from '../../component-formbuilder/src/components/FormWaxEditor'
 import TaskNotificationDetails from './TaskNotificationDetails'
 import AssigneeDropdown from './AssigneeDropdown'
@@ -396,7 +396,9 @@ const TaskEditModal = ({
             }
             onClick={addNewTaskNotification}
           >
-            {t('modals.taskEdit.Add Notification Recipient')}
+            <AddLabel>
+              {t('modals.taskEdit.Add Notification Recipient')}
+            </AddLabel>
           </SecondaryActionButton>
         </TaskActionContainer>
         {!editAsTemplate

@@ -2,6 +2,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 import { DashboardPage } from '../../page-object/dashboard-page'
+import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
 import { dashboard } from '../../support/routes'
 
@@ -34,8 +35,8 @@ describe('Create a new submission', () => {
   })
 
   it('can submit a URL and add a title', () => {
-    // Submit a URL
-    cy.get('button').contains('Submit a URL instead').click()
+    // Skip manuscript upload
+    NewSubmissionPage.clickSubmitURL()
 
     cy.completeSubmissionForm('Title 2')
   })

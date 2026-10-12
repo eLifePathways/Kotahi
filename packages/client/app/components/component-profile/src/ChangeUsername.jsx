@@ -5,22 +5,24 @@ import PropTypes from 'prop-types'
 import { grid, th } from '@coko/client'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { TextField, Button } from '../../pubsweet'
+import { TextField } from '../../pubsweet'
+import { ActionButton } from '../../shared'
 
 const InlineTextField = styled(TextField)`
   display: inline;
   width: ${grid(48)};
 `
 
-const Container = styled.div`
-  position: relative;
+const Row = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${grid(2)};
 `
 
 const WarningBox = styled.div`
   color: ${th('colorError')};
   font-size: ${th('fontSizeBaseSmall')};
-  position: absolute;
-  transform: translate(0, 44px);
+  margin-top: ${grid(1)};
 `
 
 const ChangeUsername = ({ user, updateUsername }) => {
@@ -35,16 +37,23 @@ const ChangeUsername = ({ user, updateUsername }) => {
   }
 
   return (
-    <Container>
+    <>
+      <Row>
+        <InlineTextField
+          inline
+          onChange={e => setUsername(e.target.value)}
+          value={username}
+        />
+        <ActionButton
+          disabled={!isValid}
+          onClick={() => update(user.id, username)}
+          primary
+        >
+          {t('profilePage.Change')}
+        </ActionButton>
+      </Row>
       {!isValid && <WarningBox>{t('profilePage.usernameWarn')}</WarningBox>}
-      <InlineTextField
-        onChange={e => setUsername(e.target.value)}
-        value={username}
-      />
-      <Button disabled={!isValid} onClick={() => update(user.id, username)}>
-        {t('profilePage.Change')}
-      </Button>
-    </Container>
+    </>
   )
 }
 

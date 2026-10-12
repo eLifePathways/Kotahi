@@ -296,7 +296,8 @@ const getUsers = async groupId => {
     .withGraphFetched('defaultIdentity')
 }
 
-const getUsersById = async userIds => User.query().findByIds(userIds)
+const getUsersById = async (userIds, options = {}) =>
+  User.findByIds(userIds, options)
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()

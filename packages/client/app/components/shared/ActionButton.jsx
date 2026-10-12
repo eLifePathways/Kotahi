@@ -59,14 +59,16 @@ const Button = styled(BaseButton)`
       : ''}
 `
 
+// Flex so the label, icons and status indicator share one centre line
 const LabelOnlySpan = styled.span`
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
   padding: 0 ${grid(3)};
 `
 
 const Spinner = styled.div`
-  display: inline-block;
   padding-left: ${grid(2)};
-  vertical-align: -2px;
 
   &::after {
     animation: ${rotate360} 1s linear infinite;
@@ -84,10 +86,9 @@ const Spinner = styled.div`
 `
 
 const IconContainer = styled.div`
-  display: inline-block;
+  display: flex;
   height: ${grid(4)};
   margin-left: ${grid(2)};
-  vertical-align: -2px;
   width: ${grid(4)};
 `
 
@@ -104,10 +105,20 @@ const ActionButton = ({
   'data-testid': dataTestid,
   title,
   type,
+  // Anything else (aria-*, data-cy, ...) goes straight to the <button>
+  ...rest
 }) => {
   if (disabled)
     return (
-      <DisabledButton $isCompact={isCompact} className={className} disabled>
+      <DisabledButton
+        {...rest}
+        $isCompact={isCompact}
+        className={className}
+        data-testid={dataTestid}
+        disabled
+        title={title}
+        type={type || 'button'}
+      >
         <LabelOnlySpan>{children}</LabelOnlySpan>
       </DisabledButton>
     )
@@ -155,6 +166,7 @@ const ActionButton = ({
 
   return (
     <Button
+      {...rest}
       $bgColor={bgColor}
       $fgColor={fgColor}
       $isCompact={isCompact}

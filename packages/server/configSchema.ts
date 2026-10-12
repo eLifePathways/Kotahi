@@ -135,7 +135,6 @@ const schema = z.strictObject({
       teamTimezone: z.string().default('Etc/UTC'),
       autoImportHourUtc: z.coerce.number().int().min(0).max(23).optional(),
       archivePeriodDays: z.coerce.number().int().positive().optional(),
-      allowManualImport: z.boolean().default(false),
       semanticScholarImportsRecencyPeriodDays: z.number().default(42),
     })
     .partial(),

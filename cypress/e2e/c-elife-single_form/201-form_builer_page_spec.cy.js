@@ -100,7 +100,7 @@ describe('Form builder', () => {
   context('add field to submission, review and decision forms', () => {
     it('viewing and adding fields in Submission, Review and Decision forms', () => {
       // For Submission Form
-      FormsPage.getFormTitleTab(0).should('contain', 'eLife Submission Form')
+      FormsPage.getFormTitleTab(0).should('contain', 'Submission Form')
       FormsPage.clickFormOption(1)
       FormsPage.getFieldValidate().click()
       cy.get('[class*="react-select__multi-value"]').eq(0).click()

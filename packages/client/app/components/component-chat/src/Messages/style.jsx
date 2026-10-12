@@ -211,7 +211,7 @@ export const UnreadLabelContainer = styled(ChatLabelContainer)`
   border-top: 2px solid ${th('color.brand1.tint25')};
 `
 export const UnreadLabel = styled(ChatLabel)`
-  background-color: ${th('color.brand1.tint25')};
+  background-color: ${th('color.brand1.base')};
   color: #fff;
 `
 

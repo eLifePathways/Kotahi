@@ -258,11 +258,22 @@ class Manuscript extends BaseModel {
       delete newVersion.submission.adaJobDetails
     if (newVersion.submission.jobStatus) delete newVersion.submission.jobStatus
 
-    evictFromCache(`subVersionsOfMs:${newVersion.parentId}`)
-
     const manuscript = await Manuscript.query().insertGraphAndFetch(
       omit(cloneDeep(newVersion), ['id', 'created', 'updated', 'decision']),
     )
+
+    // Every version caches its own list of other versions, so evict the whole family.
+    // This must happen after the insert, or a concurrent read could re-cache the stale list.
+    const familyIds = [
+      newVersion.parentId,
+      ...(
+        await Manuscript.query()
+          .where({ parentId: newVersion.parentId })
+          .select('id')
+      ).map(version => version.id),
+    ]
+
+    familyIds.forEach(id => evictFromCache(`subVersionsOfMs:${id}`))
 
     await TaskAlert.query()
       .delete()
@@ -321,6 +332,48 @@ class Manuscript extends BaseModel {
       .distinct()
 
     return records.map(r => r.topLevelId)
+  }
+
+  /** Does the user hold a role (author, reviewer or editor) on any version of
+   * the manuscript? Reviewers who declined their invitation don't count.
+   */
+  static async userHasRoleInAnyVersion(userId, manuscriptId, options = {}) {
+    const { trx } = options
+
+    const manuscript = await this.query(trx)
+      .findById(manuscriptId)
+      .select('id', 'parentId')
+
+    if (!manuscript) return false
+    const firstVersionId = manuscript.parentId || manuscript.id
+
+    const record = await this.query(trx)
+      .select('manuscripts.id')
+      .join('teams', 'manuscripts.id', '=', 'teams.object_id')
+      .join('team_members', 'teams.id', '=', 'team_members.team_id')
+      .where(builder =>
+        builder
+          .where('manuscripts.id', firstVersionId)
+          .orWhere('manuscripts.parent_id', firstVersionId),
+      )
+      .where('team_members.user_id', userId)
+      .whereIn('teams.role', [
+        'author',
+        'reviewer',
+        'collaborativeReviewer',
+        'editor',
+        'handlingEditor',
+        'seniorEditor',
+        'managingEditor',
+      ])
+      .where(builder =>
+        builder
+          .whereNull('team_members.status')
+          .orWhereNot('team_members.status', 'rejected'),
+      )
+      .first()
+
+    return !!record
   }
 
   static async addReviewer(

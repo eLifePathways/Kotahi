@@ -45,6 +45,13 @@ const globalStyles = css`
     text-rendering: optimizelegibility;
   }
 
+  /* :root a beats antd's low-contrast a:focus-visible ring */
+  :focus-visible,
+  :root a:focus-visible {
+    outline: 2px solid ${th('color.brand1.base')};
+    outline-offset: 2px;
+  }
+
   a {
     color: ${th('color.brand1.base')};
     text-decoration: none !important;

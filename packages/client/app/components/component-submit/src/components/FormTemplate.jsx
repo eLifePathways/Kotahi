@@ -419,7 +419,7 @@ const FormTemplate = ({
                         .filter(f => f.startsWith(`${element.name}:`))
                         .map(f => f.split(':')[1]),
                       setShouldPublishComment,
-                      userCanAddThread: true,
+                      userCanAddThread: tdProps.userCanAddThread ?? true,
                     }
                   }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { debounce, set } from 'lodash'
+import { CombinedGraphQLErrors } from '@apollo/client'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
@@ -162,7 +163,10 @@ const SubmitPage = () => {
   if (loading) return <Spinner />
 
   if (error) {
-    if (error.graphQLErrors.find(e => e.message === 'Not Authorised!')) {
+    if (
+      CombinedGraphQLErrors.is(error) &&
+      error.errors.some(e => e.message === 'Not Authorised!')
+    ) {
       return <AccessErrorPage message={t('submitPage.unauthorized')} />
     }
 

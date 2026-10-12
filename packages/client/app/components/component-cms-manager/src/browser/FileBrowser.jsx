@@ -38,8 +38,8 @@ const FolderTreeContainer = styled.div`
     position: relative;
 
     .typeIconContainer svg {
-      color: ${th('color.gray60')};
-      stroke: ${th('color.gray60')};
+      color: ${th('color.gray50')};
+      stroke: ${th('color.gray50')};
     }
 
     .displayName {

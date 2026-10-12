@@ -19,7 +19,6 @@ export const CleanButton = styled.button.attrs({ type: 'button' })`
   gap: ${grid(2)};
   justify-content: flex-start;
   opacity: ${p => (p.$disabled ? 0.5 : 1)};
-  outline: none;
 `
 
 // #region EmailTemplates -----------------------------------------------------------------------
@@ -202,7 +201,7 @@ export const OptionListItem = styled.li`
 `
 
 export const OptionListItemButton = styled(CleanButton)`
-  color: ${p => (p.$warning ? p.theme.color.warning.base : '#555')};
+  color: ${p => (p.$warning ? p.theme.color.warning.shade25 : '#555')};
   gap: ${grid(3)};
   width: 100%;
 

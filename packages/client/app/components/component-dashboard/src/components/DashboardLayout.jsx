@@ -6,8 +6,13 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
-import { Button } from '../../../pubsweet'
-import { HiddenTabsContainer, Tab, TabContainer } from '../../../shared'
+import {
+  ActionButton,
+  AddLabel,
+  HiddenTabsContainer,
+  Tab,
+  TabContainer,
+} from '../../../shared'
 import Page from '../../../../ui/shared/Page'
 import { ControlsContainer } from '../../../component-manuscripts/src/style'
 import { FlexRow } from '../../../../globals'
@@ -76,12 +81,12 @@ const DashboardLayout = ({ children }) => {
             ))}
           </Tabs>
           <RightControls>
-            <Button
-              $primary
+            <ActionButton
               onClick={() => navigate(`/${groupName}/newSubmission`)}
+              primary
             >
-              {t('dashboardPage.New submission')}
-            </Button>
+              <AddLabel>{t('dashboardPage.New submission')}</AddLabel>
+            </ActionButton>
           </RightControls>
         </TabRow>
       </HiddenTabsContainer>

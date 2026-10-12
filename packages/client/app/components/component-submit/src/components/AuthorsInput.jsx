@@ -7,10 +7,13 @@ import styled from 'styled-components'
 import { th, grid, uuid } from '@coko/client'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
-import { PlusCircle } from 'react-feather'
 import { isEmpty } from 'lodash'
-import { Button } from '../../../pubsweet'
-import { DeleteControl, TextInput } from '../../../shared'
+import {
+  ActionButton,
+  AddLabel,
+  DeleteControl,
+  TextInput,
+} from '../../../shared'
 import {
   getAuthorFields,
   validateAuthor,
@@ -20,10 +23,9 @@ import { FlexRow } from '../../../../globals'
 import useAuthorsFieldQueries from './hooks/useAuthorsInputQueries'
 
 // #region styled
-const StyledButton = styled(Button)`
+const StyledButton = styled(ActionButton)`
   cursor: pointer;
-  display: flex;
-  gap: ${grid(2)};
+  display: block;
   margin-bottom: ${grid(4)};
 
   &[disabled] {
@@ -191,6 +193,7 @@ const AuthorsInput = ({
 
           onChange(newVal)
         }}
+        primary
         title={
           validateAuthors(cleanedVal, authorFieldOptions)
             ? 'Correct or delete "persons" with invalid fields, then add a new one!'
@@ -198,10 +201,11 @@ const AuthorsInput = ({
         }
         type="button"
       >
-        <PlusCircle />
-        {!overrideButtonLabel
-          ? t('decisionPage.Add another person')
-          : overrideButtonLabel}
+        <AddLabel>
+          {!overrideButtonLabel
+            ? t('decisionPage.Add another person')
+            : overrideButtonLabel}
+        </AddLabel>
       </StyledButton>
       <Wrapper>
         {cleanedVal.map((author, index) => (

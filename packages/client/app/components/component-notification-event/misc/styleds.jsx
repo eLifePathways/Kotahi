@@ -65,7 +65,7 @@ export const EditSection = styled(Col)`
 
     /* stylelint-disable-next-line string-quotes */
     &[data-modified='true'] {
-      color: ${th('color.warning.base')};
+      color: ${th('color.warning.shade25')};
     }
     /* stylelint-disable-next-line string-quotes */
     &[data-error='true'] {
@@ -159,7 +159,7 @@ export const InputWrapper = styled.div`
   }
 
   &:active,
-  &:focus-visible {
+  &:focus-within {
     border: 1px solid ${th('color.brand1.base')};
     outline: none;
     transition: ${theme.transitionDuration};

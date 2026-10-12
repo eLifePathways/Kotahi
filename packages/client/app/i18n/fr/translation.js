@@ -38,6 +38,7 @@ const fr = {
       No: 'Non',
       Save: 'Enregistrer',
       Update: 'Mettre à jour',
+      next: 'Suivant',
       Activate: 'Activer',
       Deactivate: 'Désactiver',
       Create: 'Créer',
@@ -159,6 +160,8 @@ const fr = {
       Email: 'Email',
       Language: 'Langue',
       Change: 'Changer',
+      enterEmail: 'Saisir l’adresse e-mail',
+      enterYourEmail: 'Saisissez votre adresse e-mail',
       usernameWarn:
         'Ne peut pas commencer par un chiffre ou débuter ou finir par des espaces',
       userPrivilegeAlert: `Droits d'utilisateur requis
@@ -244,7 +247,7 @@ const fr = {
     },
     dashboardPage: {
       Dashboard: 'Tableau de bord',
-      'New submission': '+ Nouvelle soumission',
+      'New submission': 'Nouvelle soumission',
       'New Alerts': 'Nouvelles alertes',
       'My Submissions': 'Mes soumissions',
       'To Review': 'Affectations de révision',
@@ -428,7 +431,8 @@ const fr = {
     },
     editorSection: {
       noFileLoaded: 'Aucun fichier de manuscrit chargé',
-      noSupportedView: 'Aucune vue supportée du fichier',
+      noSupportedView:
+        "Fichier téléversé non pris en charge, ou l'éditeur n'est pas activé",
     },
     reviewDecisionSection: {
       noDecisionUpdated:
@@ -550,7 +554,8 @@ const fr = {
       'read-only': ' (lecture seulement)',
       'Previous Feedback Submissions':
         'Soumissions de commentaires précédentes',
-      'No supported view of the file': 'Aucune vue supportée du fichier',
+      noSupportedView:
+        "Fichier téléversé non pris en charge, ou l'éditeur n'est pas activé",
       'No feedback submissions': 'Aucune soumission de commentaires',
       Download: 'Télécharger',
       Editor: 'Éditeur',
@@ -568,6 +573,11 @@ const fr = {
       accepted: "A accepté l'invitation {{invitationType}}",
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Couleur peu accessible',
+        poorContrastDescription:
+          'La couleur sélectionnée ne respecte pas la norme d’accessibilité WCAG AA. Les utilisateurs peuvent rencontrer des difficultés d’utilisation et de navigation. Veuillez envisager une autre couleur.',
+      },
       generalTab: 'Général',
       workflowTab: 'Flux de travail',
       productionTab: 'Production',
@@ -771,11 +781,10 @@ const fr = {
       editorsCanPublish: 'Les éditeurs peuvent publier des articles/critiques',
       editorsDeleteReviews: 'Les éditeurs peuvent supprimer les avis soumis',
       Reports: 'Rapports',
-      reportShowInMenu:
-        "Le gestionnaire de groupe et l'administrateur peuvent accéder aux rapports",
+      reportShowInMenu: "Afficher l'option Rapports dans le menu",
       'User Management': 'Gestion des utilisateurs',
       userIsAdmin:
-        "Tous les utilisateurs sont assignés les rôles de gestionnaire de groupe et d'administrateur",
+        "Tous les utilisateurs se voient attribuer les rôles d'admin et d'administrateur de groupe",
       kotahiApis: 'API Kotahi',
       tokens: 'Jetons',
       Update: 'Mise à jour',
@@ -1418,7 +1427,8 @@ const fr = {
         'Types de fichiers acceptés : pdf, epub, zip, docx, latex',
       converting:
         "Votre manuscrit est en train d'être converti en une version directement éditable. Cela peut prendre quelques secondes.",
-      'Submit a URL instead': 'Soumettre une URL à la place',
+      skipManuscriptUpload:
+        'Ignorer le téléversement du manuscrit et passer au formulaire de soumission',
       errorUploading: '{{error}}',
     },
     formBuilder: {

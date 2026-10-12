@@ -57,6 +57,10 @@ const Styles = styled.div`
 
   .active {
     background-color: #eee;
+
+    a {
+      color: ${th('color.brand1.shade25')};
+    }
   }
 `
 

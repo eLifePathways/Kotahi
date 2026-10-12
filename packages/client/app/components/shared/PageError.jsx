@@ -6,7 +6,7 @@ import { th, grid } from '@coko/client'
 const ErrorBox = styled.div`
   background-color: ${th('colorFurniture')};
   border-radius: ${th('borderRadius')};
-  color: #e33;
+  color: ${th('color.error.shade15')};
   font-size: ${th('fontSizeHeading5')};
   margin: ${grid(6)};
   padding: ${grid(4)} ${grid(6)};

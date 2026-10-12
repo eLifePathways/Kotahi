@@ -33,7 +33,6 @@ const RootButton = styled.button.attrs(({ title, type }) => ({
   font-family: ${th('fontInterface')};
   font-size: ${th('fontSizeBase')};
   justify-content: center;
-  outline: none;
   padding: ${grid(1)};
   transition: all 0.1s ease-in;
 

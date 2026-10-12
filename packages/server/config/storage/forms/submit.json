@@ -1,5 +1,5 @@
 {
-  "name": "eLife Submission Form",
+  "name": "Submission Form",
   "children": [
     {
       "id": "bf66a4ed-427b-4329-b6f7-6c53eeec5ac6",
@@ -166,5 +166,5 @@
     }
   ],
   "haspopup": "false",
-  "description": "<p>eLife Form</p>"
+  "description": "<p>Please fill out the form below to complete the submission.</p>"
 }

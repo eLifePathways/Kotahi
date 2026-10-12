@@ -69,7 +69,7 @@ export const FlexRow = styled.div`
 export const HorizontalRule = styled(FlexRow)`
   align-items: center;
   align-self: stretch;
-  color: ${th('colorBorder')};
+  color: ${th('color.gray50')};
   justify-content: center;
   position: relative;
 

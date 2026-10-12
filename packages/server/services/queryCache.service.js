@@ -100,6 +100,10 @@ const queryFunctions = {
     const isEditor = !!record
     return isEditor
   },
+  userHasRoleInMsFamily: async (userId, manuscriptId) => {
+    const Manuscript = require('../models/manuscript/manuscript.model')
+    return Manuscript.userHasRoleInAnyVersion(userId, manuscriptId)
+  },
   defaultIdentityOfUser: async userId => {
     const User = require('../models/user/user.model')
     return User.relatedQuery('defaultIdentity').for(userId).first()

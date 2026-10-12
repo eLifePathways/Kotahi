@@ -13,15 +13,16 @@ const Label = styled.label`
   }
 
   input:checked + span {
-    background-color: #3aae2a;
+    background-color: #4a7c59;
   }
 
   input:checked + span::before {
     transform: translateX(26px);
   }
 
-  input:focus + span {
-    box-shadow: 0 0 1px #3aae2a;
+  input:focus-visible + span {
+    outline: 2px solid #4a7c59;
+    outline-offset: 2px;
   }
 
   position: relative;

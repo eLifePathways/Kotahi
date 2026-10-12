@@ -13,11 +13,10 @@ import { json } from '@codemirror/lang-json'
 import { grid, th } from '@coko/client'
 import { isFunction } from 'lodash'
 
-import { Spinner } from '../../../../shared'
+import { ActionButton, Spinner } from '../../../../shared'
 import { CloseButton, PopUpH2 } from '../styles'
 import { FlexRow } from '../../../../../globals'
 import dataciteLogo from '../../../../../../public/datacite-logo-vector.svg'
-import { Button } from '../../../../pubsweet'
 import { CHECK_API_PAYLOAD } from '../../../../../queries'
 import { mapEntries } from '../../../../../shared/generalUtils'
 
@@ -49,9 +48,9 @@ const APIS = {
 
 const defaultTrigger = setModalOpen => {
   return (
-    <Button $primary onClick={setModalOpen}>
+    <ActionButton onClick={setModalOpen} primary>
       Check Payload
-    </Button>
+    </ActionButton>
   )
 }
 

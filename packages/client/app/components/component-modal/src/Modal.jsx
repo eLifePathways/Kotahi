@@ -52,7 +52,7 @@ const CloseButton = styled(Button)`
   width: 30px;
 
   &:hover {
-    background-color: ${th('color.brand1.tint25')};
+    background-color: ${th('color.brand1.base')};
 
     svg {
       stroke: white;

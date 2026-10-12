@@ -24,10 +24,10 @@ import {
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
 
-import { Button } from '../../../pubsweet'
 import ToolbarButton from '../SuperChatInput/ToolbarButton'
+import { ActionButton } from '../../../shared'
 
-const SendButton = styled(Button)`
+const SendButton = styled(ActionButton)`
   align-items: center;
   display: flex;
   font-size: 90%;
@@ -85,13 +85,13 @@ const ChatWaxEditorLayout = readonly => props => {
                 <WaxView {...props} />
               </SimpleEditorDiv>
               <SendButton
-                $primary
                 aria-label={sendTooltip}
                 data-cy="chat-input-send-button"
                 onClick={onClickSend}
+                primary
                 title={sendTooltip}
               >
-                <Send color="white" size={18} />
+                <Send color="currentColor" size={18} />
               </SendButton>
             </div>
           </>

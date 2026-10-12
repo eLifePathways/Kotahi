@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 // NOTE: If you're modifying the schema here, ensure updating those changes to the files 'packages/client/config/sampleConfigFormData.js' and 'packages/server/scripts/seedConfig.js' as well.
-import React from 'react'
+
 import BrandIcon from './BrandIcon'
 import ListSubmissionFields from './ListSubmissionFields'
 
-import { Button, Select, TextField } from '../../../pubsweet'
-import { ActionButton, ColorPicker } from '../../../shared'
+import { Select } from '../../../pubsweet'
+import { ColorPicker } from '../../../shared'
 import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
 import CoarAuthToken from './CoarAuthToken'
 
@@ -108,12 +108,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -1323,12 +1323,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -2558,12 +2558,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -3823,12 +3823,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {

@@ -16,6 +16,7 @@ import {
   SectionRow,
   TightRow,
   ActionButton,
+  AddLabel,
   RoundIconButton,
 } from '../../../shared'
 import Page from '../../../../ui/shared/Page'
@@ -254,7 +255,7 @@ const FormBuilderLayout = ({
                   setIsEditingFormSettings(true)
                 }}
               >
-                {t('formBuilder.Add new form')}
+                <AddLabel>{t('formBuilder.Add new form')}</AddLabel>
               </AddFormButton>
               <HiddenTabs
                 defaultActiveKey={selectedFormId ?? null}

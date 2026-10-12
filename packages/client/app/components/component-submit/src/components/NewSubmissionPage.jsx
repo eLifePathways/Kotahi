@@ -38,7 +38,7 @@ const Dashboard = () => {
 
   const { submitOptions = '' } = submissionPage ?? {}
 
-  let showSubmitUrl =
+  let showSkipManuscriptUpload =
     submitOptions === 'allowAuthorSubmitForm' ||
     submitOptions === 'allowAuthorUploadWithForm' ||
     submitOptions === 'allowAuthorSubmitFormWithBlankEditor'
@@ -48,7 +48,7 @@ const Dashboard = () => {
     submitOptions === 'allowAuthorUploadWithForm'
 
   if (!submitOptions) {
-    showSubmitUrl = true
+    showSkipManuscriptUpload = true
     showUploadManuscript = true
   }
 
@@ -67,7 +67,7 @@ const Dashboard = () => {
             client={client}
             currentUser={currentUser}
             description={submissionPage?.submissionPagedescription}
-            showSubmitUrl={showSubmitUrl}
+            showSkipManuscriptUpload={showSkipManuscriptUpload}
             showUploadManuscript={showUploadManuscript}
           />
         </UploadContainer>

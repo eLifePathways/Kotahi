@@ -37,6 +37,7 @@ import {
 import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import dayjs from 'dayjs'
 import DOMPurify from 'isomorphic-dompurify'
+import { getReadableTextColor } from '../../shared/colorContrast'
 
 import Table from './Table'
 import Badge from './Badge'
@@ -117,7 +118,12 @@ const renderSingleOption = (
       data-testid={testId}
       small
       style={
-        option?.labelColor ? { backgroundColor: option.labelColor } : undefined
+        option?.labelColor
+          ? {
+              backgroundColor: option.labelColor,
+              color: getReadableTextColor(option.labelColor),
+            }
+          : undefined
       }
     >
       {option?.label ?? value}

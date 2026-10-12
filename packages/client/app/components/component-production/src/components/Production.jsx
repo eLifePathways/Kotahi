@@ -252,7 +252,7 @@ const Production = ({
             )}
           </>
         ) : (
-          <Info>{t('productionPage.No supported view of the file')}</Info>
+          <Info>{t('productionPage.noSupportedView')}</Info>
         )}
       </ScrollableTabContent>
     ),

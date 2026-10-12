@@ -25,7 +25,11 @@ const getExistingOrInitialComments = (
   const result = comments
     .filter(c => {
       if (c.pendingVersion) {
-        return manuscriptLatestVersionId === selectedManuscriptVersionId
+        return (
+          manuscriptLatestVersionId === selectedManuscriptVersionId &&
+          // A never-submitted draft would render as an open editor; hide it from users who can't comment
+          (c.commentVersions.length > 0 || userCanAddComment)
+        )
       }
 
       return c.commentVersions.length > 0
@@ -36,15 +40,22 @@ const getExistingOrInitialComments = (
         // Note that the server gives us only a pendingVersion for the current user.
         hasPendingVersion = true
 
+        const existingComment = c.commentVersions.length
+          ? c.commentVersions[c.commentVersions.length - 1]
+          : null // If null, this is a new, unsubmitted comment.
+
         return {
           ...c.pendingVersion,
+          // The pendingVersion carries none of these, so take them from the submitted versions.
+          // author must be the original author, or "edit own comment" checks see the editor as the owner.
+          author: c.commentVersions[0]?.author ?? c.pendingVersion.author,
+          created: c.commentVersions[0]?.created,
+          updatedBy: existingComment?.author,
           updated: c.updated,
           manuscriptVersionId: c.manuscriptVersionId,
           id: c.id,
           isEditing: true,
-          existingComment: c.commentVersions.length
-            ? c.commentVersions[c.commentVersions.length - 1]
-            : null, // If null, this is a new, unsubmitted comment.
+          existingComment,
         }
       }
 
@@ -209,7 +220,7 @@ const ThreadedDiscussion = ({
 
           if (isLatestVersionOfManuscript && !comment.existingComment) {
             return (
-              <div key={comment.id}>
+              <div data-testid="new-threaded-comment" key={comment.id}>
                 <SimpleWaxEditorWrapper key={comment.id}>
                   <SimpleWaxEditor
                     {...SimpleWaxEditorProps}
