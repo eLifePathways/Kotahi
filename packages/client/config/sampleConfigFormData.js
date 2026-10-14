@@ -143,7 +143,7 @@ export default {
       semanticScholarImportsRecencyPeriodDays: 42,
     },
     coarNotify: {
-      repoIpAddress: '127.0.0.1',
+      authToken: 'abc123',
     },
     kotahiApis: {
       tokens: 'test:123456',
