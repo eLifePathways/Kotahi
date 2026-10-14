@@ -32,6 +32,7 @@ const CoarAuthToken = ({ hasToken, onRefreshCoarAuthToken }) => {
   const [token, setToken] = useState('')
   const [status, setStatus] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [copied, setCopied] = useState(false)
 
   const handleRefresh = async () => {
     setStatus('pending')
@@ -54,6 +55,11 @@ const CoarAuthToken = ({ hasToken, onRefreshCoarAuthToken }) => {
   } else if (!hasToken) {
     displayToken = ''
   }
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(token)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   return (
     <Wrapper>
@@ -70,6 +76,11 @@ const CoarAuthToken = ({ hasToken, onRefreshCoarAuthToken }) => {
       )}
       <CoarAuthFieldWrapper>
         <StyledTextField inline readonly value={displayToken} />
+        {status === 'success' && (
+          <StyledActionButton onClick={handleCopy}>
+            {copied ? t('configPage.coar.copied') : t('configPage.coar.copy')}
+          </StyledActionButton>
+        )}
         <StyledActionButton onClick={handleRefresh} primary status={status}>
           {t('configPage.coar.refreshAuthToken')}
         </StyledActionButton>
