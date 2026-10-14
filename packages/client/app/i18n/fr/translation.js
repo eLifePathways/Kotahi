@@ -879,6 +879,8 @@ const fr = {
       coar: {
         authToken: "Jeton d'authentification COAR Notify",
         refreshAuthToken: "Actualiser le jeton d'authentification",
+        copy: 'Copier',
+        copied: 'Copié !',
         copyMessage:
           "Le jeton d'authentification n'est affiché qu'une seule fois !",
         copyDescription:
