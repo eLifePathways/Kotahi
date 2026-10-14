@@ -948,6 +948,8 @@ const esLa = {
       coar: {
         authToken: 'Token de autenticación de COAR Notify',
         refreshAuthToken: 'Actualizar token de autenticación',
+        copy: 'Copiar',
+        copied: '¡Copiado!',
         copyMessage: '¡El token de autenticación solo se muestra una vez!',
         copyDescription:
           'Por favor copie el token de autenticación ahora y guárdelo en su sistema COAR Notify de terceros. Siempre puede actualizar el token aquí, pero los tokens anteriores quedarán invalidados.',
