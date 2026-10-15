@@ -3,6 +3,7 @@ const { logger, serverUrl, request, useTransaction } = require('@coko/server')
 const { getCrossrefDataViaDoi } = require('./crossRef')
 const { getDataciteViaDoi } = require('./dataCite')
 const { makeAnnouncementOnCOAR, generateUrn } = require('./announcement')
+const { postToInbox } = require('./utils')
 
 const {
   CoarNotification,
@@ -132,18 +133,11 @@ const sendTentativeAcceptCoarNotification = async (
     type: 'TentativeAccept',
   }
 
-  const stringifiedPayload = JSON.stringify(tentativeAcceptPayload)
-
   try {
-    const response = await request({
-      method: 'post',
-      url: tentativeAcceptPayload.target.inbox,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${stringifiedPayload.length}`,
-      },
-      data: stringifiedPayload,
-    })
+    const response = await postToInbox(
+      tentativeAcceptPayload.target.inbox,
+      tentativeAcceptPayload,
+    )
 
     await createNotification(
       tentativeAcceptPayload,
@@ -216,18 +210,11 @@ const sendRejectCoarNotification = async (
     type: decision === 'revise' ? 'TentativeReject' : 'Reject',
   }
 
-  const stringifiedPayload = JSON.stringify(rejectPayload)
-
   try {
-    const response = await request({
-      method: 'post',
-      url: rejectPayload.target.inbox,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${stringifiedPayload.length}`,
-      },
-      data: stringifiedPayload,
-    })
+    const response = await postToInbox(
+      rejectPayload.target.inbox,
+      rejectPayload,
+    )
 
     await createNotification(rejectPayload, group.id, manuscript.id)
 
@@ -284,18 +271,8 @@ const sendUnprocessableCoarNotification = async (
     type: ['Flag', 'coar-notify:UnprocessableNotification'],
   }
 
-  const stringifiedPayload = JSON.stringify(payload)
-
   try {
-    const response = await request({
-      method: 'post',
-      url: payload.target.inbox,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${stringifiedPayload.length}`,
-      },
-      data: stringifiedPayload,
-    })
+    const response = await postToInbox(payload.target.inbox, payload)
 
     await createNotification(payload, groupId, manuscriptId, options)
 
