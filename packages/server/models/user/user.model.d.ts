@@ -37,6 +37,7 @@ declare class User extends BaseModel {
   static findOneWithIdentity(
     userId: string,
     identityType: string,
+    options?: Options,
   ): Promise<User | undefined>
   static findByUsernamePrefix(
     prefix: string,

@@ -51,6 +51,19 @@ class Team extends TeamBase {
     }
   }
 
+  static async isUserInRolesForObject(userId, objectId, roles, options = {}) {
+    const { trx, excludeTeamId } = options
+
+    const query = this.query(trx)
+      .joinRelated('members')
+      .where({ 'teams.objectId': objectId, 'members.userId': userId })
+      .whereIn('teams.role', roles)
+
+    if (excludeTeamId) query.whereNot('teams.id', excludeTeamId)
+
+    return (await query.resultSize()) > 0
+  }
+
   // TODO add $beforeDelete once https://github.com/Coko-Foundation/cokoserver/issues/43 is resolved
   async $beforeInsert(queryContext) {
     await super.$beforeInsert(queryContext)

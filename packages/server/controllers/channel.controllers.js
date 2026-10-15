@@ -1,34 +1,40 @@
 const { Channel, ChannelMember, Manuscript } = require('../models')
 
-const addUserToManuscriptChatChannel = async ({
-  manuscriptId,
-  userId,
-  type = 'all',
-}) => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .select('parentId')
+const addUserToManuscriptChatChannel = async (
+  { manuscriptId, userId, type = 'all' },
+  options = {},
+) => {
+  const manuscript = await Manuscript.findById(manuscriptId, options)
 
-  const channel = await Channel.query()
-    .where({
-      manuscriptId: manuscript.parentId || manuscriptId,
-      type,
-    })
-    .first()
+  const [channel] = (
+    await Channel.find(
+      {
+        manuscriptId: manuscript.parentId || manuscriptId,
+        type,
+      },
+      options,
+    )
+  ).result
 
-  const channelMember = await ChannelMember.query()
-    .where({
-      channelId: channel.id,
-      userId,
-    })
-    .first()
+  const [channelMember] = (
+    await ChannelMember.find(
+      {
+        channelId: channel.id,
+        userId,
+      },
+      options,
+    )
+  ).result
 
   if (!channelMember) {
-    await ChannelMember.query().insert({
-      channelId: channel.id,
-      userId,
-      lastViewed: new Date(),
-    })
+    await ChannelMember.insert(
+      {
+        channelId: channel.id,
+        userId,
+        lastViewed: new Date(),
+      },
+      options,
+    )
   }
 }
 
@@ -59,13 +65,14 @@ const getSystemWideDiscussionChannel = async groupId => {
     .first()
 }
 
-const removeUserFromManuscriptChatChannel = async ({
-  manuscriptId,
-  userId = null,
-  type = 'all',
-}) => {
-  await ChannelMember.query().delete().where({ userId }).whereExists(
-    ChannelMember.relatedQuery('channel').where({
+const removeUserFromManuscriptChatChannel = async (
+  { manuscriptId, userId = null, type = 'all' },
+  options = {},
+) => {
+  const { trx } = options
+
+  await ChannelMember.query(trx).delete().where({ userId }).whereExists(
+    ChannelMember.relatedQuery('channel', trx).where({
       manuscriptId,
       type,
     }),
