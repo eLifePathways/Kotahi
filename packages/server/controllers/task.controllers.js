@@ -522,10 +522,13 @@ const updateAlertsUponTeamUpdate = async (
   manuscriptId,
   userIdsToAdd,
   userIdsToRemove,
+  options = {},
 ) => {
-  if (!(await manuscriptIsActive(manuscriptId))) return
+  const { trx } = options
+
+  if (!(await manuscriptIsActive(manuscriptId, options))) return
   const now = new Date()
-  const tasks = await Task.query().where({ manuscriptId })
+  const tasks = (await Task.find({ manuscriptId }, options)).result
 
   const overdueTaskIds = tasks
     .filter(
@@ -541,12 +544,12 @@ const updateAlertsUponTeamUpdate = async (
         userId,
       }))
 
-      await TaskAlert.query()
+      await TaskAlert.query(trx)
         .insert(alertsToAdd)
         .onConflict(['taskId', 'userId'])
         .ignore()
 
-      await TaskAlert.query()
+      await TaskAlert.query(trx)
         .delete()
         .where({ taskId })
         .whereIn('userId', userIdsToRemove)

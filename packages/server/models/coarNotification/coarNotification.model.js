@@ -3,6 +3,12 @@ const { formatSearchQueryForPostgres } = require('../../utils/searchUtils')
 const Group = require('../group/group.model')
 const Manuscript = require('../manuscript/manuscript.model')
 
+const isOfferType = builder => {
+  builder
+    .whereRaw(`payload->>'type' = ?`, ['Offer']) // type is a string
+    .orWhereRaw(`payload->'type' @> ?::jsonb`, ['["Offer"]']) // type is an array
+}
+
 class CoarNotification extends BaseModel {
   static get tableName() {
     return 'coar_notifications'
@@ -106,13 +112,23 @@ class CoarNotification extends BaseModel {
 
     const [offerNotification] = await this.query(trx)
       .where({ manuscriptId })
-      .andWhere(builder => {
-        builder
-          .whereRaw(`payload->>'type' = ?`, ['Offer']) // type is a string
-          .orWhereRaw(`payload->'type' @> ?::jsonb`, ['["Offer"]']) // type is an array
-      })
+      .andWhere(isOfferType)
 
     return offerNotification
+  }
+
+  static async getTentativeAcceptNotificationForOffer(
+    manuscriptId,
+    offerId,
+    options = {},
+  ) {
+    const { trx } = options
+
+    return this.query(trx)
+      .where({ manuscriptId })
+      .whereRaw(`payload->>'type' = ?`, ['TentativeAccept'])
+      .whereRaw(`payload->>'inReplyTo' = ?`, [offerId])
+      .first()
   }
 
   static async getOfferNotificationForGroupByIdOrDoi(
@@ -127,8 +143,12 @@ class CoarNotification extends BaseModel {
 
     const { trx } = options
 
+    // Only a processed Offer blocks a retry. Rejected requests, unprocessable
+    // flags and other errors leave no manuscript, so the remote may try again.
     const [offerNotification] = await CoarNotification.query(trx)
       .where({ groupId })
+      .whereNotNull('manuscriptId')
+      .andWhere(isOfferType)
       .andWhere(builder => {
         builder.whereRaw(`payload->>'id' = ?`, [notificationId])
 
