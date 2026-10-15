@@ -1,5 +1,5 @@
 const { get } = require('lodash')
-const { logger, serverUrl, request } = require('@coko/server')
+const { logger, serverUrl, request, useTransaction } = require('@coko/server')
 const { getCrossrefDataViaDoi } = require('./crossRef')
 const { getDataciteViaDoi } = require('./dataCite')
 const { makeAnnouncementOnCOAR, generateUrn } = require('./announcement')
@@ -59,9 +59,13 @@ const sendAnnouncementNotification = (
 const sendTentativeAcceptCoarNotification = async (
   manuscript,
   handlingEditorIds,
+  options = {},
 ) => {
   const offerNotification =
-    await CoarNotification.getOfferNotificationForManuscript(manuscript.id)
+    await CoarNotification.getOfferNotificationForManuscript(
+      manuscript.id,
+      options,
+    )
 
   if (!offerNotification) {
     logger.error(
@@ -71,14 +75,31 @@ const sendTentativeAcceptCoarNotification = async (
     return false
   }
 
+  // Only one TentativeAccept per Offer, regardless of how many editors are assigned
+  const existingTentativeAccept =
+    await CoarNotification.getTentativeAcceptNotificationForOffer(
+      manuscript.id,
+      offerNotification.payload.id,
+      options,
+    )
+
+  if (existingTentativeAccept) {
+    logger.info(
+      'COAR: sendTentativeAcceptNotification: already sent for offer',
+      offerNotification.payload.id,
+    )
+    return false
+  }
+
   const handlingEditor = await User.findOneWithIdentity(
     handlingEditorIds[0],
     'orcid',
+    options,
   )
 
   handlingEditor.orcid = handlingEditor.identities[0]?.identifier
 
-  const group = await Group.findById(manuscript.groupId)
+  const group = await Group.findById(manuscript.groupId, options)
 
   const { payload: offerPayload } = offerNotification
 
@@ -124,7 +145,12 @@ const sendTentativeAcceptCoarNotification = async (
       data: stringifiedPayload,
     })
 
-    await createNotification(tentativeAcceptPayload, group.id, manuscript.id)
+    await createNotification(
+      tentativeAcceptPayload,
+      group.id,
+      manuscript.id,
+      options,
+    )
 
     return response ? response.data : false
   } catch (e) {
@@ -217,9 +243,10 @@ const sendUnprocessableCoarNotification = async (
   originalPayload = {},
   manuscriptId = null,
   groupId = null,
+  options = {},
 ) => {
   const { id: notificationId, origin, target } = originalPayload
-  const activeConfig = await Config.getCached(groupId)
+  const activeConfig = await Config.getCached(groupId, options)
 
   const actor = {
     id: 'https://kotahi.community',
@@ -270,7 +297,7 @@ const sendUnprocessableCoarNotification = async (
       data: stringifiedPayload,
     })
 
-    await createNotification(payload, groupId, manuscriptId)
+    await createNotification(payload, groupId, manuscriptId, options)
 
     return response ? response.data : false
   } catch (e) {
@@ -279,12 +306,20 @@ const sendUnprocessableCoarNotification = async (
   }
 }
 
-const createNotification = async (payload, groupId, manuscriptId = null) => {
-  const notification = await CoarNotification.query().insert({
-    payload,
-    ...(groupId ? { groupId } : {}),
-    ...(manuscriptId ? { manuscriptId } : {}),
-  })
+const createNotification = async (
+  payload,
+  groupId,
+  manuscriptId = null,
+  options = {},
+) => {
+  const notification = await CoarNotification.insert(
+    {
+      payload,
+      ...(groupId ? { groupId } : {}),
+      ...(manuscriptId ? { manuscriptId } : {}),
+    },
+    options,
+  )
 
   return notification
 }
@@ -294,21 +329,27 @@ const updateNotification = async (
   payload,
   groupId,
   manuscriptId = null,
+  options = {},
 ) => {
-  return reprocessNotification.$query().patchAndFetch({
+  const { trx } = options
+
+  return reprocessNotification.$query(trx).patchAndFetch({
     groupId,
     payload,
     ...(manuscriptId ? { manuscriptId } : {}),
   })
 }
 
-const getManuscriptByDoi = async (doi, groupId) => {
-  const manuscript = await Manuscript.findOne({ doi, groupId, isHidden: false })
+const getManuscriptByDoi = async (doi, groupId, options = {}) => {
+  const manuscript = await Manuscript.findOne(
+    { doi, groupId, isHidden: false },
+    options,
+  )
   return manuscript
 }
 
-const getAdditionalMetadata = async (data, groupId) => {
-  const submissionForm = await getSubmissionForm(groupId)
+const getAdditionalMetadata = async (data, groupId, options = {}) => {
+  const submissionForm = await getSubmissionForm(groupId, options)
 
   const mappedMetadata = submissionForm.structure.children
     .filter(e => !!e.metadataMapping)
@@ -323,7 +364,13 @@ const getAdditionalMetadata = async (data, groupId) => {
   return mappedMetadata
 }
 
-const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
+const extractManuscriptFromNotification = async (
+  payload,
+  groupId,
+  doiRa,
+  options = {},
+) => {
+  const { trx } = options
   const doi = extractDoi(payload)
 
   const doiMetadata =
@@ -337,7 +384,7 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
     )
   }
 
-  const existingManuscript = await getManuscriptByDoi(doi, groupId)
+  const existingManuscript = await getManuscriptByDoi(doi, groupId, options)
 
   if (existingManuscript) return null
 
@@ -356,6 +403,7 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
   const additionalMappedMetadata = await getAdditionalMetadata(
     rawDoiData,
     groupId,
+    options,
   )
 
   const newManuscript = {
@@ -393,7 +441,7 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
     ],
   }
 
-  const manuscript = await Manuscript.query().upsertGraphAndFetch(
+  const manuscript = await Manuscript.query(trx).upsertGraphAndFetch(
     newManuscript,
     { relate: true },
   )
@@ -401,11 +449,15 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
   return manuscript
 }
 
-const validateAuthToken = async (authHeader, groupId) => {
-  const coarAuthToken = await Token.getTokenByNameAndGroupId('coar', groupId)
+const validateAuthToken = async (authHeader, groupId, options = {}) => {
+  const coarAuthToken = await Token.getTokenByNameAndGroupId(
+    'coar',
+    groupId,
+    options,
+  )
 
   if (!coarAuthToken) {
-    return true
+    return false
   }
 
   const providedToken = authHeader?.startsWith('Bearer ')
@@ -415,33 +467,14 @@ const validateAuthToken = async (authHeader, groupId) => {
   return coarAuthToken === providedToken
 }
 
-const validateIPs = async (requestIP, group) => {
-  const groupId = group.id
-
-  const activeConfig = await Config.query().findOne({
-    groupId,
-    active: true,
-  })
-
-  const coarNotifyFormData = activeConfig.formData.integrations.coarNotify
-  let repoIpAddress = '*'
-
-  if (coarNotifyFormData) {
-    repoIpAddress = coarNotifyFormData.repoIpAddress
-  }
-
-  if (!repoIpAddress || repoIpAddress === '*') {
-    return true
-  }
-
-  const acceptedIPs = repoIpAddress.split(',').map(ip => ip.trim())
-
-  return acceptedIPs.includes(requestIP)
-}
-
-const linkManuscriptToNotification = async (notification, manuscript) => {
+const linkManuscriptToNotification = async (
+  notification,
+  manuscript,
+  options = {},
+) => {
   const manuscriptId = manuscript.id
-  await CoarNotification.query()
+  const { trx } = options
+  await CoarNotification.query(trx)
     .findById(notification.id)
     .patch({ manuscriptId })
 }
@@ -489,12 +522,14 @@ const generate400Error = message => ({ status: 400, message })
  * @param {*} groupId Group ID to assign the COAR Notify message
  * @param {*} payload COAR Notify Payload being processed
  * @param {*} [reprocessNotification] This notification is being reprocessed, due to a previous error. This notification will be updated with the valid payload.
+ * @param {*} options Optional options, which may include a `trx` transaction object
  * @returns {Promise<{status: number, message: string}>}
  */
 const processNotification = async (
   groupId,
   payload,
   reprocessNotification = null,
+  options = {},
 ) => {
   const doi = extractDoi(payload)
 
@@ -548,6 +583,7 @@ const processNotification = async (
       groupId,
       type === 'Undo' ? payload.inReplyTo : payload.id,
       doi,
+      options,
     )
 
   if (type === 'Undo') {
@@ -557,6 +593,7 @@ const processNotification = async (
 
     const existingManuscript = await Manuscript.findById(
       existingNotification.manuscriptId,
+      { ...options, throwIfNotFound: false },
     )
 
     if (!existingManuscript || existingManuscript.isHidden) {
@@ -564,17 +601,18 @@ const processNotification = async (
     }
 
     if (!reprocessNotification) {
-      await createNotification(payload, groupId, existingManuscript.id)
+      await createNotification(payload, groupId, existingManuscript.id, options)
     } else {
       await updateNotification(
         reprocessNotification,
         payload,
         groupId,
         existingManuscript.id,
+        options,
       )
     }
 
-    await archiveManuscript(existingManuscript.id)
+    await archiveManuscript(existingManuscript.id, options)
 
     return { status: 202, message: 'Manuscript archived successfully' }
   }
@@ -600,35 +638,32 @@ const processNotification = async (
       payload,
       groupId,
       doiRa,
+      options,
     )
   } catch (extractError) {
     return generate400Error(extractError.message)
   }
 
-  if (!newManuscript && reprocessNotification) {
+  // A manuscript with this DOI already exists (e.g. a manual submission), so let the sender know
+  if (!newManuscript) {
     return generate400Error('Manuscript already exists with DOI.')
   }
 
   let notification
 
   if (!reprocessNotification) {
-    notification = await createNotification(payload, groupId)
+    notification = await createNotification(payload, groupId, null, options)
   } else {
     notification = await updateNotification(
       reprocessNotification,
       payload,
       groupId,
+      null,
+      options,
     )
   }
 
-  // existing manuscript
-  if (!newManuscript) {
-    await CoarNotification.query()
-      .findById(notification.id)
-      .patch({ status: false })
-  } else {
-    await linkManuscriptToNotification(notification, newManuscript)
-  }
+  await linkManuscriptToNotification(notification, newManuscript, options)
 
   return { status: 202, message: 'Notification created successfully.' }
 }
@@ -640,6 +675,7 @@ const reprocessCoarNotifyPayload = async (
 ) => {
   const existingNotification = await CoarNotification.findById(
     existingNotificationId,
+    { throwIfNotFound: false },
   )
 
   if (!existingNotification) {
@@ -697,10 +733,96 @@ const getPaginatedNotificationsForGroup = async (
   }
 }
 
+/** Carries a non-2xx result out of the transaction, so that it rolls back */
+class InboxMessageRejection extends Error {
+  constructor({ status, message }) {
+    super(message)
+    this.status = status
+  }
+}
+
+/**
+ * Stores the rejected payload and sends an UnprocessableNotification to its origin.
+ * Runs in its own transaction, after the processing transaction has rolled back.
+ */
+const recordRejectedInboxMessage = async (message, payload, groupId) => {
+  try {
+    await useTransaction(async trx => {
+      await createNotification(payload, groupId, null, { trx })
+      await sendUnprocessableCoarNotification(message, payload, null, groupId, {
+        trx,
+      })
+    })
+  } catch (error) {
+    logger.error('COAR: failed to record rejected inbox message', error)
+  }
+}
+
+const handleIncomingInboxMessage = async (payload, groupName, authHeader) => {
+  let groupId = null
+  let result
+
+  try {
+    result = await useTransaction(async trx => {
+      const group = await Group.findOne({ name: groupName }, { trx })
+      groupId = group?.id || null
+
+      if (!group) {
+        throw new InboxMessageRejection({
+          status: 404,
+          message: 'Group not found',
+        })
+      }
+
+      if (!(await validateAuthToken(authHeader, groupId, { trx }))) {
+        throw new InboxMessageRejection({
+          status: 403,
+          message: 'Unauthorised Request',
+        })
+      }
+
+      if (
+        !(
+          payload &&
+          typeof payload === 'object' &&
+          !!Object.keys(payload).length
+        )
+      ) {
+        throw new InboxMessageRejection({
+          status: 400,
+          message: 'No payload provided',
+        })
+      }
+
+      const processResult = await processNotification(groupId, payload, null, {
+        trx,
+      })
+
+      if (processResult.status > 299) {
+        throw new InboxMessageRejection(processResult)
+      }
+
+      return processResult
+    })
+  } catch (error) {
+    if (error instanceof InboxMessageRejection) {
+      result = { status: error.status, message: error.message }
+    } else {
+      logger.error(error)
+      result = { status: 500, message: 'Failed to create notification.' }
+    }
+
+    await recordRejectedInboxMessage(result.message, payload, groupId)
+  }
+
+  return result
+}
+
 module.exports = {
   createNotification,
   getPaginatedNotificationsForGroup,
   getNotificationsForManuscript,
+  handleIncomingInboxMessage,
   sendAnnouncementNotification,
   sendTentativeAcceptCoarNotification,
   sendRejectCoarNotification,
@@ -708,5 +830,4 @@ module.exports = {
   processNotification,
   reprocessCoarNotifyPayload,
   validateAuthToken,
-  validateIPs,
 }
