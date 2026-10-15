@@ -9,6 +9,7 @@ import {
   afterAll,
   it,
   expect,
+  vi,
 } from 'vitest'
 // express comes with @coko/server, which serves the real routes
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -22,6 +23,8 @@ import {
   Manuscript,
   Token,
 } from '../../../../models'
+
+import { postToInbox } from '../../../../controllers/coar/utils'
 
 // Outbound HTTP (DOI registration agency, Crossref, the sender's inbox) goes
 // through axios. Kotahi and @coko/server each have their own copy, so both get
@@ -66,9 +69,11 @@ const crossrefWork = {
   resource: { primary: { URL: 'https://www.biorxiv.org/content/test' } },
 }
 
-type SentToOrigin = { type: string | string[]; summary?: string }
+type SentToOrigin = { id?: string; type: string | string[]; summary?: string }
 
 type AxiosConfig = { url: string; data?: string }
+
+type InboxFailure = { status: number; headers?: Record<string, string> }
 
 type AxiosResponse = {
   data: unknown
@@ -87,6 +92,35 @@ type CoarPayload = {
 type InboxResult = { status: number; message: string }
 
 let sentToOrigin: SentToOrigin[] = []
+
+// Responses the origin inbox gives before it starts accepting notifications
+let originInboxFailures: InboxFailure[] = []
+
+const rejectAs = (
+  axiosConfig: AxiosConfig,
+  { status, headers = {} }: InboxFailure,
+): Promise<never> => {
+  const { AxiosError } = axiosInstances[1]
+
+  const response = {
+    data: 'no available server\n',
+    status,
+    statusText: String(status),
+    headers,
+    config: axiosConfig,
+    request: {},
+  }
+
+  return Promise.reject(
+    new AxiosError(
+      `Request failed with status code ${status}`,
+      AxiosError.ERR_BAD_RESPONSE,
+      axiosConfig,
+      {},
+      response,
+    ),
+  )
+}
 
 const respond = (
   axiosConfig: AxiosConfig,
@@ -120,7 +154,12 @@ const fakeAdapter = (axiosConfig: AxiosConfig): Promise<AxiosResponse> => {
 
   if (url === ORIGIN_INBOX) {
     sentToOrigin.push(JSON.parse(axiosConfig.data ?? '{}'))
-    return respond(axiosConfig, 201, {})
+
+    const failure = originInboxFailures.shift()
+
+    return failure
+      ? rejectAs(axiosConfig, failure)
+      : respond(axiosConfig, 201, {})
   }
 
   return Promise.reject(new Error(`Unexpected outbound request: ${url}`))
@@ -219,6 +258,7 @@ describe('COAR Notify inbox API', () => {
 
   beforeEach(async () => {
     sentToOrigin = []
+    originInboxFailures = []
 
     group = await Group.insert({ name: 'coar-group', isArchived: false })
 
@@ -466,6 +506,111 @@ describe('COAR Notify inbox API', () => {
         status: 400,
         message: 'Property `inReplyTo` does not match `object.id`',
       })
+    })
+  })
+
+  describe('sending to an inbox', () => {
+    type Outcome = { value?: { status: number }; error?: any }
+
+    /** Starts the POST, then runs through every backoff wait */
+    const send = async (payload: unknown): Promise<Outcome> => {
+      const outcome = postToInbox(ORIGIN_INBOX, payload).then(
+        value => ({ value }),
+        error => ({ error }),
+      )
+
+      await vi.runAllTimersAsync()
+      return outcome
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+      vi.restoreAllMocks()
+    })
+
+    it('sends the payload once when the inbox accepts it', async () => {
+      const { value } = await send({ id: 'urn:uuid:1', type: 'Announce' })
+
+      expect(value?.status).toBe(201)
+      expect(sentToOrigin).toEqual([{ id: 'urn:uuid:1', type: 'Announce' }])
+    })
+
+    it('retries a 503 and resends the same payload', async () => {
+      originInboxFailures = [{ status: 503 }, { status: 503 }]
+
+      const { value } = await send('{"id":"urn:uuid:2","type":"Announce"}')
+
+      expect(value?.status).toBe(201)
+      expect(sentToOrigin).toHaveLength(3)
+      expect(new Set(sentToOrigin.map(n => n.id))).toEqual(
+        new Set(['urn:uuid:2']),
+      )
+    })
+
+    it('gives up after three retries', async () => {
+      originInboxFailures = Array(4).fill({ status: 503 })
+
+      const { error } = await send({ type: 'Announce' })
+
+      expect(error.response.status).toBe(503)
+      expect(sentToOrigin).toHaveLength(4)
+    })
+
+    it('does not retry a client error', async () => {
+      originInboxFailures = [{ status: 400 }]
+
+      const { error } = await send({ type: 'Announce' })
+
+      expect(error.response.status).toBe(400)
+      expect(sentToOrigin).toHaveLength(1)
+    })
+
+    it('backs off exponentially between retries', async () => {
+      vi.spyOn(Math, 'random').mockReturnValue(0)
+      originInboxFailures = Array(3).fill({ status: 502 })
+
+      const outcome = postToInbox(ORIGIN_INBOX, { type: 'Announce' })
+
+      // First attempt goes straight out, then waits of 1s, 2s and 4s
+      await vi.advanceTimersByTimeAsync(0)
+      expect(sentToOrigin).toHaveLength(1)
+      await vi.advanceTimersByTimeAsync(999)
+      expect(sentToOrigin).toHaveLength(1)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(sentToOrigin).toHaveLength(2)
+      await vi.advanceTimersByTimeAsync(2000)
+      expect(sentToOrigin).toHaveLength(3)
+      await vi.advanceTimersByTimeAsync(4000)
+      expect(sentToOrigin).toHaveLength(4)
+
+      await expect(outcome).resolves.toMatchObject({ status: 201 })
+    })
+
+    it('waits as long as Retry-After asks, up to the cap', async () => {
+      originInboxFailures = [{ status: 429, headers: { 'retry-after': '5' } }]
+
+      const outcome = postToInbox(ORIGIN_INBOX, { type: 'Announce' })
+
+      await vi.advanceTimersByTimeAsync(4999)
+      expect(sentToOrigin).toHaveLength(1)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(sentToOrigin).toHaveLength(2)
+      await expect(outcome).resolves.toMatchObject({ status: 201 })
+
+      originInboxFailures = [
+        { status: 503, headers: { 'retry-after': '3600' } },
+      ]
+      sentToOrigin = []
+
+      const capped = postToInbox(ORIGIN_INBOX, { type: 'Announce' })
+
+      await vi.advanceTimersByTimeAsync(10000)
+      expect(sentToOrigin).toHaveLength(2)
+      await expect(capped).resolves.toMatchObject({ status: 201 })
     })
   })
 })
