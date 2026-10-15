@@ -1,5 +1,4 @@
 import { BaseModel, Transaction } from '@coko/server'
-
 import Group from '../group/group.model'
 import Manuscript from '../manuscript/manuscript.model'
 
@@ -30,6 +29,12 @@ declare class CoarNotification extends BaseModel {
 
   static getOfferNotificationForManuscript(
     manuscriptId: string,
+    options?: Options,
+  ): Promise<CoarNotification | undefined>
+
+  static getTentativeAcceptNotificationForOffer(
+    manuscriptId: string,
+    offerId: string,
     options?: Options,
   ): Promise<CoarNotification | undefined>
 
