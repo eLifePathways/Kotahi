@@ -2,7 +2,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 import { Menu } from '../../page-object/page-component/menu'
-import { dashboard, manuscripts, login } from '../../support/routes3'
+import {
+  dashboard,
+  dashboardEdits,
+  manuscripts,
+  login,
+} from '../../support/routes3'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { LoginPage } from '../../page-object/login-page'
@@ -43,14 +48,13 @@ describe('Login page tests', () => {
       cy.awaitDisappearSpinner()
     })
 
-    it('"Editing Queue" is the only tab in dashboard page for admin', () => {
+    it('"Editing Queue" is the only table in dashboard page for admin', () => {
       Menu.getDashboardButton().should('be.visible')
-      DashboardPage.getDashboardTab().should('contain', 'Editing Queue')
-      cy.wait(1000)
-      DashboardPage.getDashboardTab().click()
-      DashboardPage.getSectionTitleWithText('Editing Queue').should(
-        'be.visible',
-      )
+      DashboardPage.getTableCardLinks()
+        .should('have.length', 1)
+        .and('have.attr', 'href', dashboardEdits)
+        .click()
+      DashboardPage.getHeader().should('contain', 'Editing Queue')
     })
 
     it('Admin can access the reports, settings, forms, ursers and manuscripts', () => {
@@ -74,12 +78,11 @@ describe('Login page tests', () => {
 
     it('dashboard page is visible to the logged in user', () => {
       Menu.getDashboardButton().should('be.visible')
-      DashboardPage.getDashboardTab().should('contain', 'Editing Queue')
-      cy.wait(1000)
-      DashboardPage.getDashboardTab().click()
-      DashboardPage.getSectionTitleWithText('Editing Queue').should(
-        'be.visible',
-      )
+      DashboardPage.getTableCardLinks()
+        .should('have.length', 1)
+        .and('have.attr', 'href', dashboardEdits)
+        .click()
+      DashboardPage.getHeader().should('contain', 'Editing Queue')
     })
 
     it('Reviewer/Editor cannot access the admin-specific pages', () => {

@@ -34,6 +34,7 @@ const COMPLETED_REVIEWS_STATUS = 'completed'
 const REJECTED_REVIEWS_STATUS = 'rejected'
 const ACCEPTED_REVIEWS_STATUS = 'accepted'
 const VERSION_TITLE = 'VersionTitle__Root-sc'
+const TABLE_CARD_LINK = 'a[href*="/dashboard/"]'
 
 export const DashboardPage = {
   getSubmissionActionLink() {
@@ -43,7 +44,7 @@ export const DashboardPage = {
     this.getSubmissionActionLink().click()
   },
   getSubmitButton() {
-    return cy.get(BUTTON).contains(SUBMISSION_BUTTON)
+    return cy.getByDataTestId('menu-nav').contains(BUTTON, SUBMISSION_BUTTON)
   },
   getSubmissionFileUploadInput() {
     return cy.get(SUBMISSION_FILE_UPLOAD_INPUT)
@@ -59,9 +60,6 @@ export const DashboardPage = {
   },
   clickSubmit() {
     this.getSubmitButton().click()
-  },
-  getSectionTitleWithText(title) {
-    return cy.getByDataTestId('section-title').contains(title)
   },
   getSubmissionTitle() {
     return cy.get(SUBMISSION_TITLE)
@@ -147,15 +145,7 @@ export const DashboardPage = {
   clickCompletedReviewButton() {
     this.getCompletedReviewButton().click({ force: true })
   },
-  getDashboardTab() {
-    return cy
-      .getByDataTestId('tab-container')
-      .filter(':has(a[href*="/dashboard/"])')
-  },
-  clickDashboardTab(nth) {
-    this.getDashboardTab().eq(nth).find('a').click()
-  },
-  clickEditingQueueTab() {
-    cy.getByDataTestId('tab-container').contains('Editing Queue').click()
+  getTableCardLinks() {
+    return cy.get(TABLE_CARD_LINK)
   },
 }

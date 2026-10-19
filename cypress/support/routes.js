@@ -1,5 +1,8 @@
 export const login = '/journal/login'
 export const dashboard = '/journal/dashboard'
+export const dashboardSubmissions = `${dashboard}/submissions`
+export const dashboardReviews = `${dashboard}/reviews`
+export const dashboardEdits = `${dashboard}/edits`
 export const manuscripts = '/journal/admin/manuscripts'
 export const formBuilder = '/journal/admin/form-builder'
 export const reports = '/journal/admin/reports'

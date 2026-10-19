@@ -1,5 +1,6 @@
 export const login = '/preprint2/login'
 export const dashboard = '/preprint2/dashboard'
+export const dashboardEdits = `${dashboard}/edits`
 export const manuscripts = '/preprint2/admin/manuscripts'
 export const formBuilder = '/preprint2/admin/form-builder'
 export const reports = '/preprint2/admin/reports'

@@ -4,7 +4,7 @@
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
-import { dashboard } from '../../support/routes'
+import { dashboard, dashboardSubmissions } from '../../support/routes'
 
 describe('Create a new submission', () => {
   before(() => {
@@ -62,10 +62,7 @@ Cypress.Commands.add('completeSubmissionForm', title => {
   SubmissionFormPage.clickSubmitYourManuscript()
 
   // Verify your submission exists in dashboard
-  DashboardPage.getSectionTitleWithText('My Submissions')
-  // the following line is added so that it gives enough time for the dom to update the title of the submission in dashboard. Only a switch between tabs.
-  cy.wait(500)
-  DashboardPage.clickDashboardTab(1)
-  DashboardPage.clickDashboardTab(0)
+  cy.url().should('match', /\/dashboard$/)
+  cy.visit(dashboardSubmissions)
   DashboardPage.getSubmissionTitle().should('contain', title)
 })
