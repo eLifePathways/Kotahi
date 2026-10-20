@@ -497,6 +497,9 @@ const permissions = {
   Query: {
     authorsActivity: or(userIsGroupAdmin, userIsAdmin),
     builtCss: isAuthenticated,
+    cmsLayout: allow, // read by the public Flax site
+    cmsPage: or(userIsGroupAdmin, userIsAdmin),
+    cmsPages: allow, // read by the public Flax site
     config: isAuthenticated,
     convertToJats: or(
       userIsEditorOfAnyManuscript,
@@ -519,12 +522,15 @@ const permissions = {
     formForPurposeAndCategory: allow,
     forms: allow,
     formsByCategory: or(userIsGroupAdmin, userIsAdmin),
+    getActiveCmsFilesTree: allow, // read by the public Flax site
     getBlacklistInformation: or(
       userIsEditorOfAnyManuscript,
       userIsGm,
       userIsGroupAdmin,
       userIsAdmin,
     ),
+    getCmsFileContent: or(userIsGroupAdmin, userIsAdmin),
+    getCmsFilesTree: or(userIsGroupAdmin, userIsAdmin),
     getEntityFiles: isAuthenticated,
     getInvitationsForManuscript: or(
       userIsEditorOfAnyManuscript,
@@ -533,6 +539,7 @@ const permissions = {
       userIsAdmin,
     ),
     getFilesByTagOrId: allow,
+    getFoldersList: or(userIsGroupAdmin, userIsAdmin),
     getSpecificFiles: isAuthenticated,
     globalTeams: deny, // Never used
     group: allow,
@@ -753,6 +760,11 @@ const permissions = {
     deleteCMSPage: or(userIsGroupAdmin, userIsAdmin),
     updateCMSLayout: or(userIsGroupAdmin, userIsAdmin),
     rebuildFlaxSite: or(userIsGroupAdmin, userIsAdmin),
+    addResourceToFolder: or(userIsGroupAdmin, userIsAdmin),
+    deleteResource: or(userIsGroupAdmin, userIsAdmin),
+    renameResource: or(userIsGroupAdmin, userIsAdmin),
+    updateResource: or(userIsGroupAdmin, userIsAdmin),
+    updateFlaxRootFolder: or(userIsGroupAdmin, userIsAdmin),
     updateMessage: or(userOwnsMessage, userIsGm, userIsGroupAdmin, userIsAdmin),
     createNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     updateNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
