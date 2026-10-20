@@ -23,6 +23,8 @@ const {
   updateManuscriptSubmission,
   patchManuscript,
   setManuscriptCreated,
+  createTask,
+  createUserNotification,
   deleteSharedUsers,
   addManuscriptFile,
   createThreadedDiscussion,
@@ -242,6 +244,45 @@ module.exports = app => {
       res.status(500).json({ error: err.message })
     }
   })
+
+  app.post('/api/e2e/createTask/:manuscriptId/:username', async (req, res) => {
+    const { manuscriptId, username } = req.params
+    const { dueDate, status } = req.query
+
+    try {
+      const result = await createTask({
+        manuscriptId,
+        username,
+        dueDate,
+        status,
+      })
+      res.status(200).json(result)
+    } catch (err) {
+      logger.error(err)
+      res.status(500).json({ error: err.message })
+    }
+  })
+
+  app.post(
+    '/api/e2e/createUserNotification/:manuscriptId/:username',
+    async (req, res) => {
+      const { manuscriptId, username } = req.params
+      const { eventType, created } = req.query
+
+      try {
+        const result = await createUserNotification({
+          manuscriptId,
+          username,
+          eventType,
+          created,
+        })
+        res.status(200).json(result)
+      } catch (err) {
+        logger.error(err)
+        res.status(500).json({ error: err.message })
+      }
+    },
+  )
 
   app.post(
     '/api/e2e/setReviewerStatus/:manuscriptId/:username',

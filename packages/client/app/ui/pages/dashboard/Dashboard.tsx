@@ -218,9 +218,9 @@ const Greeting = (props: GreetingProps): ReactNode => {
     return acc
   }, {})
 
-  const summarySentences = (
-    Object.entries(countsByType) as [ActionType, number][]
-  ).map(([type, count]) => t(actionSummaryKeys[type], { count }))
+  const summarySentences = (Object.keys(actionSummaryKeys) as ActionType[])
+    .filter(type => countsByType[type])
+    .map(type => t(actionSummaryKeys[type], { count: countsByType[type] }))
 
   const summarySentence = capitalize(
     joinWithAnd(summarySentences, t('dashboardPage.greeting.and')),

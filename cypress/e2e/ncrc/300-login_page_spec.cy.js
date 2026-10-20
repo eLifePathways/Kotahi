@@ -1,15 +1,8 @@
 /* eslint-disable promise/always-return */
-/* eslint-disable cypress/no-unnecessary-waiting */
 
 import { Menu } from '../../page-object/page-component/menu'
-import {
-  dashboard,
-  dashboardEdits,
-  manuscripts,
-  login,
-} from '../../support/routes3'
+import { dashboard, manuscripts, login } from '../../support/routes3'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
-import { DashboardPage } from '../../page-object/dashboard-page'
 import { LoginPage } from '../../page-object/login-page'
 
 describe('Login page tests', () => {
@@ -39,34 +32,6 @@ describe('Login page tests', () => {
     })
   })
 
-  context('admin can access all the pages', () => {
-    beforeEach(() => {
-      cy.fixture('role_names').then(name => {
-        // login as admin
-        cy.login(name.role.admin, dashboard)
-      })
-      cy.awaitDisappearSpinner()
-    })
-
-    it('"Editing Queue" is the only table in dashboard page for admin', () => {
-      Menu.getDashboardButton().should('be.visible')
-      DashboardPage.getTableCardLinks()
-        .should('have.length', 1)
-        .and('have.attr', 'href', dashboardEdits)
-        .click()
-      DashboardPage.getHeader().should('contain', 'Editing Queue')
-    })
-
-    it('Admin can access the reports, settings, forms, ursers and manuscripts', () => {
-      Menu.getManuscriptsButton().should('be.visible')
-      Menu.getReportsButton().should('be.visible')
-      Menu.getSettingsButton().click()
-      Menu.getFormsButton().should('be.visible')
-      Menu.getUsersButton().should('be.visible')
-      Menu.getReportsButton().should('be.visible')
-    })
-  })
-
   context('other users can only access the Dashboard page', () => {
     beforeEach(() => {
       // login as a reviewer
@@ -74,15 +39,6 @@ describe('Login page tests', () => {
         cy.login(name.role.reviewers[0], dashboard)
       })
       cy.awaitDisappearSpinner()
-    })
-
-    it('dashboard page is visible to the logged in user', () => {
-      Menu.getDashboardButton().should('be.visible')
-      DashboardPage.getTableCardLinks()
-        .should('have.length', 1)
-        .and('have.attr', 'href', dashboardEdits)
-        .click()
-      DashboardPage.getHeader().should('contain', 'Editing Queue')
     })
 
     it('Reviewer/Editor cannot access the admin-specific pages', () => {

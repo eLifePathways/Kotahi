@@ -34,7 +34,6 @@ const COMPLETED_REVIEWS_STATUS = 'completed'
 const REJECTED_REVIEWS_STATUS = 'rejected'
 const ACCEPTED_REVIEWS_STATUS = 'accepted'
 const VERSION_TITLE = 'VersionTitle__Root-sc'
-const TABLE_CARD_LINK = 'a[href*="/dashboard/"]'
 
 export const DashboardPage = {
   getSubmissionActionLink() {
@@ -144,8 +143,5 @@ export const DashboardPage = {
   },
   clickCompletedReviewButton() {
     this.getCompletedReviewButton().click({ force: true })
-  },
-  getTableCardLinks() {
-    return cy.get(TABLE_CARD_LINK)
   },
 }

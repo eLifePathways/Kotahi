@@ -553,20 +553,37 @@ const Menu = (props: MenuProps): ReactNode => {
           {links.map(item => {
             const isActive = !!pathname.match(item.url)
 
-            return (
-              <li key={item.key}>
-                <Link
-                  aria-current={isActive ? 'page' : undefined}
-                  data-testid={`menu-link-${item.key}`}
-                  to={item.url}
-                >
-                  <LinkItem $active={isActive}>
-                    <div>{item.icon}</div>
-                    {!menuCollapsed && <div>{item.label}</div>}
-                  </LinkItem>
-                </Link>
-              </li>
+            let link = (
+              <Link
+                aria-current={isActive ? 'page' : undefined}
+                data-testid={`menu-link-${item.key}`}
+                to={item.url}
+              >
+                <LinkItem $active={isActive}>
+                  <div>{item.icon}</div>
+                  <div>{item.label}</div>
+                </LinkItem>
+              </Link>
             )
+
+            if (menuCollapsed) {
+              link = (
+                <Tooltip placement="right" title={item.label}>
+                  <Link
+                    aria-current={isActive ? 'page' : undefined}
+                    aria-label={item.label}
+                    data-testid={`menu-link-${item.key}`}
+                    to={item.url}
+                  >
+                    <LinkItem $active={isActive}>
+                      <div>{item.icon}</div>
+                    </LinkItem>
+                  </Link>
+                </Tooltip>
+              )
+            }
+
+            return <li key={item.key}>{link}</li>
           })}
         </LinkItems>
 

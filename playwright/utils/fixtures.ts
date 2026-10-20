@@ -48,11 +48,11 @@ type FormField = {
   options: FormFieldOption[]
 }
 
-type Api = {
+export type Api = {
   createManuscripts: (opts: {
     amount: number
     submitter?: string
-  }) => Promise<{ manuscriptIds: string[] }>
+  }) => Promise<{ manuscriptIds: string[]; shortIds: number[] }>
   assignRole: (opts: {
     username: string
     role: string
@@ -115,6 +115,18 @@ type Api = {
     threadId: string
     commentIds: string[]
   }>
+  createTask: (opts: {
+    manuscriptId: string
+    username: string
+    dueDate: string
+    status?: string
+  }) => Promise<{ id: string }>
+  createUserNotification: (opts: {
+    manuscriptId: string
+    username: string
+    eventType: string
+    created?: string
+  }) => Promise<{ id: string }>
 }
 
 export const test = base.extend<{
@@ -302,6 +314,31 @@ export const test = base.extend<{
             `${apiUrl}/createThreadedDiscussion/${manuscriptId}?discussion=${encodeURIComponent(JSON.stringify(discussion))}`,
           ),
         ),
+
+      createTask: ({
+        manuscriptId,
+        username,
+        dueDate,
+        status = 'In progress',
+      }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/createTask/${manuscriptId}/${encodeURIComponent(username)}?dueDate=${encodeURIComponent(dueDate)}&status=${encodeURIComponent(status)}`,
+          ),
+        ),
+
+      createUserNotification: ({
+        manuscriptId,
+        username,
+        eventType,
+        created,
+      }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/createUserNotification/${manuscriptId}/${encodeURIComponent(username)}`,
+            { params: { eventType, ...(created && { created }) } },
+          ),
+        ),
     })
   },
 
@@ -311,4 +348,9 @@ export const test = base.extend<{
 })
 
 export { expect } from '@playwright/test'
-export type { APIRequestContext, APIResponse, Page } from '@playwright/test'
+export type {
+  APIRequestContext,
+  APIResponse,
+  Locator,
+  Page,
+} from '@playwright/test'
