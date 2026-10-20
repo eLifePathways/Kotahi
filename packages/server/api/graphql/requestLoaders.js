@@ -1,5 +1,6 @@
 const DataLoader = require('dataloader')
 
+const { reviewUsersLoader } = require('../../models/review/review.loaders')
 const { defaultIdentitiesLoader } = require('../../models/user/user.loaders')
 
 /**
@@ -12,6 +13,10 @@ const { defaultIdentitiesLoader } = require('../../models/user/user.loaders')
  */
 const createLoaders = options => ({
   defaultIdentities: new DataLoader(defaultIdentitiesLoader, options),
+  reviewUsers: new DataLoader(reviewUsersLoader, {
+    ...options,
+    cacheKeyFn: review => review.id,
+  }),
 })
 
 const loadersByContext = new WeakMap()

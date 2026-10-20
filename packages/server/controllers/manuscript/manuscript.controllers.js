@@ -1187,27 +1187,15 @@ const publishedManuscriptDecisions = async (manuscript, userId) => {
 }
 
 const publishedManuscriptEditors = async manuscript => {
-  const teams = await Team.query()
-    .where({ objectId: manuscript.id })
-    .whereIn('role', ['seniorEditor', 'handlingEditor', 'editor'])
+  const teams = await Team.findWithUsers(manuscript.id, [
+    'seniorEditor',
+    'handlingEditor',
+    'editor',
+  ])
 
-  const teamMembers = await TeamMember.query().whereIn(
-    'team_id',
-    teams.map(t => t.id),
+  return teams.flatMap(team =>
+    team.users.map(user => ({ name: user.username, role: team.role })),
   )
-
-  const editorAndRoles = await Promise.all(
-    teamMembers.map(async member => {
-      const user = await User.query().findById(member.userId)
-      const team = teams.find(t => t.id === member.teamId)
-      return {
-        name: user.username,
-        role: team.role,
-      }
-    }),
-  )
-
-  return editorAndRoles
 }
 
 const publishedManuscripts = async (sort, offset, limit, groupId) => {
@@ -1265,39 +1253,6 @@ const publishedManuscriptReviews = async (manuscript, userId) => {
     threadedDiscussions,
     manuscript,
   )
-}
-
-const publishedReviewUsers = async review => {
-  if (review.isHiddenReviewerName) {
-    return [{ id: '', username: 'Anonymous User' }]
-  }
-
-  let users = []
-
-  if (review.isCollaborative) {
-    const manuscript = await Manuscript.query().findById(review.manuscriptId)
-
-    const existingTeam = await manuscript
-      .$relatedQuery('teams')
-      .where('role', 'collaborativeReviewer')
-      .first()
-
-    users = await existingTeam.$relatedQuery('users')
-  } else {
-    users = await User.query().where({ id: review.userId })
-  }
-
-  users = await Promise.all(
-    users.map(async user => {
-      const defaultIdentity = await cachedGet(
-        `defaultIdentityOfUser:${user.id}`,
-      )
-
-      return { defaultIdentity, ...user }
-    }),
-  )
-
-  return users
 }
 
 // TODO: useTransaction to handle rollbacks
@@ -2351,7 +2306,6 @@ module.exports = {
   publishedManuscriptEditors,
   publishedManuscriptReviews,
   publishedManuscripts,
-  publishedReviewUsers,
   publishManuscript,
   refreshAdaStatus,
   removeAuthor,

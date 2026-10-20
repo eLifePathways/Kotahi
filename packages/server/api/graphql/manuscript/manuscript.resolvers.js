@@ -55,9 +55,10 @@ const {
   supplementaryFiles,
   updateAda,
   metaSource,
-  publishedReviewUsers,
   removeAuthor,
 } = require('../../../controllers/manuscript/manuscript.controllers')
+
+const { getRequestLoaders } = require('../requestLoaders')
 
 const manuscriptAndPublishedManuscriptSharedResolvers = {
   async files(parent, _, ctx) {
@@ -399,8 +400,24 @@ const resolvers = {
     },
   },
   PublishedReview: {
-    async users(parent) {
-      return publishedReviewUsers(parent)
+    async users(review, _, ctx) {
+      if (review.isHiddenReviewerName) {
+        return [{ id: '', username: 'Anonymous User' }]
+      }
+
+      return getRequestLoaders(ctx).reviewUsers.load(review)
+    },
+  },
+  ReviewUser: {
+    // Published reviews are public, so never expose the reviewer's email
+    async defaultIdentity(user, _, ctx) {
+      if (!user.id) return null
+
+      const identity = await getRequestLoaders(ctx).defaultIdentities.load(
+        user.id,
+      )
+
+      return identity && { ...identity, email: null }
     },
   },
 }
