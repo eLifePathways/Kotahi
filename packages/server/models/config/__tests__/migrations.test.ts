@@ -261,7 +261,7 @@ describe('Config Migrations', () => {
   })
 
   it('changes the default group identity colours', async () => {
-    await migrationManager.migrate({ to: '1789019316-remove-chat-expanded.ts' })
+    await migrationManager.migrate({ to: '1790663316-remove-recent-tab.ts' })
 
     const noncompliantGroupIdentity = {
       primaryColor: '#3aae2a',
