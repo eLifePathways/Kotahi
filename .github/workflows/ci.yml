@@ -310,8 +310,13 @@ jobs:
         run: yarn cypress run --spec cypress/e2e/ncrc
 
   end-to-end:
-    name: End to end tests - playwright
+    name: End to end tests - playwright (${{ matrix.shard }}/3)
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
 
     env:
       USE_SANDBOXED_ORCID: true
@@ -358,13 +363,13 @@ jobs:
           '
 
       - name: Run tests
-        run: npx playwright test
+        run: npx playwright test --shard=${{ matrix.shard }}/3
 
       - name: Upload Playwright traces
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-traces
+          name: playwright-traces-${{ matrix.shard }}
           path: test-results/
           retention-days: 7
           if-no-files-found: ignore
