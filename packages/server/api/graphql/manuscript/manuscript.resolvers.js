@@ -34,6 +34,7 @@ const {
   getManuscriptsData,
   versionsOfManuscriptCurrentUserIsReviewerOf,
   getManuscriptFiles,
+  getManuscriptFilesForRequest,
   getRelatedPublishedArtifacts,
   getRelatedReviews,
   authorFeedback,
@@ -59,8 +60,9 @@ const {
 } = require('../../../controllers/manuscript/manuscript.controllers')
 
 const manuscriptAndPublishedManuscriptSharedResolvers = {
-  async files(parent) {
-    return getManuscriptFiles(parent.id, parent.files)
+  async files(parent, _, ctx) {
+    if (parent.files) return getManuscriptFiles(parent.id, parent.files)
+    return getManuscriptFilesForRequest(ctx, parent.id)
   },
 
   async meta(parent) {
@@ -389,8 +391,8 @@ const resolvers = {
     },
   },
   ManuscriptMeta: {
-    async source(parent) {
-      return metaSource(parent)
+    async source(parent, _, ctx) {
+      return metaSource(parent, ctx)
     },
     async comments(parent) {
       return JSON.stringify(parent.comments)

@@ -593,16 +593,22 @@ const getCss = async () => {
 }
 
 const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
-  const forms = await Form.query()
-  const formsElements = flatten(forms.map(f => f.structure.children))
-
-  const files = (
+  const rawFiles =
     manuscriptFiles ||
     (await Manuscript.relatedQuery('files').for(manuscriptId))
-  ).map(f => {
+
+  const isExternalAttachment = f =>
+    f.meta.formElementId && f.tags.includes('externalAttachmentSource')
+
+  // Form elements hold the S3 credentials for external attachments only
+  const formsElements = rawFiles.some(isExternalAttachment)
+    ? flatten((await Form.query()).map(f => f.structure.children))
+    : []
+
+  const files = rawFiles.map(f => {
     let s3
 
-    if (f.meta.formElementId && f.tags.includes('externalAttachmentSource')) {
+    if (isExternalAttachment(f)) {
       const element = formsElements.find(el => el.id === f.meta.formElementId)
       s3 = {
         accessKeyId: element.s3AccessId
@@ -626,6 +632,26 @@ const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
   })
 
   return getFilesWithUrl(files)
+}
+
+/** Fetches and signs a manuscript's files once per request, so the `files` and
+ * `meta.source` resolvers share the work. Memoised on ctx rather than
+ * ctx.loaders, as the loaders are created once and shared by all requests.
+ * @param ctx The GQL context object
+ * @param {string} manuscriptId The manuscript owning the files
+ * */
+const getManuscriptFilesForRequest = (ctx, manuscriptId) => {
+  if (!ctx) return getManuscriptFiles(manuscriptId)
+  if (!ctx.manuscriptFilesWithUrl) ctx.manuscriptFilesWithUrl = new Map()
+
+  if (!ctx.manuscriptFilesWithUrl.has(manuscriptId)) {
+    ctx.manuscriptFilesWithUrl.set(
+      manuscriptId,
+      getManuscriptFiles(manuscriptId),
+    )
+  }
+
+  return ctx.manuscriptFilesWithUrl.get(manuscriptId)
 }
 
 const getManuscriptsData = async selectedManuscripts => {
@@ -1923,14 +1949,13 @@ const setShouldPublishField = async (
   return updated
 }
 
-const metaSource = async manuscript => {
+const metaSource = async (manuscript, ctx) => {
   if (typeof manuscript.source !== 'string') return null
 
-  let files =
-    manuscript.manuscriptFiles ||
-    (await Manuscript.relatedQuery('files').for(manuscript.manuscriptId))
+  const files = manuscript.manuscriptFiles
+    ? await getFilesWithUrl(manuscript.manuscriptFiles)
+    : await getManuscriptFilesForRequest(ctx, manuscript.manuscriptId)
 
-  files = await getFilesWithUrl(files)
   // TODO Any reason not to use replaceImageSrcResponsive here?
   return replaceImageSrc(manuscript.source, files, 'medium')
 }
@@ -2303,6 +2328,7 @@ module.exports = {
   getCss,
   getManuscript,
   getManuscriptFiles,
+  getManuscriptFilesForRequest,
   getManuscriptsData,
   getRelatedPublishedArtifacts,
   getRelatedReviews,
