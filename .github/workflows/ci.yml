@@ -310,13 +310,13 @@ jobs:
         run: yarn cypress run --spec cypress/e2e/ncrc
 
   end-to-end:
-    name: End to end tests - playwright (${{ matrix.shard }}/3)
+    name: End to end tests - playwright (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: [1, 2, 3, 4]
 
     env:
       USE_SANDBOXED_ORCID: true
@@ -363,7 +363,7 @@ jobs:
           '
 
       - name: Run tests
-        run: npx playwright test --shard=${{ matrix.shard }}/3
+        run: npx playwright test --shard=${{ matrix.shard }}/4
 
       - name: Upload Playwright traces
         if: always()
