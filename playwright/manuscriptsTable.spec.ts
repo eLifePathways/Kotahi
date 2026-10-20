@@ -1,7 +1,13 @@
 import { readFileSync } from 'fs'
 
 import { colorSecondary, colorSuccess, testOrcid } from './utils/constants'
-import { test, expect, type Page } from './utils/fixtures'
+import {
+  test,
+  expect,
+  type Api,
+  type Locator,
+  type Page,
+} from './utils/fixtures'
 import { formatAbsoluteDate, formatChipDate, hexToRgb } from './utils/helpers'
 
 // Mirrors VARIANT_CONFIG in packages/client/app/pages/hooks/useManuscriptsTable.tsx
@@ -1583,164 +1589,100 @@ test.describe('manuscripts table data types', () => {
 })
 
 test.describe('manuscripts table search and filter', () => {
-  test('search matches a subset of rows, shows snippets, a chip and the info tooltip, supports the / and Escape shortcuts, and supports quoted phrases, exclusion, OR and wildcards', async ({
+  const resultShortIdCells = (page: Page): Locator =>
+    page.locator('.ant-table-tbody td[data-testid="shortId"]')
+
+  const snippetRows = (page: Page): Locator =>
+    page.locator('.ant-table-expanded-row')
+
+  const searchUrl = (term: string): string =>
+    `/admin/manuscripts?search=${encodeURIComponent(term)}`
+
+  const setAbstracts = (
+    api: Api,
+    manuscriptIds: string[],
+    abstracts: string[],
+  ): Promise<unknown[]> =>
+    Promise.all(
+      abstracts.map((abstract, index) =>
+        api.updateManuscriptSubmission({
+          manuscriptId: manuscriptIds[index],
+          patch: { $abstract: abstract },
+        }),
+      ),
+    )
+
+  test('searching from the search box narrows the rows, shows a snippet and a chip, and removing the chip clears it', async ({
     api,
     loginAs,
     page,
     navigateTo,
     testGroup,
   }) => {
-    // this test drives ~12 sequential full page navigations - comfortably
-    // under the default 30s on a fast machine, but not on slower CI runners
-    test.setTimeout(90000)
-
     const searchTerm = 'platypus'
-
-    // 14 manuscripts are created below, more than the default page size (10)
-    await api.updateGroupConfig({ manuscript: { paginationCount: 20 } })
-
-    // A custom submission-form field gets its own search snippet group,
-    // keyed by the field's title.
-    await api.updateFormFields({
-      purpose: 'submit',
-      category: 'submission',
-      fields: [
-        {
-          name: 'submission.testKeywords',
-          title: 'Keywords',
-          component: 'TextField',
-          options: [],
-        },
-      ],
-    })
-
-    const { manuscriptIds } = await api.createManuscripts({ amount: 13 })
-
-    const [
-      uniqueManuscriptId,
-      authorNameManuscriptId,
-      ,
-      phraseManuscriptId,
-      nonAdjacentManuscriptId,
-      giraffeOnlyManuscriptId,
-      giraffeAndZebraManuscriptId,
-      narwhalManuscriptId,
-      walrusManuscriptId,
-      titleOnlyManuscriptId,
-      customFieldManuscriptId,
-      articleBodyManuscriptId,
-      multiFieldManuscriptId,
-    ] = manuscriptIds
-
-    // an entry in the submission form's own Authors field - not the same as
-    // the manuscript's submitter (a user account), which search deliberately
-    // excludes
-    await api.updateManuscriptSubmission({
-      manuscriptId: authorNameManuscriptId,
-      patch: { $authors: [{ firstName: 'Fennec', lastName: 'Meerkat' }] },
-    })
+    const { manuscriptIds } = await api.createManuscripts({ amount: 3 })
 
     await api.updateManuscriptSubmission({
-      manuscriptId: uniqueManuscriptId,
+      manuscriptId: manuscriptIds[0],
       patch: {
         $abstract: `This abstract mentions a rare keyword: ${searchTerm}.`,
-      },
-    })
-
-    // adjacent phrase, for quoted vs unquoted search
-    await api.updateManuscriptSubmission({
-      manuscriptId: phraseManuscriptId,
-      patch: { $abstract: 'This one is about a red panda.' },
-    })
-
-    // both words present, but not adjacent
-    await api.updateManuscriptSubmission({
-      manuscriptId: nonAdjacentManuscriptId,
-      patch: { $abstract: 'This one has a red fox and a panda bear.' },
-    })
-
-    // for exclusion (-) and wildcard (*) search
-    await api.updateManuscriptSubmission({
-      manuscriptId: giraffeOnlyManuscriptId,
-      patch: { $abstract: 'This one discusses a giraffe.' },
-    })
-
-    await api.updateManuscriptSubmission({
-      manuscriptId: giraffeAndZebraManuscriptId,
-      patch: { $abstract: 'This one has both a giraffe and a zebra.' },
-    })
-
-    // for OR search
-    await api.updateManuscriptSubmission({
-      manuscriptId: narwhalManuscriptId,
-      patch: { $abstract: 'This one mentions a narwhal.' },
-    })
-
-    await api.updateManuscriptSubmission({
-      manuscriptId: walrusManuscriptId,
-      patch: { $abstract: 'This one mentions a walrus.' },
-    })
-
-    // for a title-field snippet
-    await api.updateManuscriptSubmission({
-      manuscriptId: titleOnlyManuscriptId,
-      patch: { $title: 'A study of the elusive quokka' },
-    })
-
-    // for a custom-field snippet
-    await api.updateManuscriptSubmission({
-      manuscriptId: customFieldManuscriptId,
-      patch: { testKeywords: 'This mentions a wombat.' },
-    })
-
-    // for an "Article body" snippet - meta isn't part of submission, so this
-    // goes through the generic manuscript patch instead
-    await api.patchManuscript({
-      manuscriptId: articleBodyManuscriptId,
-      patch: { meta: { source: 'This article body mentions a hippogriff.' } },
-    })
-
-    // same word in both the title and the abstract, for a manuscript with
-    // two snippet groups at once
-    await api.updateManuscriptSubmission({
-      manuscriptId: multiFieldManuscriptId,
-      patch: {
-        $title: 'Something about the okapi',
-        $abstract: 'This abstract also discusses the okapi in detail.',
       },
     })
 
     await loginAs(testGroup.adminUsername)
     await navigateTo('/admin/manuscripts')
 
-    const shortIdCells = page.locator(
-      '.ant-table-tbody td[data-testid="shortId"]',
-    )
+    await expect(resultShortIdCells(page)).toHaveCount(3)
 
-    await expect(shortIdCells).toHaveCount(13)
+    const searchInput = page.getByPlaceholder('Enter search terms...')
+    await searchInput.fill(searchTerm)
+    await searchInput.press('Enter')
 
-    const idOnlyRow = page.locator('.ant-table-tbody tr', {
-      hasText: 'Test manuscript 2',
+    await expect(resultShortIdCells(page)).toHaveCount(1)
+
+    const searchChip = page.getByText(`Search: ${searchTerm}`, {
+      exact: true,
     })
 
-    const idOnlyShortId = await idOnlyRow
-      .locator('td[data-testid="shortId"]')
-      .textContent()
+    await expect(searchChip).toBeVisible()
+    await expect(snippetRows(page)).toContainText('Abstract:')
+    await expect(snippetRows(page).locator('mark')).toHaveText(searchTerm)
+
+    await searchChip.getByRole('button', { name: 'Remove filter' }).click()
+    await expect(resultShortIdCells(page)).toHaveCount(3)
+  })
+
+  test('/ focuses the search box and Escape leaves it', async ({
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
 
     const searchInput = page.getByPlaceholder('Enter search terms...')
 
-    // '/' focuses search, Escape un-focuses it
+    await expect(searchInput).toBeVisible()
     await expect(searchInput).not.toBeFocused()
     await page.keyboard.press('/')
     await expect(searchInput).toBeFocused()
     await page.keyboard.press('Escape')
     await expect(searchInput).not.toBeFocused()
+  })
 
-    const helpButton = page.getByRole('button', {
-      name: 'Surround multi-word phrases',
-    })
+  test('the search info tooltip lists the search tips', async ({
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await loginAs(testGroup.adminUsername)
+    await navigateTo('/admin/manuscripts')
 
-    await helpButton.click()
+    await page
+      .getByRole('button', { name: 'Surround multi-word phrases' })
+      .click()
 
     const tooltip = page.getByRole('tooltip')
     await expect(tooltip).toContainText('Tips for using search')
@@ -1753,126 +1695,253 @@ test.describe('manuscripts table search and filter', () => {
     await expect(tooltip).toContainText(
       'Press / anywhere on the page to jump to search.',
     )
+  })
 
-    // close the (click-triggered) tooltip before continuing
-    await helpButton.click()
+  const querySyntaxCases = [
+    {
+      name: 'a quoted phrase only matches the words next to each other',
+      abstracts: [
+        'This one is about a red panda.',
+        'This one has a red fox and a panda bear.',
+        'This one is about something else.',
+      ],
+      query: '"red panda"',
+      expectedCount: 1,
+    },
+    {
+      name: 'unquoted words match regardless of adjacency',
+      abstracts: [
+        'This one is about a red panda.',
+        'This one has a red fox and a panda bear.',
+        'This one is about something else.',
+      ],
+      query: 'red panda',
+      expectedCount: 2,
+    },
+    {
+      name: 'a term prefixed with - is excluded',
+      abstracts: [
+        'This one discusses a giraffe.',
+        'This one has both a giraffe and a zebra.',
+      ],
+      query: 'giraffe -zebra',
+      expectedCount: 1,
+    },
+    {
+      name: 'OR matches either term',
+      abstracts: [
+        'This one mentions a narwhal.',
+        'This one mentions a walrus.',
+        'This one is about something else.',
+      ],
+      query: 'narwhal OR walrus',
+      expectedCount: 2,
+    },
+    {
+      name: '* matches word endings',
+      abstracts: [
+        'This one discusses a giraffe.',
+        'This one has both a giraffe and a zebra.',
+        'This one is about something else.',
+      ],
+      query: 'gira*',
+      expectedCount: 2,
+    },
+  ]
 
-    await searchInput.fill(searchTerm)
-    await searchInput.press('Enter')
+  querySyntaxCases.forEach(({ name, abstracts, query, expectedCount }) => {
+    test(`search: ${name}`, async ({
+      api,
+      loginAs,
+      page,
+      navigateTo,
+      testGroup,
+    }) => {
+      const { manuscriptIds } = await api.createManuscripts({
+        amount: abstracts.length,
+      })
 
-    await expect(shortIdCells).toHaveCount(1)
+      await setAbstracts(api, manuscriptIds, abstracts)
 
-    const searchChip = page.getByText(`Search: ${searchTerm}`, {
-      exact: true,
+      await loginAs(testGroup.adminUsername)
+      await navigateTo(searchUrl(query))
+
+      await expect(resultShortIdCells(page)).toHaveCount(expectedCount)
+    })
+  })
+
+  type SnippetCase = {
+    name: string
+    setup: (api: Api, manuscriptId: string) => Promise<unknown>
+    term: string
+    labels: string[]
+    marks: string[]
+  }
+
+  const snippetCases: SnippetCase[] = [
+    {
+      name: 'title',
+      setup: (api, manuscriptId): Promise<unknown> =>
+        api.updateManuscriptSubmission({
+          manuscriptId,
+          patch: { $title: 'A study of the elusive quokka' },
+        }),
+      term: 'quokka',
+      labels: ['Title:'],
+      marks: ['quokka'],
+    },
+    {
+      name: 'custom submission form field, labelled by its title',
+      setup: async (api, manuscriptId): Promise<unknown> => {
+        await api.updateFormFields({
+          purpose: 'submit',
+          category: 'submission',
+          fields: [
+            {
+              name: 'submission.testKeywords',
+              title: 'Keywords',
+              component: 'TextField',
+              options: [],
+            },
+          ],
+        })
+
+        return api.updateManuscriptSubmission({
+          manuscriptId,
+          patch: { testKeywords: 'This mentions a wombat.' },
+        })
+      },
+      term: 'wombat',
+      labels: ['Keywords:'],
+      marks: ['wombat'],
+    },
+    {
+      name: 'article body (meta.source, not a submission field)',
+      setup: (api, manuscriptId): Promise<unknown> =>
+        api.patchManuscript({
+          manuscriptId,
+          patch: {
+            meta: { source: 'This article body mentions a hippogriff.' },
+          },
+        }),
+      term: 'hippogriff',
+      labels: ['Article body:'],
+      marks: ['hippogriff'],
+    },
+    {
+      name: "author names (the submission form's own Authors field)",
+      setup: (api, manuscriptId): Promise<unknown> =>
+        api.updateManuscriptSubmission({
+          manuscriptId,
+          patch: { $authors: [{ firstName: 'Fennec', lastName: 'Meerkat' }] },
+        }),
+      term: 'Meerkat',
+      labels: ['Author names:'],
+      marks: ['Meerkat'],
+    },
+    {
+      name: 'title and abstract at once',
+      setup: (api, manuscriptId): Promise<unknown> =>
+        api.updateManuscriptSubmission({
+          manuscriptId,
+          patch: {
+            $title: 'Something about the okapi',
+            $abstract: 'This abstract also discusses the okapi in detail.',
+          },
+        }),
+      term: 'okapi',
+      labels: ['Title:', 'Abstract:'],
+      marks: ['okapi', 'okapi'],
+    },
+  ]
+
+  snippetCases.forEach(({ name, setup, term, labels, marks }) => {
+    test(`search shows a snippet for a match in the ${name}`, async ({
+      api,
+      loginAs,
+      page,
+      navigateTo,
+      testGroup,
+    }) => {
+      const {
+        manuscriptIds: [manuscriptId],
+      } = await api.createManuscripts({ amount: 2 })
+
+      await setup(api, manuscriptId)
+
+      await loginAs(testGroup.adminUsername)
+      await navigateTo(searchUrl(term))
+
+      await expect(resultShortIdCells(page)).toHaveCount(1)
+      await Promise.all(
+        labels.map(label => expect(snippetRows(page)).toContainText(label)),
+      )
+      await expect(snippetRows(page).locator('mark')).toHaveText(marks)
+    })
+  })
+
+  test('search shows a snippet for a match on the manuscript ID', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    const {
+      manuscriptIds,
+      shortIds: [shortId],
+    } = await api.createManuscripts({ amount: 2 })
+
+    await Promise.all(
+      manuscriptIds.map(manuscriptId =>
+        api.updateManuscriptSubmission({
+          manuscriptId,
+          patch: { $title: 'Untitled', $abstract: 'No abstract' },
+        }),
+      ),
+    )
+
+    await loginAs(testGroup.adminUsername)
+    await navigateTo(searchUrl(String(shortId)))
+
+    await expect(resultShortIdCells(page)).toHaveText([String(shortId)])
+    await expect(snippetRows(page)).toContainText('Manuscript ID:')
+    await expect(snippetRows(page).locator('mark')).toHaveText(String(shortId))
+  })
+
+  test("search does not match a submitter's username", async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.createManuscripts({
+      amount: 1,
+      submitter: testGroup.userWithOrcidUsername,
     })
 
-    await expect(searchChip).toBeVisible()
-
-    const expandedRow = page.locator('.ant-table-expanded-row')
-    await expect(expandedRow).toContainText('Abstract:')
-    await expect(expandedRow.locator('mark')).toHaveText(searchTerm)
-
-    await searchChip.getByRole('button', { name: 'Remove filter' }).click()
-    await expect(shortIdCells).toHaveCount(13)
-
-    // The remaining checks are pure query-syntax scenarios, not new UI
-    // interactions - driving them through the URL (a fresh navigation per
-    // search) avoids racing overlapping in-flight searches against each
-    // other, since the app's search doesn't cancel a stale request when a
-    // newer one is fired (network-only fetchPolicy, no de-dupe/abort).
-    const searchUrl = (term: string): string =>
-      `/admin/manuscripts?search=${encodeURIComponent(term)}`
-
-    // quoted phrase requires adjacency - matches only the manuscript with
-    // "red panda" together, not the one with both words apart
-    await navigateTo(searchUrl('"red panda"'))
-    await expect(shortIdCells).toHaveCount(1)
-
-    // unquoted is just an AND of the two words, regardless of adjacency
-    await navigateTo(searchUrl('red panda'))
-    await expect(shortIdCells).toHaveCount(2)
-
-    // exclude with - : matches "giraffe" but not the one that also has "zebra"
-    await navigateTo(searchUrl('giraffe -zebra'))
-    await expect(shortIdCells).toHaveCount(1)
-
-    // OR: matches either term
-    await navigateTo(searchUrl('narwhal OR walrus'))
-    await expect(shortIdCells).toHaveCount(2)
-
-    // wildcard: "gira*" matches both manuscripts containing "giraffe"
-    await navigateTo(searchUrl('gira*'))
-    await expect(shortIdCells).toHaveCount(2)
-
-    // title field snippet
-    await navigateTo(searchUrl('quokka'))
-    await expect(shortIdCells).toHaveCount(1)
-    await expect(page.locator('.ant-table-expanded-row')).toContainText(
-      'Title:',
-    )
-    await expect(
-      page.locator('.ant-table-expanded-row').locator('mark'),
-    ).toHaveText('quokka')
-
-    // custom submission-form field snippet, labeled by its title
-    await navigateTo(searchUrl('wombat'))
-    await expect(shortIdCells).toHaveCount(1)
-    await expect(page.locator('.ant-table-expanded-row')).toContainText(
-      'Keywords:',
-    )
-    await expect(
-      page.locator('.ant-table-expanded-row').locator('mark'),
-    ).toHaveText('wombat')
-
-    // "Manuscript ID" snippet - matches on the manuscript's own shortId
-    await navigateTo(searchUrl(idOnlyShortId as string))
-    await expect(shortIdCells).toHaveCount(1)
-    await expect(page.locator('.ant-table-expanded-row')).toContainText(
-      'Manuscript ID:',
-    )
-
-    // "Article body" snippet - meta.source, not a submission field
-    await navigateTo(searchUrl('hippogriff'))
-    await expect(shortIdCells).toHaveCount(1)
-    await expect(page.locator('.ant-table-expanded-row')).toContainText(
-      'Article body:',
-    )
-    await expect(
-      page.locator('.ant-table-expanded-row').locator('mark'),
-    ).toHaveText('hippogriff')
-
-    // one manuscript matching in two fields at once shows both snippet groups
-    await navigateTo(searchUrl('okapi'))
-    await expect(shortIdCells).toHaveCount(1)
-
-    const multiFieldSnippets = page.locator('.ant-table-expanded-row')
-    await expect(multiFieldSnippets).toContainText('Title:')
-    await expect(multiFieldSnippets).toContainText('Abstract:')
-    await expect(multiFieldSnippets.locator('mark')).toHaveCount(2)
-
-    // an author's name (from the submission form's own Authors field, an
-    // array rather than plain text) matches, with its own labeled snippet
-    await navigateTo(searchUrl('Meerkat'))
-    await expect(shortIdCells).toHaveCount(1)
-
-    const authorSnippet = page.locator('.ant-table-expanded-row')
-    await expect(authorSnippet).toContainText('Author names:')
-    await expect(authorSnippet.locator('mark')).toHaveText('Meerkat')
-
-    // a submitter's username does NOT match - search is deliberately
-    // restricted to the manuscript's own data and form config, not team
-    // members/invitations/users (see the restrict-search-and-resolve-
-    // option-labels migration)
+    await loginAs(testGroup.adminUsername)
     await navigateTo(searchUrl(testGroup.userWithOrcidUsername))
-    await expect(shortIdCells).toHaveCount(0)
-    await expect(page.locator('.ant-table-expanded-row')).toHaveCount(0)
 
-    // a term matching nothing shows the empty state, with no stray rows or
-    // expanded snippets, but the search chip still reflects the query
+    await expect(resultShortIdCells(page)).toHaveCount(0)
+    await expect(snippetRows(page)).toHaveCount(0)
+  })
+
+  test('a search matching nothing shows the empty state and keeps the search chip', async ({
+    api,
+    loginAs,
+    page,
+    navigateTo,
+    testGroup,
+  }) => {
+    await api.createManuscripts({ amount: 2 })
+
+    await loginAs(testGroup.adminUsername)
     await navigateTo(searchUrl('unicorn'))
 
-    await expect(shortIdCells).toHaveCount(0)
-    await expect(page.locator('.ant-table-expanded-row')).toHaveCount(0)
+    await expect(resultShortIdCells(page)).toHaveCount(0)
+    await expect(snippetRows(page)).toHaveCount(0)
     await expect(
       page.getByTestId('empty-manuscripts-table-placeholder'),
     ).toHaveText('No matching manuscripts were found')
@@ -1913,6 +1982,7 @@ test.describe('manuscripts table search and filter', () => {
     const filterDropdown = page.locator('.ant-table-filter-dropdown:visible')
     await filterDropdown.getByText('Submitted', { exact: true }).click()
     await filterDropdown.getByRole('button', { name: 'OK' }).click()
+    await expect(filterDropdown).toBeHidden()
 
     await expect(shortIdCells).toHaveCount(1)
 
@@ -1939,6 +2009,7 @@ test.describe('manuscripts table search and filter', () => {
     const reopenedDropdown = page.locator('.ant-table-filter-dropdown:visible')
     await reopenedDropdown.getByText('Submitted', { exact: true }).click()
     await reopenedDropdown.getByRole('button', { name: 'OK' }).click()
+    await expect(reopenedDropdown).toBeHidden()
 
     await expect(shortIdCells).toHaveCount(1)
     await expect(statusChip).toBeVisible()
@@ -1950,6 +2021,9 @@ test.describe('manuscripts table search and filter', () => {
 
     const resetDropdown = page.locator('.ant-table-filter-dropdown:visible')
     await resetDropdown.getByRole('button', { name: 'Reset' }).click()
+    await expect(
+      resetDropdown.getByRole('checkbox', { checked: true }),
+    ).toHaveCount(0)
     await resetDropdown.getByRole('button', { name: 'OK' }).click()
 
     await expect(shortIdCells).toHaveCount(3)
