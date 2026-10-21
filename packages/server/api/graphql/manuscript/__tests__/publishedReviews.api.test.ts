@@ -7,9 +7,42 @@ import {
   expect,
   vi,
 } from 'vitest'
-import { migrationManager, db, config, DbTestUtils } from '@coko/server'
+import gql from 'graphql-tag'
+import {
+  createGraphqlTestServer,
+  migrationManager,
+  db,
+  config,
+  DbTestUtils,
+  File,
+} from '@coko/server'
 
-import { Identity, Manuscript, Review, Team, User } from '../../../../models'
+import {
+  Form,
+  Group,
+  Identity,
+  Manuscript,
+  Review,
+  Team,
+  User,
+} from '../../../../models'
+
+const formWithFiles = (groupId: string, category: string): Promise<Form> =>
+  // @ts-ignore
+  Form.insert({
+    groupId,
+    category,
+    purpose: category,
+    structure: {
+      children: [
+        {
+          id: '0f2d6c1e-5a4b-4c3d-8e9f-1a2b3c4d5e6f',
+          name: 'supplementary',
+          component: 'SupplementaryFiles',
+        },
+      ],
+    },
+  })
 
 // Loaded after config.init(), as the controllers read config on import
 let resolvers: any
@@ -133,6 +166,107 @@ describe('Published reviews API', () => {
         { name: 'Senior', role: 'seniorEditor' },
         { name: 'Handling', role: 'handlingEditor' },
       ]),
+    )
+  })
+
+  it("loads a published manuscript's reviews once for reviews and decisions", async () => {
+    const group = await Group.insert({})
+    await formWithFiles(group.id, 'review')
+    await formWithFiles(group.id, 'decision')
+
+    const manuscript = await Manuscript.insert({
+      groupId: group.id,
+      status: 'published',
+      published: new Date().toISOString(),
+      formFieldsToPublish: [],
+    })
+
+    const reviewer = await User.insert({ username: 'Reviewer' })
+    const editor = await User.insert({ username: 'Editor' })
+
+    const attachment = (name: string): Promise<File> =>
+      File.insert({
+        name,
+        objectId: manuscript.id,
+        storedObjects: [
+          {
+            type: 'original',
+            key: name,
+            mimetype: 'application/pdf',
+            extension: 'pdf',
+            size: 100,
+          },
+        ],
+      })
+
+    const reviewFile = await attachment('review.pdf')
+    const decisionFile = await attachment('decision.pdf')
+
+    const review = await Review.insert({
+      manuscriptId: manuscript.id,
+      userId: reviewer.id,
+      jsonData: { supplementary: [reviewFile.id] },
+    })
+
+    const decision = await Review.insert({
+      manuscriptId: manuscript.id,
+      userId: editor.id,
+      isDecision: true,
+      jsonData: { supplementary: [decisionFile.id] },
+    })
+
+    const orderReviewPerUsername = vi.spyOn(Review, 'orderReviewPerUsername')
+    const findFilesByIds = vi.spyOn(File, 'findByIds')
+
+    const QUERY = gql`
+      query PublishedManuscript($id: ID!) {
+        publishedManuscript(id: $id) {
+          reviews {
+            id
+          }
+          decisions {
+            id
+          }
+        }
+      }
+    `
+
+    const gqlServer = await createGraphqlTestServer()
+
+    const result = await gqlServer.executeOperation(
+      { query: QUERY, variables: { id: manuscript.id } },
+      { contextValue: { req: { headers: { 'group-id': group.id } } } },
+    )
+
+    if (result.body.kind !== 'single') {
+      throw new Error('Expected single result, got incremental')
+    }
+
+    expect(result.body.singleResult.errors).toBeUndefined()
+
+    const data = result.body.singleResult.data as {
+      publishedManuscript: {
+        reviews: { id: string }[]
+        decisions: { id: string }[]
+      }
+    }
+
+    expect(data.publishedManuscript.reviews.map(r => r.id)).toEqual([review.id])
+
+    expect(data.publishedManuscript.decisions.map(r => r.id)).toEqual([
+      decision.id,
+    ])
+
+    expect(orderReviewPerUsername).toHaveBeenCalledTimes(1)
+
+    // One query for the files of all reviews (findByIds is also used for users)
+    const fileLookups = findFilesByIds.mock.calls.filter(([ids]) =>
+      ids.includes(reviewFile.id),
+    )
+
+    expect(fileLookups).toHaveLength(1)
+    expect([...fileLookups[0][0]].sort()).toEqual(
+      [reviewFile.id, decisionFile.id].sort(),
     )
   })
 })

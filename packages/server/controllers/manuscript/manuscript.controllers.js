@@ -108,6 +108,7 @@ const {
 
 const {
   convertFilesToFullObjects,
+  getReviewFileIds,
   getReviewForm,
   getDecisionForm,
   getSubmissionForm,
@@ -752,15 +753,20 @@ const getRelatedPublishedArtifacts = async (manuscript, userId) => {
   )
 }
 
-/** Get reviews from the manuscript if present, or from DB. Generate full file info for
- * all files attached to reviews, and stringify JSON data in preparation for serving to client.
- * Note: 'reviews' include the decision object.
- */
-const getRelatedReviews = async (
-  manuscript,
-  userId,
-  shouldGetPublicReviewsOnly = false,
-) => {
+/** Runs load once per request and key, so resolvers can share the result.
+ * Outside HTTP requests (e.g. subscriptions, whose context outlives a single
+ * response) it always runs load. */
+const memoiseForRequest = (ctx, key, load) => {
+  if (!ctx?.req) return load()
+  if (!ctx.requestMemo) ctx.requestMemo = new Map()
+  if (!ctx.requestMemo.has(key)) ctx.requestMemo.set(key, load())
+  return ctx.requestMemo.get(key)
+}
+
+/** Get reviews (including decisions) from the manuscript if present, or from
+ * DB, ordered by reviewer username, with full file info for all files attached
+ * to them. Doesn't depend on the current user, so it can be shared. */
+const loadReviewsWithFiles = async manuscript => {
   const reviewForm = await getReviewForm(manuscript.groupId)
   const decisionForm = await getDecisionForm(manuscript.groupId)
 
@@ -771,14 +777,62 @@ const getRelatedReviews = async (
 
   reviews = await ReviewModel.orderReviewPerUsername(reviews)
 
-  for (const review of reviews) {
-    // eslint-disable-next-line no-await-in-loop
-    await convertFilesToFullObjects(
-      review,
-      review.isDecision ? decisionForm : reviewForm,
-      async ids => File.query().findByIds(ids),
-    )
-  }
+  const formOfReview = review => (review.isDecision ? decisionForm : reviewForm)
+
+  const fileIds = [
+    ...new Set(
+      reviews.flatMap(review => getReviewFileIds(review, formOfReview(review))),
+    ),
+  ]
+
+  const files = fileIds.length
+    ? await File.findByIds(fileIds, { throwIfNotFound: false })
+    : []
+
+  const filesById = new Map(files.map(file => [file.id, file]))
+
+  await Promise.all(
+    reviews.map(review =>
+      convertFilesToFullObjects(review, formOfReview(review), async ids =>
+        ids.map(id => filesById.get(id)).filter(Boolean),
+      ),
+    ),
+  )
+
+  return { reviewForm, decisionForm, reviews }
+}
+
+const getReviewsWithFilesForRequest = (ctx, manuscript) =>
+  memoiseForRequest(ctx, `reviewsWithFiles:${manuscript.id}`, () =>
+    loadReviewsWithFiles(manuscript),
+  )
+
+const getThreadedDiscussionsForRequest = (ctx, manuscript) =>
+  manuscript.threadedDiscussions ||
+  memoiseForRequest(ctx, `threadedDiscussions:${manuscript.id}`, () =>
+    getThreadedDiscussionsForManuscript(manuscript, getUsersById),
+  )
+
+/** Get reviews (including decisions) the current user may see, with
+ * confidential data stripped, full file info for all attached files, and
+ * stringified JSON data in preparation for serving to client.
+ * @param {object} options
+ * @param [options.ctx] The GQL context object, to share the loading between
+ * resolvers of the same request
+ */
+const getRelatedReviews = async (
+  manuscript,
+  userId,
+  shouldGetPublicReviewsOnly = false,
+  options = {},
+) => {
+  const { ctx } = options
+
+  const {
+    reviewForm,
+    decisionForm,
+    reviews: loadedReviews,
+  } = await getReviewsWithFilesForRequest(ctx, manuscript)
 
   const userRoles = shouldGetPublicReviewsOnly
     ? {}
@@ -788,7 +842,7 @@ const getRelatedReviews = async (
 
   // Insert isShared flag before userIds are stripped
   // TODO Should this step and the removal of confidential data be moved to the review resolver?
-  reviews = reviews.map(r => ({
+  let reviews = loadedReviews.map(r => ({
     ...r,
     isSharedWithCurrentUser: sharedReviewersIds.includes(r.userId),
   }))
@@ -1195,21 +1249,28 @@ const publishedManuscript = async id => {
   return Manuscript.query().findById(id).whereNotNull('published')
 }
 
-const publishedManuscriptDecisions = async (manuscript, userId) => {
+const publishedManuscriptDecisions = async (
+  manuscript,
+  userId,
+  options = {},
+) => {
+  const { ctx } = options
   // filtering decisions in Kotahi itself so that we can change
   // the logic easily in future.
-  const reviews = await getRelatedReviews(manuscript, userId)
+  const reviews = await getRelatedReviews(manuscript, userId, false, { ctx })
 
   if (!Array.isArray(reviews)) {
     return []
   }
 
   const decisions = reviews.filter(review => review.isDecision)
-  const decisionForm = await getDecisionForm(manuscript.groupId)
 
-  const threadedDiscussions =
-    manuscript.threadedDiscussions ||
-    (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
+  const { decisionForm } = await getReviewsWithFilesForRequest(ctx, manuscript)
+
+  const threadedDiscussions = await getThreadedDiscussionsForRequest(
+    ctx,
+    manuscript,
+  )
 
   return getPublishableReviewFields(
     decisions,
@@ -1251,19 +1312,21 @@ const publishedManuscripts = async (sort, offset, limit, groupId) => {
   }
 }
 
-const publishedManuscriptReviews = async (manuscript, userId) => {
-  let reviews = await getRelatedReviews(manuscript, userId, true)
+const publishedManuscriptReviews = async (manuscript, userId, options = {}) => {
+  const { ctx } = options
+  let reviews = await getRelatedReviews(manuscript, userId, true, { ctx })
 
   if (!Array.isArray(reviews)) {
     return []
   }
 
   reviews = reviews.filter(review => !review.isDecision)
-  const reviewForm = await getReviewForm(manuscript.groupId)
+  const { reviewForm } = await getReviewsWithFilesForRequest(ctx, manuscript)
 
-  const threadedDiscussions =
-    manuscript.threadedDiscussions ||
-    (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
+  const threadedDiscussions = await getThreadedDiscussionsForRequest(
+    ctx,
+    manuscript,
+  )
 
   for (const review of reviews) {
     const jsonData = JSON.parse(review.jsonData)

@@ -332,7 +332,7 @@ const resolvers = {
     },
 
     async reviews(parent, _, ctx) {
-      return getRelatedReviews(parent, ctx.userId)
+      return getRelatedReviews(parent, ctx.userId, false, { ctx })
     },
 
     async submitter(parent) {
@@ -363,7 +363,7 @@ const resolvers = {
     },
 
     async decisions(parent, _, ctx) {
-      return publishedManuscriptDecisions(parent, ctx.userId)
+      return publishedManuscriptDecisions(parent, ctx.userId, { ctx })
     },
 
     async editors(parent) {
@@ -379,7 +379,7 @@ const resolvers = {
     },
 
     async reviews(parent, _, ctx) {
-      return publishedManuscriptReviews(parent, ctx.userId)
+      return publishedManuscriptReviews(parent, ctx.userId, { ctx })
     },
 
     async styledHtml(parent) {
