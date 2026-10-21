@@ -1,5 +1,6 @@
 const DataLoader = require('dataloader')
 
+const { filesLoader } = require('../../models/file/file.loaders')
 const { reviewUsersLoader } = require('../../models/review/review.loaders')
 const { defaultIdentitiesLoader } = require('../../models/user/user.loaders')
 
@@ -19,6 +20,7 @@ const { defaultIdentitiesLoader } = require('../../models/user/user.loaders')
  */
 const createLoaders = options => ({
   defaultIdentities: new DataLoader(defaultIdentitiesLoader, options),
+  files: new DataLoader(filesLoader, options),
   reviewUsers: new DataLoader(reviewUsersLoader, {
     ...options,
     cacheKeyFn: review => review.id,

@@ -6,7 +6,7 @@ const {
   getUsers,
   isUserOnline,
   paginatedUsers,
-  profilePicture,
+  profilePictureUrl,
   searchUsers,
   sendEmail,
   setGlobalRole,
@@ -121,8 +121,11 @@ module.exports = {
       return isUserOnline(parent)
     },
 
-    async profilePicture(parent) {
-      return profilePicture(parent)
+    async profilePicture(user, _, ctx) {
+      if (!user.profilePicture) return null
+
+      const file = await getRequestLoaders(ctx).files.load(user.profilePicture)
+      return profilePictureUrl(file)
     },
   },
 }

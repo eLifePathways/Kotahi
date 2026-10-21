@@ -1,4 +1,12 @@
-import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest'
+import {
+  describe,
+  afterEach,
+  beforeAll,
+  afterAll,
+  it,
+  expect,
+  vi,
+} from 'vitest'
 import gql from 'graphql-tag'
 import {
   createGraphqlTestServer,
@@ -6,9 +14,11 @@ import {
   db,
   config,
   DbTestUtils,
+  File,
+  fileStorage,
 } from '@coko/server'
 
-import { Group, Identity, User } from '../../../../models'
+import { Group, Identity, Team, User } from '../../../../models'
 import { getRequestLoaders } from '../../requestLoaders'
 
 const USER_QUERY = gql`
@@ -28,10 +38,12 @@ describe('User API', () => {
   beforeAll(async () => {
     await config.init()
     db.init()
+    fileStorage.init()
     await migrationManager.migrate()
   })
 
   afterEach(async () => {
+    vi.restoreAllMocks()
     await DbTestUtils.clearDb()
   })
 
@@ -144,5 +156,99 @@ describe('User API', () => {
     expect(await fetchAff()).toBe('Before')
     await Identity.query().patch({ aff: 'After' }).findById(identity.id)
     expect(await fetchAff()).toBe('After')
+  })
+
+  it('loads profile pictures for a list of users in one query', async () => {
+    const group = await Group.insert({})
+
+    const picture = (name: string): Promise<File> =>
+      File.insert({
+        name,
+        storedObjects: [
+          {
+            type: 'small',
+            key: `small_${name}`,
+            mimetype: 'image/png',
+            extension: 'png',
+            size: 100,
+          },
+        ],
+      })
+
+    const one = await User.insert({
+      username: 'One',
+      profilePicture: (await picture('one.png')).id,
+    })
+
+    const two = await User.insert({
+      username: 'Two',
+      profilePicture: (await picture('two.png')).id,
+    })
+
+    const withoutPicture = await User.insert({ username: 'Three' })
+
+    const groupUsers = await Team.insert({
+      objectId: group.id,
+      objectType: 'Group',
+      role: 'user',
+      displayName: 'User',
+    })
+
+    for (const user of [one, two, withoutPicture]) {
+      // eslint-disable-next-line no-await-in-loop
+      await Team.addMember(groupUsers.id, user.id)
+    }
+
+    const admin = await User.insert({ username: 'Admin' })
+
+    const adminTeam = await Team.insert({
+      role: 'admin',
+      global: true,
+      displayName: 'Admin',
+    })
+
+    await Team.addMember(adminTeam.id, admin.id)
+
+    const findFilesByIds = vi.spyOn(File, 'findByIds')
+
+    const QUERY = gql`
+      query {
+        users {
+          id
+          profilePicture
+        }
+      }
+    `
+
+    const gqlServer = await createGraphqlTestServer()
+
+    const result = await gqlServer.executeOperation(
+      { query: QUERY },
+      {
+        contextValue: {
+          userId: admin.id,
+          req: { headers: { 'group-id': group.id } },
+        },
+      },
+    )
+
+    if (result.body.kind !== 'single') {
+      throw new Error('Expected single result, got incremental')
+    }
+
+    expect(result.body.singleResult.errors).toBeUndefined()
+
+    const { users } = result.body.singleResult.data as {
+      users: { id: string; profilePicture: string | null }[]
+    }
+
+    const pictureOf = (id: string): string | null | undefined =>
+      users.find(u => u.id === id)?.profilePicture
+
+    expect(users).toHaveLength(3)
+    expect(pictureOf(one.id)).toContain('small_one.png')
+    expect(pictureOf(two.id)).toContain('small_two.png')
+    expect(pictureOf(withoutPicture.id)).toBeNull()
+    expect(findFilesByIds).toHaveBeenCalledTimes(1)
   })
 })
