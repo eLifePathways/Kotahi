@@ -99,7 +99,9 @@ const {
 } = require('../../services/publishing/crossref')
 
 const {
+  filterOutUnreferencedImages,
   getFilesWithUrl,
+  getImageFileIdsInSource,
   replaceImageSrc,
   replaceImageSrcResponsive,
 } = require('../../utils/fileStorageUtils')
@@ -592,10 +594,27 @@ const getCss = async () => {
   return css
 }
 
-const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
-  const rawFiles =
+/** Fetches (unless given) and signs a manuscript's files.
+ * @param {string} manuscriptId The manuscript owning the files
+ * @param manuscriptFiles The files, if already loaded
+ * @param {object} options
+ * @param {string} [options.onlyImagesUsedInSource] If given, leave out
+ * manuscriptImage files this source HTML doesn't reference
+ * */
+const getManuscriptFiles = async (
+  manuscriptId,
+  manuscriptFiles,
+  options = {},
+) => {
+  const { onlyImagesUsedInSource } = options
+
+  let rawFiles =
     manuscriptFiles ||
     (await Manuscript.relatedQuery('files').for(manuscriptId))
+
+  if (typeof onlyImagesUsedInSource === 'string') {
+    rawFiles = filterOutUnreferencedImages(rawFiles, onlyImagesUsedInSource)
+  }
 
   const isExternalAttachment = f =>
     f.meta.formElementId && f.tags.includes('externalAttachmentSource')
@@ -635,23 +654,37 @@ const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
 }
 
 /** Fetches and signs a manuscript's files once per request, so the `files` and
- * `meta.source` resolvers share the work. Memoised on ctx rather than
- * ctx.loaders, as the loaders are created once and shared by all requests.
+ * `meta.source` resolvers share the work. Memoised on ctx, so it only lasts
+ * for the request.
  * @param ctx The GQL context object
  * @param {string} manuscriptId The manuscript owning the files
+ * @param {object} options
+ * @param {string} [options.onlyImagesUsedInSource] If given, leave out
+ * manuscriptImage files this source HTML doesn't reference
  * */
-const getManuscriptFilesForRequest = (ctx, manuscriptId) => {
-  if (!ctx) return getManuscriptFiles(manuscriptId)
+const getManuscriptFilesForRequest = (ctx, manuscriptId, options = {}) => {
+  const { onlyImagesUsedInSource } = options
+  if (!ctx) return getManuscriptFiles(manuscriptId, null, options)
   if (!ctx.manuscriptFilesWithUrl) ctx.manuscriptFilesWithUrl = new Map()
 
-  if (!ctx.manuscriptFilesWithUrl.has(manuscriptId)) {
+  const allFilesKey = manuscriptId
+  const onlyUsedImages = typeof onlyImagesUsedInSource === 'string'
+
+  // All the files are a superset of those used, so reuse them if already fetched
+  if (onlyUsedImages && ctx.manuscriptFilesWithUrl.has(allFilesKey)) {
+    return ctx.manuscriptFilesWithUrl.get(allFilesKey)
+  }
+
+  const key = onlyUsedImages ? `${manuscriptId}:usedImages` : allFilesKey
+
+  if (!ctx.manuscriptFilesWithUrl.has(key)) {
     ctx.manuscriptFilesWithUrl.set(
-      manuscriptId,
-      getManuscriptFiles(manuscriptId),
+      key,
+      getManuscriptFiles(manuscriptId, null, options),
     )
   }
 
-  return ctx.manuscriptFilesWithUrl.get(manuscriptId)
+  return ctx.manuscriptFilesWithUrl.get(key)
 }
 
 const getManuscriptsData = async selectedManuscripts => {
@@ -1907,9 +1940,17 @@ const setShouldPublishField = async (
 const metaSource = async (manuscript, ctx) => {
   if (typeof manuscript.source !== 'string') return null
 
+  // Only the images the source uses are needed; a manuscript can carry
+  // hundreds of unreferenced editor images.
+  const referencedIds = getImageFileIdsInSource(manuscript.source)
+
   const files = manuscript.manuscriptFiles
-    ? await getFilesWithUrl(manuscript.manuscriptFiles)
-    : await getManuscriptFilesForRequest(ctx, manuscript.manuscriptId)
+    ? await getFilesWithUrl(
+        manuscript.manuscriptFiles.filter(file => referencedIds.has(file.id)),
+      )
+    : await getManuscriptFilesForRequest(ctx, manuscript.manuscriptId, {
+        onlyImagesUsedInSource: manuscript.source,
+      })
 
   // TODO Any reason not to use replaceImageSrcResponsive here?
   return replaceImageSrc(manuscript.source, files, 'medium')
@@ -1917,9 +1958,10 @@ const metaSource = async (manuscript, ctx) => {
 
 const styledHtml = async manuscript => {
   // TODO reduce shared code with files resolver
-  let files = (
+  let files = filterOutUnreferencedImages(
     manuscript.files ||
-    (await Manuscript.relatedQuery('files').for(manuscript.id))
+      (await Manuscript.relatedQuery('files').for(manuscript.id)),
+    manuscript.meta.source,
   ).map(f => ({
     ...f,
     tags: f.tags || [],

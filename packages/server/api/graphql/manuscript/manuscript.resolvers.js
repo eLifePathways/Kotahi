@@ -349,6 +349,15 @@ const resolvers = {
   },
   PublishedManuscript: {
     ...manuscriptAndPublishedManuscriptSharedResolvers,
+    async files(parent, _, ctx) {
+      const options = { onlyImagesUsedInSource: parent.meta?.source }
+
+      if (parent.files)
+        return getManuscriptFiles(parent.id, parent.files, options)
+
+      return getManuscriptFilesForRequest(ctx, parent.id, options)
+    },
+
     async css() {
       return getCss()
     },
