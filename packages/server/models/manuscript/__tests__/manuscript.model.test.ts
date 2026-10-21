@@ -1,5 +1,5 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager } from '@coko/server'
+import { db, config, DbTestUtils, migrationManager, File } from '@coko/server'
 
 import Manuscript from '../manuscript.model'
 import Review from '../../review/review.model'
@@ -7,6 +7,8 @@ import Team from '../../team/team.model'
 import User from '../../user/user.model'
 import TeamMember from '../../teamMember/teamMember.model'
 import Invitation from '../../invitation/invitation.model'
+import Group from '../../group/group.model'
+import Config from '../../config/config.model'
 
 describe('Manuscript model', () => {
   beforeAll(async () => {
@@ -150,5 +152,111 @@ describe('Manuscript model', () => {
 
     expect(reviewerTeamThreeMembers.length).toBe(1)
     expect(reviewerTeamThreeMembers[0].status).toBe('accepted')
+  })
+
+  it('finds an editor image file by source hash', async () => {
+    const manuscript = await Manuscript.insert({})
+    const otherManuscript = await Manuscript.insert({})
+
+    const storedObjects = [
+      {
+        type: 'original',
+        key: 'abc.png',
+        mimetype: 'image/png',
+        extension: 'png',
+        size: 1,
+      },
+    ]
+
+    const image = await File.insert({
+      name: 'abc.png',
+      tags: ['manuscriptImage'],
+      objectId: manuscript.id,
+      meta: { sourceHash: 'hash-1' },
+      storedObjects,
+    })
+
+    // Same hash, but wrong tag or wrong manuscript
+    await File.insert({
+      name: 'abc.png',
+      tags: ['supplementary'],
+      objectId: manuscript.id,
+      meta: { sourceHash: 'hash-2' },
+      storedObjects,
+    })
+    await File.insert({
+      name: 'abc.png',
+      tags: ['manuscriptImage'],
+      objectId: otherManuscript.id,
+      meta: { sourceHash: 'hash-3' },
+      storedObjects,
+    })
+
+    const found = await Manuscript.findImageFileBySourceHash(
+      manuscript.id,
+      'hash-1',
+    )
+
+    expect(found?.id).toBe(image.id)
+
+    expect(
+      await Manuscript.findImageFileBySourceHash(manuscript.id, 'hash-2'),
+    ).toBeUndefined()
+    expect(
+      await Manuscript.findImageFileBySourceHash(manuscript.id, 'hash-3'),
+    ).toBeUndefined()
+    expect(
+      await Manuscript.findImageFileBySourceHash(manuscript.id, 'missing'),
+    ).toBeUndefined()
+  })
+
+  it('points the new version source at its own copies of the images', async () => {
+    const group = await Group.insert({})
+
+    await Config.query().insert({
+      active: true,
+      groupId: group.id,
+      formData: { submission: {} },
+    })
+
+    const manuscript = await Manuscript.insert({
+      groupId: group.id,
+      submission: {},
+    })
+
+    const image = await File.insert({
+      name: 'abc.png',
+      tags: ['manuscriptImage'],
+      objectId: manuscript.id,
+      storedObjects: [
+        {
+          type: 'original',
+          key: 'abc.png',
+          mimetype: 'image/png',
+          extension: 'png',
+          size: 1,
+        },
+      ],
+    })
+
+    await Manuscript.query()
+      .findById(manuscript.id)
+      .patch({
+        meta: {
+          source: `<p><img src="x" data-fileid="${image.id}" /></p>`,
+        },
+      })
+
+    const original = await Manuscript.query().findById(manuscript.id)
+    const newVersion = await original.createNewVersion()
+
+    const copies = await File.query().where({ objectId: newVersion.id })
+
+    expect(copies).toHaveLength(1)
+    expect(copies[0].id).not.toBe(image.id)
+
+    expect(newVersion.meta.source).toBe(
+      `<p><img src="x" data-fileid="${copies[0].id}" /></p>`,
+    )
   })
 })

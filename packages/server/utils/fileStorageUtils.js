@@ -3,17 +3,31 @@ const { FileStorageConstructor } = require('@coko/server')
 const cheerio = require('cheerio')
 const find = require('lodash/find')
 
+/** Constructing a FileStorage creates new S3 clients, which is expensive.
+ * Returns a getter that reuses one instance per distinct s3 config. */
+const fileStorageCache = () => {
+  const instances = new Map()
+
+  return s3 => {
+    const key = s3 ? JSON.stringify(s3) : 'default'
+
+    if (!instances.has(key)) instances.set(key, new FileStorageConstructor(s3))
+    return instances.get(key)
+  }
+}
+
 /* Get files with temporary, time-limited URLs generated */
 const getFilesWithUrl = async (files, options = {}) => {
   const { s3: globalS3 } = options
+  const getStorage = fileStorageCache()
 
   const filesWithUrl = await Promise.all(
     files.map(async file => {
       file.storedObjects = await Promise.all(
         file.storedObjects.map(async storedObject => {
-          const url = await new FileStorageConstructor(
-            file.s3 || globalS3,
-          ).getURL(storedObject.key)
+          const url = await getStorage(file.s3 || globalS3).getURL(
+            storedObject.key,
+          )
 
           return { ...storedObject, url }
         }),
@@ -28,10 +42,11 @@ const getFilesWithUrl = async (files, options = {}) => {
 /* Get file with temporary, time-limited URL generated */
 const getFileWithUrl = async (file, options = {}) => {
   const { s3 } = options
+  const fileStorage = new FileStorageConstructor(s3)
 
   file.storedObjects = await Promise.all(
     file.storedObjects.map(async storedObject => {
-      const url = await new FileStorageConstructor(s3).getURL(storedObject.key)
+      const url = await fileStorage.getURL(storedObject.key)
       return { ...storedObject, url }
     }),
   )
@@ -41,13 +56,12 @@ const getFileWithUrl = async (file, options = {}) => {
 /* Set Url for file */
 const setFileUrls = async (storedObjects, options = {}) => {
   const { s3 } = options
+  const fileStorage = new FileStorageConstructor(s3)
 
   const updatedStoredObjects = await Promise.all(
     Object.keys(storedObjects).map(async key => {
       const storedObject = storedObjects[key]
-      storedObject.url = await new FileStorageConstructor(s3).getURL(
-        storedObject.key,
-      )
+      storedObject.url = await fileStorage.getURL(storedObject.key)
       return storedObject
     }),
   )
@@ -221,7 +235,66 @@ const imageFinder = (source, fileId) => {
   return found
 }
 
+/** Ids of all files referenced by <img data-fileid="..."> in the given HTML */
+const getImageFileIdsInSource = source => {
+  const fileIds = new Set()
+  if (typeof source !== 'string' || !source.length) return fileIds
+
+  const $ = cheerio.load(source)
+
+  $('img[data-fileid]').each((i, elem) => {
+    const fileId = $(elem).attr('data-fileid')
+    if (fileId && fileId !== 'null') fileIds.add(fileId)
+  })
+
+  return fileIds
+}
+
+/**
+ * Point <img data-fileid="..."> at other files, e.g. a new version's copies.
+ * Ids missing from the map are left alone. Works on the raw string so the rest
+ * of the HTML is untouched.
+ * @param {string} source HTML
+ * @param {Map<string, string>} idMap old file id => new file id
+ */
+const remapImageFileIds = (source, idMap) => {
+  if (typeof source !== 'string' || !idMap.size) return source
+
+  return source.replace(
+    /(data-fileid=["'])([^"']+)(["'])/g,
+    (match, before, fileId, after) =>
+      idMap.has(fileId) ? `${before}${idMap.get(fileId)}${after}` : match,
+  )
+}
+
+/**
+ * Drop manuscriptImage files that the given source HTML doesn't reference.
+ * The editor can leave many unreferenced images behind (see sanitizeWaxImages),
+ * and signing URLs for all of them is expensive. Files with other tags
+ * (e.g. manuscript, printReadyPdf, supplementary) are always kept.
+ *
+ * If the source references ids that aren't among these files, we can't tell
+ * which images are in use, so keep them all. This shouldn't happen any more:
+ * createNewVersion remaps data-fileid to the new version's copies, and a
+ * migration did the same for older versions.
+ */
+const filterOutUnreferencedImages = (files, source) => {
+  const referencedIds = getImageFileIdsInSource(source)
+  const ownIds = new Set(files.map(file => file.id))
+
+  if ([...referencedIds].some(id => !ownIds.has(id))) return files
+
+  return files.filter(
+    file =>
+      !(file.tags || []).includes('manuscriptImage') ||
+      referencedIds.has(file.id),
+  )
+}
+
 module.exports = {
+  filterOutUnreferencedImages,
+  getImageFileIdsInSource,
+  remapImageFileIds,
   getFilesWithUrl,
   getFileWithUrl,
   replaceImageSrc,

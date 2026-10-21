@@ -1,4 +1,6 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
+
+import User from '../user/user.model'
 
 declare class Review extends BaseModel {
   manuscriptId: string
@@ -12,6 +14,16 @@ declare class Review extends BaseModel {
   isLock: boolean
   canBePublishedPublicly: boolean
   jsonData: any
+
+  static getUsersOfReviews(
+    reviews: Pick<Review, 'isCollaborative' | 'manuscriptId' | 'userId'>[],
+    options?: { trx?: Transaction },
+  ): Promise<User[][]>
+
+  static orderReviewPerUsername<T extends Review>(
+    reviews: T[],
+    options?: { trx?: Transaction },
+  ): Promise<(T & { username: string })[]>
 }
 
 export = Review

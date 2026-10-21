@@ -99,13 +99,16 @@ const {
 } = require('../../services/publishing/crossref')
 
 const {
+  filterOutUnreferencedImages,
   getFilesWithUrl,
+  getImageFileIdsInSource,
   replaceImageSrc,
   replaceImageSrcResponsive,
 } = require('../../utils/fileStorageUtils')
 
 const {
   convertFilesToFullObjects,
+  getReviewFileIds,
   getReviewForm,
   getDecisionForm,
   getSubmissionForm,
@@ -592,17 +595,40 @@ const getCss = async () => {
   return css
 }
 
-const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
-  const forms = await Form.query()
-  const formsElements = flatten(forms.map(f => f.structure.children))
+/** Fetches (unless given) and signs a manuscript's files.
+ * @param {string} manuscriptId The manuscript owning the files
+ * @param manuscriptFiles The files, if already loaded
+ * @param {object} options
+ * @param {string} [options.onlyImagesUsedInSource] If given, leave out
+ * manuscriptImage files this source HTML doesn't reference
+ * */
+const getManuscriptFiles = async (
+  manuscriptId,
+  manuscriptFiles,
+  options = {},
+) => {
+  const { onlyImagesUsedInSource } = options
 
-  const files = (
+  let rawFiles =
     manuscriptFiles ||
     (await Manuscript.relatedQuery('files').for(manuscriptId))
-  ).map(f => {
+
+  if (typeof onlyImagesUsedInSource === 'string') {
+    rawFiles = filterOutUnreferencedImages(rawFiles, onlyImagesUsedInSource)
+  }
+
+  const isExternalAttachment = f =>
+    f.meta.formElementId && f.tags.includes('externalAttachmentSource')
+
+  // Form elements hold the S3 credentials for external attachments only
+  const formsElements = rawFiles.some(isExternalAttachment)
+    ? flatten((await Form.query()).map(f => f.structure.children))
+    : []
+
+  const files = rawFiles.map(f => {
     let s3
 
-    if (f.meta.formElementId && f.tags.includes('externalAttachmentSource')) {
+    if (isExternalAttachment(f)) {
       const element = formsElements.find(el => el.id === f.meta.formElementId)
       s3 = {
         accessKeyId: element.s3AccessId
@@ -626,6 +652,40 @@ const getManuscriptFiles = async (manuscriptId, manuscriptFiles) => {
   })
 
   return getFilesWithUrl(files)
+}
+
+/** Fetches and signs a manuscript's files once per request, so the `files` and
+ * `meta.source` resolvers share the work. Memoised on ctx, so it only lasts
+ * for the request.
+ * @param ctx The GQL context object
+ * @param {string} manuscriptId The manuscript owning the files
+ * @param {object} options
+ * @param {string} [options.onlyImagesUsedInSource] If given, leave out
+ * manuscriptImage files this source HTML doesn't reference
+ * */
+const getManuscriptFilesForRequest = (ctx, manuscriptId, options = {}) => {
+  const { onlyImagesUsedInSource } = options
+  if (!ctx) return getManuscriptFiles(manuscriptId, null, options)
+  if (!ctx.manuscriptFilesWithUrl) ctx.manuscriptFilesWithUrl = new Map()
+
+  const allFilesKey = manuscriptId
+  const onlyUsedImages = typeof onlyImagesUsedInSource === 'string'
+
+  // All the files are a superset of those used, so reuse them if already fetched
+  if (onlyUsedImages && ctx.manuscriptFilesWithUrl.has(allFilesKey)) {
+    return ctx.manuscriptFilesWithUrl.get(allFilesKey)
+  }
+
+  const key = onlyUsedImages ? `${manuscriptId}:usedImages` : allFilesKey
+
+  if (!ctx.manuscriptFilesWithUrl.has(key)) {
+    ctx.manuscriptFilesWithUrl.set(
+      key,
+      getManuscriptFiles(manuscriptId, null, options),
+    )
+  }
+
+  return ctx.manuscriptFilesWithUrl.get(key)
 }
 
 const getManuscriptsData = async selectedManuscripts => {
@@ -693,15 +753,20 @@ const getRelatedPublishedArtifacts = async (manuscript, userId) => {
   )
 }
 
-/** Get reviews from the manuscript if present, or from DB. Generate full file info for
- * all files attached to reviews, and stringify JSON data in preparation for serving to client.
- * Note: 'reviews' include the decision object.
- */
-const getRelatedReviews = async (
-  manuscript,
-  userId,
-  shouldGetPublicReviewsOnly = false,
-) => {
+/** Runs load once per request and key, so resolvers can share the result.
+ * Outside HTTP requests (e.g. subscriptions, whose context outlives a single
+ * response) it always runs load. */
+const memoiseForRequest = (ctx, key, load) => {
+  if (!ctx?.req) return load()
+  if (!ctx.requestMemo) ctx.requestMemo = new Map()
+  if (!ctx.requestMemo.has(key)) ctx.requestMemo.set(key, load())
+  return ctx.requestMemo.get(key)
+}
+
+/** Get reviews (including decisions) from the manuscript if present, or from
+ * DB, ordered by reviewer username, with full file info for all files attached
+ * to them. Doesn't depend on the current user, so it can be shared. */
+const loadReviewsWithFiles = async manuscript => {
   const reviewForm = await getReviewForm(manuscript.groupId)
   const decisionForm = await getDecisionForm(manuscript.groupId)
 
@@ -712,14 +777,62 @@ const getRelatedReviews = async (
 
   reviews = await ReviewModel.orderReviewPerUsername(reviews)
 
-  for (const review of reviews) {
-    // eslint-disable-next-line no-await-in-loop
-    await convertFilesToFullObjects(
-      review,
-      review.isDecision ? decisionForm : reviewForm,
-      async ids => File.query().findByIds(ids),
-    )
-  }
+  const formOfReview = review => (review.isDecision ? decisionForm : reviewForm)
+
+  const fileIds = [
+    ...new Set(
+      reviews.flatMap(review => getReviewFileIds(review, formOfReview(review))),
+    ),
+  ]
+
+  const files = fileIds.length
+    ? await File.findByIds(fileIds, { throwIfNotFound: false })
+    : []
+
+  const filesById = new Map(files.map(file => [file.id, file]))
+
+  await Promise.all(
+    reviews.map(review =>
+      convertFilesToFullObjects(review, formOfReview(review), async ids =>
+        ids.map(id => filesById.get(id)).filter(Boolean),
+      ),
+    ),
+  )
+
+  return { reviewForm, decisionForm, reviews }
+}
+
+const getReviewsWithFilesForRequest = (ctx, manuscript) =>
+  memoiseForRequest(ctx, `reviewsWithFiles:${manuscript.id}`, () =>
+    loadReviewsWithFiles(manuscript),
+  )
+
+const getThreadedDiscussionsForRequest = (ctx, manuscript) =>
+  manuscript.threadedDiscussions ||
+  memoiseForRequest(ctx, `threadedDiscussions:${manuscript.id}`, () =>
+    getThreadedDiscussionsForManuscript(manuscript, getUsersById),
+  )
+
+/** Get reviews (including decisions) the current user may see, with
+ * confidential data stripped, full file info for all attached files, and
+ * stringified JSON data in preparation for serving to client.
+ * @param {object} options
+ * @param [options.ctx] The GQL context object, to share the loading between
+ * resolvers of the same request
+ */
+const getRelatedReviews = async (
+  manuscript,
+  userId,
+  shouldGetPublicReviewsOnly = false,
+  options = {},
+) => {
+  const { ctx } = options
+
+  const {
+    reviewForm,
+    decisionForm,
+    reviews: loadedReviews,
+  } = await getReviewsWithFilesForRequest(ctx, manuscript)
 
   const userRoles = shouldGetPublicReviewsOnly
     ? {}
@@ -729,7 +842,7 @@ const getRelatedReviews = async (
 
   // Insert isShared flag before userIds are stripped
   // TODO Should this step and the removal of confidential data be moved to the review resolver?
-  reviews = reviews.map(r => ({
+  let reviews = loadedReviews.map(r => ({
     ...r,
     isSharedWithCurrentUser: sharedReviewersIds.includes(r.userId),
   }))
@@ -1136,21 +1249,28 @@ const publishedManuscript = async id => {
   return Manuscript.query().findById(id).whereNotNull('published')
 }
 
-const publishedManuscriptDecisions = async (manuscript, userId) => {
+const publishedManuscriptDecisions = async (
+  manuscript,
+  userId,
+  options = {},
+) => {
+  const { ctx } = options
   // filtering decisions in Kotahi itself so that we can change
   // the logic easily in future.
-  const reviews = await getRelatedReviews(manuscript, userId)
+  const reviews = await getRelatedReviews(manuscript, userId, false, { ctx })
 
   if (!Array.isArray(reviews)) {
     return []
   }
 
   const decisions = reviews.filter(review => review.isDecision)
-  const decisionForm = await getDecisionForm(manuscript.groupId)
 
-  const threadedDiscussions =
-    manuscript.threadedDiscussions ||
-    (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
+  const { decisionForm } = await getReviewsWithFilesForRequest(ctx, manuscript)
+
+  const threadedDiscussions = await getThreadedDiscussionsForRequest(
+    ctx,
+    manuscript,
+  )
 
   return getPublishableReviewFields(
     decisions,
@@ -1161,27 +1281,15 @@ const publishedManuscriptDecisions = async (manuscript, userId) => {
 }
 
 const publishedManuscriptEditors = async manuscript => {
-  const teams = await Team.query()
-    .where({ objectId: manuscript.id })
-    .whereIn('role', ['seniorEditor', 'handlingEditor', 'editor'])
+  const teams = await Team.findWithUsers(manuscript.id, [
+    'seniorEditor',
+    'handlingEditor',
+    'editor',
+  ])
 
-  const teamMembers = await TeamMember.query().whereIn(
-    'team_id',
-    teams.map(t => t.id),
+  return teams.flatMap(team =>
+    team.users.map(user => ({ name: user.username, role: team.role })),
   )
-
-  const editorAndRoles = await Promise.all(
-    teamMembers.map(async member => {
-      const user = await User.query().findById(member.userId)
-      const team = teams.find(t => t.id === member.teamId)
-      return {
-        name: user.username,
-        role: team.role,
-      }
-    }),
-  )
-
-  return editorAndRoles
 }
 
 const publishedManuscripts = async (sort, offset, limit, groupId) => {
@@ -1204,19 +1312,21 @@ const publishedManuscripts = async (sort, offset, limit, groupId) => {
   }
 }
 
-const publishedManuscriptReviews = async (manuscript, userId) => {
-  let reviews = await getRelatedReviews(manuscript, userId, true)
+const publishedManuscriptReviews = async (manuscript, userId, options = {}) => {
+  const { ctx } = options
+  let reviews = await getRelatedReviews(manuscript, userId, true, { ctx })
 
   if (!Array.isArray(reviews)) {
     return []
   }
 
   reviews = reviews.filter(review => !review.isDecision)
-  const reviewForm = await getReviewForm(manuscript.groupId)
+  const { reviewForm } = await getReviewsWithFilesForRequest(ctx, manuscript)
 
-  const threadedDiscussions =
-    manuscript.threadedDiscussions ||
-    (await getThreadedDiscussionsForManuscript(manuscript, getUsersById))
+  const threadedDiscussions = await getThreadedDiscussionsForRequest(
+    ctx,
+    manuscript,
+  )
 
   for (const review of reviews) {
     const jsonData = JSON.parse(review.jsonData)
@@ -1239,39 +1349,6 @@ const publishedManuscriptReviews = async (manuscript, userId) => {
     threadedDiscussions,
     manuscript,
   )
-}
-
-const publishedReviewUsers = async review => {
-  if (review.isHiddenReviewerName) {
-    return [{ id: '', username: 'Anonymous User' }]
-  }
-
-  let users = []
-
-  if (review.isCollaborative) {
-    const manuscript = await Manuscript.query().findById(review.manuscriptId)
-
-    const existingTeam = await manuscript
-      .$relatedQuery('teams')
-      .where('role', 'collaborativeReviewer')
-      .first()
-
-    users = await existingTeam.$relatedQuery('users')
-  } else {
-    users = await User.query().where({ id: review.userId })
-  }
-
-  users = await Promise.all(
-    users.map(async user => {
-      const defaultIdentity = await cachedGet(
-        `defaultIdentityOfUser:${user.id}`,
-      )
-
-      return { defaultIdentity, ...user }
-    }),
-  )
-
-  return users
 }
 
 // TODO: useTransaction to handle rollbacks
@@ -1923,23 +2000,31 @@ const setShouldPublishField = async (
   return updated
 }
 
-const metaSource = async manuscript => {
+const metaSource = async (manuscript, ctx) => {
   if (typeof manuscript.source !== 'string') return null
 
-  let files =
-    manuscript.manuscriptFiles ||
-    (await Manuscript.relatedQuery('files').for(manuscript.manuscriptId))
+  // Only the images the source uses are needed; a manuscript can carry
+  // hundreds of unreferenced editor images.
+  const referencedIds = getImageFileIdsInSource(manuscript.source)
 
-  files = await getFilesWithUrl(files)
+  const files = manuscript.manuscriptFiles
+    ? await getFilesWithUrl(
+        manuscript.manuscriptFiles.filter(file => referencedIds.has(file.id)),
+      )
+    : await getManuscriptFilesForRequest(ctx, manuscript.manuscriptId, {
+        onlyImagesUsedInSource: manuscript.source,
+      })
+
   // TODO Any reason not to use replaceImageSrcResponsive here?
   return replaceImageSrc(manuscript.source, files, 'medium')
 }
 
 const styledHtml = async manuscript => {
   // TODO reduce shared code with files resolver
-  let files = (
+  let files = filterOutUnreferencedImages(
     manuscript.files ||
-    (await Manuscript.relatedQuery('files').for(manuscript.id))
+      (await Manuscript.relatedQuery('files').for(manuscript.id)),
+    manuscript.meta.source,
   ).map(f => ({
     ...f,
     tags: f.tags || [],
@@ -2303,6 +2388,7 @@ module.exports = {
   getCss,
   getManuscript,
   getManuscriptFiles,
+  getManuscriptFilesForRequest,
   getManuscriptsData,
   getRelatedPublishedArtifacts,
   getRelatedReviews,
@@ -2325,7 +2411,6 @@ module.exports = {
   publishedManuscriptEditors,
   publishedManuscriptReviews,
   publishedManuscripts,
-  publishedReviewUsers,
   publishManuscript,
   refreshAdaStatus,
   removeAuthor,
