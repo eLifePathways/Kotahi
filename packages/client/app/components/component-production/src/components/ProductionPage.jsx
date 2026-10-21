@@ -281,7 +281,7 @@ const ProductionPage = () => {
     [refetch, groupId],
   )
 
-  if (loading) return <Spinner />
+  if (loading && !data) return <Spinner />
   if (error) return <CommsErrorBanner error={error} />
 
   const { articleTemplate, manuscript: unparsedManuscript } = data
