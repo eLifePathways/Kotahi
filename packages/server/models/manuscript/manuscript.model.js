@@ -3,10 +3,11 @@ const cloneDeep = require('lodash/cloneDeep')
 const { raw } = require('objection')
 const sortBy = require('lodash/sortBy')
 
-const { BaseModel, useTransaction } = require('@coko/server')
+const { BaseModel, useTransaction, uuid } = require('@coko/server')
 
 // REFACTOR: models
 const { evictFromCache } = require('../../services/queryCache.service')
+const { remapImageFileIds } = require('../../utils/fileStorageUtils')
 
 class Manuscript extends BaseModel {
   static get tableName() {
@@ -193,10 +194,15 @@ class Manuscript extends BaseModel {
       t.members.forEach(tm => delete tm.id)
     })
 
-    // Copy files as well
+    // Copy files as well, with new ids that the copied source can point at
     const files = await this.$relatedQuery('files')
+    const fileIdMap = new Map()
 
-    files.forEach(f => delete f.id)
+    files.forEach(f => {
+      const newId = uuid()
+      fileIdMap.set(f.id, newId)
+      f.id = newId
+    })
 
     const decisions = await this.$relatedQuery('reviews').where({
       isDecision: true,
@@ -233,6 +239,13 @@ class Manuscript extends BaseModel {
 
     newVersion.reviews = clonedDecisions
     newVersion.files = files
+
+    if (newVersion.meta?.source) {
+      newVersion.meta.source = remapImageFileIds(
+        newVersion.meta.source,
+        fileIdMap,
+      )
+    }
 
     const activeConfig = await Config.getCached(this.groupId)
 
@@ -332,6 +345,25 @@ class Manuscript extends BaseModel {
       .distinct()
 
     return records.map(r => r.topLevelId)
+  }
+
+  /** Find the editor image previously created for this manuscript from the same
+   * source (base64 data or URL), identified by the hash sanitizeWaxImages stores
+   * in the file's meta. Returns undefined if there is none.
+   */
+  static async findImageFileBySourceHash(
+    manuscriptId,
+    sourceHash,
+    options = {},
+  ) {
+    const { trx } = options
+
+    return this.relatedQuery('files', trx)
+      .for(manuscriptId)
+      .whereJsonSupersetOf('tags', ['manuscriptImage'])
+      .where(raw("meta->>'sourceHash'"), sourceHash)
+      .orderBy('created')
+      .first()
   }
 
   /** Does the user hold a role (author, reviewer or editor) on any version of
