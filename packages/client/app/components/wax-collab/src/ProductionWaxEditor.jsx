@@ -27,21 +27,9 @@ import {
   GET_CITE_PROC,
   GET_CALLOUT_TEXT,
 } from '../../../queries'
+import useWaxImageUpload from './useWaxImageUpload'
 
 const Wrapper = styled.div``
-
-// TODO Save this image via the server
-const renderImage = file => {
-  const reader = new FileReader()
-  return new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = () => reject(reader.error)
-    // Some extra delay to make the asynchronicity visible
-    setTimeout(() => {
-      reader.readAsDataURL(file)
-    }, 150)
-  })
-}
 
 const ProductionWaxEditor = ({
   aiConfig,
@@ -73,6 +61,8 @@ const ProductionWaxEditor = ({
     () => onAssetManager(manuscriptId),
     [onAssetManager, manuscriptId],
   )
+
+  const uploadImage = useWaxImageUpload(client, manuscriptId)
 
   const journal = useContext(JournalContext)
 
@@ -329,7 +319,7 @@ const ProductionWaxEditor = ({
         <Wax
           autoFocus={autoFocus}
           config={config}
-          fileUpload={file => renderImage(file)}
+          fileUpload={uploadImage}
           key={`readonly-${readonly}`} // Force remount to overcome Wax bugs on changing between editable and readonly
           layout={productionLayout}
           onChange={source => {

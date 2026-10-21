@@ -8,6 +8,7 @@ import { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { ThemeProvider, useTheme } from 'styled-components'
 import { debounce } from 'lodash'
+import { useApolloClient } from '@apollo/client/react'
 import { Wax } from 'wax-prosemirror-core'
 import { JournalContext } from '../../xpub-journal'
 import waxTheme from './layout/waxTheme'
@@ -15,19 +16,7 @@ import fullWaxEditorConfig from './config/FullWaxEditorConfig'
 import yjsConfig from './config/yjsConfig'
 import FullWaxEditorLayout from './layout/FullWaxEditorLayout'
 import ProductionWaxEditorLayout from './layout/ProductionWaxEditorLayout'
-
-// TODO Save this image via the server
-const renderImage = file => {
-  const reader = new FileReader()
-  return new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = () => reject(reader.error)
-    // Some extra delay to make the asynchronicity visible
-    setTimeout(() => {
-      reader.readAsDataURL(file)
-    }, 150)
-  })
-}
+import useWaxImageUpload from './useWaxImageUpload'
 
 const FullWaxEditor = ({
   aiConfig,
@@ -55,6 +44,8 @@ const FullWaxEditor = ({
 }) => {
   const theme = useTheme()
   const handleAssetManager = () => onAssetManager(manuscriptId)
+  const client = useApolloClient()
+  const uploadImage = useWaxImageUpload(client, manuscriptId)
 
   const [config, setConfig] = useState(
     fullWaxEditorConfig(
@@ -120,7 +111,7 @@ const FullWaxEditor = ({
         <Wax
           autoFocus={autoFocus}
           config={config}
-          fileUpload={file => renderImage(file)}
+          fileUpload={uploadImage}
           key={`readonly-${readonly}`}
           layout={
             useComments

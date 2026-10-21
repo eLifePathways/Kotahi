@@ -34,6 +34,7 @@ const {
   getManuscriptsData,
   versionsOfManuscriptCurrentUserIsReviewerOf,
   getManuscriptFiles,
+  getManuscriptFilesForRequest,
   getRelatedPublishedArtifacts,
   getRelatedReviews,
   authorFeedback,
@@ -54,13 +55,15 @@ const {
   supplementaryFiles,
   updateAda,
   metaSource,
-  publishedReviewUsers,
   removeAuthor,
 } = require('../../../controllers/manuscript/manuscript.controllers')
 
+const { getRequestLoaders } = require('../requestLoaders')
+
 const manuscriptAndPublishedManuscriptSharedResolvers = {
-  async files(parent) {
-    return getManuscriptFiles(parent.id, parent.files)
+  async files(parent, _, ctx) {
+    if (parent.files) return getManuscriptFiles(parent.id, parent.files)
+    return getManuscriptFilesForRequest(ctx, parent.id)
   },
 
   async meta(parent) {
@@ -329,7 +332,7 @@ const resolvers = {
     },
 
     async reviews(parent, _, ctx) {
-      return getRelatedReviews(parent, ctx.userId)
+      return getRelatedReviews(parent, ctx.userId, false, { ctx })
     },
 
     async submitter(parent) {
@@ -346,12 +349,21 @@ const resolvers = {
   },
   PublishedManuscript: {
     ...manuscriptAndPublishedManuscriptSharedResolvers,
+    async files(parent, _, ctx) {
+      const options = { onlyImagesUsedInSource: parent.meta?.source }
+
+      if (parent.files)
+        return getManuscriptFiles(parent.id, parent.files, options)
+
+      return getManuscriptFilesForRequest(ctx, parent.id, options)
+    },
+
     async css() {
       return getCss()
     },
 
     async decisions(parent, _, ctx) {
-      return publishedManuscriptDecisions(parent, ctx.userId)
+      return publishedManuscriptDecisions(parent, ctx.userId, { ctx })
     },
 
     async editors(parent) {
@@ -367,7 +379,7 @@ const resolvers = {
     },
 
     async reviews(parent, _, ctx) {
-      return publishedManuscriptReviews(parent, ctx.userId)
+      return publishedManuscriptReviews(parent, ctx.userId, { ctx })
     },
 
     async styledHtml(parent) {
@@ -389,16 +401,32 @@ const resolvers = {
     },
   },
   ManuscriptMeta: {
-    async source(parent) {
-      return metaSource(parent)
+    async source(parent, _, ctx) {
+      return metaSource(parent, ctx)
     },
     async comments(parent) {
       return JSON.stringify(parent.comments)
     },
   },
   PublishedReview: {
-    async users(parent) {
-      return publishedReviewUsers(parent)
+    async users(review, _, ctx) {
+      if (review.isHiddenReviewerName) {
+        return [{ id: '', username: 'Anonymous User' }]
+      }
+
+      return getRequestLoaders(ctx).reviewUsers.load(review)
+    },
+  },
+  ReviewUser: {
+    // Published reviews are public, so never expose the reviewer's email
+    async defaultIdentity(user, _, ctx) {
+      if (!user.id) return null
+
+      const identity = await getRequestLoaders(ctx).defaultIdentities.load(
+        user.id,
+      )
+
+      return identity && { ...identity, email: null }
     },
   },
 }

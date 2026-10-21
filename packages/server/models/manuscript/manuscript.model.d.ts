@@ -1,4 +1,4 @@
-import { BaseModel, Transaction } from '@coko/server'
+import { BaseModel, File, Transaction } from '@coko/server'
 import Review from '../review/review.model'
 import User from '../user/user.model'
 import Team from '../team/team.model'
@@ -71,6 +71,11 @@ declare class Manuscript extends BaseModel {
     manuscriptId: string,
     options?: Options,
   ): Promise<string[]>
+  static findImageFileBySourceHash(
+    manuscriptId: string,
+    sourceHash: string,
+    options?: Options,
+  ): Promise<File | undefined>
   static getFirstVersionIdsOfManuscriptsUserHasARoleIn(
     userId: string,
     groupId: string,

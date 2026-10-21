@@ -1,4 +1,3 @@
-const { randomUUID } = require('crypto')
 const { Readable } = require('stream')
 const {
   useTransaction,
@@ -6,6 +5,7 @@ const {
   createFile,
   deleteFiles,
   File,
+  uuid,
 } = require('@coko/server')
 const merge = require('lodash/merge')
 
@@ -591,10 +591,10 @@ const updateFormFields = async ({ groupName, purpose, category, fields }) => {
 
   fields.forEach(field => {
     const fieldWithIds = {
-      id: randomUUID(),
+      id: uuid(),
       ...field,
       options: field.options?.map(option => ({
-        id: randomUUID(),
+        id: uuid(),
         ...option,
       })),
     }
@@ -848,13 +848,13 @@ const createThreadedDiscussion = async ({
 
   const submittedComments = await Promise.all(
     comments.map(async ({ username, comment }, index) => ({
-      id: randomUUID(),
+      id: uuid(),
       manuscriptVersionId: manuscriptId,
       created: at(index),
       updated: at(index),
       commentVersions: [
         {
-          id: randomUUID(),
+          id: uuid(),
           created: at(index),
           updated: at(index),
           userId: await findUserId(username),
@@ -878,7 +878,7 @@ const createThreadedDiscussion = async ({
 
       if (commentIndex === undefined) {
         newDraftComments.push({
-          id: randomUUID(),
+          id: uuid(),
           manuscriptVersionId: manuscriptId,
           created: at(100),
           commentVersions: [],
@@ -890,7 +890,7 @@ const createThreadedDiscussion = async ({
     }),
   )
 
-  const threadId = randomUUID()
+  const threadId = uuid()
   const allComments = [...submittedComments, ...newDraftComments]
 
   const discussion = await ThreadedDiscussion.query().insertAndFetch({

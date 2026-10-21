@@ -7,6 +7,7 @@ const {
   request,
   File,
   logger,
+  useTransaction,
 } = require('@coko/server')
 
 const {
@@ -29,45 +30,48 @@ const {
 const sanitizeWaxImages = require('../utils/sanitizeWaxImages')
 
 const addResourceToFolder = async (id, type) => {
-  const parent = await CmsFileTemplate.query().findOne({ id })
+  return useTransaction(async trx => {
+    const parent = await CmsFileTemplate.findOne({ id }, { trx })
 
-  const name = type ? 'new folder' : 'new file.njk'
+    const name = type ? 'new folder' : 'new file.njk'
 
-  const insertedResource = await CmsFileTemplate.query()
-    .insertGraph({
-      name,
-      parentId: parent.id,
-      groupId: parent.groupId,
-    })
-    .returning('id')
+    const insertedResource = await CmsFileTemplate.query(trx)
+      .insertGraph({
+        name,
+        parentId: parent.id,
+        groupId: parent.groupId,
+      })
+      .returning('id')
 
-  let fileId = null
+    let fileId = null
 
-  if (!type) {
-    const insertedFile = await createFile(Readable.from(' '), name, {
-      tags: ['cmsTemplateFile'],
-      objectId: insertedResource.id,
-    })
+    if (!type) {
+      const insertedFile = await createFile(Readable.from(' '), name, {
+        tags: ['cmsTemplateFile'],
+        trx,
+        objectId: insertedResource.id,
+      })
 
-    fileId = insertedFile.id
+      fileId = insertedFile.id
 
-    await CmsFileTemplate.query()
-      .update({ fileId })
-      .where({ id: insertedResource.id })
+      await CmsFileTemplate.query(trx)
+        .update({ fileId })
+        .where({ id: insertedResource.id })
+
+      return {
+        id: insertedResource.id,
+        fileId,
+        name,
+      }
+    }
 
     return {
       id: insertedResource.id,
-      fileId,
+      fileId: null,
       name,
+      children: [],
     }
-  }
-
-  return {
-    id: insertedResource.id,
-    fileId: null,
-    name,
-    children: [],
-  }
+  })
 }
 
 const addSlashes = inputString => {
@@ -215,36 +219,47 @@ const deleteCMSPage = async id => {
 }
 
 const deleteResource = async id => {
-  const item = await CmsFileTemplate.query().findOne({ id })
+  const { fileKeys, resource } = await useTransaction(async trx => {
+    const item = await CmsFileTemplate.findOne({ id }, { trx })
+    let keys = []
 
-  if (item.fileId) {
-    await CmsFileTemplate.query().findOne({ id }).delete()
-    const file = await File.query().findOne({ id: item.fileId })
-    const keys = file.storedObjects.map(f => f.key)
+    if (item.fileId) {
+      await CmsFileTemplate.deleteById(id, { trx })
+      const file = await File.findOne({ id: item.fileId }, { trx })
+      keys = file.storedObjects.map(f => f.key)
+      await File.deleteById(item.fileId, { trx })
+    } else {
+      const { result: children } = await CmsFileTemplate.find(
+        {
+          parentId: item.id,
+        },
+        { trx },
+      )
 
-    try {
-      if (keys.length > 0) {
-        await fileStorage.delete(keys)
-        await File.query().deleteById(id)
+      if (children.length === 0) {
+        await CmsFileTemplate.deleteById(id, { trx })
       }
-    } catch (e) {
-      throw new Error(`The was a problem deleting the file: ${e.message}`)
     }
-  } else {
-    const hasChildren = await CmsFileTemplate.query().where({
-      parentId: item.id,
-    })
 
-    if (hasChildren.length === 0) {
-      await CmsFileTemplate.query().findOne({ id }).delete()
+    return { resource: item, fileKeys: keys }
+  })
+
+  if (fileKeys.length > 0) {
+    try {
+      await fileStorage.delete(fileKeys)
+    } catch (e) {
+      logger.error(
+        `Failed to delete stored objects for CMS file ${resource.fileId}`,
+        e,
+      )
     }
   }
 
   return {
-    id: item.id,
-    fileId: item.fileId,
-    name: item.name,
-    parentId: item.parentId,
+    id: resource.id,
+    fileId: resource.fileId,
+    name: resource.name,
+    parentId: resource.parentId,
   }
 }
 
@@ -459,18 +474,20 @@ const pageMeta = page => {
 }
 
 const renameResource = async (id, name) => {
-  const item = await CmsFileTemplate.query().findOne({ id })
+  return useTransaction(async trx => {
+    const item = await CmsFileTemplate.findOne({ id }, { trx })
 
-  const updatedItem = await CmsFileTemplate.query()
-    .patch({ name })
-    .findOne({ id })
-    .returning('*')
+    const updatedItem = await CmsFileTemplate.query(trx)
+      .patch({ name })
+      .findOne({ id })
+      .returning('*')
 
-  if (item.fileId) {
-    await File.query().patch({ name }).findOne({ id: item.fileId })
-  }
+    if (item.fileId) {
+      await File.query(trx).patch({ name }).findOne({ id: item.fileId })
+    }
 
-  return updatedItem
+    return updatedItem
+  })
 }
 
 const setInitialLayout = async groupId => {
@@ -516,12 +533,16 @@ const updateCMSPage = async (id, userId, input) => {
 }
 
 const updateFlaxRootFolder = async (id, groupId) => {
-  await CmsFileTemplate.query().patch({ rootFolder: false }).where({ groupId })
+  return useTransaction(async trx => {
+    await CmsFileTemplate.query(trx)
+      .patch({ rootFolder: false })
+      .where({ groupId })
 
-  return CmsFileTemplate.query()
-    .patch({ rootFolder: true })
-    .findOne({ id, groupId })
-    .returning('*')
+    return CmsFileTemplate.query(trx)
+      .patch({ rootFolder: true })
+      .findOne({ id, groupId })
+      .returning('*')
+  })
 }
 
 const updateResource = async (id, content) => {

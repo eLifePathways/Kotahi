@@ -66,33 +66,60 @@ class Review extends BaseModel {
     }
   }
 
-  static async orderReviewPerUsername(reviews) {
+  /** Users of each review, in the same order as the reviews: the manuscript's
+   * collaborative reviewer team for a collaborative review, otherwise the
+   * review's own user. Missing users or teams give an empty array. */
+  static async getUsersOfReviews(reviews, options = {}) {
+    const { trx } = options
+    const Team = require('../team/team.model')
     const User = require('../user/user.model')
 
-    const Manuscript = require('../manuscript/manuscript.model')
+    const manuscriptIds = [
+      ...new Set(
+        reviews.filter(r => r.isCollaborative).map(r => r.manuscriptId),
+      ),
+    ]
 
-    const reviewWithUsers = await Promise.all(
-      reviews.map(async review => {
-        let users = null
+    const userIds = [
+      ...new Set(
+        reviews.filter(r => !r.isCollaborative && r.userId).map(r => r.userId),
+      ),
+    ]
 
-        if (review.isCollaborative) {
-          const manuscript = await Manuscript.query().findById(
-            review.manuscriptId,
-          )
+    const teams = manuscriptIds.length
+      ? await Team.findCollaborativeReviewerTeams(manuscriptIds, { trx })
+      : []
 
-          const existingTeam = await manuscript
-            .$relatedQuery('teams')
-            .where('role', 'collaborativeReviewer')
-            .first()
+    const users = userIds.length
+      ? await User.findByIds(userIds, { trx, throwIfNotFound: false })
+      : []
 
-          users = await existingTeam.$relatedQuery('users')
-        } else {
-          users = await User.query().where({ id: review.userId })
-        }
+    const teamUsersByManuscriptId = new Map()
 
-        return { ...review, username: users[0]?.username || '' } // imported manuscripts may have invalid reviewers
-      }),
-    )
+    teams.forEach(team => {
+      if (!teamUsersByManuscriptId.has(team.objectId))
+        teamUsersByManuscriptId.set(team.objectId, team.users)
+    })
+
+    const usersById = new Map(users.map(u => [u.id, u]))
+
+    return reviews.map(review => {
+      if (review.isCollaborative)
+        return teamUsersByManuscriptId.get(review.manuscriptId) ?? []
+
+      const user = usersById.get(review.userId)
+      return user ? [user] : []
+    })
+  }
+
+  static async orderReviewPerUsername(reviews, options = {}) {
+    const usersOfReviews = await Review.getUsersOfReviews(reviews, options)
+
+    // imported manuscripts may have invalid reviewers
+    const reviewWithUsers = reviews.map((review, i) => ({
+      ...review,
+      username: usersOfReviews[i][0]?.username || '',
+    }))
 
     return reviewWithUsers.sort((reviewOne, reviewTwo) => {
       // Get the username of reviewer and convert to uppercase

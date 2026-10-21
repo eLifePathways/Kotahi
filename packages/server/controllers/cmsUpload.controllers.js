@@ -1,37 +1,40 @@
 const fs = require('fs')
 
-const { createFile } = require('@coko/server')
+const { createFile, useTransaction } = require('@coko/server')
 
 const { CmsFileTemplate } = require('../models')
 
 const uploadCms = async (templateId, files) => {
-  const folder = await CmsFileTemplate.query().findOne({ id: templateId })
+  return useTransaction(async trx => {
+    const folder = await CmsFileTemplate.findOne({ id: templateId }, { trx })
 
-  return Promise.all(
-    files.map(async file => {
-      const insertedResource = await CmsFileTemplate.query()
-        .insertGraph({
-          name: file.originalname,
-          parentId: folder.id,
-          groupId: folder.groupId,
-        })
-        .returning('id')
+    return Promise.all(
+      files.map(async file => {
+        const insertedResource = await CmsFileTemplate.query(trx)
+          .insertGraph({
+            name: file.originalname,
+            parentId: folder.id,
+            groupId: folder.groupId,
+          })
+          .returning('id')
 
-      const insertedFile = await createFile(
-        fs.createReadStream(`${file.path}`),
-        file.originalname,
-        {
-          tags: ['cmsTemplateFile'],
-          objectId: insertedResource.id,
-        },
-      )
+        const insertedFile = await createFile(
+          fs.createReadStream(`${file.path}`),
+          file.originalname,
+          {
+            tags: ['cmsTemplateFile'],
+            trx,
+            objectId: insertedResource.id,
+          },
+        )
 
-      return CmsFileTemplate.query()
-        .update({ fileId: insertedFile.id })
-        .where({ id: insertedResource.id })
-        .returning('*')
-    }),
-  )
+        return CmsFileTemplate.query(trx)
+          .update({ fileId: insertedFile.id })
+          .where({ id: insertedResource.id })
+          .returning('*')
+      }),
+    )
+  })
 }
 
 module.exports = { uploadCms }

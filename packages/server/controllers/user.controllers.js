@@ -1,6 +1,6 @@
 const chunk = require('lodash/chunk')
 
-const { File, fileStorage, logger, useTransaction } = require('@coko/server')
+const { fileStorage, logger, useTransaction } = require('@coko/server')
 
 const {
   Channel,
@@ -359,9 +359,12 @@ const paginatedUsers = async (userId, groupId, sort, offset, limit) => {
   }
 }
 
-const profilePicture = async user => {
-  if (!user.profilePicture) return null
-  const file = await File.query().findById(user.profilePicture)
+/** URL of the small version of a profile picture file
+ * @param {object} file The file object
+ * @returns {string} The requested URL
+ */
+const profilePictureUrl = async file => {
+  if (!file) return null
 
   let small
 
@@ -849,7 +852,7 @@ module.exports = {
   getUsersById,
   isUserOnline,
   paginatedUsers,
-  profilePicture,
+  profilePictureUrl,
   searchUsers,
   sendEmail: sendEmailFn,
   sendEmailWithPreparedData,
