@@ -159,7 +159,9 @@ const ReviewPage = () => {
     }, collapseTimeMs)
   }
 
-  if (loading || currentUser === null) return <Spinner />
+  if ((loading && !data) || currentUser === null) {
+    return <Spinner />
+  }
 
   if (error) {
     console.warn(error.message)
