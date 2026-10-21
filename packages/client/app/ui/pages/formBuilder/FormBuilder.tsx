@@ -1,10 +1,16 @@
 import { type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+import { grid } from '@coko/client'
 
 import CardGrid from '../../shared/CardGrid'
 import Page from '../../shared/Page'
 import PageDescription from '../../shared/PageDescription'
+
+const Grid = styled(CardGrid)`
+  padding-bottom: ${grid(6)};
+`
 
 const FormBuilder = (): ReactNode => {
   const { groupName } = useParams()
@@ -13,7 +19,7 @@ const FormBuilder = (): ReactNode => {
   return (
     <Page title={t('formsPage.title')}>
       <PageDescription>{t('formsPage.description')}</PageDescription>
-      <CardGrid
+      <Grid
         items={[
           {
             title: t('formsPage.submissionFormTitle'),

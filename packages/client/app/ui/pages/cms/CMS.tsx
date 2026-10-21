@@ -1,10 +1,16 @@
 import { type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+import { grid } from '@coko/client'
 
 import CardGrid from '../../shared/CardGrid'
 import Page from '../../shared/Page'
 import PageDescription from '../../shared/PageDescription'
+
+const Grid = styled(CardGrid)`
+  padding-bottom: ${grid(6)};
+`
 
 const CMS = (): ReactNode => {
   const { groupName } = useParams()
@@ -13,7 +19,7 @@ const CMS = (): ReactNode => {
   return (
     <Page title={t('cmsIndexPage.title')}>
       <PageDescription>{t('cmsIndexPage.description')}</PageDescription>
-      <CardGrid
+      <Grid
         items={[
           {
             title: t('cmsIndexPage.pagesTitle'),

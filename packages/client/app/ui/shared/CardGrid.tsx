@@ -72,12 +72,13 @@ type CardItem = {
 }
 
 type CardGridProps = {
+  className?: string
   items: CardItem[]
 }
 
-const CardGrid = ({ items }: CardGridProps): ReactNode => {
+const CardGrid = ({ className, items }: CardGridProps): ReactNode => {
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       {items.map(item => {
         return (
           <li key={item.key}>
