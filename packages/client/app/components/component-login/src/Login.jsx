@@ -21,22 +21,6 @@ const getNextUrl = config => {
   return `${url.searchParams.get('next') || redirectLink}`
 }
 
-const RegisterLinkButton = styled.button`
-  border: 0;
-  border-radius: 0;
-  display: block;
-  font-size: 1em;
-  font-weight: 500;
-  margin: 1em;
-  padding: 0.25em 1em;
-
-  color: ${th('colorPrimary')};
-
-  &:hover {
-    color: ${th('colorPrimary')};
-  }
-`
-
 const RegisterInfoString = styled.p`
   color: #33444d;
   font-size: 1rem;
@@ -174,9 +158,6 @@ const Login = () => {
           <LoginButton $primary as="a" href={nextpage}>
             {t('loginPage.Login with ORCID')}
           </LoginButton>
-          <RegisterLinkButton as="a" href={nextpage}>
-            {t('loginPage.Register with ORCID')}
-          </RegisterLinkButton>
         </Content>
       </Centered>
     </Container>

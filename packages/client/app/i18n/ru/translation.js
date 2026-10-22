@@ -1173,7 +1173,6 @@ const ru = {
       kotahiUses:
         'Мы используем ORCID <0>icon</0> для идентификации Авторов и сотрудников редакции.',
       'Login with ORCID': 'Войти с ORCID',
-      'Register with ORCID': 'Зарегистрироваться с ORCID',
     },
     frontPage: {
       recent: 'Последние публикации {{brandName}}',
