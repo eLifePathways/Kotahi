@@ -26,12 +26,3 @@ export const CONVERT_TO_PDF = gql`
     }
   }
 `
-
-export const UPDATE_TAB = gql`
-  mutation UpdateRecentTab($tab: String) {
-    updateRecentTab(tab: $tab) {
-      id
-      recentTab
-    }
-  }
-`

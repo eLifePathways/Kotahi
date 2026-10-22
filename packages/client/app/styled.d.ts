@@ -14,6 +14,11 @@ declare module 'styled-components' {
     colorText: string
     colorTextReverse: string
     colorTextPlaceholder: string
+    colorTextMuted: string
+    colorOverlayBlackHover: string
+    colorOverlayBlackPressed: string
+    colorOverlayWhiteHover: string
+    colorOverlayWhitePressed: string
     colorWarning: string
     colorWarningLight: string
     colorWarningDark: string

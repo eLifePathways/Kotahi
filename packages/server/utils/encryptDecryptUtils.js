@@ -5,10 +5,11 @@ const deriveKey = (secret, salt) => {
   return crypto.pbkdf2Sync(secret, salt, 100000, 32, 'sha512')
 }
 
-const encryptionKeySecret = config.get('secret')
 const algorithm = 'aes-256-gcm'
 
 const encrypt = text => {
+  const encryptionKeySecret = config.get('secret')
+
   const iv = crypto.randomBytes(16)
   const salt = crypto.randomBytes(16)
   const key = deriveKey(encryptionKeySecret, salt)
@@ -24,6 +25,8 @@ const encrypt = text => {
 }
 
 const decrypt = text => {
+  const encryptionKeySecret = config.get('secret')
+
   const [ivHex, saltHex, encryptedText, tagHex] = text.split(':')
   const iv = Buffer.from(ivHex, 'hex')
   const salt = Buffer.from(saltHex, 'hex')

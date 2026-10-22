@@ -2,7 +2,7 @@
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { Menu } from '../../page-object/page-component/menu'
-import { dashboard } from '../../support/routes'
+import { dashboard, dashboardSubmissions } from '../../support/routes'
 
 describe('Login test', () => {
   it('Can log in as admin (and logout)', () => {
@@ -25,6 +25,7 @@ describe('Login test', () => {
       Menu.getLoggedUserButton().should('contain', name.role.admin)
       Menu.getDashboardButton().should('be.visible')
       Menu.getLoggedUserButton().should('contain', 'Group Manager')
+      cy.visit(dashboardSubmissions)
       DashboardPage.getSectionPlaceholder(0).should(
         'contain',
         'No matching manuscripts were found',

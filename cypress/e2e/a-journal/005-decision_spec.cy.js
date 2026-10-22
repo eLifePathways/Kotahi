@@ -5,7 +5,11 @@ import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
-import { dashboard } from '../../support/routes'
+import {
+  dashboard,
+  dashboardEdits,
+  dashboardSubmissions,
+} from '../../support/routes'
 
 const decisionTextContent = 'Please fix Foo in the Paper!'
 const decisionFileName = 'test-pdf.pdf'
@@ -33,9 +37,8 @@ describe('Completing a decision', () => {
 
   beforeEach(() => {
     cy.fixture('role_names').then(name => {
-      cy.login(name.role.seniorEditor, dashboard)
+      cy.login(name.role.seniorEditor, dashboardEdits)
       cy.wait(1000)
-      DashboardPage.clickEditingQueueTab()
       cy.wait(2000)
       DashboardPage.clickControl() // Navigate to Control Page
       cy.wait(500)
@@ -60,7 +63,7 @@ describe('Completing a decision', () => {
       ControlPage.checkSvgExists() // Check appears in front of button
 
       /* View Decision as an Author */
-      cy.login(name.role.author, dashboard) // Login as an Author
+      cy.login(name.role.author, dashboardSubmissions) // Login as an Author
       DashboardPage.clickSubmissionActionLink() // Click on first MySubmission
 
       // Verify Decision Content
@@ -77,6 +80,8 @@ describe('Completing a decision', () => {
       )
       SubmissionFormPage.clickSubmitResearch()
       SubmissionFormPage.clickSubmitYourManuscript()
+      cy.url().should('match', /\/dashboard$/)
+      cy.visit(dashboardSubmissions)
       DashboardPage.getSubmissionTitle().contains('test pdf').should('exist') // Verify new submission got created
     })
   })

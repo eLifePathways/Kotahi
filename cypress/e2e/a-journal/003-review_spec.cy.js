@@ -3,7 +3,11 @@
 
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ReviewPage } from '../../page-object/review-page'
-import { dashboard } from '../../support/routes'
+import {
+  dashboard,
+  dashboardEdits,
+  dashboardReviews,
+} from '../../support/routes'
 
 const reviewDataList = [
   {
@@ -46,10 +50,9 @@ describe('Completing reviews', () => {
       doReview(name.role.reviewers[4], reviewDataList[4])
 
       // login as seniorEditor and assign the 3 reviews are completed
-      cy.login(name.role.seniorEditor, dashboard)
+      cy.login(name.role.seniorEditor, dashboardEdits)
 
       cy.wait(1000)
-      DashboardPage.clickDashboardTab(2)
       cy.getByDataTestId('statusCounts')
         .find('[role="img"][aria-label$="Completed"]')
         .should('have.length', 3)
@@ -85,9 +88,8 @@ describe('Completing reviews', () => {
 const doReview = (name, reviewData) => {
   cy.login(name, dashboard)
   cy.get('nav').contains('Dashboard').click()
-  cy.visit(dashboard)
+  cy.visit(dashboardReviews)
   cy.wait(1000)
-  DashboardPage.clickDashboardTab(1)
 
   // Accpet Review Request Workflow
   if (reviewData.verdict === 'accept') {
@@ -117,8 +119,8 @@ const doReview = (name, reviewData) => {
       ReviewPage.clickConfirmSubmitButton()
 
       // Verify the review got completed
-      cy.get('nav').contains('Dashboard').click()
-      cy.url().should('contain', '/dashboard/reviews')
+      cy.url().should('match', /\/dashboard$/)
+      cy.visit(dashboardReviews)
       DashboardPage.getDoReviewButton().should('contain', 'View')
       cy.getByDataTestId('menu-user').click()
       cy.contains('Logout').click()

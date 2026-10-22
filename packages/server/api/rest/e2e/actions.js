@@ -8,6 +8,7 @@ const {
   uuid,
 } = require('@coko/server')
 const merge = require('lodash/merge')
+const mergeWith = require('lodash/mergeWith')
 
 const Group = require('../../../models/group/group.model')
 const Config = require('../../../models/config/config.model')
@@ -21,6 +22,7 @@ const Form = require('../../../models/form/form.model')
 const Manuscript = require('../../../models/manuscript/manuscript.model')
 const Review = require('../../../models/review/review.model')
 const ThreadedDiscussion = require('../../../models/threadedDiscussion/threadedDiscussion.model')
+const Task = require('../../../models/task/task.model')
 const seedForms = require('../../../scripts/seedForms')
 const { seedNotifications } = require('../../../scripts/seedNotifications')
 const EmailTemplate = require('../../../models/emailTemplate/emailTemplate.model')
@@ -535,7 +537,18 @@ const createManuscripts = async ({ groupName, count, submitterUsername }) => {
       }),
     )
 
-    return { manuscriptIds: manuscripts.map(manuscript => manuscript.id) }
+    const manuscriptIds = manuscripts.map(manuscript => manuscript.id)
+
+    const inserted = await Manuscript.query(trx)
+      .findByIds(manuscriptIds)
+      .select('id', 'shortId')
+
+    const shortIdsById = new Map(inserted.map(m => [m.id, m.shortId]))
+
+    return {
+      manuscriptIds,
+      shortIds: manuscriptIds.map(id => shortIdsById.get(id)),
+    }
   })
 }
 
@@ -651,6 +664,70 @@ const setManuscriptCreated = async ({ manuscriptId, created }) => {
   await db('manuscripts').where({ id: manuscriptId }).update({ created })
 
   return Manuscript.findById(manuscriptId)
+}
+
+const createTask = async ({ manuscriptId, username, dueDate, status }) => {
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  if (!manuscript) {
+    throw new Error(`No manuscript found with id "${manuscriptId}"`)
+  }
+
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  return Task.query().insertAndFetch({
+    manuscriptId,
+    groupId: manuscript.groupId,
+    title: 'Test task',
+    assigneeUserId: user.id,
+    assigneeType: 'registeredUser',
+    dueDate,
+    status,
+    sequenceIndex: 0,
+  })
+}
+
+const createUserNotification = async ({
+  manuscriptId,
+  username,
+  eventType,
+  created,
+}) => {
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  if (!manuscript) {
+    throw new Error(`No manuscript found with id "${manuscriptId}"`)
+  }
+
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  // use db so that we can backdate notifications
+  const [notification] = await db('user_notifications')
+    .insert({
+      id: uuid(),
+      user_id: user.id,
+      group_id: manuscript.groupId,
+      manuscript_id: manuscriptId,
+      event_type: eventType,
+      data: {
+        userId: user.id,
+        groupId: manuscript.groupId,
+        manuscriptId,
+        shortId: manuscript.shortId,
+      },
+      ...(created && { created }),
+    })
+    .returning('*')
+
+  return notification
 }
 
 // isShared: whether this reviewer's review is shared with the other shared
@@ -793,7 +870,9 @@ const updateGroupConfig = async ({ groupName, patch }) => {
     throw new Error(`No active config found for group "${groupName}"`)
   }
 
-  const formData = merge({}, config.formData, patch)
+  const formData = mergeWith({}, config.formData, patch, (_, value) =>
+    Array.isArray(value) ? value : undefined,
+  )
 
   return Config.patchAndFetchById(config.id, { formData })
 }
@@ -976,6 +1055,8 @@ module.exports = {
   updateManuscriptSubmission,
   patchManuscript,
   setManuscriptCreated,
+  createTask,
+  createUserNotification,
   deleteSharedUsers,
   addManuscriptFile,
   createThreadedDiscussion,

@@ -32,7 +32,6 @@ describe('User migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('Make profile picture a file id foreign key', async () => {
@@ -185,5 +184,32 @@ describe('User migrations', () => {
 
     const columnInfoRollback = await db('users').columnInfo('chat_expanded')
     expect(columnInfoRollback.type).toEqual('boolean')
+  })
+
+  it('drops the recent tab column', async () => {
+    let hasColumn: boolean
+
+    await migrationManager.migrate({
+      to: '1790140895-create-user-notifications-table',
+    })
+
+    hasColumn = await db.schema.hasColumn('users', 'recent_tab')
+    expect(hasColumn).toBe(true)
+
+    const columnInfoPre = await db('users').columnInfo('recent_tab')
+    expect(columnInfoPre.type).toEqual('text')
+
+    await migrationManager.migrate({ step: 1 })
+
+    hasColumn = await db.schema.hasColumn('users', 'recent_tab')
+    expect(hasColumn).toBe(false)
+
+    await migrationManager.rollback({ step: 1 })
+
+    hasColumn = await db.schema.hasColumn('users', 'recent_tab')
+    expect(hasColumn).toBe(true)
+
+    const columnInfoRollback = await db('users').columnInfo('recent_tab')
+    expect(columnInfoRollback.type).toEqual('text')
   })
 })

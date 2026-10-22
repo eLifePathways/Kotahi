@@ -10,6 +10,7 @@ const Review = require('./models/review/review.model')
 const Team = require('./models/team/team.model')
 const TeamMember = require('./models/teamMember/teamMember.model')
 const User = require('./models/user/user.model')
+const UserNotification = require('./models/userNotification/userNotification.model')
 
 // Shield's `race` rule is misnamed, as it doesn't race the different rules but applies them sequentially until one succeeds. `or`, on the other hand, applies all rules in parallel.
 const { rule, and, or, allow, deny, race: lazyOr } = authorization
@@ -67,6 +68,16 @@ const userOwnsMessage = rule({ cache: 'contextual' })(async (
   const message = await Message.query().findById(args.messageId)
 
   return message?.userId === ctx.userId
+})
+
+const userOwnsUserNotification = rule({ cache: 'contextual' })(async (
+  parent,
+  args,
+  ctx,
+) => {
+  if (!ctx.userId) return false
+  const userNotification = await UserNotification.findById(args.id)
+  return userNotification.userId === ctx.userId
 })
 
 const getLatestVersionOfManuscript = async (ctx, manuscriptVersionId) => {
@@ -514,6 +525,7 @@ const permissions = {
       userIsAdmin,
     ),
     currentUser: isAuthenticated,
+    dashboardData: isAuthenticated,
     docmap: allow,
     editorsActivity: or(userIsGroupAdmin, userIsAdmin),
     file: deny, // Never used
@@ -580,6 +592,7 @@ const permissions = {
     unreviewedPreprints: allow, // This has its own token-based authentication.
     user: isAuthenticated,
     userHasTaskAlerts: isAuthenticated,
+    userNotifications: isAuthenticated,
     users: or(
       userIsEditorOfAnyManuscript,
       userIsGm,
@@ -771,6 +784,8 @@ const permissions = {
     deleteNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setNotificationActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setEventActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
+    dismissUserNotification: userOwnsUserNotification,
+    dismissAllUserNotifications: isAuthenticated,
   },
   Subscription: {
     fileUpdated: isAuthenticated,

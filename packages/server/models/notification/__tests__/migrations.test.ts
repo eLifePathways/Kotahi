@@ -17,7 +17,6 @@ describe('Notification Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('creates and seeds notification table', async () => {

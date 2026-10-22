@@ -4,7 +4,7 @@
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
-import { dashboard } from '../../support/routes1'
+import { dashboardEdits, dashboardSubmissions } from '../../support/routes1'
 
 const decisionTextContent = 'Please fix Foo in the Paper!'
 const decisionFileName = 'test-pdf.pdf'
@@ -22,9 +22,8 @@ describe('checking manuscript version', () => {
   it('editor checks for new manuscript version', () => {
     cy.fixture('role_names').then(name => {
       /* Editor  Submits a decision */
-      cy.login(name.role.seniorEditor, dashboard)
+      cy.login(name.role.seniorEditor, dashboardEdits)
       cy.wait(500)
-      DashboardPage.clickDashboardTab(2)
       DashboardPage.clickControl() // Navigate to Control Page
       cy.wait(500)
       ControlPage.clickDecisionTab(1)
@@ -48,7 +47,7 @@ describe('checking manuscript version', () => {
 
       /* View Decision as an Author */
       cy.wait(1000)
-      cy.login(name.role.author, dashboard)
+      cy.login(name.role.author, dashboardSubmissions)
       /* Click on first MySubmission */
       DashboardPage.clickSubmissionActionLink()
 
@@ -76,11 +75,12 @@ describe('checking manuscript version', () => {
       SubmissionFormPage.clickSubmitResearch()
       SubmissionFormPage.clickSubmitYourManuscript()
       /* Verify new submission got created */
+      cy.url().should('match', /\/dashboard$/)
+      cy.visit(dashboardSubmissions)
       DashboardPage.getSubmissionTitle().contains('test pdf').should('exist')
 
       /* Login as editor and check the new version submission form */
-      cy.login(name.role.seniorEditor, dashboard)
-      DashboardPage.clickDashboardTab(2)
+      cy.login(name.role.seniorEditor, dashboardEdits)
       DashboardPage.clickControl() // Navigate to Control Page
       ControlPage.clickDecisionTab(1)
       /* Verify publish button is disabled */

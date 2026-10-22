@@ -85,6 +85,17 @@ declare class Manuscript extends BaseModel {
     manuscriptId: string,
     options?: Options,
   ): Promise<boolean>
+  static getLatestVersionsOfManuscriptsUserHasRolesIn(
+    userId: string,
+    groupId: string,
+    roles: string[],
+    options?: Options,
+  ): Promise<Manuscript[]>
+  static findManuscriptsWithOverdueTasksForUser(
+    userId: string,
+    groupId: string,
+    options?: Options & { dueBefore?: Date },
+  ): Promise<(Manuscript & { nextTaskDueDate: string })[]>
   static addReviewer(
     manuscriptId: string,
     userId: string,

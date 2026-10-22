@@ -36,7 +36,7 @@ describe('Login page tests', () => {
     })
   })
 
-  context('admin can see branding settings, dashboard and reports page', () => {
+  context('admin can see branding settings', () => {
     beforeEach(() => {
       cy.fixture('role_names').then(name => {
         cy.login(name.role.admin, manuscripts)
@@ -50,16 +50,6 @@ describe('Login page tests', () => {
           .should('have.css', 'background')
           .and('contains', Color(settings.prc.primaryColor).string())
       })
-    })
-
-    it('Dashboard, Manuscripts, Reports and Settings page should be visible to the logged in user', () => {
-      cy.awaitDisappearSpinner()
-      Menu.getDashboardButton().should('be.visible')
-      Menu.getManuscriptsButton().should('be.visible')
-      Menu.getReportsButton().should('be.visible')
-      Menu.getSettingsButton().click()
-      Menu.getFormsButton().should('be.visible')
-      Menu.getUsersButton().should('be.visible')
     })
   })
 })

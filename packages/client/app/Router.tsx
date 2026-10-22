@@ -1,6 +1,7 @@
 import { type ReactNode, useContext } from 'react'
 import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
+import { useTranslation } from 'react-i18next'
 
 import AcceptArticleOwnershipPage from './components/component-dashboard/src/components/AcceptArticleOwnershipPage'
 import ArticleArtifactPage from './components/component-published-artifact/components/ArticleArtifactPage'
@@ -12,11 +13,6 @@ import CMSPagesPage from './components/component-cms-manager/src/CMSPagesPage'
 import CMSPublishingCollectionPage from './components/component-cms-manager/src/CMSPublishingCollectionPage'
 import CoarNotifyInboxPage from './components/component-coar/CoarNotifyInboxPage'
 import ConfigManagerPage from './components/component-config-manager/src/ConfigManagerPage'
-import DashboardEditsPage from './components/component-dashboard/src/components/DashboardEditsPage'
-import DashboardLayout from './components/component-dashboard/src/components/DashboardLayout'
-import DashboardRedirect from './components/component-dashboard/src/components/DashboardRedirect'
-import DashboardReviewsPage from './components/component-dashboard/src/components/DashboardReviewsPage'
-import DashboardSubmissionsPage from './components/component-dashboard/src/components/DashboardSubmissionsPage'
 import DecisionPage from './components/component-review/src/components/DecisionPage'
 import DeclineArticleOwnershipPage from './components/component-dashboard/src/components/DeclineArticleOwnershipPage'
 import FormBuilderPage from './components/component-formbuilder/src/components/FormBuilderPage'
@@ -36,12 +32,13 @@ import SubmitRedirect from './components/component-submit/src/components/SubmitR
 import TasksTemplatePage from './components/component-task-manager/src/TasksTemplatePage'
 import UsersPage from './components/component-users-manager/src/UsersPage'
 
-import { ConfigContext } from './components/config/src'
 import { XpubContext } from './components/xpub-with-context/src'
 
 import {
   AuthenticatedPage,
   CMSPage,
+  DashboardPage,
+  DashboardManuscriptsPage,
   FormsPage,
   GroupPage,
   MenuPage,
@@ -101,40 +98,10 @@ const RoleGate = (props: RoleGateProps): ReactNode => {
 }
 // #endregion helpers
 
-/**
- * TO DO - dashboard tabs don't need to be separate urls
- * (OR dashboard does not need tabs at all ???)
- *
- * kept separate here in order to call config context within config provider
- * (config provider starts at /:groupName)
- *
- * Clean solution for the above is to not use config in the router and simply
- * hide / show sections in the ui
- */
-const DashboardRoutes = (): ReactNode => {
-  const config = useContext(ConfigContext)
-  // @ts-ignore
-  const dashboard = config?.dashboard
-
-  return (
-    <Routes>
-      <Route element={<DashboardRedirect />} path="" />
-      {dashboard?.showSections?.includes('submission') && (
-        <Route element={<DashboardSubmissionsPage />} path="submissions" />
-      )}
-      {dashboard?.showSections?.includes('review') && (
-        <Route element={<DashboardReviewsPage />} path="reviews" />
-      )}
-      {dashboard?.showSections?.includes('editor') && (
-        <Route element={<DashboardEditsPage />} path="edits" />
-      )}
-    </Routes>
-  )
-}
-
 const Router = (): ReactNode => {
   // TO DO - look into how to get rid of these two
   const [conversion] = useContext(XpubContext)
+  const { t } = useTranslation()
 
   return (
     <Routes>
@@ -220,13 +187,36 @@ const Router = (): ReactNode => {
                 path="versions/:version/production"
               />
 
+              <Route element={<DashboardPage />} path="dashboard" />
+
               <Route
                 element={
-                  <DashboardLayout>
-                    <DashboardRoutes />
-                  </DashboardLayout>
+                  <DashboardManuscriptsPage
+                    title={t('dashboardPage.My Submissions')}
+                    variant="submitter"
+                  />
                 }
-                path="dashboard/*"
+                path="dashboard/submissions"
+              />
+
+              <Route
+                element={
+                  <DashboardManuscriptsPage
+                    title={t('dashboardPage.To Review')}
+                    variant="reviewer"
+                  />
+                }
+                path="dashboard/reviews"
+              />
+
+              <Route
+                element={
+                  <DashboardManuscriptsPage
+                    title={t("dashboardPage.Manuscripts I'm editor of")}
+                    variant="editor"
+                  />
+                }
+                path="dashboard/edits"
               />
             </Route>
 

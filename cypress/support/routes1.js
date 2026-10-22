@@ -1,5 +1,8 @@
 export const login = '/prc/login'
 export const dashboard = '/prc/dashboard'
+export const dashboardSubmissions = `${dashboard}/submissions`
+export const dashboardReviews = `${dashboard}/reviews`
+export const dashboardEdits = `${dashboard}/edits`
 export const manuscripts = '/prc/admin/manuscripts'
 export const reports = '/prc/admin/reports'
 export const users = '/prc/admin/users'

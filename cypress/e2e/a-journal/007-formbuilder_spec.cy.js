@@ -2,10 +2,9 @@
 
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
-import { dashboard } from '../../support/routes'
+import { dashboard, dashboardSubmissions } from '../../support/routes'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
-import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 
 describe('Form builder', () => {
   before(() => {
@@ -90,9 +89,8 @@ describe('Form builder', () => {
     cy.fixture('role_names').then(name => {
       cy.login(name.role.author, dashboard)
 
-      Menu.clickDashboard()
       // Click on new submission
-      ManuscriptsPage.clickSubmit()
+      DashboardPage.clickSubmissionButton()
 
       // Upload manuscript
       cy.get('input[type=file]').selectFile('cypress/fixtures/test-pdf.pdf', {
@@ -111,9 +109,8 @@ describe('Form builder', () => {
       SubmissionFormPage.clickSubmitYourManuscript()
       // Contains new title
       cy.awaitDisappearSpinner()
-      // the following line is added so that it gives enough time for the dom to update the title of the submission in dashboard.
-      DashboardPage.clickDashboardTab(1)
-      DashboardPage.clickDashboardTab(0)
+      cy.url().should('match', /\/dashboard$/)
+      cy.visit(dashboardSubmissions)
       DashboardPage.getSubmissionTitle(0).should('contain', data.newTitle)
     })
   })
