@@ -260,7 +260,6 @@ describe('CMS permissions', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   describe.each(Object.entries(ADMIN_ONLY_OPERATIONS))('%s', (_, operation) => {

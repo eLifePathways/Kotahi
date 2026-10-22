@@ -51,7 +51,6 @@ describe('Manuscript files API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('fetches and signs files once per request for files and meta.source', async () => {

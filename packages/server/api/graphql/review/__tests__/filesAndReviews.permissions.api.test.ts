@@ -352,7 +352,6 @@ describe('File and Review permissions', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   const allowed = [
