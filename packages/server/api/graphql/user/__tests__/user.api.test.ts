@@ -49,7 +49,6 @@ describe('User API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   describe('getRequestLoaders', () => {

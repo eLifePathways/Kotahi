@@ -47,7 +47,6 @@ describe('Remap version image file ids migration', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it("points each version's images at its own copies", async () => {

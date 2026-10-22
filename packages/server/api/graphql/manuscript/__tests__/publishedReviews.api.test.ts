@@ -66,7 +66,6 @@ describe('Published reviews API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('batches review users within a request', async () => {
