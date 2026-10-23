@@ -50,7 +50,7 @@ const Wrapper = styled.span<{
   ${(props): RuleSet =>
     props.$variant === 'warning' &&
     css`
-      background-color: ${th('colorWarning')};
+      background-color: ${th('color.warning.tint50')};
       color: ${th('colorText')};
     `};
 

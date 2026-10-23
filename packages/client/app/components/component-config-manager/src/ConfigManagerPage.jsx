@@ -8,6 +8,7 @@ import {
   CREATE_FILE,
   DELETE_FILE,
   GENERATE_NEW_COAR_AUTH_TOKEN,
+  HAS_TOKEN,
 } from '../../../queries'
 
 import { CommsErrorBanner, Spinner } from '../../shared'
@@ -19,6 +20,8 @@ const ConfigManagerPage = () => {
   const [createFile] = useMutation(CREATE_FILE)
   const [deleteFile] = useMutation(DELETE_FILE)
 
+  const { groupId } = config
+
   const [generateNewCoarAuthToken] = useMutation(GENERATE_NEW_COAR_AUTH_TOKEN)
 
   const [updateConfigStatus, setUpdateConfigStatus] = useState(null)
@@ -27,7 +30,7 @@ const ConfigManagerPage = () => {
     GET_SUBMISSION_FORM,
     {
       variables: {
-        groupId: config.groupId,
+        groupId,
       },
     },
   )
@@ -37,10 +40,17 @@ const ConfigManagerPage = () => {
     fetchPolicy: 'network-only',
   })
 
+  const { data: hasCoarTokenData, loading: loadingHasCoarToken } = useQuery(
+    HAS_TOKEN,
+    {
+      variables: { name: 'coar', groupId },
+    },
+  )
+
   const handleRefreshCoarAuthToken = async () => {
     const { data: coarRefreshData, errors: coarRefreshError } =
       await generateNewCoarAuthToken({
-        variables: { name: 'coar', groupId: config.groupId },
+        variables: { name: 'coar', groupId },
         errorPolicy: 'all',
       })
 
@@ -59,9 +69,16 @@ const ConfigManagerPage = () => {
     }
   }
 
-  if ((loading && !data) || (!metadata && loadingMetadata)) return <Spinner />
+  if (
+    (loading && !data) ||
+    (!metadata && loadingMetadata) ||
+    (!hasCoarTokenData && loadingHasCoarToken)
+  )
+    return <Spinner />
 
   if (error) return <CommsErrorBanner error={error} />
+
+  const hasCoarToken = hasCoarTokenData?.hasToken ?? false
 
   const updateConfig = async (configId, formData) => {
     setUpdateConfigStatus('pending')
@@ -99,6 +116,7 @@ const ConfigManagerPage = () => {
       disabled={!data.config.active}
       emailTemplates={data.emailTemplates}
       formData={JSON.parse(data.config.formData)}
+      hasCoarToken={hasCoarToken}
       onRefreshCoarAuthToken={handleRefreshCoarAuthToken}
       submissionForm={form}
       updateConfig={updateConfig}

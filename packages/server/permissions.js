@@ -556,6 +556,7 @@ const permissions = {
     globalTeams: deny, // Never used
     group: allow,
     groups: allow,
+    hasToken: or(userIsGroupAdmin, userIsAdmin),
     invitationManuscriptId: isAuthenticated,
     invitationStatus: allow,
     manuscript: or(
@@ -646,6 +647,7 @@ const permissions = {
       userOwnsMessage,
       and(userIsGm, userIsGroupAdmin, userIsAdmin),
     ),
+    generateNewToken: or(userIsGroupAdmin, userIsAdmin),
     importManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     makeDecision: or(
       userIsEditorOfAnyManuscript,
