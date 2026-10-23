@@ -10,6 +10,8 @@ const {
   CoarNotification,
 } = require('../../models')
 
+const { postToInbox } = require('./utils')
+
 // TODO: What is the purpose of this?
 const isReviewDoi = () => {
   return false
