@@ -137,12 +137,9 @@ const DecisionVersion = ({
     (isGroupManager && config.controlPanel?.groupManagersCanPublish) ||
     (isEditor && config.controlPanel?.editorsCanPublish)
 
-  const debouncedSave = useCallback(
-    debounce(source => {
-      updateManuscript(version.id, { meta: { source } })
-    }, 2000),
-    [],
-  )
+  const saveSource = source => {
+    updateManuscript(version.id, { meta: { source } })
+  }
 
   const debouncedSaveComments = useCallback(
     debounce(comments => {
@@ -154,7 +151,6 @@ const DecisionVersion = ({
   )
 
   const { t } = useTranslation()
-  useEffect(() => debouncedSave.flush, [])
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -176,7 +172,7 @@ const DecisionVersion = ({
           queryAI={queryAI}
           readonly={isReadOnly}
           saveComments={debouncedSaveComments}
-          saveSource={isReadOnly ? null : debouncedSave}
+          saveSource={isReadOnly ? null : saveSource}
         />
       ),
       key: `editor`,
