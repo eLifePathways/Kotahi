@@ -30,6 +30,7 @@ const esLa = {
       notAssignedForThisVersion: 'No es revisor de la versión actual',
     },
     common: {
+      Loading: 'Cargando',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -1497,6 +1498,19 @@ const esLa = {
       skipManuscriptUpload:
         'Omitir la carga del manuscrito y continuar al formulario de envío',
       errorUploading: '{{error}}',
+      uploadTitle: 'Subir un manuscrito',
+      uploadDescription:
+        'Arrastra y suelta aquí el archivo de tu manuscrito, o haz clic para elegir uno.',
+      skipTitle: 'Comenzar sin archivo',
+      skipDescription:
+        'Ve directamente al formulario de envío sin subir un manuscrito.',
+      stepUploading: 'Subiendo tu manuscrito...',
+      stepConverting: 'Convirtiendo tu documento...',
+      stepCleaning: 'Preparando tu documento...',
+      stepInferringMetadata:
+        'Usando IA para completar los detalles del envío...',
+      stepCreating: 'Creando tu envío...',
+      redirecting: 'Envío creado. Redirigiendo...',
     },
     formBuilder: {
       'New Form': 'Nuevo Formulario',

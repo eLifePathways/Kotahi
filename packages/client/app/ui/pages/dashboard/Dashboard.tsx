@@ -10,9 +10,11 @@ import { Spinner } from '../../../components/shared/Spinner'
 import CommsErrorBanner from '../../../components/shared/CommsErrorBanner'
 import Badge from '../../shared/Badge'
 import Page from '../../shared/Page'
+import Card from '../../shared/Card'
+import Grid from '../../shared/Grid'
+import Surface from '../../shared/Surface'
 import {
   Activity,
-  ArrowRight,
   Broom,
   ChevronLeft,
   ChevronRight,
@@ -124,43 +126,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: ${grid(5)};
 `
-
-const Link = styled(UILink)`
-  display: block;
-  height: 100%;
-`
-
-const IconWrapper = styled.div`
-  position: absolute;
-  right: ${grid(3)};
-  bottom: ${grid(2)};
-
-  opacity: 0;
-  transition: opacity 0.3s ease;
-
-  > span[role='img'] {
-    font-size: 2rem;
-    color: ${th('colorPrimary')};
-  }
-`
-
-const Card = styled.div`
-  background-color: ${th('colorBackground')};
-  padding: ${grid(5)};
-  border-radius: ${th('borderRadius')};
-  box-shadow: ${th('boxShadow')};
-  transition: box-shadow 0.2s ease;
-  position: relative;
-
-  &:hover,
-  ${Link}:focus & {
-    box-shadow: 0 0 0 3px ${th('colorPrimary')};
-  }
-
-  &:hover ${IconWrapper}, ${Link}:focus & ${IconWrapper} {
-    opacity: 1;
-  }
-`
 // #endregion main-styles
 
 // #region greeting-card
@@ -243,29 +208,13 @@ const Greeting = (props: GreetingProps): ReactNode => {
 // #endregion greeting-card
 
 // #region acrion-cards
-const ActionCardWrapper = styled.div<{ color: ActionColor }>`
-  background-color: ${th('colorBackground')};
-  padding: ${grid(5)} ${grid(5)} ${grid(10)};
-  border-radius: ${th('borderRadius')};
-  box-shadow: ${th('boxShadow')};
-  position: relative;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: ${th('boxShadow')};
-  }
-
-  &:hover ${IconWrapper}, ${Link}:focus & ${IconWrapper} {
-    opacity: 1;
-  }
-
-  flex-shrink: 0;
+const ActionCardWrapper = styled(Card)<{ $color: ActionColor }>`
   width: 250px;
-  height: 100%;
-  border-left: 6px solid ${(props): string => props.theme[props.color]};
+  padding: ${grid(5)} ${grid(5)} ${grid(10)};
+  border-left: 6px solid ${(props): string => props.theme[props.$color]};
+
+  --card-hover-shadow: ${th('boxShadow')};
+  --card-hover-transform: translateY(-4px);
 `
 
 const ActionCardLabel = styled.div`
@@ -355,6 +304,7 @@ const ScrollButton = styled.button<{ $side: 'left' | 'right' }>`
 `
 
 type ActionCardProps = {
+  href: string
   type: ActionType
   shortId: string
   title: string
@@ -363,7 +313,7 @@ type ActionCardProps = {
 const TITLE_LENGTH_LIMIT = 55
 
 const ActionCard = (props: ActionCardProps): ReactNode => {
-  const { type, shortId, title } = props
+  const { href, type, shortId, title } = props
   const { t } = useTranslation()
   const { labelKey, color } = actionTypes[type]
   const label = t(labelKey)
@@ -374,16 +324,12 @@ const ActionCard = (props: ActionCardProps): ReactNode => {
       : title
 
   return (
-    <ActionCardWrapper color={color}>
+    <ActionCardWrapper $color={color} type="link" url={href}>
       <ActionCardLabel>
         {label} #{shortId}
       </ActionCardLabel>
 
       <ActionCardTitle>{trimmedTitle}</ActionCardTitle>
-
-      <IconWrapper>
-        <ArrowRight aria-hidden />
-      </IconWrapper>
     </ActionCardWrapper>
   )
 }
@@ -403,17 +349,16 @@ const TableCardAttention = styled.div`
   font-size: ${th('fontSizeBaseSmaller')};
 `
 
-const TableCardGrid = styled.ul`
-  display: grid;
-  gap: ${grid(3)};
-  grid-template-columns: repeat(auto-fit, minmax(${grid(50)}, 1fr));
-
-  list-style: none;
-  margin: 0 auto;
+const TableCardGrid = styled(Grid)`
   padding: 0 ${grid(1)};
 `
 
+const TableCardLink = styled(Card)`
+  padding: ${grid(5)};
+`
+
 type TableCardProps = {
+  href: string
   typeLabel: string
   descriptionLabel: string
   totalCount: number
@@ -421,11 +366,12 @@ type TableCardProps = {
 }
 
 const TableCard = (props: TableCardProps): ReactNode => {
-  const { typeLabel, descriptionLabel, totalCount, attentionCount } = props
+  const { href, typeLabel, descriptionLabel, totalCount, attentionCount } =
+    props
   const { t } = useTranslation()
 
   return (
-    <Card>
+    <TableCardLink type="link" url={href}>
       <div>
         <Badge small variant="primary">
           {typeLabel}
@@ -439,22 +385,15 @@ const TableCard = (props: TableCardProps): ReactNode => {
           count: attentionCount,
         })}
       </TableCardAttention>
-
-      <IconWrapper>
-        <ArrowRight aria-hidden />
-      </IconWrapper>
-    </Card>
+    </TableCardLink>
   )
 }
 // #endregion table-cards
 
 // #region notifications
-const NotificationsWrapper = styled.div`
+const NotificationsWrapper = styled(Surface)`
   padding: ${grid(3)} ${grid(5)};
   margin: 0 ${grid(1)};
-  background-color: ${th('colorBackground')};
-  border-radius: ${th('borderRadius')};
-  box-shadow: ${th('boxShadow')};
 `
 
 const NotificationsHeader = styled.div`
@@ -810,13 +749,11 @@ const Dashboard = (props: DashboardProps): ReactNode => {
             <ActionCardListWrapper>
               <ActionCardList ref={actionCardListRef}>
                 {actionCardData.map((cardData: ActionCardItem) => {
-                  const { id, href, ...rest } = cardData
+                  const { id, ...rest } = cardData
 
                   return (
                     <li key={id}>
-                      <Link to={href}>
-                        <ActionCard {...rest} />
-                      </Link>
+                      <ActionCard {...rest} />
                     </li>
                   )
                 })}
@@ -854,46 +791,37 @@ const Dashboard = (props: DashboardProps): ReactNode => {
 
           {(submissionsData || reviewData || editingQueueData) && (
             <div>
-              <TableCardGrid>
+              <TableCardGrid gap={3} minColumnWidth={50}>
                 {submissionsData && (
-                  <li>
-                    <Link to={submissionsData.href}>
-                      <TableCard
-                        attentionCount={submissionsData.attentionCount}
-                        descriptionLabel={t('dashboardPage.My Submissions')}
-                        totalCount={submissionsData.totalCount}
-                        typeLabel={t('dashboardPage.tableCards.author')}
-                      />
-                    </Link>
-                  </li>
+                  <TableCard
+                    attentionCount={submissionsData.attentionCount}
+                    descriptionLabel={t('dashboardPage.My Submissions')}
+                    href={submissionsData.href}
+                    totalCount={submissionsData.totalCount}
+                    typeLabel={t('dashboardPage.tableCards.author')}
+                  />
                 )}
 
                 {reviewData && (
-                  <li>
-                    <Link to={reviewData.href}>
-                      <TableCard
-                        attentionCount={reviewData.attentionCount}
-                        descriptionLabel={t('dashboardPage.To Review')}
-                        totalCount={reviewData.totalCount}
-                        typeLabel={t('dashboardPage.tableCards.reviewer')}
-                      />
-                    </Link>
-                  </li>
+                  <TableCard
+                    attentionCount={reviewData.attentionCount}
+                    descriptionLabel={t('dashboardPage.To Review')}
+                    href={reviewData.href}
+                    totalCount={reviewData.totalCount}
+                    typeLabel={t('dashboardPage.tableCards.reviewer')}
+                  />
                 )}
 
                 {editingQueueData && (
-                  <li>
-                    <Link to={editingQueueData.href}>
-                      <TableCard
-                        attentionCount={editingQueueData.attentionCount}
-                        descriptionLabel={t(
-                          "dashboardPage.Manuscripts I'm editor of",
-                        )}
-                        totalCount={editingQueueData.totalCount}
-                        typeLabel={t('dashboardPage.tableCards.editor')}
-                      />
-                    </Link>
-                  </li>
+                  <TableCard
+                    attentionCount={editingQueueData.attentionCount}
+                    descriptionLabel={t(
+                      "dashboardPage.Manuscripts I'm editor of",
+                    )}
+                    href={editingQueueData.href}
+                    totalCount={editingQueueData.totalCount}
+                    typeLabel={t('dashboardPage.tableCards.editor')}
+                  />
                 )}
               </TableCardGrid>
             </div>

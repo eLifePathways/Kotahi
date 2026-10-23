@@ -30,6 +30,7 @@ const en = {
       notAssignedForThisVersion: 'Not a reviewer of the current version',
     },
     common: {
+      Loading: 'Loading',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -1465,6 +1466,18 @@ const en = {
       skipManuscriptUpload:
         'Skip manuscript upload, and proceed to the submission form',
       errorUploading: '{{error}}',
+      uploadTitle: 'Upload a manuscript',
+      uploadDescription:
+        'Drag and drop your manuscript file here, or click to choose one.',
+      skipTitle: 'Start without a file',
+      skipDescription:
+        'Go straight to the submission form without uploading a manuscript.',
+      stepUploading: 'Uploading your manuscript...',
+      stepConverting: 'Converting your document...',
+      stepCleaning: 'Preparing your document...',
+      stepInferringMetadata: 'Using AI to fill in the submission details...',
+      stepCreating: 'Creating your submission...',
+      redirecting: 'Submission created. Redirecting...',
     },
     formBuilder: {
       'New Form': 'New Form',

@@ -30,6 +30,7 @@ const ru = {
       notAssignedForThisVersion: 'Не рецензент текущей версии',
     },
     common: {
+      Loading: 'Загрузка',
       cms: 'CMS',
       pdf: 'PDF',
       Ok: 'OK',
@@ -1482,6 +1483,17 @@ const ru = {
       skipManuscriptUpload:
         'Пропустить загрузку рукописи и перейти к форме подачи',
       errorUploading: 'Файл не распознан',
+      uploadTitle: 'Загрузить рукопись',
+      uploadDescription:
+        'Перетащите файл рукописи сюда или нажмите, чтобы выбрать файл.',
+      skipTitle: 'Начать без файла',
+      skipDescription: 'Перейти сразу к форме подачи без загрузки рукописи.',
+      stepUploading: 'Загрузка рукописи...',
+      stepConverting: 'Преобразование документа...',
+      stepCleaning: 'Подготовка документа...',
+      stepInferringMetadata: 'Заполнение сведений о подаче с помощью ИИ...',
+      stepCreating: 'Создание подачи...',
+      redirecting: 'Подача создана. Перенаправление...',
     },
     formBuilder: {
       'New Form': 'Новая форма',

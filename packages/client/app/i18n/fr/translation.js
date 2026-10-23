@@ -30,6 +30,7 @@ const fr = {
       notAssignedForThisVersion: "N'est pas évaluateur de la version actuelle",
     },
     common: {
+      Loading: 'Chargement',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'Ok',
@@ -1517,6 +1518,19 @@ const fr = {
       skipManuscriptUpload:
         'Ignorer le téléversement du manuscrit et passer au formulaire de soumission',
       errorUploading: '{{error}}',
+      uploadTitle: 'Téléverser un manuscrit',
+      uploadDescription:
+        'Glissez-déposez ici le fichier de votre manuscrit, ou cliquez pour en choisir un.',
+      skipTitle: 'Commencer sans fichier',
+      skipDescription:
+        'Passez directement au formulaire de soumission sans téléverser de manuscrit.',
+      stepUploading: 'Téléversement de votre manuscrit...',
+      stepConverting: 'Conversion de votre document...',
+      stepCleaning: 'Préparation de votre document...',
+      stepInferringMetadata:
+        "Utilisation de l'IA pour remplir les informations de soumission...",
+      stepCreating: 'Création de votre soumission...',
+      redirecting: 'Soumission créée. Redirection...',
     },
     formBuilder: {
       'New Form': 'Nouveau formulaire',
