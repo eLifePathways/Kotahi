@@ -1180,7 +1180,7 @@ const esLa = {
     loginPage: {
       kotahiUses:
         'Kotahi utiliza ORCID <0>icon</0> para identificar autores y personal.',
-      'Login with ORCID': 'Iniciar sesión con ORCID',
+      loginWithOrcid: 'Iniciar sesión con ORCID',
     },
     frontPage: {
       recent: 'Publicaciones recientes en {{brandName}}',

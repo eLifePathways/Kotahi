@@ -1155,7 +1155,7 @@ const en = {
     loginPage: {
       kotahiUses:
         'Kotahi uses ORCID <0>icon</0> to identify authors and staff.',
-      'Login with ORCID': 'Login with ORCID',
+      loginWithOrcid: 'Login with ORCID',
     },
     frontPage: {
       recent: 'Recent publications in {{brandName}}',

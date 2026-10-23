@@ -1172,7 +1172,7 @@ const ru = {
     loginPage: {
       kotahiUses:
         'Мы используем ORCID <0>icon</0> для идентификации Авторов и сотрудников редакции.',
-      'Login with ORCID': 'Войти с ORCID',
+      loginWithOrcid: 'Войти с ORCID',
     },
     frontPage: {
       recent: 'Последние публикации {{brandName}}',

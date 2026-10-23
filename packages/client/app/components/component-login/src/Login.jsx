@@ -156,7 +156,7 @@ const Login = () => {
             />
           </RegisterInfoString>
           <LoginButton $primary as="a" href={nextpage}>
-            {t('loginPage.Login with ORCID')}
+            {t('loginPage.loginWithOrcid')}
           </LoginButton>
         </Content>
       </Centered>
