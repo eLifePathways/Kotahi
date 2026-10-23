@@ -88,7 +88,7 @@ const getDataciteCslFromDOI = async (input, groupId) => {
       matches.length === 0 &&
       activeConfig.formData.production.fallbackOnCrossrefAfterDatacite
     ) {
-      logger.error('Datacite timed out.')
+      logger.error('Datacite had an error or timed out.')
       logger.error(
         'Trying CrossRef instead – note this may be imprecise!',
         input.text,
@@ -130,7 +130,7 @@ const getDataciteCslFromTitle = async (input, groupId) => {
     )
 
     if (matches.length === 0) {
-      logger.error('Datacite timed out.')
+      logger.error('Datacite had an error or timed out.')
       logger.error('Trying CrossRef instead.', input.text)
       // TODO: at this point, query CrossRef with the DOI
       tryCrossref(input.text, crossrefRetrievalEmail)

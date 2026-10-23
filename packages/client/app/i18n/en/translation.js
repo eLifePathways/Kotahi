@@ -931,6 +931,8 @@ const en = {
       coar: {
         authToken: 'COAR Notify auth token',
         refreshAuthToken: 'Refresh auth token',
+        copy: 'Copy',
+        copied: 'Copied!',
         copyMessage: 'Auth token is only shown once!',
         copyDescription:
           'Please copy the auth token now, and store it in your third-party COAR Notify system. You can always refresh the token here, but previous tokens will be invalidated.',

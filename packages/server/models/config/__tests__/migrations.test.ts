@@ -456,4 +456,130 @@ describe('Config Migrations', () => {
 
     expect(configForGroup6.formData.groupIdentity).toBeUndefined()
   })
+
+  it('removes the deprecated COAR Notify IP allow list', async () => {
+    await migrationManager.migrate({
+      to: '1791456947-change-default-brand-colours.ts',
+    })
+
+    const repoIpAddress = '127.0.0.1'
+    const scietyInboxUrl = 'https://inbox.sciety.org/inbox'
+
+    // ip address and other coar notify settings
+    const group1 = await Group.insert({})
+
+    let config1ForGroup1 = await Config.insert({
+      active: true,
+      groupId: group1.id,
+      formData: {
+        integrations: {
+          coarNotify: { repoIpAddress, scietyInboxUrl },
+        },
+      },
+    })
+
+    let config2ForGroup1 = await Config.insert({
+      active: false,
+      groupId: group1.id,
+      formData: {
+        integrations: {
+          coarNotify: { repoIpAddress, scietyInboxUrl },
+        },
+      },
+    })
+
+    // empty ip address
+    const group2 = await Group.insert({})
+
+    let configForGroup2 = await Config.insert({
+      active: true,
+      groupId: group2.id,
+      formData: {
+        integrations: {
+          coarNotify: { repoIpAddress: null, scietyInboxUrl },
+        },
+      },
+    })
+
+    // no ip address
+    const group3 = await Group.insert({})
+
+    let configForGroup3 = await Config.insert({
+      active: true,
+      groupId: group3.id,
+      formData: {
+        integrations: {
+          coarNotify: { scietyInboxUrl },
+        },
+      },
+    })
+
+    // no coar notify settings
+    const group4 = await Group.insert({})
+
+    let configForGroup4 = await Config.insert({
+      active: true,
+      groupId: group4.id,
+      formData: {},
+    })
+
+    expect(
+      config1ForGroup1.formData.integrations.coarNotify.repoIpAddress,
+    ).toBe(repoIpAddress)
+    expect(
+      config2ForGroup1.formData.integrations.coarNotify.repoIpAddress,
+    ).toBe(repoIpAddress)
+    expect(
+      configForGroup2.formData.integrations.coarNotify.repoIpAddress,
+    ).toBeNull()
+
+    await migrationManager.migrate({ step: 1 })
+
+    config1ForGroup1 = await Config.findById(config1ForGroup1.id)
+    config2ForGroup1 = await Config.findById(config2ForGroup1.id)
+    configForGroup2 = await Config.findById(configForGroup2.id)
+    configForGroup3 = await Config.findById(configForGroup3.id)
+    configForGroup4 = await Config.findById(configForGroup4.id)
+
+    expect(config1ForGroup1.formData.integrations.coarNotify).toEqual({
+      scietyInboxUrl,
+    })
+    expect(config2ForGroup1.formData.integrations.coarNotify).toEqual({
+      scietyInboxUrl,
+    })
+    expect(configForGroup2.formData.integrations.coarNotify).toEqual({
+      scietyInboxUrl,
+    })
+    expect(configForGroup3.formData.integrations.coarNotify).toEqual({
+      scietyInboxUrl,
+    })
+    expect(configForGroup4.formData.integrations).toBeUndefined()
+
+    await migrationManager.rollback({ step: 1 })
+
+    config1ForGroup1 = await Config.findById(config1ForGroup1.id)
+    config2ForGroup1 = await Config.findById(config2ForGroup1.id)
+    configForGroup2 = await Config.findById(configForGroup2.id)
+    configForGroup3 = await Config.findById(configForGroup3.id)
+    configForGroup4 = await Config.findById(configForGroup4.id)
+
+    // removed ip addresses cannot be restored, so the key comes back empty
+    expect(config1ForGroup1.formData.integrations.coarNotify).toEqual({
+      repoIpAddress: null,
+      scietyInboxUrl,
+    })
+    expect(config2ForGroup1.formData.integrations.coarNotify).toEqual({
+      repoIpAddress: null,
+      scietyInboxUrl,
+    })
+    expect(configForGroup2.formData.integrations.coarNotify).toEqual({
+      repoIpAddress: null,
+      scietyInboxUrl,
+    })
+    expect(configForGroup3.formData.integrations.coarNotify).toEqual({
+      repoIpAddress: null,
+      scietyInboxUrl,
+    })
+    expect(configForGroup4.formData.integrations).toBeUndefined()
+  })
 })

@@ -132,7 +132,7 @@ const invitationUser = async invitation => {
 }
 
 const removeInvitation = async id => {
-  const invitation = await Invitation.findById(id)
+  const invitation = await Invitation.findById(id, { throwIfNotFound: false })
   if (!invitation) return null
 
   await Invitation.query().findById(id).delete()

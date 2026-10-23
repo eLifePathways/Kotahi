@@ -165,6 +165,7 @@ const FieldTemplate = props => {
     'form-emailNotifications_emailNotification_advancedSettings_requireTLS',
   ]
 
+  // TODO: remove `form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress`
   const alertFields = [
     'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress',
   ]
