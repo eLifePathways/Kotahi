@@ -22,11 +22,13 @@ export class TimeoutError extends RequestError {
 export class HttpError extends RequestError {
   readonly status: number
   readonly data: unknown
+  readonly headers: Headers
 
-  constructor(url: string, status: number, data: unknown) {
+  constructor(url: string, status: number, data: unknown, headers: Headers) {
     super(`Request to ${url} failed with status ${status}`)
     this.name = 'HttpError'
     this.status = status
     this.data = data
+    this.headers = headers
   }
 }

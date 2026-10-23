@@ -19,6 +19,7 @@ export type RequestResponse<T> = {
 
 const DEFAULT_TIMEOUT = 30000
 const DEFAULT_RETRY_DELAY = 1000
+const MAX_RETRY_AFTER = 60000
 
 const wait = (ms: number): Promise<void> =>
   new Promise(resolve => {
@@ -45,7 +46,22 @@ const isJsonBody = (
 
 const shouldRetry = (error: unknown): boolean =>
   error instanceof NetworkError ||
-  (error instanceof HttpError && error.status >= 500)
+  (error instanceof HttpError && (error.status === 429 || error.status >= 500))
+
+const getRetryAfter = (error: unknown): number | null => {
+  if (!(error instanceof HttpError)) return null
+
+  const value = error.headers.get('retry-after')
+  if (!value) return null
+
+  const seconds = Number(value)
+  if (!Number.isNaN(seconds)) return seconds * 1000
+
+  const date = Date.parse(value)
+  if (Number.isNaN(date)) return null
+
+  return Math.max(0, date - Date.now())
+}
 
 const send = async <T>(
   url: string,
@@ -76,7 +92,9 @@ const send = async <T>(
 
   const data = await parseBody(response)
 
-  if (!response.ok) throw new HttpError(url, response.status, data)
+  if (!response.ok) {
+    throw new HttpError(url, response.status, data, response.headers)
+  }
 
   return { status: response.status, headers: response.headers, data: data as T }
 }
@@ -94,8 +112,11 @@ const request = async <T>(
     } catch (error) {
       if (attempt === retries || !shouldRetry(error)) throw error
 
+      const delay = getRetryAfter(error) ?? (attempt + 1) * retryDelay
+      if (delay > MAX_RETRY_AFTER) throw error
+
       // eslint-disable-next-line no-await-in-loop
-      await wait((attempt + 1) * retryDelay)
+      await wait(delay)
     }
   }
 
