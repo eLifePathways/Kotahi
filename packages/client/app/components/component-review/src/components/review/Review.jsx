@@ -27,7 +27,7 @@ const StyledStrong = styled.strong`
 const UnsubmittedBannerBlock = styled.div`
   background: ${th('color.warning.tint50')};
   border-radius: 8px;
-  color: ${th('color.warning.shade50')};
+  color: ${th('colorWarningDark')};
   font-size: ${th('fontSizeBaseSmall')};
   font-style: italic;
   line-height: ${th('lineHeightBaseSmall')};

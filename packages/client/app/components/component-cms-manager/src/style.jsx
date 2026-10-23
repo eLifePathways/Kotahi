@@ -36,7 +36,7 @@ export const VerticalBar = styled.div`
 `
 
 export const NewEditText = styled.p`
-  color: ${th('color.success.shade15')};
+  color: ${th('color.success.base')};
 `
 
 export const Heading2 = styled(Heading)`
