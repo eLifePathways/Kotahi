@@ -37,7 +37,6 @@
     "fs-extra": "4.0.3",
     "google-spreadsheet": "^3.1.15",
     "graphql": "16.9.0",
-    "graphql-tag": "^2.12.6",
     "handlebars": "^4.7.7",
     "he": "^1.2.0",
     "html-to-text": "^8.0.0",
@@ -70,6 +69,7 @@
     "@types/node": "^25.6.0",
     "@types/pg": "^8.23.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "graphql-tag": "^2.12.6",
     "pg": "^8.23.0",
     "ts-node": "^10.9.2",
     "vitest": "^4.1.10"
