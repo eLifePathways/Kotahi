@@ -1,16 +1,7 @@
 const path = require('path')
 const archiver = require('archiver')
 const crypto = require('crypto')
-const list = require('list-contents')
 const fs = require('fs-extra')
-
-const dirContents = async pathString =>
-  new Promise((resolve, reject) => {
-    list(pathString, o => {
-      if (o.error) reject(o.error)
-      resolve(o.files)
-    })
-  })
 
 const zipper = async dirPath => {
   try {
@@ -21,7 +12,6 @@ const zipper = async dirPath => {
     )
 
     await fs.ensureDir(tempPath)
-    const contents = await dirContents(dirPath)
     return new Promise((resolve, reject) => {
       const destination = path.join(
         tempPath,
@@ -33,10 +23,7 @@ const zipper = async dirPath => {
       // pipe archive data to the file
       archive.pipe(output)
 
-      contents.forEach(item => {
-        const absoluteFilePath = path.join(dirPath, item)
-        archive.append(fs.createReadStream(absoluteFilePath), { name: item })
-      })
+      archive.directory(dirPath, false)
       archive.finalize()
 
       output.on('close', () => {

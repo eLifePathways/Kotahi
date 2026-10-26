@@ -43,7 +43,6 @@
     "htmlparser2": "^7.2.0",
     "lib0": "^0.2.54",
     "libxml2-wasm": "^0.7.1",
-    "list-contents": "^4.0.3",
     "lodash": "^4.17.20",
     "lru-cache": "^10.1.0",
     "mathjax-node": "^2.1.1",

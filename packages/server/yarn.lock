@@ -7563,7 +7563,6 @@ __metadata:
     htmlparser2: "npm:^7.2.0"
     lib0: "npm:^0.2.54"
     libxml2-wasm: "npm:^0.7.1"
-    list-contents: "npm:^4.0.3"
     lodash: "npm:^4.17.20"
     lru-cache: "npm:^10.1.0"
     mathjax-node: "npm:^2.1.1"
@@ -7762,17 +7761,6 @@ __metadata:
     lightningcss-win32-x64-msvc:
       optional: true
   checksum: 10c0/70945bd55097af46fc9fab7f5ed09cd5869d85940a2acab7ee06d0117004a1d68155708a2d462531cea2fc3c67aefc9333a7068c80b0b78dd404c16838809e03
-  languageName: node
-  linkType: hard
-
-"list-contents@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "list-contents@npm:4.0.3"
-  dependencies:
-    move-on: "npm:^2.1.8"
-    of-type: "npm:^3.0.3"
-    typeof-arguments: "npm:^5.1.2"
-  checksum: 10c0/69ff03eb6b9e5b0e58f8fa4067e52f887663007ff0177628ddeeb079b004a712c56951f09b0c7446c77eb74dc13c2a473f382d8745499aab09ee431133c35528
   languageName: node
   linkType: hard
 
@@ -8366,16 +8354,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"move-on@npm:^2.1.8":
-  version: 2.1.9
-  resolution: "move-on@npm:2.1.9"
-  dependencies:
-    of-type: "npm:^3.0.3"
-    typeof-arguments: "npm:^5.1.2"
-  checksum: 10c0/a20590ed72100fb26ff4b55b15d6088c72476d6cc61a2bd1c56380fdeb502b1554fcad074dd2e798cbe588caa6088eb1f48fc203e0fdfdb4025e64b889851080
-  languageName: node
-  linkType: hard
-
 "ms@npm:2.1.2":
   version: 2.1.2
   resolution: "ms@npm:2.1.2"
@@ -8742,13 +8720,6 @@ __metadata:
   version: 2.1.4
   resolution: "obug@npm:2.1.4"
   checksum: 10c0/34a0ee97cd88573cfd97d384c2a79f07118ae5680d7e45d1de6e99c74eddefe145e8ca27a2db02195a1ee5fded5aa22b924869c842728c201b9f109a27d0ef19
-  languageName: node
-  linkType: hard
-
-"of-type@npm:^3.0.3":
-  version: 3.0.4
-  resolution: "of-type@npm:3.0.4"
-  checksum: 10c0/41a1d246df16cd4bde442c291d165422c47c8f54b1bceb1443ea306600ea0d6bd4a4124e416492599ab21e61a62bf16941d65f8999a545e870d666b4be8e9719
   languageName: node
   linkType: hard
 
@@ -11018,15 +10989,6 @@ __metadata:
   version: 0.0.6
   resolution: "typedarray@npm:0.0.6"
   checksum: 10c0/6005cb31df50eef8b1f3c780eb71a17925f3038a100d82f9406ac2ad1de5eb59f8e6decbdc145b3a1f8e5836e17b0c0002fb698b9fe2516b8f9f9ff602d36412
-  languageName: node
-  linkType: hard
-
-"typeof-arguments@npm:^5.1.2":
-  version: 5.1.3
-  resolution: "typeof-arguments@npm:5.1.3"
-  dependencies:
-    of-type: "npm:^3.0.3"
-  checksum: 10c0/9b36242d9c33b950e892bb04f775eb180369a9f22fdcf6b1c913cc2da7e634e7a6f7cd15a4476510f0bf5843bd9e30ec981865f3a6fc9e5ec0edbece5f0b0c0d
   languageName: node
   linkType: hard
 
