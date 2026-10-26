@@ -1,4 +1,8 @@
-# This file is meant for running a production environment locally
+# IMPORTANT: This file is NOT meant to run in production environments.
+# It is here so that developers can tests a production build locally.
+# Docker compose if often unnecessary in production, but if you still want to
+# use it, it is expected that you'd create your own and use kotahi release
+# images published on dockerhub rather than building from source.
 
 services:
   client:
