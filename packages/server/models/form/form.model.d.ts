@@ -24,8 +24,8 @@ type FormField = {
   title: string | null
   shortDescription: string | null
   id: string
-  component: string | null
-  name: string | null
+  component: string
+  name: string
   description: string | null
   uploadAttachmentSource: string
   s3Url: string
@@ -59,6 +59,8 @@ declare class Form extends BaseModel {
   category: string
   structure: FormStructure
   groupId: string | null
+
+  getFields(): FormField[]
 }
 
 export = Form

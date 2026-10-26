@@ -10,6 +10,10 @@ class Form extends BaseModel {
     this.type = 'Form'
   }
 
+  getFields() {
+    return this.structure?.children ?? []
+  }
+
   static get modifiers() {
     return {
       orderByCreated(builder) {
@@ -65,8 +69,8 @@ class Form extends BaseModel {
                   title: { type: ['string', 'null'] },
                   shortDescription: { type: ['string', 'null'] },
                   id: { type: 'string', format: 'uuid' },
-                  component: { type: ['string', 'null'] },
-                  name: { type: ['string', 'null'] },
+                  component: { type: 'string' },
+                  name: { type: 'string' },
                   description: { type: ['string', 'null'] },
                   uploadAttachmentSource: { type: 'string' },
                   s3Url: { type: 'string' },
@@ -102,6 +106,7 @@ class Form extends BaseModel {
                     },
                   },
                 },
+                required: ['name', 'component'],
               },
               type: 'array',
             },

@@ -1,3 +1,5 @@
+import { z } from '@coko/server'
+
 import Config from '../../models/config/config.model'
 import Connector from './Connector'
 
@@ -16,8 +18,10 @@ export type ChatMessage = {
   content: string | ContentPart[]
 }
 
-type ChatCompletionOptions = {
+type ChatCompletionOptions<T> = {
   messages: ChatMessage[]
+  schema: z.ZodType<T>
+  schemaName?: string
   model?: string
   maxTokens?: number
   temperature?: number
@@ -49,13 +53,17 @@ class OpenAiConnector extends Connector {
     return new OpenAiConnector(apiKey)
   }
 
-  async chatCompletion<T>(options: ChatCompletionOptions): Promise<T> {
+  async chatCompletion<T>(options: ChatCompletionOptions<T>): Promise<T> {
     const {
       messages,
+      schema,
+      schemaName = 'response',
       model = DEFAULT_MODEL,
       maxTokens = DEFAULT_MAX_TOKENS,
       temperature = 0,
     } = options
+
+    const { $schema: _schemaVersion, ...jsonSchema } = z.toJSONSchema(schema)
 
     const data = await this.request<ChatCompletionResponse>(
       '/chat/completions',
@@ -66,12 +74,15 @@ class OpenAiConnector extends Connector {
           messages,
           max_tokens: maxTokens,
           temperature,
-          response_format: { type: 'json_object' },
+          response_format: {
+            type: 'json_schema',
+            json_schema: { name: schemaName, schema: jsonSchema, strict: true },
+          },
         },
       },
     )
 
-    return JSON.parse(data.choices[0]?.message.content ?? '') as T
+    return schema.parse(JSON.parse(data.choices[0]?.message.content ?? ''))
   }
 }
 
