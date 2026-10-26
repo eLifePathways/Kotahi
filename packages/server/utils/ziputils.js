@@ -2,7 +2,8 @@ const path = require('path')
 const archiver = require('archiver')
 const crypto = require('crypto')
 const list = require('list-contents')
-const fs = require('fs-extra')
+const fs = require('fs')
+const { mkdir } = require('fs/promises')
 
 const dirContents = async pathString =>
   new Promise((resolve, reject) => {
@@ -20,7 +21,7 @@ const zipper = async dirPath => {
       `${crypto.randomBytes(32).toString('hex')}`,
     )
 
-    await fs.ensureDir(tempPath)
+    await mkdir(tempPath, { recursive: true })
     const contents = await dirContents(dirPath)
     return new Promise((resolve, reject) => {
       const destination = path.join(

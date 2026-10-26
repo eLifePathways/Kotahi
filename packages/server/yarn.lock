@@ -6214,17 +6214,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:4.0.3":
-  version: 4.0.3
-  resolution: "fs-extra@npm:4.0.3"
-  dependencies:
-    graceful-fs: "npm:^4.1.2"
-    jsonfile: "npm:^4.0.0"
-    universalify: "npm:^0.1.0"
-  checksum: 10c0/b34344de77adaccb294e6dc116e8b247ae0a4da45b79749814893549e6f15e3baace2998db06a966a9f8d5a39b6b2d8e51543bd0a565a8927c37d6373dfd20b9
-  languageName: node
-  linkType: hard
-
 "fs-extra@npm:~7.0.1":
   version: 7.0.1
   resolution: "fs-extra@npm:7.0.1"
@@ -7528,7 +7517,6 @@ __metadata:
     fast-xml-parser: "npm:^4.0.7"
     fnv-plus: "npm:^1.3.1"
     form-data: "npm:^4.0.6"
-    fs-extra: "npm:4.0.3"
     google-spreadsheet: "npm:^3.1.15"
     graphql: "npm:16.9.0"
     graphql-tag: "npm:^2.12.6"
