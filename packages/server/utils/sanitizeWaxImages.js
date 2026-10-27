@@ -17,7 +17,7 @@ class WaxImageSanitizerError extends Error {
 
 const hashSrc = src => crypto.createHash('sha256').update(src).digest('hex')
 
-const createFileFromUrl = async (src, manuscriptId, sourceHash) => {
+const createFileFromUrl = async (src, manuscriptId, sourceHash, trx) => {
   logger.info(`Wax image sanitizer: Downloading image from url: ${src}`)
 
   let fileStream, extension
@@ -53,6 +53,7 @@ const createFileFromUrl = async (src, manuscriptId, sourceHash) => {
     tags: ['manuscriptImage'],
     objectId: manuscriptId,
     meta: { sourceHash },
+    trx,
   })
 }
 
@@ -61,6 +62,7 @@ const createFileFromBase64 = async (
   base64Match,
   manuscriptId,
   sourceHash,
+  trx,
 ) => {
   const raw = await crypto.randomBytes(16)
   const extension = base64Match[0].split('/')[1]
@@ -70,6 +72,7 @@ const createFileFromBase64 = async (
     tags: ['manuscriptImage'],
     objectId: manuscriptId,
     meta: { sourceHash },
+    trx,
   })
 }
 
@@ -91,7 +94,9 @@ const createFileFromBase64 = async (
  * with the same hash is reused.
  */
 
-const sanitizeWaxImages = async (content, manuscriptId) => {
+const sanitizeWaxImages = async (content, manuscriptId, options = {}) => {
+  const { trx, onFileCreated } = options
+
   if (!content) return content
 
   if (typeof content !== 'string') {
@@ -115,12 +120,14 @@ const sanitizeWaxImages = async (content, manuscriptId) => {
             const existing = await Manuscript.findImageFileBySourceHash(
               manuscriptId,
               sourceHash,
+              { trx },
             )
 
             if (existing) return existing.id
           }
 
           const createdFile = await createImageFile(sourceHash)
+          if (onFileCreated) onFileCreated(createdFile)
           return createdFile.id
         })(),
       )
@@ -154,7 +161,7 @@ const sanitizeWaxImages = async (content, manuscriptId) => {
       // where src is a url, most likely pasted
       if (src && isURL && !isBase64 && !fileId) {
         const newFileId = await getOrCreateImageFileId(src, sourceHash =>
-          createFileFromUrl(src, manuscriptId, sourceHash),
+          createFileFromUrl(src, manuscriptId, sourceHash, trx),
         )
 
         element.attr('data-fileid', newFileId)
@@ -162,7 +169,7 @@ const sanitizeWaxImages = async (content, manuscriptId) => {
 
       if (isBase64 && !fileId) {
         const newFileId = await getOrCreateImageFileId(src, sourceHash =>
-          createFileFromBase64(src, base64Match, manuscriptId, sourceHash),
+          createFileFromBase64(src, base64Match, manuscriptId, sourceHash, trx),
         )
 
         element.attr('data-fileid', newFileId)

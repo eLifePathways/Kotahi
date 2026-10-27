@@ -47,6 +47,12 @@ class TaskEmailNotification extends BaseModel {
     }
   }
 
+  static async findByTaskId(taskId, options = {}) {
+    return TaskEmailNotification.query(options.trx)
+      .where({ taskId })
+      .orderBy('created')
+  }
+
   static get schema() {
     return {
       properties: {

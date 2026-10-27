@@ -206,42 +206,52 @@ export default {
       {
         displayName: 'Senior Editor',
         role: 'seniorEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Handling Editor',
         role: 'handlingEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Editor',
         role: 'editor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Managing Editor',
         role: 'managingEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Reviewers',
         role: 'reviewer',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Author',
         role: 'author',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Collaborative Reviewers',
         role: 'collaborativeReviewer',
+        objectType: 'manuscript',
       },
       {
         displayName: 'User',
         role: 'user',
+        objectType: 'Group',
       },
       {
         displayName: 'Group Manager',
         role: 'groupManager',
+        objectType: 'Group',
       },
       {
         displayName: 'Group Admin',
         role: 'groupAdmin',
+        objectType: 'Group',
       },
     ],
   },

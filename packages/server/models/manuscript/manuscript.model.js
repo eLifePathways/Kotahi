@@ -1,15 +1,23 @@
 const omit = require('lodash/omit')
-const cloneDeep = require('lodash/cloneDeep')
+const omitBy = require('lodash/omitBy')
+const pick = require('lodash/pick')
 const { raw } = require('objection')
 const sortBy = require('lodash/sortBy')
 
-const { BaseModel, useTransaction, uuid } = require('@coko/server')
+const { BaseModel, config, useTransaction, uuid } = require('@coko/server')
 
 // REFACTOR: models
 const { evictFromCache } = require('../../services/queryCache.service')
 const { remapImageFileIds } = require('../../utils/fileStorageUtils')
 
 const EDITOR_ROLES = ['editor', 'handlingEditor', 'seniorEditor']
+
+const VERSION_COPIED_TEAM_ROLES = [
+  'author',
+  'editor',
+  'seniorEditor',
+  'handlingEditor',
+]
 
 class Manuscript extends BaseModel {
   static get tableName() {
@@ -179,111 +187,231 @@ class Manuscript extends BaseModel {
     ]
   }
 
-  async createNewVersion() {
-    const Config = require('../config/config.model')
-    const Form = require('../form/form.model')
-    const Task = require('../task/task.model')
-    const TaskAlert = require('../taskAlert/taskAlert.model')
+  static async createTeams(manuscriptId, options = {}) {
+    const Team = require('../team/team.model')
 
-    // Copy authors and editors to the new version
-    const teams = await this.$relatedQuery('teams')
-      .whereIn('role', ['author', 'editor', 'seniorEditor', 'handlingEditor'])
-      .withGraphFetched('members')
+    const teamDefinitions = config
+      .get('teams.nonGlobal')
+      .filter(team => team.objectType === 'manuscript')
 
-    teams.forEach(t => {
-      delete t.id
+    return Team.insert(
+      teamDefinitions.map(({ role, displayName, objectType }) => ({
+        role,
+        displayName,
+        objectId: manuscriptId,
+        objectType,
+      })),
+      { trx: options.trx },
+    )
+  }
 
-      t.members.forEach(tm => delete tm.id)
-    })
+  static async assignRole(userId, manuscriptId, role, options = {}) {
+    const Team = require('../team/team.model')
 
-    // Copy files as well, with new ids that the copied source can point at
-    const files = await this.$relatedQuery('files')
-    const fileIdMap = new Map()
-
-    files.forEach(f => {
-      const newId = uuid()
-      fileIdMap.set(f.id, newId)
-      f.id = newId
-    })
-
-    const decisions = await this.$relatedQuery('reviews').where({
-      isDecision: true,
-    })
-
-    const decisionForm = await Form.query().findOne({
-      category: 'decision',
-      purpose: 'decision',
-      groupId: this.groupId,
-    })
-
-    const threadedDiscussionFieldNames = decisionForm
-      ? decisionForm.structure.children
-          .filter(field => field.component === 'ThreadedDiscussion')
-          .map(field => field.name)
-      : []
-
-    const clonedDecisions = decisions.map(decision => {
-      const clonedDecision = cloneDeep(decision)
-      delete clonedDecision.id
-      clonedDecision.jsonData = {}
-
-      Object.entries(decision.jsonData)
-        .filter(([key]) => threadedDiscussionFieldNames.includes(key))
-        .forEach(([key, value]) => {
-          clonedDecision.jsonData[key] = value
+    return useTransaction(
+      async trx => {
+        const team = await Team.findTeamByRoleAndObject(role, manuscriptId, {
+          trx,
         })
 
-      return clonedDecision
-    })
-
-    const newVersion = cloneDeep(this)
-    newVersion.teams = teams
-
-    newVersion.reviews = clonedDecisions
-    newVersion.files = files
-
-    if (newVersion.meta?.source) {
-      newVersion.meta.source = remapImageFileIds(
-        newVersion.meta.source,
-        fileIdMap,
-      )
-    }
-
-    const activeConfig = await Config.getCached(this.groupId)
-
-    if (
-      activeConfig.formData.submission.allowAuthorsSubmitNewVersion ||
-      this.status === 'revise'
-    ) {
-      newVersion.status = 'revising'
-    }
-
-    // All versions should be linked to one parent, original manuscript
-    newVersion.parentId = this.parentId || this.id
-
-    newVersion.authorFeedback = {}
-
-    // remove existing ADA data from submission
-    if (newVersion.submission.adaState) delete newVersion.submission.adaState
-    if (newVersion.submission.adaProcessStatus)
-      delete newVersion.submission.adaProcessStatus
-    if (newVersion.submission.adaId) delete newVersion.submission.adaId
-    if (newVersion.submission.adaJobId) delete newVersion.submission.adaJobId
-    if (newVersion.submission.adaJobDetails)
-      delete newVersion.submission.adaJobDetails
-    if (newVersion.submission.jobStatus) delete newVersion.submission.jobStatus
-
-    const manuscript = await Manuscript.query().insertGraphAndFetch(
-      omit(cloneDeep(newVersion), ['id', 'created', 'updated', 'decision']),
+        return Team.addMember(team.id, userId, { trx, status: options.status })
+      },
+      { trx: options.trx },
     )
+  }
+
+  static async removeRole(userId, manuscriptId, role, options = {}) {
+    const Team = require('../team/team.model')
+
+    return useTransaction(
+      async trx => {
+        const team = await Team.findTeamByRoleAndObject(role, manuscriptId, {
+          trx,
+        })
+
+        return Team.removeMember(team.id, userId, { trx })
+      },
+      { trx: options.trx },
+    )
+  }
+
+  static async createChannels(manuscriptId, groupId, options = {}) {
+    const Channel = require('../channel/channel.model')
+
+    return Channel.insert(
+      [
+        {
+          topic: 'Manuscript discussion',
+          type: 'all',
+          manuscriptId,
+          groupId,
+        },
+        {
+          topic: 'Editorial discussion',
+          type: 'editorial',
+          manuscriptId,
+          groupId,
+        },
+      ],
+      { trx: options.trx },
+    )
+  }
+
+  static async createNewManuscript(data, options = {}) {
+    const ChannelMember = require('../channelMember/channelMember.model')
+
+    return useTransaction(
+      async trx => {
+        const manuscript = await Manuscript.insert(data, { trx })
+        const { groupId, submitterId } = manuscript
+
+        await Manuscript.createTeams(manuscript.id, { trx })
+
+        const channels = await Manuscript.createChannels(
+          manuscript.id,
+          groupId,
+          { trx },
+        )
+
+        if (submitterId) {
+          await Manuscript.assignRole(submitterId, manuscript.id, 'author', {
+            trx,
+          })
+
+          const discussionChannel = channels.find(
+            channel => channel.type === 'all',
+          )
+
+          await ChannelMember.insert(
+            { channelId: discussionChannel.id, userId: submitterId },
+            { trx },
+          )
+        }
+
+        return manuscript
+      },
+      { trx: options.trx },
+    )
+  }
+
+  async createNewVersion() {
+    const { File } = require('@coko/server')
+    const Config = require('../config/config.model')
+    const Form = require('../form/form.model')
+    const Review = require('../review/review.model')
+    const Task = require('../task/task.model')
+    const TaskAlert = require('../taskAlert/taskAlert.model')
+    const TeamMember = require('../teamMember/teamMember.model')
+
+    const manuscript = await useTransaction(async trx => {
+      // Members of these teams carry over to the new version
+      const copiedMembers = await TeamMember.query(trx)
+        .join('teams', 'teams.id', 'team_members.teamId')
+        .where('teams.objectId', this.id)
+        .whereIn('teams.role', VERSION_COPIED_TEAM_ROLES)
+        .select('team_members.userId', 'team_members.status', 'teams.role')
+
+      const files = await this.$relatedQuery('files', trx)
+
+      const decisions = await this.$relatedQuery('reviews', trx).where({
+        isDecision: true,
+      })
+
+      const decisionForm = await Form.query(trx).findOne({
+        category: 'decision',
+        purpose: 'decision',
+        groupId: this.groupId,
+      })
+
+      const threadedDiscussionFieldNames = decisionForm
+        ? decisionForm.structure.children
+            .filter(field => field.component === 'ThreadedDiscussion')
+            .map(field => field.name)
+        : []
+
+      const activeConfig = await Config.getActive(this.groupId, { trx })
+
+      // Copied files get new ids that the copied source can point at
+      const fileIdMap = new Map(files.map(file => [file.id, uuid()]))
+
+      const newVersion = await Manuscript.insert(
+        {
+          ...omit(this, ['id', 'created', 'updated', 'decision']),
+          // All versions should be linked to one parent, original manuscript
+          parentId: this.parentId || this.id,
+          status:
+            activeConfig.formData.submission.allowAuthorsSubmitNewVersion ||
+            this.status === 'revise'
+              ? 'revising'
+              : this.status,
+          authorFeedback: {},
+          meta: this.meta?.source
+            ? {
+                ...this.meta,
+                source: remapImageFileIds(this.meta.source, fileIdMap),
+              }
+            : this.meta,
+          // remove existing ADA data from submission
+          submission: omitBy(
+            this.submission,
+            (value, key) =>
+              value &&
+              [
+                'adaState',
+                'adaProcessStatus',
+                'adaId',
+                'adaJobId',
+                'adaJobDetails',
+                'jobStatus',
+              ].includes(key),
+          ),
+        },
+        { trx },
+      )
+
+      await Manuscript.createTeams(newVersion.id, { trx })
+
+      await Promise.all(
+        copiedMembers.map(member =>
+          Manuscript.assignRole(member.userId, newVersion.id, member.role, {
+            trx,
+            status: member.status,
+          }),
+        ),
+      )
+
+      if (files.length) {
+        await File.insert(
+          files.map(file => ({
+            ...omit(file, ['created', 'updated']),
+            id: fileIdMap.get(file.id),
+            objectId: newVersion.id,
+          })),
+          { trx },
+        )
+      }
+
+      if (decisions.length) {
+        await Review.insert(
+          decisions.map(decision => ({
+            ...omit(decision, ['id', 'created', 'updated']),
+            manuscriptId: newVersion.id,
+            jsonData: pick(decision.jsonData, threadedDiscussionFieldNames),
+          })),
+          { trx },
+        )
+      }
+
+      return newVersion
+    })
 
     // Every version caches its own list of other versions, so evict the whole family.
     // This must happen after the insert, or a concurrent read could re-cache the stale list.
     const familyIds = [
-      newVersion.parentId,
+      manuscript.parentId,
       ...(
         await Manuscript.query()
-          .where({ parentId: newVersion.parentId })
+          .where({ parentId: manuscript.parentId })
           .select('id')
       ).map(version => version.id),
     ]

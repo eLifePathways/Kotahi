@@ -8,6 +8,11 @@ const MicroserviceSchema = z.strictObject({
   port: z.coerce.number().int().positive().max(65535).optional(),
 })
 
+const TeamSchema = z.strictObject({
+  displayName: z.string(),
+  role: z.string(),
+})
+
 const schema = z.strictObject({
   anystyle: MicroserviceSchema,
   pagedjs: MicroserviceSchema,
@@ -158,6 +163,12 @@ const schema = z.strictObject({
     })
     .partial(),
   schema: z.object(),
+  teams: z.strictObject({
+    global: z.array(TeamSchema),
+    nonGlobal: z.array(
+      TeamSchema.extend({ objectType: z.enum(['manuscript', 'Group']) }),
+    ),
+  }),
   tempFolderPath: z.string().optional(),
   wsYjsServerPort: z.coerce.number().int().positive().max(65535),
 })
