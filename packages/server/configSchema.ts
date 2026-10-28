@@ -141,6 +141,7 @@ const schema = z.strictObject({
       autoImportHourUtc: z.coerce.number().int().min(0).max(23).optional(),
       archivePeriodDays: z.coerce.number().int().positive().optional(),
       semanticScholarImportsRecencyPeriodDays: z.number().default(42),
+      maxUploadSizeMb: z.number().positive().default(50),
     })
     .partial(),
   'publishing-webhook': z

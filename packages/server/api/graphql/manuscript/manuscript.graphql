@@ -75,6 +75,7 @@ extend type Subscription {
 
 extend type Mutation {
   createManuscript(input: ManuscriptInput): Manuscript!
+  createSubmission(groupId: ID!, file: Upload): Manuscript!
   updateManuscript(id: ID!, input: String): Manuscript!
   submitManuscript(id: ID!, input: String): Manuscript!
   submitAuthorProofingFeedback(id: ID!, input: String): Manuscript!

@@ -1,4 +1,5 @@
-const { subscriptionManager } = require('@coko/server')
+const { GraphQLError } = require('graphql')
+const { config, subscriptionManager } = require('@coko/server')
 
 const {
   createManuscript,
@@ -58,7 +59,34 @@ const {
   removeAuthor,
 } = require('../../../controllers/manuscript/manuscript.controllers')
 
+const {
+  createManuscriptFromFile,
+  NewSubmissionError,
+} = require('../../../controllers/manuscript/newSubmission.controllers')
+
 const { getRequestLoaders } = require('../requestLoaders')
+
+// turns graphql upload into a web-standard File for the controllers to work with
+const uploadToFile = async upload => {
+  const { createReadStream, filename, mimetype } = await upload
+  const maxSizeMb = config.get('manuscripts.maxUploadSizeMb')
+  const chunks = []
+  let size = 0
+
+  for await (const chunk of createReadStream()) {
+    size += chunk.length
+
+    if (size > maxSizeMb * 1024 * 1024) {
+      throw new GraphQLError(`${filename} is larger than ${maxSizeMb} MB`, {
+        extensions: { code: 'FILE_TOO_LARGE' },
+      })
+    }
+
+    chunks.push(chunk)
+  }
+
+  return new File(chunks, filename, { type: mimetype })
+}
 
 const manuscriptAndPublishedManuscriptSharedResolvers = {
   async files(parent, _, ctx) {
@@ -90,6 +118,24 @@ const resolvers = {
   Mutation: {
     async createManuscript(_, vars, ctx) {
       return createManuscript(ctx.userId, vars.input)
+    },
+
+    async createSubmission(_, { groupId, file }, ctx) {
+      try {
+        return await createManuscriptFromFile(
+          ctx.userId,
+          groupId,
+          file && (await uploadToFile(file)),
+        )
+      } catch (error) {
+        if (error instanceof NewSubmissionError) {
+          throw new GraphQLError(error.message, {
+            extensions: { code: error.code },
+          })
+        }
+
+        throw error
+      }
     },
 
     async importManuscripts(_, { groupId }, ctx) {

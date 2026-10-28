@@ -156,6 +156,8 @@ export default {
     semanticScholarImportsRecencyPeriodDays:
       env('SEMANTIC_SCHOLAR_IMPORTS_RECENCY_PERIOD_DAYS', { type: 'number' }) ||
       42,
+    maxUploadSizeMb:
+      env('MANUSCRIPT_MAX_UPLOAD_SIZE_MB', { type: 'number' }) || 50,
   },
   pagedjs: {
     clientId: env('SERVICE_PAGEDJS_CLIENT_ID'),

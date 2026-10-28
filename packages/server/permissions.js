@@ -174,6 +174,38 @@ const isAuthenticated = rule({ cache: 'contextual' })(async (
   return !!ctx.userId
 })
 
+const userCanCreateSubmission = rule({ cache: 'strict' })(async (
+  parent,
+  { groupId, file },
+  ctx,
+) => {
+  if (!ctx.userId) return false
+
+  const roleChecks = await Promise.all([
+    User.hasGlobalRole(ctx.userId, 'admin'),
+    ...['user', 'groupManager', 'groupAdmin'].map(role =>
+      User.hasRoleOnObject(ctx.userId, role, groupId),
+    ),
+  ])
+
+  if (!roleChecks.some(Boolean)) return false
+
+  const config = await Config.getActive(groupId)
+  const { submitOptions } = config?.formData?.submission?.submissionPage ?? {}
+
+  if (!submitOptions) return true
+
+  return file
+    ? ['allowAuthorUploadOnly', 'allowAuthorUploadWithForm'].includes(
+        submitOptions,
+      )
+    : [
+        'allowAuthorUploadWithForm',
+        'allowAuthorSubmitForm',
+        'allowAuthorSubmitFormWithBlankEditor',
+      ].includes(submitOptions)
+})
+
 // Who can send a message to a channel?
 // Configured like so now:
 // if the channel is for 'all', then all associated with the manuscript can create messages
@@ -618,6 +650,7 @@ const permissions = {
     createForm: or(userIsGroupAdmin, userIsAdmin),
     createCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     createManuscript: isAuthenticated,
+    createSubmission: userCanCreateSubmission,
     createMessage: userIsAllowedToChat,
     createNewTaskAlerts: or(userIsGm, userIsGroupAdmin, userIsAdmin), // Only used when test code is enabled
     createNewVersion: or(
