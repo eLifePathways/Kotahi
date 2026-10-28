@@ -605,6 +605,7 @@ const permissions = {
     manuscriptsUserHasCurrentRoleIn: isAuthenticated,
     message: deny, // Never used
     messages: isAuthenticated,
+    newSubmissionSettings: isAuthenticated,
     orcidValidate: isAuthenticated,
     paginatedManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     paginatedUsers: or(userIsGroupAdmin, userIsAdmin),

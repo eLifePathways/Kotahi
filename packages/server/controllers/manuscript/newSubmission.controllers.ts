@@ -3,6 +3,7 @@ import { Readable } from 'stream'
 import { load } from 'cheerio'
 import moment from 'moment-timezone'
 import {
+  config,
   createFile,
   File as FileModel,
   fileStorage,
@@ -19,22 +20,6 @@ import Manuscript from '../../models/manuscript/manuscript.model'
 import Task from '../../models/task/task.model'
 import TaskEmailNotification from '../../models/taskEmailNotification/taskEmailNotification.model'
 import sanitizeWaxImages from '../../utils/sanitizeWaxImages'
-
-const DOCX_MIME_TYPE =
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-
-const ACCEPTED_MIME_TYPES = [
-  DOCX_MIME_TYPE,
-  'application/x-latex',
-  'text/vnd.latex-z',
-  'text/plain',
-  'text/x-tex',
-  'application/x-tex',
-  'application/x-dvi',
-  'application/pdf',
-  'application/epub+zip',
-  'application/zip',
-]
 
 const ACCEPTED_EXTENSIONS = [
   '.docx',
@@ -65,14 +50,6 @@ export class NewSubmissionError extends Error {
     this.code = code
   }
 }
-
-const isAccepted = (file: File): boolean =>
-  ACCEPTED_MIME_TYPES.includes(file.type) ||
-  ACCEPTED_EXTENSIONS.includes(path.extname(file.name).toLowerCase())
-
-const isDocx = (file: File): boolean =>
-  file.type === DOCX_MIME_TYPE ||
-  path.extname(file.name).toLowerCase() === '.docx'
 
 const getTitleFromHtml = (html: string): string =>
   load(html, null, false)('h1').first().text().trim()
@@ -144,6 +121,14 @@ export type NewSubmissionStep =
   | 'inferringMetadata'
   | 'creatingManuscript'
 
+export const getNewSubmissionSettings = (): {
+  maxUploadSizeMb: number
+  acceptedFileTypes: string[]
+} => ({
+  maxUploadSizeMb: config.get('manuscripts.maxUploadSizeMb'),
+  acceptedFileTypes: ACCEPTED_EXTENSIONS,
+})
+
 export const createManuscriptFromFile = async (
   userId: string,
   groupId: string,
@@ -156,14 +141,16 @@ export const createManuscriptFromFile = async (
   let submission: Record<string, unknown> = {}
 
   if (file) {
-    if (!isAccepted(file)) {
+    const extension = path.extname(file.name).toLowerCase()
+
+    if (!ACCEPTED_EXTENSIONS.includes(extension)) {
       throw new NewSubmissionError(
         'UNSUPPORTED_FILE_TYPE',
         `File type of ${file.name} is not accepted`,
       )
     }
 
-    if (isDocx(file)) {
+    if (extension === '.docx') {
       try {
         onProgress('converting')
         const convertedHtml = await xsweet.docxToHtml(file)

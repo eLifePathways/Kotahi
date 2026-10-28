@@ -2,6 +2,7 @@ extend type Query {
   globalTeams: [Team]
   manuscript(id: ID!): Manuscript!
   manuscripts: [Manuscript]!
+  newSubmissionSettings: NewSubmissionSettings!
   paginatedManuscripts(
     offset: Int
     limit: Int
@@ -67,6 +68,11 @@ type validateDOIResponse {
 type PaginatedManuscripts {
   totalCount: Int
   manuscripts: [Manuscript]
+}
+
+type NewSubmissionSettings {
+  maxUploadSizeMb: Float!
+  acceptedFileTypes: [String!]!
 }
 
 enum NewSubmissionStep {

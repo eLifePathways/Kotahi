@@ -61,6 +61,7 @@ const {
 
 const {
   createManuscriptFromFile,
+  getNewSubmissionSettings,
   NewSubmissionError,
 } = require('../../../controllers/manuscript/newSubmission.controllers')
 
@@ -258,6 +259,10 @@ const resolvers = {
   Query: {
     async manuscript(_, { id }) {
       return getManuscript(id)
+    },
+
+    newSubmissionSettings() {
+      return getNewSubmissionSettings()
     },
 
     async manuscriptsUserHasCurrentRoleIn(
