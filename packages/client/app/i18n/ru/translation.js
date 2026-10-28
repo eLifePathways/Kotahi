@@ -1482,7 +1482,7 @@ const ru = {
         'Ваша рукопись преобразуется в редактируемую версию. Это может занять некоторое время.',
       skipManuscriptUpload:
         'Пропустить загрузку рукописи и перейти к форме подачи',
-      errorUploading: 'Файл не распознан',
+      errorUploading: '{{error}}',
       uploadTitle: 'Загрузить рукопись',
       uploadDescription:
         'Перетащите файл рукописи сюда или нажмите, чтобы выбрать файл.',
@@ -1494,6 +1494,13 @@ const ru = {
       stepInferringMetadata: 'Заполнение сведений о подаче с помощью ИИ...',
       stepCreating: 'Создание подачи...',
       redirecting: 'Подача создана. Перенаправление...',
+      fileRequirements:
+        'Принимаемые форматы файлов: {{fileTypes}}. Максимальный размер: {{maxSizeMb}} МБ.',
+      errorUnsupportedFileType: 'Этот формат файла не поддерживается.',
+      errorFileTooLarge: 'Размер файла превышает {{maxSizeMb}} МБ.',
+      errorConversionFailed: 'Не удалось преобразовать документ.',
+      errorCreationFailed: 'Не удалось создать подачу.',
+      errorUnknown: 'Что-то пошло не так. Попробуйте ещё раз.',
     },
     formBuilder: {
       'New Form': 'Новая форма',

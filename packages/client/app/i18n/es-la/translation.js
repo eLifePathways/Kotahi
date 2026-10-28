@@ -1511,6 +1511,13 @@ const esLa = {
         'Usando IA para completar los detalles del envío...',
       stepCreating: 'Creando tu envío...',
       redirecting: 'Envío creado. Redirigiendo...',
+      fileRequirements:
+        'Tipos de archivo aceptados: {{fileTypes}}. Tamaño máximo: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'Este tipo de archivo no es compatible.',
+      errorFileTooLarge: 'Este archivo supera los {{maxSizeMb}} MB.',
+      errorConversionFailed: 'No se pudo convertir tu documento.',
+      errorCreationFailed: 'No se pudo crear tu envío.',
+      errorUnknown: 'Algo salió mal. Inténtalo de nuevo.',
     },
     formBuilder: {
       'New Form': 'Nuevo Formulario',

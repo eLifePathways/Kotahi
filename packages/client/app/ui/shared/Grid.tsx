@@ -14,7 +14,7 @@ const Wrapper = styled.ul<{
   );
   gap: ${(props): string => grid(props.$gap)(props)};
   list-style: none;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
 
   ${(props): RuleSet | false =>

@@ -174,7 +174,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(async (
   return !!ctx.userId
 })
 
-const userCanCreateSubmission = rule({ cache: 'strict' })(async (
+const userCanCreateSubmission = rule({ cache: 'no_cache' })(async (
   parent,
   { groupId, file },
   ctx,

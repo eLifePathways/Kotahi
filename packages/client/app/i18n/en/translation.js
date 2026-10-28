@@ -1478,6 +1478,13 @@ const en = {
       stepInferringMetadata: 'Using AI to fill in the submission details...',
       stepCreating: 'Creating your submission...',
       redirecting: 'Submission created. Redirecting...',
+      fileRequirements:
+        'Accepted file types: {{fileTypes}}. Maximum size: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'This file type is not supported.',
+      errorFileTooLarge: 'This file is larger than {{maxSizeMb}} MB.',
+      errorConversionFailed: 'Your document could not be converted.',
+      errorCreationFailed: 'Your submission could not be created.',
+      errorUnknown: 'Something went wrong. Please try again.',
     },
     formBuilder: {
       'New Form': 'New Form',

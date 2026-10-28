@@ -5,3 +5,4 @@ export { default as DashboardManuscriptsPage } from './DashboardManuscripts.page
 export { default as FormsPage } from './Forms.page'
 export { default as GroupPage } from './Group.page'
 export { default as MenuPage } from './Menu.page'
+export { default as NewSubmissionPage } from './NewSubmission.page'

@@ -8,12 +8,14 @@ import Grid from '../../shared/Grid'
 import Page from '../../shared/Page'
 import Spinner from '../../shared/Spinner'
 
+const CARD_WIDTH = 130
+const CARD_HEIGHT = 65
+const CARD_GAP = 5
+
 // #region styled
 const CardGrid = styled(Grid)<{ $columns: number }>`
-  grid-template-columns: repeat(
-    ${(props): number => props.$columns},
-    minmax(0, 1fr)
-  );
+  max-width: ${(props): string =>
+    grid(props.$columns * CARD_WIDTH + (props.$columns - 1) * CARD_GAP)(props)};
   padding-bottom: ${grid(6)};
 `
 
@@ -68,7 +70,7 @@ type NewSubmissionProps = {
   title?: string
   /** File types the upload card accepts, as a comma-separated list of MIME types and/or extensions, like the `accept` attribute of a file input. */
   acceptedFileTypes?: string
-  /** Text shown under the upload card's description to explain which files are accepted. Defaults to the translated list of accepted file types. */
+  /** Text shown under the upload card's description to explain which files are accepted, as HTML. Defaults to the translated list of accepted file types. */
   fileTypesDescription?: string
   /** Show the "Upload a manuscript" card. */
   showUpload: boolean
@@ -141,12 +143,14 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
       )
     }
 
-    let description = t('newSubmission.stepCreating')
-    if (status === 'completed') description = t('newSubmission.redirecting')
+    let spinnerDescription = t('newSubmission.stepCreating')
+
+    if (status === 'completed')
+      spinnerDescription = t('newSubmission.redirecting')
 
     return (
       <Page title={pageTitle}>
-        <Spinner description={description} fullpage />
+        <Spinner description={spinnerDescription} fullpage />
       </Page>
     )
   }
@@ -157,9 +161,9 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
     <Page title={pageTitle}>
       <CardGrid
         $columns={columns}
-        gap={8}
-        minColumnWidth={110}
-        minRowHeight={76}
+        gap={CARD_GAP}
+        minColumnWidth={CARD_WIDTH}
+        minRowHeight={CARD_HEIGHT}
       >
         {showUpload && (
           <Card
@@ -176,9 +180,13 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
             {statusContent('upload') ?? (
               <>
                 {t('newSubmission.uploadDescription')}
-                <Hint>
-                  {fileTypesDescription ?? t('newSubmission.acceptedFiletypes')}
-                </Hint>
+                <Hint
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      fileTypesDescription ??
+                      t('newSubmission.acceptedFiletypes'),
+                  }}
+                />
               </>
             )}
           </Card>

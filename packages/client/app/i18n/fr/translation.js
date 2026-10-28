@@ -1531,6 +1531,13 @@ const fr = {
         "Utilisation de l'IA pour remplir les informations de soumission...",
       stepCreating: 'Création de votre soumission...',
       redirecting: 'Soumission créée. Redirection...',
+      fileRequirements:
+        'Types de fichiers acceptés : {{fileTypes}}. Taille maximale : {{maxSizeMb}} Mo.',
+      errorUnsupportedFileType: "Ce type de fichier n'est pas pris en charge.",
+      errorFileTooLarge: 'Ce fichier dépasse {{maxSizeMb}} Mo.',
+      errorConversionFailed: "Votre document n'a pas pu être converti.",
+      errorCreationFailed: "Votre soumission n'a pas pu être créée.",
+      errorUnknown: "Une erreur s'est produite. Veuillez réessayer.",
     },
     formBuilder: {
       'New Form': 'Nouveau formulaire',

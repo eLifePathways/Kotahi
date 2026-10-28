@@ -1323,3 +1323,30 @@ export const SUBMIT_AUTHOR_PROOFING_FEEDBACK = gql`
     }
   }
 `
+
+export const NEW_SUBMISSION_SETTINGS = gql`
+  query NewSubmissionSettings {
+    newSubmissionSettings {
+      maxUploadSizeMb
+      acceptedFileTypes
+    }
+  }
+`
+
+export const CREATE_SUBMISSION = gql`
+  mutation CreateSubmission($groupId: ID!, $file: Upload, $operationId: ID) {
+    createSubmission(
+      groupId: $groupId
+      file: $file
+      operationId: $operationId
+    ) {
+      id
+    }
+  }
+`
+
+export const NEW_SUBMISSION_PROGRESS = gql`
+  subscription NewSubmissionProgress($operationId: ID!) {
+    newSubmissionProgress(operationId: $operationId)
+  }
+`
