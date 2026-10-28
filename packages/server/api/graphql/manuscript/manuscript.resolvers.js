@@ -1,5 +1,5 @@
 const { GraphQLError } = require('graphql')
-const { config, subscriptionManager } = require('@coko/server')
+const { config, subscriptionManager, withFilter } = require('@coko/server')
 
 const {
   createManuscript,
@@ -120,12 +120,21 @@ const resolvers = {
       return createManuscript(ctx.userId, vars.input)
     },
 
-    async createSubmission(_, { groupId, file }, ctx) {
+    async createSubmission(_, { groupId, file, operationId }, ctx) {
+      const onProgress = operationId
+        ? step =>
+            subscriptionManager.publish(
+              `NEW_SUBMISSION_PROGRESS.${operationId}`,
+              { userId: ctx.userId, step },
+            )
+        : undefined
+
       try {
         return await createManuscriptFromFile(
           ctx.userId,
           groupId,
           file && (await uploadToFile(file)),
+          { onProgress },
         )
       } catch (error) {
         if (error instanceof NewSubmissionError) {
@@ -234,6 +243,16 @@ const resolvers = {
       subscribe: async () => {
         return subscriptionManager.asyncIterator(['IMPORT_MANUSCRIPTS_STATUS'])
       },
+    },
+    newSubmissionProgress: {
+      subscribe: withFilter(
+        (_, { operationId }) =>
+          subscriptionManager.asyncIterator([
+            `NEW_SUBMISSION_PROGRESS.${operationId}`,
+          ]),
+        (payload, _, ctx) => payload.userId === ctx.userId,
+      ),
+      resolve: payload => payload.step,
     },
   },
   Query: {

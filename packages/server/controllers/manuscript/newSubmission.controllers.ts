@@ -138,11 +138,20 @@ const copyTemplatedTasks = async (
     { trx: options.trx },
   )
 
+export type NewSubmissionStep =
+  | 'converting'
+  | 'cleaning'
+  | 'inferringMetadata'
+  | 'creatingManuscript'
+
 export const createManuscriptFromFile = async (
   userId: string,
   groupId: string,
   file?: File,
+  options: { onProgress?: (step: NewSubmissionStep) => void } = {},
 ): Promise<unknown> => {
+  const { onProgress = (): void => {} } = options
+
   let html: string | undefined
   let submission: Record<string, unknown> = {}
 
@@ -156,7 +165,10 @@ export const createManuscriptFromFile = async (
 
     if (isDocx(file)) {
       try {
-        html = cleanConvertedDocx(await xsweet.docxToHtml(file))
+        onProgress('converting')
+        const convertedHtml = await xsweet.docxToHtml(file)
+        onProgress('cleaning')
+        html = cleanConvertedDocx(convertedHtml)
       } catch (error) {
         throw new NewSubmissionError(
           'CONVERSION_FAILED',
@@ -165,6 +177,7 @@ export const createManuscriptFromFile = async (
         )
       }
 
+      onProgress('inferringMetadata')
       submission = await prefillSubmission(groupId, html)
     }
   }
@@ -176,6 +189,8 @@ export const createManuscriptFromFile = async (
     `New submission ${new Date().toLocaleString()}`
 
   const storedKeys: string[] = []
+
+  onProgress('creatingManuscript')
 
   try {
     return await useTransaction(async trx => {

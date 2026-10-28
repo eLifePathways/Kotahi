@@ -826,6 +826,7 @@ const permissions = {
     filesUploaded: isAuthenticated,
     reviewFormUpdated: isAuthenticated,
     manuscriptsImportStatus: isAuthenticated,
+    newSubmissionProgress: isAuthenticated,
     /**
      * This was not being triggered at all before the v3 upgrade.
      * It doesn't work because userIsAllowedToChat dependends on req, and req

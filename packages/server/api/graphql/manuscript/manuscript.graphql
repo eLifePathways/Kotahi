@@ -69,13 +69,21 @@ type PaginatedManuscripts {
   manuscripts: [Manuscript]
 }
 
+enum NewSubmissionStep {
+  converting
+  cleaning
+  inferringMetadata
+  creatingManuscript
+}
+
 extend type Subscription {
   manuscriptsImportStatus: Boolean
+  newSubmissionProgress(operationId: ID!): NewSubmissionStep!
 }
 
 extend type Mutation {
   createManuscript(input: ManuscriptInput): Manuscript!
-  createSubmission(groupId: ID!, file: Upload): Manuscript!
+  createSubmission(groupId: ID!, file: Upload, operationId: ID): Manuscript!
   updateManuscript(id: ID!, input: String): Manuscript!
   submitManuscript(id: ID!, input: String): Manuscript!
   submitAuthorProofingFeedback(id: ID!, input: String): Manuscript!
