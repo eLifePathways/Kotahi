@@ -82,7 +82,7 @@ declare class Manuscript extends BaseModel {
 
   static createNewManuscript(
     data: Partial<Manuscript>,
-    options?: Options,
+    options?: Options & { assignSubmitter?: boolean },
   ): Promise<Manuscript>
   getManuscriptVersions(): Promise<Manuscript[]>
 

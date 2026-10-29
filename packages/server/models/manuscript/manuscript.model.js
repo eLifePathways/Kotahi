@@ -259,21 +259,20 @@ class Manuscript extends BaseModel {
 
   static async createNewManuscript(data, options = {}) {
     const ChannelMember = require('../channelMember/channelMember.model')
+    const { assignSubmitter = true } = options
 
     return useTransaction(
       async trx => {
         const manuscript = await Manuscript.insert(data, { trx })
-        const { groupId, submitterId } = manuscript
+        const { groupId, parentId, submitterId } = manuscript
 
         await Manuscript.createTeams(manuscript.id, { trx })
 
-        const channels = await Manuscript.createChannels(
-          manuscript.id,
-          groupId,
-          { trx },
-        )
+        const channels = parentId
+          ? []
+          : await Manuscript.createChannels(manuscript.id, groupId, { trx })
 
-        if (submitterId) {
+        if (submitterId && assignSubmitter) {
           await Manuscript.assignRole(submitterId, manuscript.id, 'author', {
             trx,
           })
@@ -282,10 +281,12 @@ class Manuscript extends BaseModel {
             channel => channel.type === 'all',
           )
 
-          await ChannelMember.insert(
-            { channelId: discussionChannel.id, userId: submitterId },
-            { trx },
-          )
+          if (discussionChannel) {
+            await ChannelMember.insert(
+              { channelId: discussionChannel.id, userId: submitterId },
+              { trx },
+            )
+          }
         }
 
         return manuscript

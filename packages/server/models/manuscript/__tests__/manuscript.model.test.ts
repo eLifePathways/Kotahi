@@ -826,6 +826,44 @@ describe('Manuscript model', () => {
       expect(channelMembers).toEqual([{ type: 'all', userId: user.id }])
     })
 
+    it('does not make the submitter an author when told not to', async () => {
+      const user = await User.insert({})
+
+      const manuscript = await Manuscript.createNewManuscript(
+        { groupId, submitterId: user.id },
+        { assignSubmitter: false },
+      )
+
+      const channelMembers = await ChannelMember.query()
+        .join('channels', 'channels.id', 'channel_members.channelId')
+        .where('channels.manuscriptId', manuscript.id)
+
+      expect(manuscript.submitterId).toBe(user.id)
+      expect(await membersByRole(manuscript.id)).toEqual({})
+      expect(channelMembers).toHaveLength(0)
+    })
+
+    it('gives versions teams but not channels', async () => {
+      const user = await User.insert({})
+      const original = await Manuscript.createNewManuscript({ groupId })
+
+      const version = await Manuscript.createNewManuscript({
+        groupId,
+        parentId: original.id,
+        submitterId: user.id,
+      })
+
+      expect(await teamsOf(version.id)).toHaveLength(7)
+
+      expect(
+        await Channel.query().where({ manuscriptId: version.id }),
+      ).toHaveLength(0)
+
+      expect(await membersByRole(version.id)).toEqual({
+        author: [{ userId: user.id, status: null }],
+      })
+    })
+
     it('creates no members without a submitter', async () => {
       const manuscript = await Manuscript.createNewManuscript({ groupId })
 

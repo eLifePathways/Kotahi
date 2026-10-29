@@ -131,21 +131,6 @@ const buildNewManuscripts = (
       },
       meta: {},
       submitterId: ctx.userId,
-      channels: [
-        {
-          topic: 'Manuscript discussion',
-          type: 'all',
-          groupId,
-        },
-        {
-          topic: 'Editorial discussion',
-          type: 'editorial',
-          groupId,
-        },
-      ],
-      files: [],
-      reviews: [],
-      teams: [],
       groupId,
     }),
   )
@@ -182,9 +167,11 @@ const saveBatch = async (
   for (let i = 0; i < newManuscripts.length; i += SAVE_CHUNK_SIZE) {
     const chunk = newManuscripts.slice(i, i + SAVE_CHUNK_SIZE)
     // eslint-disable-next-line no-await-in-loop
-    const inserted = await Manuscript.query().upsertGraphAndFetch(chunk, {
-      relate: true,
-    })
+    const inserted = await Promise.all(
+      chunk.map(manuscript =>
+        Manuscript.createNewManuscript(manuscript, { assignSubmitter: false }),
+      ),
+    )
     Array.prototype.push.apply(result, inserted)
   }
 
