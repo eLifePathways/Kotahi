@@ -349,6 +349,7 @@ type MenuProps = {
 
   showCoar: boolean
   showDashboard: boolean
+  showNewSubmissionButton: boolean
   showReports: boolean
 }
 // #endregion types
@@ -371,6 +372,7 @@ const Menu = (props: MenuProps): ReactNode => {
     onMenuCollapseChange,
     showCoar,
     showDashboard,
+    showNewSubmissionButton,
     showReports,
   } = props
 
@@ -544,9 +546,11 @@ const Menu = (props: MenuProps): ReactNode => {
 
       <Separator />
 
-      <NewSubmissionSection $menuCollapsed={menuCollapsed}>
-        {newSubmissionButton}
-      </NewSubmissionSection>
+      {showNewSubmissionButton && (
+        <NewSubmissionSection $menuCollapsed={menuCollapsed}>
+          {newSubmissionButton}
+        </NewSubmissionSection>
+      )}
 
       <LinkSection>
         <LinkItems>

@@ -321,11 +321,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: true,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -1528,11 +1523,6 @@ export const generateSchemas = ({
               description: t('configPage.daysManuscriptRemain'),
               minimum: 1,
               maximum: 90,
-            },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: true,
             },
             labelColumn: {
               type: 'boolean',
@@ -2754,11 +2744,6 @@ export const generateSchemas = ({
               description: t('configPage.daysManuscriptRemain'),
               minimum: 1,
               maximum: 90,
-            },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: false,
             },
             labelColumn: {
               type: 'boolean',
@@ -4010,11 +3995,6 @@ export const generateSchemas = ({
               description: t('configPage.daysManuscriptRemain'),
               minimum: 1,
               maximum: 90,
-            },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: false,
             },
             labelColumn: {
               type: 'boolean',
