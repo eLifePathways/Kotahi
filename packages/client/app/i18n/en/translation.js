@@ -246,7 +246,6 @@ const en = {
     },
     dashboardPage: {
       Dashboard: 'Dashboard',
-      'New submission': 'New submission',
       backToDashboard: 'Back to Dashboard',
       'New Alerts': 'New Alerts',
       'My Submissions': 'My Submissions',
@@ -693,8 +692,6 @@ const en = {
         'Number of days a manuscript should remain in the Manuscripts page before being automatically archived (leave empty if you do not wish to use auto-archiving)',
       importFromSematic:
         'Import manuscripts from Semantic Scholar no older than ‘x’ number of days',
-      newSubmissionActionVisisble:
-        '‘Add new submission’ action visible on the Manuscripts page',
       displayActionToSelect:
         'Display action to ‘Select’ manuscripts for review from the Manuscripts page',
       importManuscriptsManually:

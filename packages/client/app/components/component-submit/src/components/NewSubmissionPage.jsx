@@ -53,13 +53,7 @@ const Dashboard = () => {
   }
 
   return (
-    <Page
-      title={
-        submissionPage?.title
-          ? submissionPage.title
-          : t('newSubmission.New submission')
-      }
-    >
+    <Page title={submissionPage?.title || t('newSubmission.New submission')}>
       <Content>
         <UploadContainer>
           <UploadManuscript

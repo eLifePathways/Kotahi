@@ -21,6 +21,7 @@ const MenuPage = (): ReactNode => {
   const isUserGroupAdmin = groupRoles.includes('groupAdmin')
   const isUserGroupManager = groupRoles.includes('groupManager')
   const isUserAdmin = globalRoles.includes('admin')
+  const isPrivilegedUser = isUserAdmin || isUserGroupAdmin || isUserGroupManager
 
   // @ts-ignore
   const { instanceName, groupIdentity, report, controlPanel } = config
@@ -34,6 +35,8 @@ const MenuPage = (): ReactNode => {
 
   const showDashboard = ['journal', 'prc', 'preprint2'].includes(instanceName)
   const showCoar = controlPanel?.showTabs.includes('COAR Notify Metadata')
+  const showNewSubmissionButton =
+    (instanceName === 'preprint1' && isPrivilegedUser) || showDashboard
 
   return (
     <Menu
@@ -46,6 +49,7 @@ const MenuPage = (): ReactNode => {
       onMenuCollapseChange={updateMenuCollapsed}
       showCoar={showCoar}
       showDashboard={showDashboard}
+      showNewSubmissionButton={showNewSubmissionButton}
       showReports={report.showInMenu}
       userDisplayName={username}
       userProfileImage={profilePicture}

@@ -12,7 +12,6 @@ export default {
     tableColumns:
       'shortId, titleAndAbstract, created, updated, status, submission.$customStatus, author',
     manualImport: false,
-    newSubmission: false,
     autoImportHourUtc: 21,
     paginationCount: 10,
     archivePeriodDays: 60,
