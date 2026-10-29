@@ -66,6 +66,12 @@ export const GENERATE_NEW_COAR_AUTH_TOKEN = gql`
   }
 `
 
+export const HAS_TOKEN = gql`
+  query HasToken($name: String!, $groupId: ID!) {
+    hasToken(name: $name, groupId: $groupId)
+  }
+`
+
 export const GET_ANYSTYLE_CSL = gql`
   query BuildCitationsCSL($textReferences: String!) {
     buildCitationsCSL(textReferences: $textReferences) {

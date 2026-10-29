@@ -1199,8 +1199,7 @@ const fr = {
     loginPage: {
       kotahiUses:
         'Kotahi utilise ORCID <0>icône</0> pour identifier les auteurs et le personnel.',
-      'Login with ORCID': 'Se connecter avec ORCID',
-      'Register with ORCID': "S'inscrire avec ORCID",
+      loginWithOrcid: 'Se connecter avec ORCID',
     },
     frontPage: {
       recent: 'Publications récentes dans {{brandName}}',

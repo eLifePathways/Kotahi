@@ -2,14 +2,13 @@
 
 import Color from 'color'
 
-const WHITE = '#ffffff'
-const DARK_TEXT = '#111111'
+import { colorBackground, colorText, colorTextReverse } from '../theme'
 
 /**
  * WCAG level of `color` against `against`: 'AAA', 'AA', '' (fails), or null
  * when either colour can't be parsed (e.g. an empty string).
  */
-export const getWcagLevel = (color, against = WHITE) => {
+export const getWcagLevel = (color, against = colorBackground) => {
   try {
     return Color(color).level(Color(against))
   } catch {
@@ -18,7 +17,7 @@ export const getWcagLevel = (color, against = WHITE) => {
 }
 
 /** True when `color` meets AA against `against`, or can't be checked yet. */
-export const meetsWcagAA = (color, against = WHITE) => {
+export const meetsWcagAA = (color, against = colorBackground) => {
   const level = getWcagLevel(color, against)
   return level === null || ['AA', 'AAA'].includes(level)
 }
@@ -29,8 +28,8 @@ export const meetsWcagAA = (color, against = WHITE) => {
  */
 export const getReadableTextColor = (
   background,
-  dark = DARK_TEXT,
-  light = WHITE,
+  dark = colorText,
+  light = colorTextReverse,
 ) => {
   try {
     const bg = Color(background)

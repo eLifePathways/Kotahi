@@ -100,7 +100,7 @@ const ValueInput = props => (
 )
 
 const ContrastWarning = styled.div`
-  color: ${th('color.warning.shade25')};
+  color: ${th('color.warning.base')};
   font-size: ${th('fontSizeBaseSmall')};
   max-width: ${grid(30)};
 `

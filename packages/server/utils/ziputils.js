@@ -1,7 +1,8 @@
 const path = require('path')
 const archiver = require('archiver')
 const crypto = require('crypto')
-const fs = require('fs-extra')
+const fs = require('fs')
+const { mkdir } = require('fs/promises')
 
 const zipper = async dirPath => {
   try {
@@ -11,7 +12,7 @@ const zipper = async dirPath => {
       `${crypto.randomBytes(32).toString('hex')}`,
     )
 
-    await fs.ensureDir(tempPath)
+    await mkdir(tempPath, { recursive: true })
     return new Promise((resolve, reject) => {
       const destination = path.join(
         tempPath,

@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components'
-import { th } from '@coko/client'
 
 export const hexa = (hex, alpha) => {
   const r = parseInt(hex.slice(1, 3), 16)
@@ -64,24 +63,6 @@ export const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-`
-
-export const HorizontalRule = styled(FlexRow)`
-  align-items: center;
-  align-self: stretch;
-  color: ${th('color.gray50')};
-  justify-content: center;
-  position: relative;
-
-  hr {
-    border-top: 1px solid ${th('colorBorder')};
-    display: inline-block;
-    flex: 1 0 auto;
-  }
-
-  div {
-    margin: 0 16px;
-  }
 `
 
 export const articleStatuses = {

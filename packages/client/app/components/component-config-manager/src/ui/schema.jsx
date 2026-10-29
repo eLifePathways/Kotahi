@@ -48,6 +48,7 @@ export const generateSchemas = ({
   defaultCollaborativeReviewerInvitationTemplate,
   defaultAuthorProofingInvitationTemplate,
   defaultAuthorProofingSubmittedTemplate,
+  hasCoarToken,
   onRefreshCoarAuthToken,
   t,
   logoAndFavicon,
@@ -5205,7 +5206,10 @@ export const generateSchemas = ({
           classNames: 'col-md-12 col-md-offset-0',
           authToken: {
             'ui:widget': props => (
-              <CoarAuthToken onRefreshCoarAuthToken={onRefreshCoarAuthToken} />
+              <CoarAuthToken
+                hasToken={hasCoarToken}
+                onRefreshCoarAuthToken={onRefreshCoarAuthToken}
+              />
             ),
           },
         },
