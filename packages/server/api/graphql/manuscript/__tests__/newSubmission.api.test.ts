@@ -29,7 +29,7 @@ import { Group, User, Manuscript, Team, Config } from '../../../../models'
 
 // coko builds the schema with the CommonJS build of graphql, while vitest would
 // import the ESM build, so subscribe is required to get the same instance
-const { subscribe } = createRequire(import.meta.url)('graphql')
+const { subscribe } = createRequire(__filename)('graphql')
 
 const CONVERSION_PATH = '/api/v1/sync/DOCXToHTML'
 
@@ -451,7 +451,7 @@ describe('new submission API', () => {
 
       const steps: string[] = []
 
-      const collecting = (async (): void => {
+      const collecting = (async (): Promise<void> => {
         while (steps.length < 4) {
           // eslint-disable-next-line no-await-in-loop
           const { value } = await iterator.next()

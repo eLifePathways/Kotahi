@@ -142,7 +142,7 @@ describe('Connector', () => {
       const connector = new TestConnector()
       connector.canRecoverFromUnauthorized = true
 
-      const error = await connector.call('items').catch(e => e)
+      const error = (await connector.call('items').catch(e => e)) as HttpError
 
       expect(error).toBeInstanceOf(HttpError)
       expect(error.status).toBe(401)

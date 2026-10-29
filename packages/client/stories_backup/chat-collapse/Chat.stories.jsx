@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components'
 import Messages from '../../app/components/component-chat/src/Messages/Messages'
 import ChatInput from '../../app/components/component-chat/src/SuperChatInput/SuperChatInput'
 import DesignEmbed from '../common/utils'
-import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { JournalProvider } from '../../app/components/xpub-journal'
 import { ConfigProvider } from '../../app/components/config/src'
 import journal from '../../config/journal'
@@ -56,38 +55,36 @@ const MessagesWrapper = styled.div`
 `
 
 export const Base = args => (
-  <XpubProvider>
-    <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
-      <ConfigProvider config={config}>
-        <MessageContainer {...args}>
-          <>
-            {args.figmaEmbedLink && (
-              <>
-                <h2 style={{ color: '#333333' }}>Design</h2>
-                <iframe
-                  allowFullScreen
-                  height={350}
-                  src={args.figmaEmbedLink}
-                  style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
-                  title="figma embed"
-                  width="100%"
-                />
-                <h2 style={{ color: '#333333' }}>Component</h2>
-              </>
-            )}
+  <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
+    <ConfigProvider config={config}>
+      <MessageContainer {...args}>
+        <>
+          {args.figmaEmbedLink && (
+            <>
+              <h2 style={{ color: '#333333' }}>Design</h2>
+              <iframe
+                allowFullScreen
+                height={350}
+                src={args.figmaEmbedLink}
+                style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
+                title="figma embed"
+                width="100%"
+              />
+              <h2 style={{ color: '#333333' }}>Component</h2>
+            </>
+          )}
 
-            <MessagesWrapper {...args}>
-              <Messages {...args} />
-            </MessagesWrapper>
+          <MessagesWrapper {...args}>
+            <Messages {...args} />
+          </MessagesWrapper>
 
-            <ChatInputContainer {...args}>
-              <ChatInput {...args} />
-            </ChatInputContainer>
-          </>
-        </MessageContainer>
-      </ConfigProvider>
-    </JournalProvider>
-  </XpubProvider>
+          <ChatInputContainer {...args}>
+            <ChatInput {...args} />
+          </ChatInputContainer>
+        </>
+      </MessageContainer>
+    </ConfigProvider>
+  </JournalProvider>
 )
 
 export const EmptyAuthorChat = Base.bind()

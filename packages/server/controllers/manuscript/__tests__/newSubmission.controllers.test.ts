@@ -293,7 +293,7 @@ describe('createManuscriptFromFile', () => {
 
       const { result: tasks } = await Task.find(
         { manuscriptId: manuscript.id },
-        { orderBy: 'sequenceIndex' },
+        { orderBy: ['sequenceIndex'] },
       )
 
       expect(tasks.map(task => [task.title, task.sequenceIndex])).toEqual([
@@ -434,7 +434,13 @@ describe('createManuscriptFromFile', () => {
 
       await Promise.all(
         uploadedKeys.map(key =>
-          expect(fileStorage.getFileContent(key)).rejects.toThrow(),
+          expect(
+            (
+              fileStorage as unknown as InstanceType<
+                typeof FileStorageConstructor
+              >
+            ).getFileContent(key),
+          ).rejects.toThrow(),
         ),
       )
     })

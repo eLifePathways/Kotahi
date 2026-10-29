@@ -1,3 +1,4 @@
+import { type ReadStream } from 'fs'
 import path from 'path'
 import { Readable } from 'stream'
 import { load } from 'cheerio'
@@ -198,7 +199,9 @@ export const createManuscriptFromFile = async (
 
       if (file) {
         const storedFile = await createFile(
-          Readable.from(Buffer.from(await file.arrayBuffer())),
+          Readable.from(
+            Buffer.from(await file.arrayBuffer()),
+          ) as unknown as ReadStream,
           file.name,
           { tags: ['manuscript'], objectId: manuscript.id, trx },
         )

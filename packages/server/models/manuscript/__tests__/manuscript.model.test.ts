@@ -1174,7 +1174,6 @@ describe('Manuscript model', () => {
     it('copies decisions, keeping only their threaded discussions', async () => {
       const original = await createOriginal()
 
-      // @ts-ignore
       await Form.insert({
         groupId,
         category: 'decision',
@@ -1186,7 +1185,7 @@ describe('Manuscript model', () => {
             { id: uuid(), component: 'TextField', name: 'comment' },
           ],
         },
-      })
+      } as unknown as Partial<Form>)
 
       await Review.insert({
         manuscriptId: original.id,

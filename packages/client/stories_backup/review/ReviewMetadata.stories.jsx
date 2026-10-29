@@ -1,31 +1,28 @@
 import { JournalProvider } from '../../app/components/xpub-journal'
-import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import journal from '../../config/journal'
 import DesignEmbed from '../common/utils'
 import ReadonlyFormTemplate from '../../app/components/component-review/src/components/metadata/ReadonlyFormTemplate'
 
 export const Base = args => (
-  <XpubProvider>
-    <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
-      <>
-        {args.figmaEmbedLink && (
-          <>
-            <h2 style={{ color: '#333333' }}>Design</h2>
-            <iframe
-              allowFullScreen
-              height={350}
-              src={args.figmaEmbedLink}
-              style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
-              title="figma embed"
-              width="100%"
-            />
-            <h2 style={{ color: '#333333' }}>Component</h2>
-          </>
-        )}
-        <ReadonlyFormTemplate {...args} />
-      </>
-    </JournalProvider>
-  </XpubProvider>
+  <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
+    <>
+      {args.figmaEmbedLink && (
+        <>
+          <h2 style={{ color: '#333333' }}>Design</h2>
+          <iframe
+            allowFullScreen
+            height={350}
+            src={args.figmaEmbedLink}
+            style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
+            title="figma embed"
+            width="100%"
+          />
+          <h2 style={{ color: '#333333' }}>Component</h2>
+        </>
+      )}
+      <ReadonlyFormTemplate {...args} />
+    </>
+  </JournalProvider>
 )
 
 export const EmptyReviewMetadaForm = Base.bind()
