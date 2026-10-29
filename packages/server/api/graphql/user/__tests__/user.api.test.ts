@@ -188,7 +188,7 @@ describe('User API', () => {
 
     const groupUsers = await Team.insert({
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
       role: 'user',
       displayName: 'User',
     })

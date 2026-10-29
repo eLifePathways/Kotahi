@@ -124,7 +124,7 @@ const setUp = async ({
     role: 'groupAdmin',
     displayName: 'Group Admin',
     objectId: group.id,
-    objectType: 'Group',
+    objectType: 'group',
   })
 
   const editorTeam = await Team.insert({

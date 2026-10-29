@@ -243,17 +243,17 @@ export default {
       {
         displayName: 'User',
         role: 'user',
-        objectType: 'Group',
+        objectType: 'group',
       },
       {
         displayName: 'Group Manager',
         role: 'groupManager',
-        objectType: 'Group',
+        objectType: 'group',
       },
       {
         displayName: 'Group Admin',
         role: 'groupAdmin',
-        objectType: 'Group',
+        objectType: 'group',
       },
     ],
   },

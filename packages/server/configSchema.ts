@@ -167,7 +167,7 @@ const schema = z.strictObject({
   teams: z.strictObject({
     global: z.array(TeamSchema),
     nonGlobal: z.array(
-      TeamSchema.extend({ objectType: z.enum(['manuscript', 'Group']) }),
+      TeamSchema.extend({ objectType: z.enum(['manuscript', 'group']) }),
     ),
   }),
   tempFolderPath: z.string().optional(),

@@ -160,7 +160,7 @@ const addToGroupTeam = async (
 ): Promise<void> => {
   const team = await Team.insert({
     objectId: groupId,
-    objectType: 'Group',
+    objectType: 'group',
     role,
     displayName,
   })

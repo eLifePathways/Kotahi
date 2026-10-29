@@ -50,7 +50,7 @@ describe('User model', () => {
         role: 'groupManager',
         displayName: 'Group Manager',
         objectId: group.id,
-        objectType: 'Group',
+        objectType: 'group',
       })
 
       await Team.addMember(team.id, user.id)

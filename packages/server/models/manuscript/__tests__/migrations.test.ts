@@ -252,7 +252,7 @@ describe('Manuscript Migrations', () => {
         role: 'user',
         displayName: 'User',
         objectId: group.id,
-        objectType: 'Group',
+        objectType: 'group',
       })
 
       const { result: globalTeamsBefore } = await Team.find({ global: true })

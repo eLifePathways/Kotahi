@@ -86,7 +86,7 @@ const channelUsersForMention = async (channelId, groupId) => {
           Team.query(trx)
             .where({
               objectId: groupId,
-              objectType: 'Group',
+              objectType: 'group',
             })
             .whereIn('role', ['groupManager', 'groupAdmin']),
         )

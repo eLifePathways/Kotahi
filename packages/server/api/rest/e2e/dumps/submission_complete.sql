@@ -2,7 +2,7 @@ DO $$
 DECLARE
   g_id UUID;
 BEGIN
-SELECT object_id  INTO g_id FROM team_members JOIN teams ON teams.id  = team_members.team_id WHERE object_type = 'Group' LIMIT 1;
+SELECT object_id  INTO g_id FROM team_members JOIN teams ON teams.id  = team_members.team_id WHERE object_type = 'group' LIMIT 1;
 
 -- New Manuscript is Added
 INSERT INTO "public"."files" ("id", "created", "updated", "type", "name", "stored_objects", "tags", "reference_id", "object_id", "alt", "upload_status", "caption") VALUES
