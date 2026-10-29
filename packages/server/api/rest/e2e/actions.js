@@ -462,80 +462,26 @@ const createManuscripts = async ({ groupName, count, submitterUsername }) => {
   }
 
   return useTransaction(async trx => {
-    const manuscripts = await Manuscript.insert(
-      Array.from({ length: count }, (_, index) => ({
-        groupId: group.id,
-        submitterId: submitters[index % submitters.length].id,
-        status: 'new',
-        // A real submission always has this (see manuscript.controllers.js's
-        // createManuscript) - the updateManuscript resolver re-validates the
-        // whole row on every patch, and Manuscript's schema requires meta to
-        // be an object (not null) whenever it's present.
-        meta: {},
-        submission: {
-          $title: `Test manuscript ${index + 1}`,
-          $abstract: `Abstract for test manuscript ${index + 1}`,
+    const manuscripts = []
+
+    for (let index = 0; index < count; index += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const manuscript = await Manuscript.createNewManuscript(
+        {
+          groupId: group.id,
+          submitterId: submitters[index % submitters.length].id,
+          status: 'new',
+          meta: {},
+          submission: {
+            $title: `Test manuscript ${index + 1}`,
+            $abstract: `Abstract for test manuscript ${index + 1}`,
+          },
         },
-      })),
-      { trx },
-    )
+        { trx },
+      )
 
-    await Promise.all(
-      manuscripts.map(async (manuscript, index) => {
-        const authorTeam = await Team.insert(
-          {
-            displayName: 'Author',
-            role: 'author',
-            global: false,
-            objectId: manuscript.id,
-            objectType: 'manuscript',
-          },
-          { trx },
-        )
-
-        await TeamMember.insert(
-          {
-            userId: submitters[index % submitters.length].id,
-            teamId: authorTeam.id,
-          },
-          { trx },
-        )
-
-        await Promise.all(
-          Object.entries(ASSIGNABLE_MANUSCRIPT_ROLES).map(
-            ([role, displayName]) =>
-              Team.insert(
-                {
-                  displayName,
-                  role,
-                  global: false,
-                  objectId: manuscript.id,
-                  objectType: 'manuscript',
-                },
-                { trx },
-              ),
-          ),
-        )
-
-        await Channel.insert(
-          [
-            {
-              topic: 'Manuscript discussion',
-              type: 'all',
-              groupId: group.id,
-              manuscriptId: manuscript.id,
-            },
-            {
-              topic: 'Editorial discussion',
-              type: 'editorial',
-              groupId: group.id,
-              manuscriptId: manuscript.id,
-            },
-          ],
-          { trx },
-        )
-      }),
-    )
+      manuscripts.push(manuscript)
+    }
 
     const manuscriptIds = manuscripts.map(manuscript => manuscript.id)
 

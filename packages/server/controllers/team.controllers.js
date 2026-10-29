@@ -35,60 +35,6 @@ const REMOVED_EVENT_BY_ROLE = {
   seniorEditor: 'removedAsSeniorEditor',
 }
 
-const createTeam = async (input, groupId) => {
-  // TODO Only the relate option appears to be used by insertGraphAndFetch, according to Objection docs?
-  const options = {
-    relate: ['members.user'],
-    unrelate: ['members.user'],
-    allowUpsert: '[members]',
-    eager: '[members.[user.teams]]',
-  }
-
-  await Promise.all(
-    input.members.map(async member => {
-      await addUserToManuscriptChatChannel({
-        manuscriptId: input.objectId,
-        userId: member.user.id,
-        type: 'all',
-      })
-      await addUserToManuscriptChatChannel({
-        manuscriptId: input.objectId,
-        userId: member.user.id,
-        type: 'editorial',
-      })
-    }),
-  )
-
-  if (EDITOR_ROLES.includes(input.role)) {
-    const manuscript = await Manuscript.query().findById(input.objectId)
-    const handlingEditorIds = input.members.map(m => m.user.id)
-
-    if (input.role === 'handlingEditor' && handlingEditorIds.length > 0) {
-      await sendTentativeAcceptCoarNotification(manuscript, handlingEditorIds)
-    }
-
-    seekEvent('team-editor-assigned', {
-      manuscript,
-      membersAdded: input.members,
-      role: input.role,
-      groupId,
-    })
-
-    await Promise.all(
-      handlingEditorIds.map(memberId =>
-        emitEvent(ADDED_EVENT_BY_ROLE[input.role], {
-          userId: memberId,
-          groupId,
-          manuscriptId: input.objectId,
-          shortId: manuscript.shortId,
-        }),
-      ),
-    )
-  }
-
-  return Team.query().insertGraphAndFetch(input, options)
-}
-
 const updateTeam = async (id, input, groupId) => {
   evictFromCacheByPrefix('userIs')
   evictFromCacheByPrefix('membersOfTeam')
@@ -241,7 +187,6 @@ const userTeams = async userId => {
 }
 
 module.exports = {
-  createTeam,
   updateTeam,
   updateTeamMember,
   updateCollaborativeTeamMembers,

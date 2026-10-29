@@ -660,12 +660,6 @@ const permissions = {
       userIsGroupAdmin,
       userIsAdmin,
     ),
-    createTeam: or(
-      userIsEditorOfAnyManuscript,
-      userIsGm,
-      userIsGroupAdmin,
-      userIsAdmin,
-    ), // TODO scrap this mutation in favour of an 'assignEditor' mutation
     deleteCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     deleteFile: isAuthenticated,
     deleteFiles: isAuthenticated,

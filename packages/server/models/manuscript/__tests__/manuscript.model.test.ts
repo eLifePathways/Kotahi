@@ -138,6 +138,7 @@ describe('Manuscript model', () => {
 
   it('adds a reviewer', async () => {
     const manuscriptOne = await Manuscript.insert({})
+    await Manuscript.createTeams(manuscriptOne.id)
     const reviewerOne = await User.insert({})
     const reviewerTwo = await User.insert({})
 
@@ -171,6 +172,7 @@ describe('Manuscript model', () => {
     expect(reviewerTeamOneMembers.length).toBe(2)
 
     const manuscriptThree = await Manuscript.insert({})
+    await Manuscript.createTeams(manuscriptThree.id)
 
     const reviewerThree = await User.insert({
       email: 'reviewer3@email.com',

@@ -61,6 +61,8 @@ describe('manuscript.controllers events', () => {
         shortId: 301,
       })
 
+      await Manuscript.createTeams(manuscript.id)
+
       const reviewerUser = await User.insert({})
 
       await addReviewer(manuscript.id, reviewerUser.id, null, false)

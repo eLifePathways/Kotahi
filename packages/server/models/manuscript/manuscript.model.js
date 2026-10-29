@@ -631,63 +631,31 @@ class Manuscript extends BaseModel {
     const Team = require('../team/team.model')
 
     return useTransaction(async trx => {
-      const manuscript = await Manuscript.query(trx).findById(manuscriptId)
-      const status = invitationId ? 'accepted' : 'invited'
+      const role = isCollaborative ? 'collaborativeReviewer' : 'reviewer'
 
-      const team = isCollaborative
-        ? {
-            role: 'collaborativeReviewer',
-            displayName: 'Collaborative Reviewers',
-          }
-        : { role: 'reviewer', displayName: 'Reviewers' }
+      const invitation = invitationId
+        ? await Invitation.query(trx).findById(invitationId)
+        : null
 
-      let invitationData
-
-      if (invitationId) {
-        invitationData = await Invitation.query(trx).findById(invitationId)
-      }
-
-      const existingTeam = await manuscript
-        .$relatedQuery('teams', trx)
-        .where('role', team.role)
-        .first()
-
-      // Add the reviewer to the existing team of reviewers
-      if (existingTeam) {
-        const reviewerExists =
-          (await existingTeam
-            .$relatedQuery('users', trx)
-            .where('users.id', userId)
-            .resultSize()) > 0
-
-        if (!reviewerExists) {
-          await TeamMember.query(trx).insert({
-            teamId: existingTeam.id,
-            status,
-            userId,
-            isShared: invitationData ? invitationData.isShared : null,
-          })
-        }
-
-        return existingTeam.$query(trx)
-      }
-
-      // Create a new team of reviewers if it doesn't exist
-
-      const newTeam = await Team.query(trx).insert({
-        objectId: manuscriptId,
-        objectType: 'manuscript',
-        role: team.role,
-        displayName: team.displayName,
+      const team = await Team.findTeamByRoleAndObject(role, manuscriptId, {
+        trx,
       })
 
-      await TeamMember.query(trx).insert({
+      const isReviewer = await TeamMember.query(trx).findOne({
+        teamId: team.id,
         userId,
-        teamId: newTeam.id,
-        status,
       })
 
-      return newTeam
+      if (!isReviewer) {
+        await TeamMember.query(trx).insert({
+          teamId: team.id,
+          userId,
+          status: invitationId ? 'accepted' : 'invited',
+          isShared: invitation ? invitation.isShared : null,
+        })
+      }
+
+      return team
     }, options)
   }
 

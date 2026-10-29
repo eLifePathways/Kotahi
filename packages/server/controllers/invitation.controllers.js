@@ -3,7 +3,6 @@ const {
   Invitation,
   Manuscript,
   Team,
-  TeamMember,
   User,
 } = require('../models')
 
@@ -37,43 +36,13 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
     userId,
   })
 
-  const existingTeam = await Manuscript.relatedQuery('teams')
-    .for(manuscriptId)
-    .where('role', 'author')
-    .first()
+  const isAuthor = await User.hasRoleOnObject(userId, 'author', manuscriptId)
 
-  // Add the author to the existing team of authors
-  if (existingTeam) {
-    const authorExists =
-      (await existingTeam
-        .$relatedQuery('users')
-        .where('users.id', userId)
-        .resultSize()) > 0
+  if (!isAuthor) await Manuscript.assignRole(userId, manuscriptId, 'author')
 
-    if (!authorExists) {
-      await TeamMember.query().insert({
-        teamId: existingTeam.id,
-        userId,
-      })
-    }
+  const authorTeam = await Team.findTeamByRoleAndObject('author', manuscriptId)
 
-    return existingTeam.$query().withGraphFetched('members.[user]')
-  }
-
-  // Create a new team of authors if it doesn't exist
-  const newTeam = await Team.query().insert({
-    objectId: manuscriptId,
-    objectType: 'manuscript',
-    role: 'author',
-    displayName: 'Author',
-  })
-
-  await TeamMember.query().insert({
-    userId,
-    teamId: newTeam.id,
-  })
-
-  return newTeam
+  return Team.findById(authorTeam.id, { related: 'members.[user]' })
 }
 
 const getBlacklistInformation = async (email, groupId) => {

@@ -47,7 +47,6 @@ const DecisionVersions = ({
   updateReviewJsonData,
   publishManuscript,
   updateTeam,
-  createTeam,
   updateReview,
   reviewForm,
   reviewers,
@@ -124,7 +123,6 @@ const DecisionVersions = ({
                 coarMessages={coarMessages}
                 createFile={createFile}
                 createTaskEmailNotificationLog={createTaskEmailNotificationLog}
-                createTeam={createTeam}
                 currentDecisionData={initialValue}
                 currentUser={currentUser}
                 decisionForm={decisionForm}
