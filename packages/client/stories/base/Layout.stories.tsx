@@ -33,7 +33,7 @@ export const Base = meta.story({
   },
   render: () => {
     return (
-      <Layout converting={false}>
+      <Layout>
         <Left>Sidebar</Left>
         <Right>Main</Right>
       </Layout>

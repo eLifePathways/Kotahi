@@ -7,7 +7,6 @@ import AssetManager from './components/asset-manager/src/AssetManagerPage'
 import { JournalProvider } from './components/xpub-journal'
 import journal from '../config/journal'
 import ModalProvider from './components/asset-manager/src/ui/Modal/ModalProvider'
-import { XpubProvider } from './components/xpub-with-context/src/index'
 
 import Router from './Router'
 
@@ -23,14 +22,12 @@ const DefaultPage = () => {
 
   return (
     <LazyMotion features={loadDomAnimationFeatures} strict>
-      <XpubProvider>
-        <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
-          <ModalProvider modals={modals}>
-            <GlobalStyle />
-            <Router />
-          </ModalProvider>
-        </JournalProvider>
-      </XpubProvider>
+      <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
+        <ModalProvider modals={modals}>
+          <GlobalStyle />
+          <Router />
+        </ModalProvider>
+      </JournalProvider>
     </LazyMotion>
   )
 }

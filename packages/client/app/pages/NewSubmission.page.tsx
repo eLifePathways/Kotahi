@@ -85,6 +85,16 @@ const NewSubmissionPage = (): ReactNode => {
     },
   })
 
+  const isMounted = useRef(false)
+
+  useEffect(() => {
+    isMounted.current = true
+
+    return (): void => {
+      isMounted.current = false
+    }
+  }, [])
+
   const submit = useCallback(
     async (option: NewSubmissionOption, file?: File): Promise<void> => {
       setActiveOption(option)
@@ -97,6 +107,9 @@ const NewSubmissionPage = (): ReactNode => {
         })
 
         setStatus('completed')
+
+        // do not redirect if you've moved to another page
+        if (!isMounted.current) return
 
         const page = ['preprint1', 'preprint2'].includes(instanceName)
           ? 'evaluation'

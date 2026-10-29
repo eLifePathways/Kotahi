@@ -1,4 +1,4 @@
-import { type ReactNode, useContext } from 'react'
+import { type ReactNode } from 'react'
 import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
@@ -30,8 +30,6 @@ import ReviewPreviewPage from './components/component-review/src/components/Revi
 import SubmitRedirect from './components/component-submit/src/components/SubmitRedirect'
 import TasksTemplatePage from './components/component-task-manager/src/TasksTemplatePage'
 import UsersPage from './components/component-users-manager/src/UsersPage'
-
-import { XpubContext } from './components/xpub-with-context/src'
 
 import {
   AuthenticatedPage,
@@ -99,8 +97,6 @@ const RoleGate = (props: RoleGateProps): ReactNode => {
 // #endregion helpers
 
 const Router = (): ReactNode => {
-  // TO DO - look into how to get rid of these two
-  const [conversion] = useContext(XpubContext)
   const { t } = useTranslation()
 
   return (
@@ -136,7 +132,7 @@ const Router = (): ReactNode => {
         <Route element={<AuthenticatedPage />}>
           <Route
             element={
-              <Layout converting={conversion.converting}>
+              <Layout>
                 <MenuPage />
                 <Outlet />
               </Layout>
