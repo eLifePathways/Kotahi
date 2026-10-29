@@ -4,7 +4,8 @@ import PropTypes from 'prop-types'
 import { sanitize } from 'isomorphic-dompurify'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { Spinner, CommsErrorBanner, PlainOrRichText } from '../../shared'
+import { CommsErrorBanner, PlainOrRichText } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import { PUBLISHED_MANUSCRIPT_AND_FORMS } from '../../../queries'
 
 const Page = styled.div`
@@ -48,7 +49,7 @@ const ArticleArtifactPage = () => {
   })
 
   if (error) return <CommsErrorBanner error={error} />
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
 
   const manuscript = { ...data.publishedManuscript }
   manuscript.submission = JSON.parse(manuscript.submission)

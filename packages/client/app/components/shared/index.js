@@ -1,6 +1,5 @@
 export * from './Icon'
 export * from './Pagination'
-export * from './Spinner'
 export * from './DescriptionList'
 export * from './UserCombo'
 export * from './Table'

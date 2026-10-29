@@ -4,7 +4,8 @@ import { useMutation, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../config/src'
 import LayoutForm from './layout/LayoutForm'
-import { Spinner, CommsErrorBanner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import Page from '../../../ui/shared/Page'
 
 import {
@@ -118,7 +119,7 @@ const CMSLayoutPage = () => {
     return initialData
   }
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
   if (!data.cmsLayout) return <CommsErrorBanner error={error} />
 

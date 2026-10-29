@@ -18,11 +18,11 @@ import { DownloadDropdown } from './DownloadDropdown'
 import {
   ErrorBoundary,
   HiddenTabsContainer,
-  Spinner,
   Tab,
   TabContainer,
   VersionSwitcher,
 } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { Info } from './styles'
 import { ControlsContainer } from '../../../component-manuscripts/src/style'
 import AuthorFeedbackForm from '../../../component-author-feedback/src/components/AuthorFeedbackForm'
@@ -248,7 +248,7 @@ const Production = ({
                 value={manuscript.meta.source}
               />
             ) : (
-              <Spinner />
+              <Spinner fullpage />
             )}
           </>
         ) : (

@@ -3,7 +3,8 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { useQuery } from '@apollo/client/react'
-import { Spinner, CommsErrorBanner } from '../../../shared'
+import { CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { CloseButton, PopUpTextContainer, PopUpH2 } from './styles'
 import { CONVERT_TO_JATS } from '../../../../queries'
 
@@ -47,7 +48,7 @@ const DownloadJatsComponent = ({ manuscript, resetMakingJats }) => {
           }}
         />
         <PopUpH2>Generating JATS...</PopUpH2>
-        <Spinner />
+        <Spinner fullpage />
       </Modal>
     )
 

@@ -15,7 +15,8 @@ import {
 import { set, debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
-import { AccessErrorPage, CommsErrorBanner, Spinner } from '../../../shared'
+import { AccessErrorPage, CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import DecisionVersions from './DecisionVersions'
 import { roles } from '../../../../globals'
 import { waxAiToolSystem } from '../../../component-production/helpers'
@@ -420,7 +421,7 @@ const DecisionPage = () => {
     })
   }
 
-  if ((loading && !data) || !currentUser) return <Spinner />
+  if ((loading && !data) || !currentUser) return <Spinner fullpage />
 
   if (error) {
     if (

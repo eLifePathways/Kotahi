@@ -5,8 +5,6 @@ import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { MoreVertical } from 'react-feather'
 
-export { Spinner } from '../../../shared'
-
 export const Time = styled.span`
   color: ${th('colorText')};
   font-size: 14px;

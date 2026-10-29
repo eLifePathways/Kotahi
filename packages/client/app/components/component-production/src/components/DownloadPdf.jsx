@@ -3,7 +3,7 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { useQuery } from '@apollo/client/react'
-import { Spinner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { CONVERT_TO_PDF } from '../../../../queries'
 
 const getSimplifiedTitle = title => {
@@ -101,7 +101,7 @@ const DownloadPdfComponent = ({ manuscript, resetMakingPdf }) => {
       <h2 style={{ marginBottom: '1em' }}>
         {error ? <p>Error generating PDF</p> : <p>Preparing PDF...</p>}
       </h2>
-      {loading && <Spinner />}
+      {loading && <Spinner fullpage />}
       {error ? (
         <div
           style={{

@@ -107,17 +107,18 @@ const VisuallyHidden = styled.span`
 
 type SpinnerContentProps = {
   className?: string
+  testId?: string
   size: number
   reverse: boolean
   description?: ReactNode
 }
 
 const SpinnerContent = (props: SpinnerContentProps): ReactNode => {
-  const { className, size, reverse, description } = props
+  const { className, testId, size, reverse, description } = props
 
   if (description) {
     return (
-      <WithDescription aria-hidden className={className}>
+      <WithDescription aria-hidden className={className} data-testid={testId}>
         <Wrapper $reverse={reverse} $size={size} />
         <Description $reverse={reverse}>{description}</Description>
       </WithDescription>
@@ -130,6 +131,7 @@ const SpinnerContent = (props: SpinnerContentProps): ReactNode => {
       $size={size}
       aria-hidden
       className={className}
+      data-testid={testId}
     />
   )
 }
@@ -149,13 +151,18 @@ const LiveStatus = ({ message }: LiveStatusProps): ReactNode => {
   return <VisuallyHidden role="status">{isReady && message}</VisuallyHidden>
 }
 
+const PAGE_LOADER_DELAY = 100
+const PAGE_LOADER_TEST_ID = 'spinner-loading-page'
+
 type SpinnerProps = {
   className?: string
+  testId?: string
   size?: number
   'aria-label'?: AriaAttributes['aria-label']
   reverse?: boolean
   delay?: number
   description?: ReactNode
+  /** Fill and centre in the available space, as a page loader. Also defaults `delay` to 300ms and `testId` to "spinner-loading-page". */
   fullpage?: boolean
   children?: ReactNode
   spinning?: boolean
@@ -167,11 +174,15 @@ const Spinner = (props: SpinnerProps): ReactNode => {
     size = 10,
     'aria-label': ariaLabel,
     reverse = false,
-    delay = 0,
     description,
     fullpage = false,
     children,
     spinning = true,
+  } = props
+
+  const {
+    delay = fullpage ? PAGE_LOADER_DELAY : 0,
+    testId = fullpage ? PAGE_LOADER_TEST_ID : undefined,
   } = props
 
   const { t } = useTranslation()
@@ -192,7 +203,7 @@ const Spinner = (props: SpinnerProps): ReactNode => {
 
   if (children) {
     return (
-      <Nested aria-busy={isVisible} className={className}>
+      <Nested aria-busy={isVisible} className={className} data-testid={testId}>
         <NestedContent $isLoading={isVisible} inert={isVisible}>
           {children}
         </NestedContent>
@@ -219,20 +230,22 @@ const Spinner = (props: SpinnerProps): ReactNode => {
   const message = ariaLabel ?? description
   const status = message && <LiveStatus message={isVisible && message} />
 
-  if (!isVisible) return status || null
-
   if (fullpage) {
     return (
-      <FullPage className={className}>
-        <SpinnerContent
-          description={description}
-          reverse={reverse}
-          size={size}
-        />
+      <FullPage className={className} data-testid={testId}>
+        {isVisible && (
+          <SpinnerContent
+            description={description}
+            reverse={reverse}
+            size={size}
+          />
+        )}
         {status}
       </FullPage>
     )
   }
+
+  if (!isVisible) return status || null
 
   return (
     <>
@@ -241,6 +254,7 @@ const Spinner = (props: SpinnerProps): ReactNode => {
         description={description}
         reverse={reverse}
         size={size}
+        testId={testId}
       />
       {status}
     </>

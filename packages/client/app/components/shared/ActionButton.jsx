@@ -6,7 +6,9 @@ import styled, { ThemeContext } from 'styled-components'
 import PropTypes from 'prop-types'
 import Color from 'color'
 import { Check, AlertCircle } from 'react-feather'
-import { th, grid, rotate360 } from '@coko/client'
+import { th, grid } from '@coko/client'
+
+import Spinner from '../../ui/shared/Spinner'
 
 const BaseButton = styled.button`
   border: none;
@@ -67,22 +69,8 @@ const LabelOnlySpan = styled.span`
   padding: 0 ${grid(3)};
 `
 
-const Spinner = styled.div`
-  padding-left: ${grid(2)};
-
-  &::after {
-    animation: ${rotate360} 1s linear infinite;
-    border: 2.5px solid ${props => props.$fgColor};
-    border-color: ${props => props.$fgColor} transparent
-      ${props => props.$fgColor} transparent;
-    border-radius: 50%;
-    box-sizing: border-box;
-    /* stylelint-disable-next-line string-quotes */
-    content: '';
-    display: block;
-    height: ${grid(4)};
-    width: ${grid(4)};
-  }
+const StatusSpinner = styled(Spinner)`
+  margin-left: ${grid(2)};
 `
 
 const IconContainer = styled.div`
@@ -143,7 +131,8 @@ const ActionButton = ({
     : themeContext.color.textReverse
 
   let statusIndicator = null
-  if (status === 'pending') statusIndicator = <Spinner $fgColor={fgColor} />
+  if (status === 'pending')
+    statusIndicator = <StatusSpinner reverse={!isLight} size={4} />
 
   if (status === 'success')
     statusIndicator = (

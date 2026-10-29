@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
-import { Spinner } from '../../../components/shared/Spinner'
+import Spinner from '../../shared/Spinner'
 import CommsErrorBanner from '../../../components/shared/CommsErrorBanner'
 import Badge from '../../shared/Badge'
 import Page from '../../shared/Page'
@@ -739,7 +739,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
 
   return (
     <Page title={t('dashboardPage.Dashboard')}>
-      {loading && <Spinner />}
+      {loading && <Spinner fullpage />}
       {error && <CommsErrorBanner error={error} />}
       {!loading && !error && (
         <Wrapper>
@@ -846,7 +846,7 @@ const Dashboard = (props: DashboardProps): ReactNode => {
               )}
             </NotificationsHeader>
 
-            {notificationsLoading && <Spinner />}
+            {notificationsLoading && <Spinner fullpage />}
 
             {notificationsError && (
               <CommsErrorBanner error={notificationsError} />

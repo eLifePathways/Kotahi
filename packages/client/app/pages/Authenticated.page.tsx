@@ -8,7 +8,7 @@ import { useNotification } from '@coko/client'
 import i18next from 'i18next'
 
 import { CURRENT_USER, UPDATE_LANGUAGE } from '../queries'
-import { Spinner } from '../components/shared'
+import Spinner from '../ui/shared/Spinner'
 import { JournalContext } from '../components/xpub-journal'
 import { ConfigContext } from '../components/config/src'
 import { getLanguages } from '../i18n'
@@ -77,7 +77,7 @@ const AuthenticatedPage = (): ReactNode => {
   }, [loading, currentUser, logout])
 
   if (loading) {
-    return <Spinner />
+    return <Spinner fullpage />
   }
 
   if (!currentUser) {

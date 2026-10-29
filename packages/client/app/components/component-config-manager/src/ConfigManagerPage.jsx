@@ -10,7 +10,8 @@ import {
   GENERATE_NEW_COAR_AUTH_TOKEN,
 } from '../../../queries'
 
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import ConfigManagerForm from './ConfigManagerForm'
 
 const ConfigManagerPage = () => {
@@ -59,7 +60,8 @@ const ConfigManagerPage = () => {
     }
   }
 
-  if ((loading && !data) || (!metadata && loadingMetadata)) return <Spinner />
+  if ((loading && !data) || (!metadata && loadingMetadata))
+    return <Spinner fullpage />
 
   if (error) return <CommsErrorBanner error={error} />
 

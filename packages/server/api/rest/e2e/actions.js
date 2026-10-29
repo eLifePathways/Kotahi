@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const { Readable } = require('stream')
 const {
   useTransaction,
@@ -66,6 +67,24 @@ const SHARED_USERS = {
 
 const TEST_ORCID = '0000-0001-2345-6789'
 
+const testOrcidFor = username => {
+  const digits = BigInt(
+    `0x${crypto.createHash('md5').update(username).digest('hex').slice(0, 12)}`,
+  )
+    .toString()
+    .padStart(12, '0')
+    .slice(-12)
+
+  return `0000-${digits.slice(0, 4)}-${digits.slice(4, 8)}-${digits.slice(8)}`
+}
+
+const ensureIdentity = (userId, identifier) =>
+  findOrCreate(
+    Identity,
+    { userId, isDefault: true },
+    { userId, isDefault: true, type: 'orcid', identifier },
+  )
+
 const findOrCreate = async (Model, findQuery, insertData) => {
   const existing = await Model.findOne(findQuery)
   if (existing) return existing
@@ -95,12 +114,17 @@ const deleteAllMatching = async (Model, rowsOrFilter, trx) => {
 const ensureSharedUsers = async () => {
   const adminTeam = await Team.findOne({ global: true, role: 'admin' })
 
-  const ensureUser = async username =>
-    findOrCreate(
+  const ensureUser = async (username, orcid = testOrcidFor(username)) => {
+    const user = await findOrCreate(
       User,
       { username },
       { username, email: `${username}@example.com` },
     )
+
+    await ensureIdentity(user.id, orcid)
+
+    return user
+  }
 
   const [
     adminUser,
@@ -112,8 +136,8 @@ const ensureSharedUsers = async () => {
     ensureUser(SHARED_USERS.admin),
     ensureUser(SHARED_USERS.groupAdmin),
     ensureUser(SHARED_USERS.groupManager),
-    ensureUser(SHARED_USERS.userWithOrcid),
-    ...SHARED_USERS.generic.map(ensureUser),
+    ensureUser(SHARED_USERS.userWithOrcid, TEST_ORCID),
+    ...SHARED_USERS.generic.map(username => ensureUser(username)),
   ])
 
   // Add admin user to the admin group
@@ -121,17 +145,6 @@ const ensureSharedUsers = async () => {
     TeamMember,
     { userId: adminUser.id, teamId: adminTeam.id },
     { userId: adminUser.id, teamId: adminTeam.id },
-  )
-
-  await findOrCreate(
-    Identity,
-    { userId: userWithOrcid.id, isDefault: true },
-    {
-      userId: userWithOrcid.id,
-      isDefault: true,
-      type: 'orcid',
-      identifier: TEST_ORCID,
-    },
   )
 
   return {
@@ -185,11 +198,15 @@ const deleteGroupData = async (group, trx) => {
 
   await deleteAllMatching(Manuscript, { groupId: group.id }, trx)
   // Users made by createGroupUser
-  await deleteAllMatching(
-    User,
-    await User.findByUsernamePrefix(`${group.name}-`, { trx }),
-    trx,
+  const groupUsers = await User.findByUsernamePrefix(`${group.name}-`, { trx })
+
+  await Promise.all(
+    groupUsers.map(user =>
+      deleteAllMatching(Identity, { userId: user.id }, trx),
+    ),
   )
+
+  await deleteAllMatching(User, groupUsers, trx)
   await deleteAllMatching(Team, { objectId: group.id }, trx)
   await deleteAllMatching(Config, { groupId: group.id }, trx)
   await deleteAllMatching(Channel, { groupId: group.id }, trx)
@@ -779,6 +796,16 @@ const createGroupUser = async ({ groupName, name }) => {
     )
 
     await TeamMember.insert({ userId: user.id, teamId: userTeam.id }, { trx })
+
+    await Identity.insert(
+      {
+        userId: user.id,
+        isDefault: true,
+        type: 'orcid',
+        identifier: testOrcidFor(username),
+      },
+      { trx },
+    )
 
     return { username }
   })
