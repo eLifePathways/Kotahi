@@ -63,4 +63,13 @@ INSERT INTO "public"."channels" ("id", "manuscript_id", "created", "updated", "t
 INSERT INTO "public"."files" ("id", "created", "updated", "type", "name", "stored_objects", "tags", "reference_id", "object_id", "alt", "upload_status", "caption") VALUES
 ('d0009388-f77b-45ca-9fea-7c426f93d888', '2022-08-10 02:15:29.063+00', '2022-08-10 02:15:29.063+00', 'file', 'demo.pdf', '[{"id": "cb186b0b-bbf6-467c-a939-7c9f8a87f627", "key": "fb9f7bfc1da0.pdf", "size": 115209, "type": "original", "mimetype": "application/pdf", "extension": "pdf", "imageMetadata": null}]', '["manuscript"]', NULL, '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', NULL, NULL, NULL);
 
+-- Teams every manuscript has, one per manuscript role
+INSERT INTO "public"."teams" ("id", "created", "updated", "display_name", "role", "global", "type", "object_id", "object_type") VALUES
+('4bff8a7c-40a2-5e4f-8767-a349fbf34f43', '2022-08-10 02:15:29.046+00', '2022-08-10 02:15:29.046+00', 'Reviewers', 'reviewer', 'f', 'team', '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', 'manuscript'),
+('1e8c5ca1-06f5-5240-9c08-ef8a864428e0', '2022-08-10 02:15:29.046+00', '2022-08-10 02:15:29.046+00', 'Collaborative Reviewers', 'collaborativeReviewer', 'f', 'team', '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', 'manuscript'),
+('377ff055-c128-52cd-9899-f2e66ee8fcd2', '2022-08-10 02:15:29.046+00', '2022-08-10 02:15:29.046+00', 'Editor', 'editor', 'f', 'team', '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', 'manuscript'),
+('5cc3ad77-b987-56ce-803e-20288ea62f7f', '2022-08-10 02:15:29.046+00', '2022-08-10 02:15:29.046+00', 'Senior Editor', 'seniorEditor', 'f', 'team', '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', 'manuscript'),
+('b0bf09dd-a388-5b40-bd62-8379eb18a2bb', '2022-08-10 02:15:29.046+00', '2022-08-10 02:15:29.046+00', 'Handling Editor', 'handlingEditor', 'f', 'team', '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', 'manuscript'),
+('7144b487-d15c-5ed7-9c8c-18a4d5cdbe8c', '2022-08-10 02:15:29.046+00', '2022-08-10 02:15:29.046+00', 'Managing Editor', 'managingEditor', 'f', 'team', '10bc66ee-dc1a-4ac2-82d1-b37cd8e0fc15', 'manuscript');
+
 END $$

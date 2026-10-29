@@ -34,4 +34,12 @@ INSERT INTO "public"."team_members" ("id", "created", "updated", "team_id", "use
 ('9589d580-f183-44eb-8a61-96352df56692', '2022-09-13 14:08:06.689+00', '2022-09-13 14:08:06.689+00', '84b65fa6-0ca9-42ee-92dc-e8c98307456b', '85e1300e-003c-4e96-987b-23812f902477', NULL),
 ('e150f9c6-903a-4753-9934-26c4a74be188', '2022-09-13 14:07:25.582+00', '2022-09-13 14:07:25.582+00', '62469169-e185-43e3-965c-3e4ecf3dcbcb', 'ba84de0d-d3d5-49e9-ae1b-e8a265789fbe', NULL);
 
+-- Teams every manuscript has, one per manuscript role
+INSERT INTO "public"."teams" ("id", "created", "updated", "display_name", "role", "global", "type", "object_id", "object_type") VALUES
+('efd9d52c-098a-54b4-a3f2-5bbb51b7ee63', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Reviewers', 'reviewer', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('57ca6227-89b3-5d1b-bd8a-8a44b3318bec', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Collaborative Reviewers', 'collaborativeReviewer', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('f4690e4a-dbd8-5540-be3d-c66ff8d1a64f', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Editor', 'editor', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('9612cc38-a2bd-5a93-acf5-0b9b92a08823', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Handling Editor', 'handlingEditor', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('5f85f7fc-6eb8-5da3-9028-a70522248bb2', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Managing Editor', 'managingEditor', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript');
+
 END $$;
