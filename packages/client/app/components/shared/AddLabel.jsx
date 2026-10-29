@@ -2,7 +2,7 @@
 
 import styled from 'styled-components'
 import { grid } from '@coko/client'
-import { PlusCircle } from 'react-feather'
+import { Plus } from 'react-feather'
 
 const Label = styled.span`
   align-items: center;
@@ -14,7 +14,7 @@ const Label = styled.span`
 /** Button label for "Add ..." actions, prefixed with a plus icon. Use inside any button. */
 const AddLabel = ({ children }) => (
   <Label>
-    <PlusCircle aria-hidden="true" size={16} />
+    <Plus aria-hidden="true" size={16} />
     {children}
   </Label>
 )

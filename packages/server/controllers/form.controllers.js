@@ -13,7 +13,7 @@ const deleteForm = async formId => {
 }
 
 const deleteFormElement = async (formId, elementId) => {
-  const form = await Form.findById(formId)
+  const form = await Form.findById(formId, { throwIfNotFound: false })
 
   if (!form) return null
   form.structure.children = form.structure.children.filter(
@@ -125,7 +125,7 @@ const updateForm = async form => {
 }
 
 const updateFormElement = async (element, formId) => {
-  const form = await Form.findById(formId)
+  const form = await Form.findById(formId, { throwIfNotFound: false })
   if (!form) return null
 
   if (element.name === '$verdict' && Array.isArray(element.options)) {

@@ -175,8 +175,9 @@ class User extends BaseModel {
   //   return this.findByField('username', username).then(users => users[0])
   // }
 
-  static async findOneWithIdentity(userId, identityType) {
-    const user = await this.query()
+  static async findOneWithIdentity(userId, identityType, options = {}) {
+    const { trx } = options
+    const user = await this.query(trx)
       .findById(userId)
       .withGraphFetched('identities')
       .modifyGraph('identities', builder => builder.where('type', identityType))

@@ -29,6 +29,7 @@ export const Base = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -52,6 +53,7 @@ export const Admin = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -75,6 +77,7 @@ export const GroupAdmin = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -98,6 +101,7 @@ export const GroupManager = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -121,6 +125,7 @@ export const NoRoles = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -144,6 +149,31 @@ export const ManyRoles = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
+          showReports={true}
+          userDisplayName="Jane Green"
+          userProfileImage={avatarImg}
+        />
+      </Wrapper>
+    )
+  },
+})
+
+export const WithoutNewSubmissionButton = meta.story({
+  render: () => {
+    return (
+      <Wrapper>
+        <Menu
+          groupDisplayName="Kotahi"
+          groupType="Journal"
+          initialMenuCollapsed={false}
+          isUserAdmin={false}
+          isUserGroupAdmin={false}
+          isUserGroupManager={false}
+          onMenuCollapseChange={() => {}}
+          showCoar={true}
+          showDashboard={true}
+          showNewSubmissionButton={false}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -167,6 +197,7 @@ export const StartCollapsed = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Green"
           userProfileImage={avatarImg}
@@ -190,6 +221,7 @@ export const MediumNames = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Margaret Wilkinson"
           userProfileImage={avatarImg}
@@ -213,6 +245,7 @@ export const LongNames = meta.story({
           onMenuCollapseChange={() => {}}
           showCoar={true}
           showDashboard={true}
+          showNewSubmissionButton={true}
           showReports={true}
           userDisplayName="Jane Margaret Samantha Green Wilkinson Henderson"
           userProfileImage={avatarImg}

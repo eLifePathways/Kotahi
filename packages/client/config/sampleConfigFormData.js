@@ -12,7 +12,6 @@ export default {
     tableColumns:
       'shortId, titleAndAbstract, created, updated, status, submission.$customStatus, author',
     manualImport: false,
-    newSubmission: false,
     autoImportHourUtc: 21,
     paginationCount: 10,
     archivePeriodDays: 60,
@@ -143,7 +142,7 @@ export default {
       semanticScholarImportsRecencyPeriodDays: 42,
     },
     coarNotify: {
-      repoIpAddress: '127.0.0.1',
+      authToken: 'abc123',
     },
     kotahiApis: {
       tokens: 'test:123456',

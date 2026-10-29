@@ -246,7 +246,6 @@ const en = {
     },
     dashboardPage: {
       Dashboard: 'Dashboard',
-      'New submission': 'New submission',
       backToDashboard: 'Back to Dashboard',
       'New Alerts': 'New Alerts',
       'My Submissions': 'My Submissions',
@@ -693,8 +692,6 @@ const en = {
         'Number of days a manuscript should remain in the Manuscripts page before being automatically archived (leave empty if you do not wish to use auto-archiving)',
       importFromSematic:
         'Import manuscripts from Semantic Scholar no older than ‘x’ number of days',
-      newSubmissionActionVisisble:
-        '‘Add new submission’ action visible on the Manuscripts page',
       displayActionToSelect:
         'Display action to ‘Select’ manuscripts for review from the Manuscripts page',
       importManuscriptsManually:
@@ -931,6 +928,8 @@ const en = {
       coar: {
         authToken: 'COAR Notify auth token',
         refreshAuthToken: 'Refresh auth token',
+        copy: 'Copy',
+        copied: 'Copied!',
         copyMessage: 'Auth token is only shown once!',
         copyDescription:
           'Please copy the auth token now, and store it in your third-party COAR Notify system. You can always refresh the token here, but previous tokens will be invalidated.',

@@ -321,11 +321,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: true,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -909,10 +904,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -1538,11 +1529,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: true,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -2126,10 +2112,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -2773,11 +2755,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: false,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -3387,10 +3364,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -4038,11 +4011,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: false,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -4653,10 +4621,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),

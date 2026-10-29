@@ -247,7 +247,6 @@ const esLa = {
     },
     dashboardPage: {
       Dashboard: 'Tablero',
-      'New submission': 'Nueva presentación',
       backToDashboard: 'Volver al Tablero',
       'New Alerts': 'Nuevas Alertas',
       'My Submissions': 'Mis presentaciones',
@@ -699,8 +698,6 @@ const esLa = {
         'Número de días que un manuscrito debe permanecer en la página de Manuscritos antes de ser archivado automáticamente (déjelo vacío si no desea utilizar el archivado automático)',
       importFromSematic:
         'Importar manuscritos de Semantic Scholar no más antiguos que ‘x’ días',
-      newSubmissionActionVisisble:
-        'Acción de "Agregar nuevo envío" visible en la página de Manuscritos',
       displayActionToSelect:
         'Mostrar acción para "Seleccionar" manuscritos para revisión desde la página de Manuscritos',
       importManuscriptsManually:
@@ -948,6 +945,8 @@ const esLa = {
       coar: {
         authToken: 'Token de autenticación de COAR Notify',
         refreshAuthToken: 'Actualizar token de autenticación',
+        copy: 'Copiar',
+        copied: '¡Copiado!',
         copyMessage: '¡El token de autenticación solo se muestra una vez!',
         copyDescription:
           'Por favor copie el token de autenticación ahora y guárdelo en su sistema COAR Notify de terceros. Siempre puede actualizar el token aquí, pero los tokens anteriores quedarán invalidados.',

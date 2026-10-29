@@ -247,7 +247,6 @@ const fr = {
     },
     dashboardPage: {
       Dashboard: 'Tableau de bord',
-      'New submission': 'Nouvelle soumission',
       backToDashboard: 'Retour au tableau de bord',
       'New Alerts': 'Nouvelles alertes',
       'My Submissions': 'Mes soumissions',
@@ -712,8 +711,6 @@ const fr = {
         "Nombre de jours pendant lesquels un manuscrit doit rester sur la page des manuscrits avant d'être automatiquement archivé (laissez-le vide si vous ne souhaitez pas utiliser l'archivage automatique)",
       importFromSematic:
         'Importer des manuscrits de Semantic Scholar datant de moins de « x » nombre de jours',
-      newSubmissionActionVisisble:
-        'Action « Ajouter une nouvelle soumission » visible sur la page des manuscrits',
       displayActionToSelect:
         "Afficher l'action pour « Sélectionner » des manuscrits pour l'évaluation à partir de la page des manuscrits",
       importManuscriptsManually:
@@ -966,6 +963,8 @@ const fr = {
       coar: {
         authToken: "Jeton d'authentification COAR Notify",
         refreshAuthToken: "Actualiser le jeton d'authentification",
+        copy: 'Copier',
+        copied: 'Copié !',
         copyMessage:
           "Le jeton d'authentification n'est affiché qu'une seule fois !",
         copyDescription:

@@ -2,7 +2,6 @@
   "preprint1": {
     "primaryColor": "linear-gradient(134deg, rgb(10, 157, 217), rgb(55, 190, 246))",
     "secondaryColor": "rgb(10, 157, 217)",
-    "tertiaryColor": "rgba(0, 0, 0, 0)",
     "logoPath": "/logo-elife.svg",
     "brandName": "eLife"
   },

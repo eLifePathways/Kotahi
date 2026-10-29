@@ -3,7 +3,7 @@ import { db, config, migrationManager, DbTestUtils, File } from '@coko/server'
 
 import Manuscript from '../manuscript.model'
 
-const MIGRATION_BEFORE_REMAP = '1791456947-change-default-brand-colours.ts'
+const MIGRATION_BEFORE_REMAP = '1791912695-remove-repoipaddress.ts'
 
 const image = (objectId: string, key: string): Promise<{ id: string }> =>
   File.insert({
