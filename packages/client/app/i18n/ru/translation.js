@@ -722,7 +722,6 @@ const ru = {
       Submission: 'Подача',
       SubmissionPage: {
         title: 'Название',
-        description: 'Описание',
         allowAuthorUploadOnly:
           'Разрешить автору загружать только файл рукописи',
         allowAuthorUploadWithForm:
@@ -1474,7 +1473,6 @@ const ru = {
     },
     newSubmission: {
       'New submission': 'Загрузить новую статью',
-      acceptedFiletypes: 'Принимаемые форматы файлов: pdf,epub,zip,docx,latex',
       errorUploading: '{{error}}',
       uploadTitle: 'Загрузить рукопись',
       uploadDescription:

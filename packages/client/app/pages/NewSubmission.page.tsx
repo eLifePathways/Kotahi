@@ -42,10 +42,6 @@ const SKIP_SUBMIT_OPTIONS = [
   'allowAuthorSubmitFormWithBlankEditor',
 ]
 
-const hasText = (html?: string | null): boolean =>
-  !!html &&
-  !!new DOMParser().parseFromString(html, 'text/html').body.textContent?.trim()
-
 const NewSubmissionPage = (): ReactNode => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -53,8 +49,7 @@ const NewSubmissionPage = (): ReactNode => {
 
   // @ts-ignore
   const { groupId, urlFrag, instanceName, submission } = config
-  const { title, submissionPagedescription, submitOptions } =
-    submission?.submissionPage ?? {}
+  const { title, submitOptions } = submission?.submissionPage ?? {}
 
   const showUpload =
     !submitOptions || UPLOAD_SUBMIT_OPTIONS.includes(submitOptions)
@@ -172,18 +167,10 @@ const NewSubmissionPage = (): ReactNode => {
 
   return (
     <NewSubmission
-      acceptedFileTypes={acceptedFileTypes?.join(',')}
+      acceptedFileTypes={acceptedFileTypes}
       activeOption={activeOption}
       errorMessage={errorMessage}
-      fileTypesDescription={
-        hasText(submissionPagedescription)
-          ? submissionPagedescription
-          : acceptedFileTypes &&
-            t('newSubmission.fileRequirements', {
-              fileTypes: acceptedFileTypes.join(', '),
-              maxSizeMb: maxUploadSizeMb,
-            })
-      }
+      maxUploadSizeMb={maxUploadSizeMb}
       onSkip={handleSkip}
       onUpload={handleUpload}
       showSkip={showSkip}

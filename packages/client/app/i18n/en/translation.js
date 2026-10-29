@@ -714,7 +714,6 @@ const en = {
       Submission: 'Submission',
       SubmissionPage: {
         title: 'Title',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Allow an author to upload a manuscript file only',
         allowAuthorUploadWithForm:
@@ -1457,7 +1456,6 @@ const en = {
 
     newSubmission: {
       'New submission': 'New submission',
-      acceptedFiletypes: 'Accepted file types: pdf, epub, zip, docx, latex',
       errorUploading: '{{error}}',
       uploadTitle: 'Upload a manuscript',
       uploadDescription:

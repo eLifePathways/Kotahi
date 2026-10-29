@@ -725,7 +725,6 @@ const esLa = {
       Submission: 'Envío',
       SubmissionPage: {
         title: 'Título',
-        description: 'Descripción',
         allowAuthorUploadOnly:
           'Permitir a un autor subir solo un archivo de manuscrito',
         allowAuthorUploadWithForm:
@@ -1488,8 +1487,6 @@ const esLa = {
     },
     newSubmission: {
       'New submission': 'Nueva presentación',
-      acceptedFiletypes:
-        'Tipos de archivo aceptados: pdf, epub, zip, docx, latex',
       errorUploading: '{{error}}',
       uploadTitle: 'Subir un manuscrito',
       uploadDescription:

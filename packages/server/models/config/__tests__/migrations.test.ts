@@ -456,4 +456,79 @@ describe('Config Migrations', () => {
 
     expect(configForGroup6.formData.groupIdentity).toBeUndefined()
   })
+
+  describe('remove submission page description', () => {
+    const MIGRATION = '1793267709-remove-submission-page-description.ts'
+    const MIGRATION_BEFORE = '1793265002-lowercase-group-team-object-type.ts'
+
+    beforeEach(async () => {
+      await migrationManager.migrate({ to: MIGRATION_BEFORE })
+    })
+
+    it('removes the description and keeps the rest of the submission page settings', async () => {
+      const group = await Group.insert({})
+
+      const { id } = await Config.insert({
+        active: true,
+        groupId: group.id,
+        formData: {
+          submission: {
+            allowAuthorsSubmitNewVersion: true,
+            submissionPage: {
+              title: 'Submit',
+              submissionPagedescription: '<p>Read our guidelines</p>',
+              submitOptions: 'allowAuthorUploadWithForm',
+            },
+          },
+        },
+      })
+
+      await migrationManager.migrate({ to: MIGRATION })
+
+      const { formData } = await Config.findById(id)
+
+      expect(formData.submission).toEqual({
+        allowAuthorsSubmitNewVersion: true,
+        submissionPage: {
+          title: 'Submit',
+          submitOptions: 'allowAuthorUploadWithForm',
+        },
+      })
+    })
+
+    it('removes a description stored as null', async () => {
+      const group = await Group.insert({})
+
+      const { id } = await Config.insert({
+        active: true,
+        groupId: group.id,
+        formData: {
+          submission: {
+            submissionPage: { title: null, submissionPagedescription: null },
+          },
+        },
+      })
+
+      await migrationManager.migrate({ to: MIGRATION })
+
+      const { formData } = await Config.findById(id)
+
+      expect(formData.submission.submissionPage).toEqual({ title: null })
+    })
+
+    it('leaves configs without a description alone', async () => {
+      const group = await Group.insert({})
+      const formData = { submission: { submissionPage: { title: 'Submit' } } }
+
+      const { id } = await Config.insert({
+        active: true,
+        groupId: group.id,
+        formData,
+      })
+
+      await migrationManager.migrate({ to: MIGRATION })
+
+      expect((await Config.findById(id)).formData).toEqual(formData)
+    })
+  })
 })

@@ -74,16 +74,18 @@ const Demo = (props: DemoProps): ReactNode => {
   )
 }
 
-const acceptedFileTypes = [
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/pdf',
-  'application/epub+zip',
-  'application/zip',
-  '.tex',
-].join()
-
 const baseArgs = {
-  acceptedFileTypes,
+  acceptedFileTypes: [
+    '.docx',
+    '.tex',
+    '.latex',
+    '.txt',
+    '.dvi',
+    '.pdf',
+    '.epub',
+    '.zip',
+  ],
+  maxUploadSizeMb: 50,
   showUpload: true,
   showSkip: true,
   status: 'idle',
@@ -148,7 +150,8 @@ export const CustomTitleAndFileTypes = meta.story({
   args: {
     ...baseArgs,
     title: 'Submit your research',
-    fileTypesDescription: 'Word documents (.docx) and PDFs only, up to 20MB.',
+    acceptedFileTypes: ['.docx', '.pdf'],
+    maxUploadSizeMb: 20,
   } satisfies NewSubmissionProps,
 })
 

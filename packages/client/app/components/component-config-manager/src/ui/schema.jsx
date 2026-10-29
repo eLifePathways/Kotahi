@@ -451,11 +451,6 @@ export const generateSchemas = ({
                   description: t('configPage.SubmissionPage.title'),
                   default: null,
                 },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
-                  default: null,
-                },
                 submitOptions: {
                   type: 'string',
                   description: 'Choose a submission view',
@@ -1666,11 +1661,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -2927,11 +2917,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -4195,11 +4180,6 @@ export const generateSchemas = ({
                   description: t('configPage.SubmissionPage.title'),
                   default: null,
                 },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
-                  default: null,
-                },
                 submitOptions: {
                   type: 'string',
                   description: 'Choose a submission view',
@@ -5180,11 +5160,6 @@ export const generateSchemas = ({
         },
         submissionPage: {
           classNames: 'col-md-12 col-md-offset-0',
-          submissionPagedescription: {
-            'ui:widget': ({ value, onChange }) => (
-              <SimpleWaxEditor onChange={onChange} value={value} />
-            ),
-          },
           submitOptions: {
             'ui:widget': 'radio',
           },

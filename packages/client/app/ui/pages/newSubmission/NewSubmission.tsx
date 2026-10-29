@@ -68,10 +68,10 @@ export type NewSubmissionOption = 'upload' | 'skip'
 type NewSubmissionProps = {
   /** Page title. Defaults to the translated "New submission". */
   title?: string
-  /** File types the upload card accepts, as a comma-separated list of MIME types and/or extensions, like the `accept` attribute of a file input. */
-  acceptedFileTypes?: string
-  /** Text shown under the upload card's description to explain which files are accepted, as HTML. Defaults to the translated list of accepted file types. */
-  fileTypesDescription?: string
+  /** File types the upload card accepts, as extensions and/or MIME types. Listed under the upload card's description, together with the size limit. */
+  acceptedFileTypes?: string[]
+  /** Largest file the upload card accepts, in MB. */
+  maxUploadSizeMb?: number
   /** Show the "Upload a manuscript" card. */
   showUpload: boolean
   /** Show the "Start without a file" card. When it's the only option, the page shows a full-page spinner instead, since there's no choice to make. */
@@ -92,7 +92,7 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
   const {
     title,
     acceptedFileTypes,
-    fileTypesDescription,
+    maxUploadSizeMb,
     showUpload,
     showSkip,
     status,
@@ -167,7 +167,7 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
       >
         {showUpload && (
           <Card
-            accept={acceptedFileTypes}
+            accept={acceptedFileTypes?.join(',')}
             busy={isBusy && activeOption === 'upload'}
             disabled={isBusy && activeOption !== 'upload'}
             onDrop={files => {
@@ -180,13 +180,14 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
             {statusContent('upload') ?? (
               <>
                 {t('newSubmission.uploadDescription')}
-                <Hint
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      fileTypesDescription ??
-                      t('newSubmission.acceptedFiletypes'),
-                  }}
-                />
+                {!!acceptedFileTypes?.length && !!maxUploadSizeMb && (
+                  <Hint>
+                    {t('newSubmission.fileRequirements', {
+                      fileTypes: acceptedFileTypes.join(', '),
+                      maxSizeMb: maxUploadSizeMb,
+                    })}
+                  </Hint>
+                )}
               </>
             )}
           </Card>

@@ -735,7 +735,6 @@ const fr = {
       Submission: 'Soumission',
       SubmissionPage: {
         title: 'Titre',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Autoriser un auteur à télécharger un fichier de manuscrit uniquement',
         allowAuthorUploadWithForm:
@@ -1508,8 +1507,6 @@ const fr = {
 
     newSubmission: {
       'New submission': 'Nouvelle soumission',
-      acceptedFiletypes:
-        'Types de fichiers acceptés : pdf, epub, zip, docx, latex',
       errorUploading: '{{error}}',
       uploadTitle: 'Téléverser un manuscrit',
       uploadDescription:
