@@ -1,6 +1,17 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { z } from '@coko/server'
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+} from 'vitest'
+import { db, config, DbTestUtils, migrationManager, z } from '@coko/server'
 
+import Group from '../../../models/group/group.model'
+import Config from '../../../models/config/config.model'
 import OpenAiConnector from '../OpenAiConnector'
 
 const completion = (content: string | null): Response =>
@@ -120,6 +131,51 @@ describe('OpenAiConnector', () => {
       await expect(
         new OpenAiConnector('sk-test').chatCompletion({ messages, schema }),
       ).rejects.toThrow()
+    })
+  })
+
+  describe('forGroup', () => {
+    beforeAll(async () => {
+      await config.init()
+      db.init()
+      await migrationManager.migrate()
+    })
+
+    beforeEach(async () => {
+      await DbTestUtils.clearDb()
+    })
+
+    afterAll(async () => {
+      await DbTestUtils.clearDb()
+    })
+
+    it("uses the API key from the group's active config", async () => {
+      const group = await Group.insert({})
+
+      await Config.insert({
+        groupId: group.id,
+        active: true,
+        formData: { integrations: { aiDesignStudio: { apiKey: 'sk-group' } } },
+      })
+
+      fetchMock.mockResolvedValueOnce(completion('{"title":"A paper"}'))
+
+      const connector = await OpenAiConnector.forGroup(group.id)
+      await connector.chatCompletion({ messages, schema })
+
+      expect(fetchMock.mock.calls[0][1]?.headers).toMatchObject({
+        authorization: 'Bearer sk-group',
+      })
+    })
+
+    it('throws when the group has no API key', async () => {
+      const group = await Group.insert({})
+
+      await Config.insert({ groupId: group.id, active: true, formData: {} })
+
+      await expect(OpenAiConnector.forGroup(group.id)).rejects.toThrow(
+        `No OpenAI API key configured for group ${group.id}`,
+      )
     })
   })
 })
