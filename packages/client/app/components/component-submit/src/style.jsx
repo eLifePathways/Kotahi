@@ -123,8 +123,3 @@ export const SubNote = styled.span`
     color: blue;
   }
 `
-
-export const UploadContainer = styled.div`
-  padding: ${grid(6)};
-  text-align: center;
-`

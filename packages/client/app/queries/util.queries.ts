@@ -1,14 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const DOCX_TO_HTML = gql`
-  query DocxToHtml($key: String!) {
-    docxToHtml(key: $key) {
-      html
-      error
-    }
-  }
-`
-
 export const CONVERT_TO_JATS = gql`
   query ConvertToJats($manuscriptId: String!) {
     convertToJats(manuscriptId: $manuscriptId) {

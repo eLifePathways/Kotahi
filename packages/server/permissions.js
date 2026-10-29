@@ -650,7 +650,6 @@ const permissions = {
     createFile: isAuthenticated,
     createForm: or(userIsGroupAdmin, userIsAdmin),
     createCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    createManuscript: isAuthenticated,
     createSubmission: userCanCreateSubmission,
     createMessage: userIsAllowedToChat,
     createNewTaskAlerts: or(userIsGm, userIsGroupAdmin, userIsAdmin), // Only used when test code is enabled
@@ -799,7 +798,6 @@ const permissions = {
       userIsEditorOfTheManuscriptOfTheReview,
     ),
     updateUser: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    uploadFile: isAuthenticated,
     uploadFiles: isAuthenticated,
     updateTaskStatus: isAuthenticated,
     updateCMSPage: or(userIsGroupAdmin, userIsAdmin),
@@ -859,7 +857,6 @@ const permissions = {
     userIsGroupAdmin,
     userIsAdmin,
   ),
-  FileNotInDb: allow,
   Form: allow,
   FormStructure: allow,
   FormElement: allow,

@@ -1508,15 +1508,8 @@ const fr = {
 
     newSubmission: {
       'New submission': 'Nouvelle soumission',
-      'Submission created': 'Soumission créée',
-      'Upload Manuscript': 'Télécharger le manuscrit',
-      dragNDrop: 'Glisser-déposer ou cliquer pour sélectionner un fichier',
       acceptedFiletypes:
         'Types de fichiers acceptés : pdf, epub, zip, docx, latex',
-      converting:
-        "Votre manuscrit est en train d'être converti en une version directement éditable. Cela peut prendre quelques secondes.",
-      skipManuscriptUpload:
-        'Ignorer le téléversement du manuscrit et passer au formulaire de soumission',
       errorUploading: '{{error}}',
       uploadTitle: 'Téléverser un manuscrit',
       uploadDescription:

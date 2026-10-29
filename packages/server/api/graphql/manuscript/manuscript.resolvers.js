@@ -2,7 +2,6 @@ const { GraphQLError } = require('graphql')
 const { config, subscriptionManager, withFilter } = require('@coko/server')
 
 const {
-  createManuscript,
   importManuscripts,
   archiveManuscripts,
   archiveManuscript,
@@ -117,10 +116,6 @@ const manuscriptAndPublishedManuscriptSharedResolvers = {
 
 const resolvers = {
   Mutation: {
-    async createManuscript(_, vars, ctx) {
-      return createManuscript(ctx.userId, vars.input)
-    },
-
     async createSubmission(_, { groupId, file, operationId }, ctx) {
       const onProgress = operationId
         ? step =>

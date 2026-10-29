@@ -1474,14 +1474,7 @@ const ru = {
     },
     newSubmission: {
       'New submission': 'Загрузить новую статью',
-      'Submission created': 'Загружено',
-      'Upload Manuscript': 'Загрузить рукопись',
-      dragNDrop: 'Перетащите файлы сюда',
       acceptedFiletypes: 'Принимаемые форматы файлов: pdf,epub,zip,docx,latex',
-      converting:
-        'Ваша рукопись преобразуется в редактируемую версию. Это может занять некоторое время.',
-      skipManuscriptUpload:
-        'Пропустить загрузку рукописи и перейти к форме подачи',
       errorUploading: '{{error}}',
       uploadTitle: 'Загрузить рукопись',
       uploadDescription:

@@ -21,7 +21,6 @@ import InvitationAcceptedPage from './components/component-dashboard/src/compone
 import Login from './components/component-login/src'
 import ManuscriptPage from './components/component-manuscript/src/components/ManuscriptPage'
 import ManuscriptsPage from './components/component-manuscripts/src/ManuscriptsPage'
-import LegacyNewSubmissionPage from './components/component-submit/src/components/NewSubmissionPage'
 import { PageError } from './components/shared'
 import ProductionPage from './components/component-production/src/components/ProductionPage'
 import ProfilePage from './components/component-profile/src/ProfilePage'
@@ -161,10 +160,6 @@ const Router = (): ReactNode => {
             >
               <Route element={<ProfilePage />} path="profile" />
               <Route element={<NewSubmissionPage />} path="newSubmission" />
-              <Route
-                element={<LegacyNewSubmissionPage />}
-                path="newSubmission_bak"
-              />
               <Route element={<ReviewPage />} path="versions/:version/review" />
 
               <Route

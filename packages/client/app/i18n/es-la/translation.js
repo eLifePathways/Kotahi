@@ -1488,15 +1488,8 @@ const esLa = {
     },
     newSubmission: {
       'New submission': 'Nueva presentación',
-      'Submission created': 'Presentación creada',
-      'Upload Manuscript': 'Subir Manuscrito',
-      dragNDrop: 'Arrastra y suelta o haz clic para seleccionar un archivo',
       acceptedFiletypes:
         'Tipos de archivo aceptados: pdf, epub, zip, docx, latex',
-      converting:
-        'Tu manuscrito se está convirtiendo en una versión directamente editable. Esto podría tomar unos segundos.',
-      skipManuscriptUpload:
-        'Omitir la carga del manuscrito y continuar al formulario de envío',
       errorUploading: '{{error}}',
       uploadTitle: 'Subir un manuscrito',
       uploadDescription:

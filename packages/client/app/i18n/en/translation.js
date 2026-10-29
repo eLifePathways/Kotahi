@@ -1457,14 +1457,7 @@ const en = {
 
     newSubmission: {
       'New submission': 'New submission',
-      'Submission created': 'Submission created',
-      'Upload Manuscript': 'Upload Manuscript',
-      dragNDrop: 'Drag and drop or click to select file',
       acceptedFiletypes: 'Accepted file types: pdf, epub, zip, docx, latex',
-      converting:
-        'Your manuscript is being converted into a directly editable version. This might take a few seconds.',
-      skipManuscriptUpload:
-        'Skip manuscript upload, and proceed to the submission form',
       errorUploading: '{{error}}',
       uploadTitle: 'Upload a manuscript',
       uploadDescription:
