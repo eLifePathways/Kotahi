@@ -38,24 +38,20 @@ const REMOVED_EVENT_BY_ROLE = {
 const updateTeam = async (id, input, groupId) => {
   evictFromCacheByPrefix('userIs')
   evictFromCacheByPrefix('membersOfTeam')
-  const existing = await Team.query().select('role').findById(id)
+  const { objectId, role } = await Team.findById(id)
+  const { result: existingMembers } = await TeamMember.find({ teamId: id })
+  const existingMemberIds = existingMembers.map(member => member.userId)
+  const newMemberIds = input.members.map(member => member.user.id)
 
-  if (existing && EDITOR_ROLES.includes(existing.role)) {
-    const existingMemberIds = (
-      await TeamMember.query().select('userId').where({ teamId: id })
-    ).map(m => m.userId)
+  const membersAdded = newMemberIds.filter(
+    userId => !existingMemberIds.includes(userId),
+  )
 
-    const newMemberIds = input.members.map(m => m.user.id)
+  const membersRemoved = existingMemberIds.filter(
+    userId => !newMemberIds.includes(userId),
+  )
 
-    const membersAdded = newMemberIds.filter(
-      userId => !existingMemberIds.includes(userId),
-    )
-
-    const membersRemoved = existingMemberIds.filter(
-      userId => !newMemberIds.includes(userId),
-    )
-
-    const { objectId } = await Team.query().select('objectId').findById(id)
+  if (EDITOR_ROLES.includes(role)) {
     const manuscript = await Manuscript.query().findById(objectId)
 
     const eventData = {
@@ -63,11 +59,11 @@ const updateTeam = async (id, input, groupId) => {
       membersAdded,
       membersRemoved,
       groupId,
-      role: existing.role,
+      role,
     }
 
     if (membersAdded.length) {
-      if (existing.role === 'handlingEditor') {
+      if (role === 'handlingEditor') {
         await sendTentativeAcceptCoarNotification(manuscript, membersAdded)
       }
 
@@ -75,7 +71,7 @@ const updateTeam = async (id, input, groupId) => {
 
       await Promise.all(
         membersAdded.map(memberId =>
-          emitEvent(ADDED_EVENT_BY_ROLE[existing.role], {
+          emitEvent(ADDED_EVENT_BY_ROLE[role], {
             userId: memberId,
             groupId,
             manuscriptId: objectId,
@@ -90,7 +86,7 @@ const updateTeam = async (id, input, groupId) => {
 
       await Promise.all(
         membersRemoved.map(memberId =>
-          emitEvent(REMOVED_EVENT_BY_ROLE[existing.role], {
+          emitEvent(REMOVED_EVENT_BY_ROLE[role], {
             userId: memberId,
             groupId,
             manuscriptId: objectId,
@@ -151,14 +147,15 @@ const updateTeam = async (id, input, groupId) => {
     )
   }
 
-  return Team.query().upsertGraphAndFetch(
-    { id, ...input, role: existing?.role },
-    {
-      relate: ['members.user'],
-      unrelate: ['members.user'],
-      eager: 'members.user.teams', // TODO This appears to be ignored, according to Objection documentation?
-    },
+  await Promise.all(
+    membersRemoved.map(userId => Manuscript.removeRole(userId, objectId, role)),
   )
+
+  await Promise.all(
+    membersAdded.map(userId => Manuscript.assignRole(userId, objectId, role)),
+  )
+
+  return Team.findById(id, { related: 'members.user' })
 }
 
 const updateTeamMember = async (id, input) => {

@@ -36,11 +36,7 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
     userId,
   })
 
-  const isAuthor = await User.hasRoleOnObject(userId, 'author', manuscriptId)
-
-  if (!isAuthor) await Manuscript.assignRole(userId, manuscriptId, 'author')
-
-  const authorTeam = await Team.findTeamByRoleAndObject('author', manuscriptId)
+  const authorTeam = await Manuscript.assignRole(userId, manuscriptId, 'author')
 
   return Team.findById(authorTeam.id, { related: 'members.[user]' })
 }

@@ -207,6 +207,8 @@ class Manuscript extends BaseModel {
 
   static async assignRole(userId, manuscriptId, role, options = {}) {
     const Team = require('../team/team.model')
+    const TeamMember = require('../teamMember/teamMember.model')
+    const { status, isShared, throwIfAssigned = false } = options
 
     return useTransaction(
       async trx => {
@@ -214,7 +216,27 @@ class Manuscript extends BaseModel {
           trx,
         })
 
-        return Team.addMember(team.id, userId, { trx, status: options.status })
+        const member = await TeamMember.query(trx).findOne({
+          teamId: team.id,
+          userId,
+        })
+
+        if (member && throwIfAssigned) {
+          throw new Error(
+            `User ${userId} already has the ${role} role on manuscript ${manuscriptId}`,
+          )
+        }
+
+        if (!member) {
+          await TeamMember.query(trx).insert({
+            teamId: team.id,
+            userId,
+            status,
+            isShared,
+          })
+        }
+
+        return team
       },
       { trx: options.trx },
     )
@@ -222,6 +244,8 @@ class Manuscript extends BaseModel {
 
   static async removeRole(userId, manuscriptId, role, options = {}) {
     const Team = require('../team/team.model')
+    const TeamMember = require('../teamMember/teamMember.model')
+    const { throwIfNotAssigned = false } = options
 
     return useTransaction(
       async trx => {
@@ -229,7 +253,17 @@ class Manuscript extends BaseModel {
           trx,
         })
 
-        return Team.removeMember(team.id, userId, { trx })
+        const removed = await TeamMember.query(trx)
+          .delete()
+          .where({ teamId: team.id, userId })
+
+        if (!removed && throwIfNotAssigned) {
+          throw new Error(
+            `User ${userId} does not have the ${role} role on manuscript ${manuscriptId}`,
+          )
+        }
+
+        return team
       },
       { trx: options.trx },
     )
@@ -627,35 +661,22 @@ class Manuscript extends BaseModel {
     options = {},
   ) {
     const Invitation = require('../invitation/invitation.model')
-    const TeamMember = require('../teamMember/teamMember.model')
-    const Team = require('../team/team.model')
 
     return useTransaction(async trx => {
-      const role = isCollaborative ? 'collaborativeReviewer' : 'reviewer'
-
       const invitation = invitationId
         ? await Invitation.query(trx).findById(invitationId)
         : null
 
-      const team = await Team.findTeamByRoleAndObject(role, manuscriptId, {
-        trx,
-      })
-
-      const isReviewer = await TeamMember.query(trx).findOne({
-        teamId: team.id,
+      return Manuscript.assignRole(
         userId,
-      })
-
-      if (!isReviewer) {
-        await TeamMember.query(trx).insert({
-          teamId: team.id,
-          userId,
+        manuscriptId,
+        isCollaborative ? 'collaborativeReviewer' : 'reviewer',
+        {
+          trx,
           status: invitationId ? 'accepted' : 'invited',
           isShared: invitation ? invitation.isShared : null,
-        })
-      }
-
-      return team
+        },
+      )
     }, options)
   }
 

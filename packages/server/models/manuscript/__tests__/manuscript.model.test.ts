@@ -747,15 +747,58 @@ describe('Manuscript model', () => {
       })
     })
 
-    it('does not add the same user to a role twice', async () => {
+    it('stores isShared', async () => {
+      const manuscript = await Manuscript.insert({ groupId })
+      const user = await User.insert({})
+      await Manuscript.createTeams(manuscript.id)
+
+      const team = await Manuscript.assignRole(
+        user.id,
+        manuscript.id,
+        'reviewer',
+        {
+          isShared: true,
+        },
+      )
+
+      const member = await TeamMember.query().findOne({
+        teamId: team.id,
+        userId: user.id,
+      })
+
+      expect(member.isShared).toBe(true)
+    })
+
+    it('leaves the user as they are when they already have the role', async () => {
+      const manuscript = await Manuscript.insert({ groupId })
+      const user = await User.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      await Manuscript.assignRole(user.id, manuscript.id, 'editor', {
+        status: 'accepted',
+      })
+
+      await Manuscript.assignRole(user.id, manuscript.id, 'editor', {
+        status: 'invited',
+      })
+
+      expect(await membersByRole(manuscript.id)).toEqual({
+        editor: [{ userId: user.id, status: 'accepted' }],
+      })
+    })
+
+    it('throws when the user already has the role and throwIfAssigned is set', async () => {
       const manuscript = await Manuscript.insert({ groupId })
       const user = await User.insert({})
       await Manuscript.createTeams(manuscript.id)
       await Manuscript.assignRole(user.id, manuscript.id, 'editor')
 
       await expect(
-        Manuscript.assignRole(user.id, manuscript.id, 'editor'),
-      ).rejects.toThrow()
+        Manuscript.assignRole(user.id, manuscript.id, 'editor', {
+          throwIfAssigned: true,
+        }),
+      ).rejects.toThrow(
+        `User ${user.id} already has the editor role on manuscript ${manuscript.id}`,
+      )
     })
 
     it("removes the user from the manuscript's team for the role", async () => {
@@ -772,14 +815,29 @@ describe('Manuscript model', () => {
       })
     })
 
-    it('throws when removing a role the user does not have', async () => {
+    it('does nothing when removing a role the user does not have', async () => {
+      const manuscript = await Manuscript.insert({ groupId })
+      const user = await User.insert({})
+      await Manuscript.createTeams(manuscript.id)
+
+      const team = await Manuscript.removeRole(user.id, manuscript.id, 'editor')
+
+      expect(team.role).toBe('editor')
+      expect(await membersByRole(manuscript.id)).toEqual({})
+    })
+
+    it('throws when the user does not have the role and throwIfNotAssigned is set', async () => {
       const manuscript = await Manuscript.insert({ groupId })
       const user = await User.insert({})
       await Manuscript.createTeams(manuscript.id)
 
       await expect(
-        Manuscript.removeRole(user.id, manuscript.id, 'editor'),
-      ).rejects.toThrow()
+        Manuscript.removeRole(user.id, manuscript.id, 'editor', {
+          throwIfNotAssigned: true,
+        }),
+      ).rejects.toThrow(
+        `User ${user.id} does not have the editor role on manuscript ${manuscript.id}`,
+      )
     })
   })
 

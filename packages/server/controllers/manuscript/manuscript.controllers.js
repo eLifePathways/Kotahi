@@ -1694,20 +1694,21 @@ const publishOnCMS = async (groupId, manuscriptId) => {
 const removeReviewer = async (manuscriptId, userId) => {
   const manuscript = await Manuscript.findById(manuscriptId)
 
-  const reviewerTeams = await manuscript
-    .$relatedQuery('teams')
-    .whereIn('role', ['reviewer', 'collaborativeReviewer'])
-
-  const [deletedTeamMember] = await TeamMember.query()
-    .whereIn(
-      'teamId',
-      reviewerTeams.map(reviewerTeam => reviewerTeam.id),
+  const reviewerRoles = (
+    await Promise.all(
+      ['reviewer', 'collaborativeReviewer'].map(async role =>
+        (await User.hasRoleOnObject(userId, role, manuscriptId)) ? role : null,
+      ),
     )
-    .andWhere({
-      userId,
-    })
-    .delete()
-    .returning('*')
+  ).filter(Boolean)
+
+  if (!reviewerRoles.length) throw new Error('Invalid reviewer team member')
+
+  const [reviewerTeam] = await Promise.all(
+    reviewerRoles.map(role =>
+      Manuscript.removeRole(userId, manuscriptId, role),
+    ),
+  )
 
   await removeUserFromManuscriptChatChannel({
     manuscriptId,
@@ -1715,38 +1716,25 @@ const removeReviewer = async (manuscriptId, userId) => {
     type: 'editorial',
   })
 
-  if (deletedTeamMember) {
-    emitEvent('removedAsReviewer', {
-      userId,
-      groupId: manuscript.groupId,
-      manuscriptId,
-      shortId: manuscript.shortId,
-    })
-  }
-
-  const reviewerTeam = await Team.query().findOne({
-    id: deletedTeamMember.teamId,
+  emitEvent('removedAsReviewer', {
+    userId,
+    groupId: manuscript.groupId,
+    manuscriptId,
+    shortId: manuscript.shortId,
   })
 
-  return reviewerTeam.$query().withGraphFetched('members.user')
+  return Team.findById(reviewerTeam.id, { related: 'members.user' })
 }
 
 const removeAuthor = async (manuscriptId, userId) => {
-  const manuscript = await Manuscript.findById(manuscriptId)
-
-  const authorTeam = await Team.findTeamByRoleAndObject('author', manuscript.id)
-
-  const [deletedTeamMember] = await TeamMember.query()
-    .where({
-      teamId: authorTeam.id,
-      userId,
-    })
-    .delete()
-    .returning('*')
-
-  if (!deletedTeamMember) {
-    throw new Error('Invalid author team member')
-  }
+  const authorTeam = await Manuscript.removeRole(
+    userId,
+    manuscriptId,
+    'author',
+    {
+      throwIfNotAssigned: true,
+    },
+  )
 
   await removeUserFromManuscriptChatChannel({
     manuscriptId,
@@ -1754,7 +1742,7 @@ const removeAuthor = async (manuscriptId, userId) => {
     type: 'all',
   })
 
-  return authorTeam.$query().withGraphFetched('members.user')
+  return Team.findById(authorTeam.id, { related: 'members.user' })
 }
 
 // TODO Rename to something like 'setReviewerResponse'

@@ -62,14 +62,18 @@ declare class Manuscript extends BaseModel {
     userId: string,
     manuscriptId: string,
     role: string,
-    options?: Options & { status?: string },
+    options?: Options & {
+      status?: string
+      isShared?: boolean | null
+      throwIfAssigned?: boolean
+    },
   ): Promise<Team>
 
   static removeRole(
     userId: string,
     manuscriptId: string,
     role: string,
-    options?: Options,
+    options?: Options & { throwIfNotAssigned?: boolean },
   ): Promise<Team>
 
   static createTeams(manuscriptId: string, options?: Options): Promise<Team[]>
