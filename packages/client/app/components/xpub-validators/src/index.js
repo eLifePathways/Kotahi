@@ -11,7 +11,7 @@ export const join =
     value ? value.join(separator) : value
 
 export const required = value => {
-  if (value === undefined || value === '') {
+  if (value === undefined || value === null || value === '') {
     return 'Required'
   }
 
