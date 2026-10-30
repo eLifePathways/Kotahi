@@ -3,7 +3,7 @@ const { chunk, orderBy, uniqBy, flatten } = require('lodash')
 const { ref, raw } = require('objection')
 const axios = require('axios')
 
-const { File, logger } = require('@coko/server')
+const { File, logger, useTransaction } = require('@coko/server')
 
 const {
   CoarNotification,
@@ -1692,28 +1692,37 @@ const publishOnCMS = async (groupId, manuscriptId) => {
 }
 
 const removeReviewer = async (manuscriptId, userId) => {
-  const manuscript = await Manuscript.findById(manuscriptId)
+  const { manuscript, reviewerTeam } = await useTransaction(async trx => {
+    const reviewerRoles = (
+      await Promise.all(
+        ['reviewer', 'collaborativeReviewer'].map(async role =>
+          (await User.hasRoleOnObject(userId, role, manuscriptId, { trx }))
+            ? role
+            : null,
+        ),
+      )
+    ).filter(Boolean)
 
-  const reviewerRoles = (
-    await Promise.all(
-      ['reviewer', 'collaborativeReviewer'].map(async role =>
-        (await User.hasRoleOnObject(userId, role, manuscriptId)) ? role : null,
+    if (!reviewerRoles.length) throw new Error('Invalid reviewer team member')
+
+    const [team] = await Promise.all(
+      reviewerRoles.map(role =>
+        Manuscript.removeRole(userId, manuscriptId, role, { trx }),
       ),
     )
-  ).filter(Boolean)
 
-  if (!reviewerRoles.length) throw new Error('Invalid reviewer team member')
+    await removeUserFromManuscriptChatChannel(
+      { manuscriptId, userId, type: 'editorial' },
+      { trx },
+    )
 
-  const [reviewerTeam] = await Promise.all(
-    reviewerRoles.map(role =>
-      Manuscript.removeRole(userId, manuscriptId, role),
-    ),
-  )
-
-  await removeUserFromManuscriptChatChannel({
-    manuscriptId,
-    userId,
-    type: 'editorial',
+    return {
+      manuscript: await Manuscript.findById(manuscriptId, { trx }),
+      reviewerTeam: await Team.findById(team.id, {
+        related: 'members.user',
+        trx,
+      }),
+    }
   })
 
   emitEvent('removedAsReviewer', {
@@ -1723,26 +1732,25 @@ const removeReviewer = async (manuscriptId, userId) => {
     shortId: manuscript.shortId,
   })
 
-  return Team.findById(reviewerTeam.id, { related: 'members.user' })
+  return reviewerTeam
 }
 
 const removeAuthor = async (manuscriptId, userId) => {
-  const authorTeam = await Manuscript.removeRole(
-    userId,
-    manuscriptId,
-    'author',
-    {
-      throwIfNotAssigned: true,
-    },
-  )
+  return useTransaction(async trx => {
+    const authorTeam = await Manuscript.removeRole(
+      userId,
+      manuscriptId,
+      'author',
+      { throwIfNotAssigned: true, trx },
+    )
 
-  await removeUserFromManuscriptChatChannel({
-    manuscriptId,
-    userId,
-    type: 'all',
+    await removeUserFromManuscriptChatChannel(
+      { manuscriptId, userId, type: 'all' },
+      { trx },
+    )
+
+    return Team.findById(authorTeam.id, { related: 'members.user', trx })
   })
-
-  return Team.findById(authorTeam.id, { related: 'members.user' })
 }
 
 // TODO Rename to something like 'setReviewerResponse'

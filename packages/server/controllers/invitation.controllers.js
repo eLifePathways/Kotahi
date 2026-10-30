@@ -1,3 +1,5 @@
+const { useTransaction } = require('@coko/server')
+
 const {
   BlacklistEmail,
   Invitation,
@@ -21,24 +23,28 @@ const addEmailToBlacklist = async (email, groupId) => {
 }
 
 const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
-  const existingInvite = await Invitation.query().findById(invitationId)
+  return useTransaction(async trx => {
+    const existingInvite = await Invitation.query(trx).findById(invitationId)
 
-  if (!existingInvite || existingInvite.responseDate) {
-    throw new Error('Invalid Invitation ID')
-  }
+    if (!existingInvite || existingInvite.responseDate) {
+      throw new Error('Invalid Invitation ID')
+    }
 
-  if (existingInvite.userId && existingInvite.userId !== userId) {
-    throw new Error('Invalid User ID')
-  }
+    if (existingInvite.userId && existingInvite.userId !== userId) {
+      throw new Error('Invalid User ID')
+    }
 
-  await addUserToManuscriptChatChannel({
-    manuscriptId,
-    userId,
+    await addUserToManuscriptChatChannel({ manuscriptId, userId }, { trx })
+
+    const authorTeam = await Manuscript.assignRole(
+      userId,
+      manuscriptId,
+      'author',
+      { trx },
+    )
+
+    return Team.findById(authorTeam.id, { related: 'members.[user]', trx })
   })
-
-  const authorTeam = await Manuscript.assignRole(userId, manuscriptId, 'author')
-
-  return Team.findById(authorTeam.id, { related: 'members.[user]' })
 }
 
 const getBlacklistInformation = async (email, groupId) => {

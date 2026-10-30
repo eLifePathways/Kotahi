@@ -4,7 +4,7 @@
 
 const moment = require('moment-timezone')
 
-const { config, logger } = require('@coko/server')
+const { config, logger, useTransaction } = require('@coko/server')
 
 const {
   Config,
@@ -522,35 +522,41 @@ const updateAlertsUponTeamUpdate = async (
   manuscriptId,
   userIdsToAdd,
   userIdsToRemove,
+  options = {},
 ) => {
-  if (!(await manuscriptIsActive(manuscriptId))) return
-  const now = new Date()
-  const tasks = await Task.query().where({ manuscriptId })
+  return useTransaction(
+    async trx => {
+      if (!(await manuscriptIsActive(manuscriptId, { trx }))) return
+      const now = new Date()
+      const tasks = await Task.query(trx).where({ manuscriptId })
 
-  const overdueTaskIds = tasks
-    .filter(
-      task =>
-        task.dueDate && task.dueDate < now && task.status === 'In progress',
-    )
-    .map(task => task.id)
+      const overdueTaskIds = tasks
+        .filter(
+          task =>
+            task.dueDate && task.dueDate < now && task.status === 'In progress',
+        )
+        .map(task => task.id)
 
-  await Promise.all(
-    overdueTaskIds.map(async taskId => {
-      const alertsToAdd = userIdsToAdd.map(userId => ({
-        taskId,
-        userId,
-      }))
+      await Promise.all(
+        overdueTaskIds.map(async taskId => {
+          const alertsToAdd = userIdsToAdd.map(userId => ({
+            taskId,
+            userId,
+          }))
 
-      await TaskAlert.query()
-        .insert(alertsToAdd)
-        .onConflict(['taskId', 'userId'])
-        .ignore()
+          await TaskAlert.query(trx)
+            .insert(alertsToAdd)
+            .onConflict(['taskId', 'userId'])
+            .ignore()
 
-      await TaskAlert.query()
-        .delete()
-        .where({ taskId })
-        .whereIn('userId', userIdsToRemove)
-    }),
+          await TaskAlert.query(trx)
+            .delete()
+            .where({ taskId })
+            .whereIn('userId', userIdsToRemove)
+        }),
+      )
+    },
+    { trx: options.trx },
   )
 }
 

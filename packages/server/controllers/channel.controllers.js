@@ -1,35 +1,41 @@
+const { useTransaction } = require('@coko/server')
+
 const { Channel, ChannelMember, Manuscript } = require('../models')
 
-const addUserToManuscriptChatChannel = async ({
-  manuscriptId,
-  userId,
-  type = 'all',
-}) => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .select('parentId')
+const addUserToManuscriptChatChannel = async (
+  { manuscriptId, userId, type = 'all' },
+  options = {},
+) => {
+  return useTransaction(
+    async trx => {
+      const manuscript = await Manuscript.query(trx)
+        .findById(manuscriptId)
+        .select('parentId')
 
-  const channel = await Channel.query()
-    .where({
-      manuscriptId: manuscript.parentId || manuscriptId,
-      type,
-    })
-    .first()
+      const channel = await Channel.query(trx)
+        .where({
+          manuscriptId: manuscript.parentId || manuscriptId,
+          type,
+        })
+        .first()
 
-  const channelMember = await ChannelMember.query()
-    .where({
-      channelId: channel.id,
-      userId,
-    })
-    .first()
+      const channelMember = await ChannelMember.query(trx)
+        .where({
+          channelId: channel.id,
+          userId,
+        })
+        .first()
 
-  if (!channelMember) {
-    await ChannelMember.query().insert({
-      channelId: channel.id,
-      userId,
-      lastViewed: new Date(),
-    })
-  }
+      if (!channelMember) {
+        await ChannelMember.query(trx).insert({
+          channelId: channel.id,
+          userId,
+          lastViewed: new Date(),
+        })
+      }
+    },
+    { trx: options.trx },
+  )
 }
 
 const addUsersToChatChannel = async (channelId, userIds) => {
@@ -59,16 +65,20 @@ const getSystemWideDiscussionChannel = async groupId => {
     .first()
 }
 
-const removeUserFromManuscriptChatChannel = async ({
-  manuscriptId,
-  userId = null,
-  type = 'all',
-}) => {
-  await ChannelMember.query().delete().where({ userId }).whereExists(
-    ChannelMember.relatedQuery('channel').where({
-      manuscriptId,
-      type,
-    }),
+const removeUserFromManuscriptChatChannel = async (
+  { manuscriptId, userId = null, type = 'all' },
+  options = {},
+) => {
+  return useTransaction(
+    async trx => {
+      await ChannelMember.query(trx).delete().where({ userId }).whereExists(
+        ChannelMember.relatedQuery('channel').where({
+          manuscriptId,
+          type,
+        }),
+      )
+    },
+    { trx: options.trx },
   )
 }
 
