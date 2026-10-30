@@ -2,6 +2,7 @@ extend type Query {
   globalTeams: [Team]
   manuscript(id: ID!): Manuscript!
   manuscripts: [Manuscript]!
+  newSubmissionSettings: NewSubmissionSettings!
   paginatedManuscripts(
     offset: Int
     limit: Int
@@ -69,12 +70,25 @@ type PaginatedManuscripts {
   manuscripts: [Manuscript]
 }
 
+type NewSubmissionSettings {
+  maxUploadSizeMb: Float!
+  acceptedFileTypes: [String!]!
+}
+
+enum NewSubmissionStep {
+  converting
+  cleaning
+  inferringMetadata
+  creatingManuscript
+}
+
 extend type Subscription {
   manuscriptsImportStatus: Boolean
+  newSubmissionProgress(operationId: ID!): NewSubmissionStep!
 }
 
 extend type Mutation {
-  createManuscript(input: ManuscriptInput): Manuscript!
+  createSubmission(groupId: ID!, file: Upload, operationId: ID): Manuscript!
   updateManuscript(id: ID!, input: String): Manuscript!
   submitManuscript(id: ID!, input: String): Manuscript!
   submitAuthorProofingFeedback(id: ID!, input: String): Manuscript!
@@ -173,18 +187,6 @@ type ManuscriptExport {
   importSourceServer: String
 }
 
-input ManuscriptInput {
-  files: [FileInput]
-  meta: ManuscriptMetaInput
-  submission: String
-  groupId: ID!
-}
-
-input ManuscriptMetaInput {
-  source: String
-  comments: String
-}
-
 type PublishingResult {
   manuscript: Manuscript
   steps: [PublishingStepResult]!
@@ -195,35 +197,6 @@ type PublishingStepResult {
   succeeded: Boolean!
   errorMessage: String
   errorDetails: [String]
-}
-
-input FileInput {
-  name: String!
-  storedObjects: [StoredObjectInput!]!
-  tags: [String]!
-}
-
-input ImageMetadataInput {
-  width: Int!
-  height: Int!
-  space: String
-  density: Int
-}
-
-input StoredObjectInput {
-  type: ImageSizeInput!
-  key: String!
-  size: Int
-  mimetype: String!
-  extension: String!
-  imageMetadata: ImageMetadataInput
-}
-
-enum ImageSizeInput {
-  original
-  full
-  medium
-  small
 }
 
 type Author {

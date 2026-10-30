@@ -52,7 +52,7 @@ const addUserToAdminAndGroupAdminTeams = async (
   const groupAdminTeam = await Team.query(trx).findOne({
     role: 'groupAdmin',
     objectId: groupId,
-    objectType: 'Group',
+    objectType: 'group',
   })
 
   const adminTeam = await Team.query(trx).findOne({
@@ -68,7 +68,7 @@ const addUserToUserTeam = async (userId, groupId) => {
   const userTeam = await Team.query().findOne({
     role: 'user',
     objectId: groupId,
-    objectType: 'Group',
+    objectType: 'group',
   })
 
   await TeamMember.query().insert({ userId, teamId: userTeam.id })
@@ -80,7 +80,7 @@ const addUserToGroupAdminTeam = async (userId, groupId, options = {}) => {
   const groupAdminTeam = await Team.query(trx).findOne({
     role: 'groupAdmin',
     objectId: groupId,
-    objectType: 'Group',
+    objectType: 'group',
   })
 
   await TeamMember.query(trx).insert({ userId, teamId: groupAdminTeam.id })
@@ -307,7 +307,7 @@ const handleOrcidOAuthResponse = async user => {
     .findOne({
       userId: user.id,
       objectId: groupId,
-      objectType: 'Group',
+      objectType: 'group',
       role: 'groupManager',
     })
 
@@ -319,7 +319,7 @@ const handleOrcidOAuthResponse = async user => {
     .findOne({
       userId: user.id,
       objectId: groupId,
-      objectType: 'Group',
+      objectType: 'group',
       role: 'user',
     })
 

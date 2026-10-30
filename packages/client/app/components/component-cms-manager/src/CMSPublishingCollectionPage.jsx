@@ -11,7 +11,8 @@ import {
   CREATE_COLLECTION,
   DELETE_COLLECTION,
 } from '../../../queries'
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import CollectionList from './collection/CollectionList'
 
 const useAsyncQuery = () => {
@@ -66,7 +67,7 @@ const CmsPublishingCollectionPage = () => {
     fetchPolicy: 'network-only',
   })
 
-  if (loading && !data) return <Spinner />
+  if (loading && !data) return <Spinner fullpage />
 
   if (error) return <CommsErrorBanner error={error} />
 

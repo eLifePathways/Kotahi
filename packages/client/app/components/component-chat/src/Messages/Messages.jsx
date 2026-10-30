@@ -29,7 +29,6 @@ import {
   InnerMessageContainer,
   Byline,
   Placeholder,
-  Spinner,
   InlineTime,
   UnreadLabelContainer,
   UnreadLabel,
@@ -39,6 +38,7 @@ import {
   EditedTimeContainer,
   EditedTime,
 } from './style'
+import Spinner from '../../../../ui/shared/Spinner'
 
 const Messages = ({
   channelId,
@@ -105,7 +105,7 @@ const Messages = ({
 
   const { t } = useTranslation()
 
-  if (loading && !data) return <Spinner />
+  if (loading && !data) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   const messages = sortAndGroupMessages(

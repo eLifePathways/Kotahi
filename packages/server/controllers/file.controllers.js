@@ -1,4 +1,4 @@
-const { fileStorage, createFile, deleteFiles, File } = require('@coko/server')
+const { createFile, deleteFiles, File } = require('@coko/server')
 const { map, uniq, flatten } = require('lodash')
 const { decrypt } = require('../utils/encryptDecryptUtils')
 const Form = require('../models/form/form.model')
@@ -206,20 +206,6 @@ const updateTagsFile = async input => {
   return updatedFile
 }
 
-const uploadFile = async file => {
-  const { createReadStream, filename } = await file
-  const fileStream = createReadStream()
-  const storedObjects = await fileStorage.upload(fileStream, filename)
-  storedObjects[0].url = await fileStorage.getURL(storedObjects[0].key)
-
-  const data = {
-    name: filename,
-    storedObjects,
-  }
-
-  return data
-}
-
 const uploadFiles = async (files, fileType, entityId) => {
   const uploadedFiles = await Promise.all(
     map(files, async file => {
@@ -250,6 +236,5 @@ module.exports = {
   getSpecificFiles,
   updateFile,
   updateTagsFile,
-  uploadFile,
   uploadFiles,
 }

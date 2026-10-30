@@ -65,6 +65,13 @@ class Task extends BaseModel {
     }
   }
 
+  static async findTemplates(groupId, options = {}) {
+    return Task.query(options.trx)
+      .whereNull('manuscriptId')
+      .where({ groupId })
+      .orderBy('sequenceIndex')
+  }
+
   static get schema() {
     return {
       properties: {

@@ -66,12 +66,13 @@ const shortDescriptionField = {
 // Decision and Review:
 // - Don't have meta, but a single jsonData that can accomodate everything
 const nameFieldRegex = /^[a-zA-Z]\w*$/
+const isValidName = (val, regex) => typeof val === 'string' && regex.test(val)
 
 const nameField = {
   component: 'TextField',
   props: {
     label: 'Name (internal field name)',
-    validate: val => (nameFieldRegex.test(val) ? null : 'Invalid name'),
+    validate: val => (isValidName(val, nameFieldRegex) ? null : 'Invalid name'),
   },
 }
 
@@ -83,7 +84,7 @@ const submissionNameField = {
     label: 'Name (internal field name)',
     description: i18next.t('formBuilder.internalNameDescription'),
     validate: val =>
-      submissionNameFieldRegex.test(val) ? null : 'Invalid name',
+      isValidName(val, submissionNameFieldRegex) ? null : 'Invalid name',
   },
 }
 

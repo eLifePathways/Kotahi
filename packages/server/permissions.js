@@ -174,6 +174,38 @@ const isAuthenticated = rule({ cache: 'contextual' })(async (
   return !!ctx.userId
 })
 
+const userCanCreateSubmission = rule({ cache: 'no_cache' })(async (
+  parent,
+  { groupId, file },
+  ctx,
+) => {
+  if (!ctx.userId) return false
+
+  const roleChecks = await Promise.all([
+    User.hasGlobalRole(ctx.userId, 'admin'),
+    ...['user', 'groupManager', 'groupAdmin'].map(role =>
+      User.hasRoleOnObject(ctx.userId, role, groupId),
+    ),
+  ])
+
+  if (!roleChecks.some(Boolean)) return false
+
+  const config = await Config.getActive(groupId)
+  const { submitOptions } = config?.formData?.submission?.submissionPage ?? {}
+
+  if (!submitOptions) return true
+
+  return file
+    ? ['allowAuthorUploadOnly', 'allowAuthorUploadWithForm'].includes(
+        submitOptions,
+      )
+    : [
+        'allowAuthorUploadWithForm',
+        'allowAuthorSubmitForm',
+        'allowAuthorSubmitFormWithBlankEditor',
+      ].includes(submitOptions)
+})
+
 // Who can send a message to a channel?
 // Configured like so now:
 // if the channel is for 'all', then all associated with the manuscript can create messages
@@ -574,6 +606,7 @@ const permissions = {
     manuscriptsUserHasCurrentRoleIn: isAuthenticated,
     message: deny, // Never used
     messages: isAuthenticated,
+    newSubmissionSettings: isAuthenticated,
     orcidValidate: isAuthenticated,
     paginatedManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     paginatedUsers: or(userIsGroupAdmin, userIsAdmin),
@@ -618,7 +651,7 @@ const permissions = {
     createFile: isAuthenticated,
     createForm: or(userIsGroupAdmin, userIsAdmin),
     createCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    createManuscript: isAuthenticated,
+    createSubmission: userCanCreateSubmission,
     createMessage: userIsAllowedToChat,
     createNewTaskAlerts: or(userIsGm, userIsGroupAdmin, userIsAdmin), // Only used when test code is enabled
     createNewVersion: or(
@@ -628,12 +661,6 @@ const permissions = {
       userIsGroupAdmin,
       userIsAdmin,
     ),
-    createTeam: or(
-      userIsEditorOfAnyManuscript,
-      userIsGm,
-      userIsGroupAdmin,
-      userIsAdmin,
-    ), // TODO scrap this mutation in favour of an 'assignEditor' mutation
     deleteCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     deleteFile: isAuthenticated,
     deleteFiles: isAuthenticated,
@@ -767,7 +794,6 @@ const permissions = {
       userIsEditorOfTheManuscriptOfTheReview,
     ),
     updateUser: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    uploadFile: isAuthenticated,
     uploadFiles: isAuthenticated,
     updateTaskStatus: isAuthenticated,
     updateCMSPage: or(userIsGroupAdmin, userIsAdmin),
@@ -795,6 +821,7 @@ const permissions = {
     filesUploaded: isAuthenticated,
     reviewFormUpdated: isAuthenticated,
     manuscriptsImportStatus: isAuthenticated,
+    newSubmissionProgress: isAuthenticated,
     /**
      * This was not being triggered at all before the v3 upgrade.
      * It doesn't work because userIsAllowedToChat dependends on req, and req
@@ -826,7 +853,6 @@ const permissions = {
     userIsGroupAdmin,
     userIsAdmin,
   ),
-  FileNotInDb: allow,
   Form: allow,
   FormStructure: allow,
   FormElement: allow,

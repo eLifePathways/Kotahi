@@ -11,7 +11,8 @@ import {
   HAS_TOKEN,
 } from '../../../queries'
 
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import ConfigManagerForm from './ConfigManagerForm'
 
 const ConfigManagerPage = () => {
@@ -74,7 +75,7 @@ const ConfigManagerPage = () => {
     (!metadata && loadingMetadata) ||
     (!hasCoarTokenData && loadingHasCoarToken)
   )
-    return <Spinner />
+    return <Spinner fullpage />
 
   if (error) return <CommsErrorBanner error={error} />
 

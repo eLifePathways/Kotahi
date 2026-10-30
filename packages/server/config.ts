@@ -161,6 +161,8 @@ export default {
     semanticScholarImportsRecencyPeriodDays:
       env('SEMANTIC_SCHOLAR_IMPORTS_RECENCY_PERIOD_DAYS', { type: 'number' }) ||
       42,
+    maxUploadSizeMb:
+      env('MANUSCRIPT_MAX_UPLOAD_SIZE_MB', { type: 'number' }) || 50,
   },
   pagedjs: {
     clientId: env('SERVICE_PAGEDJS_CLIENT_ID'),
@@ -211,42 +213,52 @@ export default {
       {
         displayName: 'Senior Editor',
         role: 'seniorEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Handling Editor',
         role: 'handlingEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Editor',
         role: 'editor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Managing Editor',
         role: 'managingEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Reviewers',
         role: 'reviewer',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Author',
         role: 'author',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Collaborative Reviewers',
         role: 'collaborativeReviewer',
+        objectType: 'manuscript',
       },
       {
         displayName: 'User',
         role: 'user',
+        objectType: 'group',
       },
       {
         displayName: 'Group Manager',
         role: 'groupManager',
+        objectType: 'group',
       },
       {
         displayName: 'Group Admin',
         role: 'groupAdmin',
+        objectType: 'group',
       },
     ],
   },

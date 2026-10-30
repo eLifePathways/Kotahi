@@ -30,6 +30,7 @@ const fr = {
       notAssignedForThisVersion: "N'est pas évaluateur de la version actuelle",
     },
     common: {
+      Loading: 'Chargement',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'Ok',
@@ -734,7 +735,6 @@ const fr = {
       Submission: 'Soumission',
       SubmissionPage: {
         title: 'Titre',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Autoriser un auteur à télécharger un fichier de manuscrit uniquement',
         allowAuthorUploadWithForm:
@@ -1506,16 +1506,27 @@ const fr = {
 
     newSubmission: {
       'New submission': 'Nouvelle soumission',
-      'Submission created': 'Soumission créée',
-      'Upload Manuscript': 'Télécharger le manuscrit',
-      dragNDrop: 'Glisser-déposer ou cliquer pour sélectionner un fichier',
-      acceptedFiletypes:
-        'Types de fichiers acceptés : pdf, epub, zip, docx, latex',
-      converting:
-        "Votre manuscrit est en train d'être converti en une version directement éditable. Cela peut prendre quelques secondes.",
-      skipManuscriptUpload:
-        'Ignorer le téléversement du manuscrit et passer au formulaire de soumission',
       errorUploading: '{{error}}',
+      uploadTitle: 'Téléverser un manuscrit',
+      uploadDescription:
+        'Glissez-déposez ici le fichier de votre manuscrit, ou cliquez pour en choisir un.',
+      skipTitle: 'Commencer sans fichier',
+      skipDescription:
+        'Passez directement au formulaire de soumission sans téléverser de manuscrit.',
+      stepUploading: 'Téléversement de votre manuscrit...',
+      stepConverting: 'Conversion de votre document...',
+      stepCleaning: 'Préparation de votre document...',
+      stepInferringMetadata:
+        "Utilisation de l'IA pour remplir les informations de soumission...",
+      stepCreating: 'Création de votre soumission...',
+      redirecting: 'Soumission créée. Redirection...',
+      fileRequirements:
+        'Types de fichiers acceptés : {{fileTypes}}. Taille maximale : {{maxSizeMb}} Mo.',
+      errorUnsupportedFileType: "Ce type de fichier n'est pas pris en charge.",
+      errorFileTooLarge: 'Ce fichier dépasse {{maxSizeMb}} Mo.',
+      errorConversionFailed: "Votre document n'a pas pu être converti.",
+      errorCreationFailed: "Votre soumission n'a pas pu être créée.",
+      errorUnknown: "Une erreur s'est produite. Veuillez réessayer.",
     },
     formBuilder: {
       'New Form': 'Nouveau formulaire',

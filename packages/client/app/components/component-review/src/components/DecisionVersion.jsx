@@ -68,7 +68,6 @@ const DecisionVersion = ({
   sendChannelMessage,
   publishManuscript,
   updateTeam,
-  createTeam,
   updateReview,
   reviewForm,
   reviewers,
@@ -337,7 +336,6 @@ const DecisionVersion = ({
             <AssignEditorsReviewers
               allUsers={allUsers}
               AssignEditor={AssignEditor}
-              createTeam={createTeam}
               manuscript={version}
               teamLabels={teamLabels}
               updateTeam={updateTeam}

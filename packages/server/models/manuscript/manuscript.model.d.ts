@@ -2,6 +2,7 @@ import { BaseModel, File, Transaction } from '@coko/server'
 import Review from '../review/review.model'
 import User from '../user/user.model'
 import Team from '../team/team.model'
+import Channel from '../channel/channel.model'
 
 type Options = { trx?: Transaction }
 
@@ -56,6 +57,37 @@ declare class Manuscript extends BaseModel {
   getManuscriptAuthor(options?: Options): Promise<User | null>
   getManuscriptEditor(options?: Options): Promise<User | null>
   createNewVersion(): Promise<Manuscript>
+
+  static assignRole(
+    userId: string,
+    manuscriptId: string,
+    role: string,
+    options?: Options & {
+      status?: string
+      isShared?: boolean | null
+      throwIfAssigned?: boolean
+    },
+  ): Promise<Team>
+
+  static removeRole(
+    userId: string,
+    manuscriptId: string,
+    role: string,
+    options?: Options & { throwIfNotAssigned?: boolean },
+  ): Promise<Team>
+
+  static createTeams(manuscriptId: string, options?: Options): Promise<Team[]>
+
+  static createChannels(
+    manuscriptId: string,
+    groupId: string,
+    options?: Options,
+  ): Promise<Channel[]>
+
+  static createNewManuscript(
+    data: Partial<Manuscript>,
+    options?: Options & { assignSubmitter?: boolean },
+  ): Promise<Manuscript>
   getManuscriptVersions(): Promise<Manuscript[]>
 
   static getReviews(

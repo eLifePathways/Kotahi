@@ -2,7 +2,7 @@ import { type ComponentProps, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-import { Spinner } from '../../../components/shared/Spinner'
+import Spinner from '../../shared/Spinner'
 import CommsErrorBanner from '../../../components/shared/CommsErrorBanner'
 import Page from '../../shared/Page'
 import BackLink from '../../shared/BackLink'
@@ -30,7 +30,7 @@ const DashboardManuscriptsTable = (
         label={t('dashboardPage.backToDashboard')}
       />
 
-      {loading && <Spinner />}
+      {loading && <Spinner fullpage />}
       {error && <CommsErrorBanner error={error} />}
       {!loading && !error && <ManuscriptsTable {...tableProps} />}
     </Page>

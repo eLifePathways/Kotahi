@@ -6,7 +6,8 @@ import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 
 import Production from './Production'
 import { ConfigContext } from '../../../config/src'
-import { Spinner, CommsErrorBanner } from '../../../shared'
+import { CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import ModalContext from '../../../asset-manager/src/ui/Modal/ModalContext'
 import DownloadPdfComponent from './DownloadPdf'
 import DownloadJatsComponent from './DownloadJats'
@@ -281,7 +282,7 @@ const ProductionPage = () => {
     [refetch, groupId],
   )
 
-  if (loading && !data) return <Spinner />
+  if (loading && !data) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   const { articleTemplate, manuscript: unparsedManuscript } = data

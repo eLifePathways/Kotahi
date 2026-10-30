@@ -114,6 +114,7 @@ describe('buildQueryForManuscriptSearchFilterAndOrder: placeholder/param safety'
           },
           {
             name: 'submission.topics',
+            component: 'CheckboxGroup',
             title: 'Topics',
             options: [
               { value: 'a', label: 'A' },
@@ -232,6 +233,7 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
         children: [
           {
             name: 'submission.objectType',
+            component: 'Select',
             title: 'Type',
             options: [
               { value: 'ds', label: 'Dataset' },
@@ -281,6 +283,7 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
         children: [
           {
             name: 'submission.topics',
+            component: 'CheckboxGroup',
             title: 'Topics',
             options: [
               { value: 'a', label: 'Alpha' },

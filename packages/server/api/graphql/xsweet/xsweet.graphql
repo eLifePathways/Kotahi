@@ -1,8 +1,0 @@
-extend type Query {
-  docxToHtml(key: String!): docxToHtmlType
-}
-
-type docxToHtmlType {
-  html: String!
-  error: String
-}

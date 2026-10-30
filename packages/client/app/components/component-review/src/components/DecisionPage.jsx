@@ -15,7 +15,8 @@ import {
 import { set, debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
-import { AccessErrorPage, CommsErrorBanner, Spinner } from '../../../shared'
+import { AccessErrorPage, CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import DecisionVersions from './DecisionVersions'
 import { roles } from '../../../../globals'
 import { waxAiToolSystem } from '../../../component-production/helpers'
@@ -49,7 +50,6 @@ import {
   DELETE_PENDING_COMMENT,
   UPDATE_PENDING_COMMENT,
   UPDATE_MANUSCRIPT,
-  CREATE_TEAM,
   UPDATE_TEAM_MEMBER,
   UPDATE_COLLABORATIVE_TEAM_MEMBER,
   UPDATE_TEAM,
@@ -58,8 +58,6 @@ import {
   CHAT_GPT,
   REVIEW_FORM_UPDATED,
   NEW_REVIEW_FRAGMENT,
-  NEW_TEAM_FRAGMENT,
-  CREATED_TEAM_FRAGMENT,
   UPDATE_ADA,
 } from '../../../../queries'
 
@@ -211,22 +209,6 @@ const DecisionPage = () => {
   const [makeDecision] = useMutation(MAKE_DECISION)
   const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
   const [updateTeam] = useMutation(UPDATE_TEAM)
-  const [createTeam] = useMutation(CREATE_TEAM, {
-    update(cache, { data: { createTeam: newTeam } }) {
-      cache.modify({
-        id: cache.identify({ __typename: 'Manuscript', id: newTeam.objectId }),
-        fields: {
-          teams: existingRefs => {
-            const ref = cache.writeFragment({
-              data: newTeam,
-              fragment: CREATED_TEAM_FRAGMENT,
-            })
-            return [...existingRefs, ref]
-          },
-        },
-      })
-    },
-  })
   const [updateTeamMember] = useMutation(UPDATE_TEAM_MEMBER)
 
   const [updateCollaborativeTeamMember] = useMutation(
@@ -304,26 +286,7 @@ const DecisionPage = () => {
     UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER,
   )
 
-  const [addReviewer] = useMutation(ADD_REVIEWER, {
-    update: (cache, { data: { addReviewer: revisedReviewersObject } }) => {
-      cache.modify({
-        id: cache.identify({
-          __typename: 'Manuscript',
-          id: revisedReviewersObject.objectId,
-        }),
-        fields: {
-          teams(existingTeamRefs = []) {
-            const newTeamRef = cache.writeFragment({
-              data: revisedReviewersObject,
-              fragment: NEW_TEAM_FRAGMENT,
-            })
-
-            return [...existingTeamRefs, newTeamRef]
-          },
-        },
-      })
-    },
-  })
+  const [addReviewer] = useMutation(ADD_REVIEWER)
 
   const [removeAuthor] = useMutation(REMOVE_AUTHOR)
   const [removeReviewer] = useMutation(REMOVE_REVIEWER)
@@ -458,7 +421,7 @@ const DecisionPage = () => {
     })
   }
 
-  if ((loading && !data) || !currentUser) return <Spinner />
+  if ((loading && !data) || !currentUser) return <Spinner fullpage />
 
   if (error) {
     if (
@@ -593,10 +556,6 @@ const DecisionPage = () => {
     return response
   }
 
-  const handleCreateTeam = async createTeamVariables => {
-    return await createTeam(createTeamVariables)
-  }
-
   const sendChannelMessage = async messageData => {
     const response = await doSendChannelMessage({
       variables: messageData,
@@ -667,7 +626,6 @@ const DecisionPage = () => {
       coarMessages={coarNotificationsForManuscript}
       createFile={createFile}
       createTaskEmailNotificationLog={createTaskEmailNotificationLog}
-      createTeam={handleCreateTeam}
       currentUser={currentUser}
       decisionForm={decisionForm}
       deleteFile={deleteFile}

@@ -5,7 +5,8 @@ import { useQuery } from '@apollo/client/react'
 import i18next from 'i18next'
 import Report from './Report'
 import { getStartOfDay, getEndOfDay } from '../../../shared/dateUtils'
-import { Spinner, CommsErrorBanner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import { ConfigContext } from '../../config/src'
 import { GET_REPORT_DATA } from '../../../queries'
 
@@ -53,7 +54,7 @@ const ReportPage = () => {
     fetchPolicy: 'network-only',
   })
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   return (

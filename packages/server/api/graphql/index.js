@@ -39,7 +39,6 @@ const threadedDiscussionResolvers = require('./threadedDiscussion/threadedDiscus
 const tokenResolvers = require('./token/token.resolvers')
 const userResolvers = require('./user/user.resolvers')
 const userNotificationResolvers = require('./userNotification/userNotification.resolvers')
-const xsweetResolvers = require('./xsweet/xsweet.resolvers')
 
 const typeDefFilePaths = [
   'anyStyle/anyStyle.graphql',
@@ -81,7 +80,6 @@ const typeDefFilePaths = [
   'token/token.graphql',
   'user/user.graphql',
   'userNotification/userNotification.graphql',
-  'xsweet/xsweet.graphql',
 ]
 
 const createTotalTypeDefs = paths => {
@@ -131,7 +129,6 @@ const resolvers = merge(
   tokenResolvers,
   userResolvers,
   userNotificationResolvers,
-  xsweetResolvers,
 )
 
 module.exports = {

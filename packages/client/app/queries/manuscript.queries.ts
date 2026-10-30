@@ -234,56 +234,6 @@ export const GET_MANUSCRIPTS_DATA = gql`
   }
 `
 
-export const CREATE_MANUSCRIPT = gql`
-  mutation CreateManuscript($input: ManuscriptInput) {
-    createManuscript(input: $input) {
-      id
-      created
-      manuscriptVersions {
-        id
-      }
-      teams {
-        id
-        role
-        displayName
-        objectId
-        objectType
-        members {
-          id
-          user {
-            id
-            username
-          }
-          status
-        }
-      }
-      status
-      reviews {
-        open
-        created
-        user {
-          id
-          username
-        }
-      }
-      meta {
-        source
-        manuscriptId
-        history {
-          type
-          date
-        }
-      }
-    }
-  }
-`
-
-export const NEW_MANUSCRIPT_FRAGMENT = gql`
-  fragment NewManuscript on Manuscript {
-    id
-  }
-`
-
 export const NEW_MANUSCRIPT_VERSION_FRAGMENT = gql`
   fragment NewManuscriptVersion on Manuscript {
     id
@@ -1321,5 +1271,32 @@ export const SUBMIT_AUTHOR_PROOFING_FEEDBACK = gql`
       id
       ${productionFragmentFields}
     }
+  }
+`
+
+export const NEW_SUBMISSION_SETTINGS = gql`
+  query NewSubmissionSettings {
+    newSubmissionSettings {
+      maxUploadSizeMb
+      acceptedFileTypes
+    }
+  }
+`
+
+export const CREATE_SUBMISSION = gql`
+  mutation CreateSubmission($groupId: ID!, $file: Upload, $operationId: ID) {
+    createSubmission(
+      groupId: $groupId
+      file: $file
+      operationId: $operationId
+    ) {
+      id
+    }
+  }
+`
+
+export const NEW_SUBMISSION_PROGRESS = gql`
+  subscription NewSubmissionProgress($operationId: ID!) {
+    newSubmissionProgress(operationId: $operationId)
   }
 `

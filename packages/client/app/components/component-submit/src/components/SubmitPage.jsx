@@ -6,7 +6,8 @@ import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import Submit from './Submit'
-import { AccessErrorPage, Spinner } from '../../../shared'
+import { AccessErrorPage } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import gatherManuscriptVersions from '../../../../shared/manuscript_versions'
 import { validateManuscriptSubmission } from '../../../../shared/manuscriptUtils'
 import CommsErrorBanner from '../../../shared/CommsErrorBanner'
@@ -160,7 +161,7 @@ const SubmitPage = () => {
 
   const client = useApolloClient()
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
 
   if (error) {
     if (

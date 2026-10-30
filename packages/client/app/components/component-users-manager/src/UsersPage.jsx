@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client/react'
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import {
   extractSortData,
   URI_PAGENUM_PARAM,
@@ -49,7 +50,7 @@ const UsersPage = () => {
   const [setGroupRole] = useMutation(SET_GROUP_ROLE)
   const [setGlobalRole] = useMutation(SET_GLOBAL_ROLE)
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   const { users, totalCount } = data.paginatedUsers

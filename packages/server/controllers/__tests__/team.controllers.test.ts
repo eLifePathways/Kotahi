@@ -20,7 +20,7 @@ import User from '../../models/user/user.model'
 import Manuscript from '../../models/manuscript/manuscript.model'
 import Team from '../../models/team/team.model'
 import Channel from '../../models/channel/channel.model'
-import { createTeam, updateTeam } from '../team.controllers'
+import { updateTeam } from '../team.controllers'
 
 const createManuscriptChannels = async (
   manuscriptId: string,
@@ -47,66 +47,6 @@ describe('team.controllers events', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-  })
-
-  describe('createTeam', () => {
-    it('emits addedAsEditor for each editor member added to a new team', async () => {
-      const group = await Group.insert({})
-      const manuscript = await Manuscript.insert({
-        groupId: group.id,
-        shortId: 111,
-      })
-
-      await createManuscriptChannels(manuscript.id, group.id)
-
-      const editorUser = await User.insert({})
-
-      await createTeam(
-        {
-          role: 'editor',
-          displayName: 'Editor',
-          objectId: manuscript.id,
-          objectType: 'manuscript',
-          members: [{ user: { id: editorUser.id } }],
-        },
-        group.id,
-      )
-
-      expect(jobManager.sendToQueue).toHaveBeenCalledTimes(1)
-
-      expect(jobManager.sendToQueue).toHaveBeenCalledWith('event-queue', {
-        eventType: 'addedAsEditor',
-        userId: editorUser.id,
-        groupId: group.id,
-        manuscriptId: manuscript.id,
-        shortId: manuscript.shortId,
-      })
-    })
-
-    it('does not emit an event for a non-editorial role', async () => {
-      const group = await Group.insert({})
-      const manuscript = await Manuscript.insert({
-        groupId: group.id,
-        shortId: 112,
-      })
-
-      await createManuscriptChannels(manuscript.id, group.id)
-
-      const authorUser = await User.insert({})
-
-      await createTeam(
-        {
-          role: 'author',
-          displayName: 'Author',
-          objectId: manuscript.id,
-          objectType: 'manuscript',
-          members: [{ user: { id: authorUser.id } }],
-        },
-        group.id,
-      )
-
-      expect(jobManager.sendToQueue).not.toHaveBeenCalled()
-    })
   })
 
   describe('updateTeam', () => {

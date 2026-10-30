@@ -6,7 +6,8 @@ import { useQuery, useMutation } from '@apollo/client/react'
 import { cloneDeep, omitBy } from 'lodash'
 import { ConfigContext } from '../../../config/src'
 import FormBuilderLayout from './FormBuilderLayout'
-import { Spinner, CommsErrorBanner } from '../../../shared'
+import { CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import pruneEmpty from '../../../../shared/pruneEmpty'
 import {
   GET_FORM,
@@ -163,7 +164,7 @@ const FormBuilderPage = ({ category }) => {
     })
   }, [data])
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   return (

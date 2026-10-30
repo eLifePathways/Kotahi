@@ -44,6 +44,17 @@ declare class User extends BaseModel {
   static ownersWithUsername(object: {
     owners: string[]
   }): Promise<Pick<User, 'id' | 'username'>[]>
+  static hasGlobalRole(
+    userId: string,
+    role: string,
+    options?: Options,
+  ): Promise<boolean>
+  static hasRoleOnObject(
+    userId: string,
+    role: string,
+    objectId: string,
+    options?: Options,
+  ): Promise<boolean>
 }
 
 export = User

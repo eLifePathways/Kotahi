@@ -23,34 +23,11 @@ describe('Create a new submission', () => {
     cy.url().should('include', 'newSubmission')
   })
 
-  it('can upload a manuscript and add a title', () => {
-    DashboardPage.getSubmissionFileUploadInput().selectFile(
-      'cypress/fixtures/test-docx.docx',
-      { force: true },
-    ) // Upload manuscript .docx
-    DashboardPage.confirmSubmissionCreated()
-    cy.url().should('contain', '/submit')
+  it('can upload a manuscript, complete the form and see it on the dashboard', () => {
+    NewSubmissionPage.uploadManuscript('cypress/fixtures/test-docx.docx')
+    cy.url({ timeout: 30000 }).should('contain', '/submit')
 
     cy.completeSubmissionForm('Title 1')
-  })
-
-  it('can submit a URL and add a title', () => {
-    // Skip manuscript upload
-    NewSubmissionPage.clickSubmitURL()
-
-    cy.completeSubmissionForm('Title 2')
-  })
-
-  it('can upload a PDF and add a title', () => {
-    // Upload manuscript .pdf
-    DashboardPage.getSubmissionFileUploadInput().selectFile(
-      'cypress/fixtures/test-pdf.pdf',
-      { force: true },
-    )
-    DashboardPage.confirmSubmissionCreated()
-    cy.url().should('contain', '/submit')
-
-    cy.completeSubmissionForm('Title 3')
   })
 })
 

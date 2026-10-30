@@ -37,7 +37,6 @@
     "@rjsf/core": "4.2.3",
     "@uiw/react-codemirror": "^4.21.20",
     "antd": "^6.3.7",
-    "cheerio": "1.0.0-rc.10",
     "color": "^3.0.0",
     "dayjs": "^1.11.21",
     "file-type": "^20.4.1",

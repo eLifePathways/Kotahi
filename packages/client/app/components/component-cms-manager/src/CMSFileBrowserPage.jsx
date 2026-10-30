@@ -15,7 +15,8 @@ import 'split-pane-react/esm/themes/default.css'
 import { serverUrl, th } from '@coko/client'
 
 import Browser from './browser/FileBrowser'
-import { CommsErrorBanner, SectionContent, Spinner } from '../../shared'
+import { CommsErrorBanner, SectionContent } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import UploadComponent from '../../component-production/src/components/uploadManager/UploadComponent'
 import { EditPageContainer } from './style'
 import { ConfigContext } from '../../config/src'
@@ -275,7 +276,7 @@ const CMSFileBrowserPage = () => {
     }
   }
 
-  if (loadingFolders || loading || loadingMetadata) return <Spinner />
+  if (loadingFolders || loading || loadingMetadata) return <Spinner fullpage />
 
   if (error) return <CommsErrorBanner error={error} />
 

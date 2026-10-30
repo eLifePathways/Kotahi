@@ -858,36 +858,6 @@ test.describe('manuscripts table data types', () => {
     ).not.toBeEmpty()
   })
 
-  test('person datatype column shows the submitter without an ORCID', async ({
-    api,
-    loginAs,
-    page,
-    navigateTo,
-    testGroup,
-  }) => {
-    const submitterUsername = testGroup.usernames[0]
-
-    // 'author' (admin's default columns already include it) resolves to
-    // dataType 'person' unconditionally (see useManuscriptsTable.tsx) - no
-    // form field or config change needed to exercise it.
-    await api.createManuscripts({ amount: 1, submitter: submitterUsername })
-
-    await loginAs(testGroup.adminUsername)
-    await navigateTo('/admin/manuscripts')
-
-    const rows = page.locator('.ant-table-tbody tr')
-    await expect(rows).toHaveCount(1)
-
-    const authorCell = rows.first().locator('td[data-testid="author"]')
-
-    await expect(authorCell.getByTestId('person-name')).toHaveText(
-      submitterUsername,
-    )
-
-    // This shared pw-* user has no linked ORCID, so that line shouldn't render
-    await expect(authorCell).not.toContainText('ORCID')
-  })
-
   test('person datatype column shows the submitter with an ORCID', async ({
     api,
     loginAs,

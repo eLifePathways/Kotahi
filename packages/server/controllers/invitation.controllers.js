@@ -1,9 +1,10 @@
+const { useTransaction } = require('@coko/server')
+
 const {
   BlacklistEmail,
   Invitation,
   Manuscript,
   Team,
-  TeamMember,
   User,
 } = require('../models')
 
@@ -22,58 +23,28 @@ const addEmailToBlacklist = async (email, groupId) => {
 }
 
 const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
-  const existingInvite = await Invitation.query().findById(invitationId)
+  return useTransaction(async trx => {
+    const existingInvite = await Invitation.query(trx).findById(invitationId)
 
-  if (!existingInvite || existingInvite.responseDate) {
-    throw new Error('Invalid Invitation ID')
-  }
-
-  if (existingInvite.userId && existingInvite.userId !== userId) {
-    throw new Error('Invalid User ID')
-  }
-
-  await addUserToManuscriptChatChannel({
-    manuscriptId,
-    userId,
-  })
-
-  const existingTeam = await Manuscript.relatedQuery('teams')
-    .for(manuscriptId)
-    .where('role', 'author')
-    .first()
-
-  // Add the author to the existing team of authors
-  if (existingTeam) {
-    const authorExists =
-      (await existingTeam
-        .$relatedQuery('users')
-        .where('users.id', userId)
-        .resultSize()) > 0
-
-    if (!authorExists) {
-      await TeamMember.query().insert({
-        teamId: existingTeam.id,
-        userId,
-      })
+    if (!existingInvite || existingInvite.responseDate) {
+      throw new Error('Invalid Invitation ID')
     }
 
-    return existingTeam.$query().withGraphFetched('members.[user]')
-  }
+    if (existingInvite.userId && existingInvite.userId !== userId) {
+      throw new Error('Invalid User ID')
+    }
 
-  // Create a new team of authors if it doesn't exist
-  const newTeam = await Team.query().insert({
-    objectId: manuscriptId,
-    objectType: 'manuscript',
-    role: 'author',
-    displayName: 'Author',
+    await addUserToManuscriptChatChannel({ manuscriptId, userId }, { trx })
+
+    const authorTeam = await Manuscript.assignRole(
+      userId,
+      manuscriptId,
+      'author',
+      { trx },
+    )
+
+    return Team.findById(authorTeam.id, { related: 'members.[user]', trx })
   })
-
-  await TeamMember.query().insert({
-    userId,
-    teamId: newTeam.id,
-  })
-
-  return newTeam
 }
 
 const getBlacklistInformation = async (email, groupId) => {

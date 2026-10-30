@@ -8,12 +8,31 @@ import {
 } from '@coko/server'
 
 import Manuscript from '../manuscript.model'
+import Group from '../../group/group.model'
 import Team from '../../team/team.model'
+import TeamMember from '../../teamMember/teamMember.model'
 import User from '../../user/user.model'
 
 import oldContent from './content'
 
 const MIGRATION_BEFORE_SEARCH_CHANGES = '1783674872-remove-menu-pinned.ts'
+
+const MISSING_TEAMS_MIGRATION = '1793088854-create-missing-manuscript-teams.ts'
+const MIGRATION_BEFORE_MISSING_TEAMS =
+  '1792576418-remap-version-image-file-ids.ts'
+
+const MANUSCRIPT_TEAMS = [
+  ['author', 'Author'],
+  ['reviewer', 'Reviewers'],
+  ['collaborativeReviewer', 'Collaborative Reviewers'],
+  ['editor', 'Editor'],
+  ['seniorEditor', 'Senior Editor'],
+  ['handlingEditor', 'Handling Editor'],
+  ['managingEditor', 'Managing Editor'],
+]
+
+const teamsOf = async (objectId: string): Promise<Team[]> =>
+  (await Team.find({ objectId })).result
 
 const matchesSearch = async (manuscriptId, term): Promise<boolean> => {
   const { rows } = await db.raw(
@@ -159,5 +178,100 @@ describe('Manuscript Migrations', () => {
     // After rolling back: both match again.
     expect(await matchesSearch(manuscript.id, 'wombat')).toBe(true)
     expect(await matchesSearch(manuscript.id, 'quokkaville')).toBe(true)
+  })
+
+  describe('create missing manuscript teams', () => {
+    beforeEach(async () => {
+      await migrationManager.migrate({ to: MIGRATION_BEFORE_MISSING_TEAMS })
+    })
+
+    it('creates every manuscript team for manuscripts that have none', async () => {
+      const manuscript = await Manuscript.insert({})
+
+      await migrationManager.migrate({ to: MISSING_TEAMS_MIGRATION })
+
+      const teams = await teamsOf(manuscript.id)
+
+      expect(teams.map(team => [team.role, team.displayName]).sort()).toEqual(
+        [...MANUSCRIPT_TEAMS].sort(),
+      )
+
+      teams.forEach(team => {
+        expect(team.objectType).toBe('manuscript')
+        expect(team.global).toBe(false)
+      })
+    })
+
+    it('only adds the missing teams, keeping existing teams and their members', async () => {
+      const manuscript = await Manuscript.insert({})
+      const user = await User.insert({})
+
+      const authorTeam = await Team.insert({
+        role: 'author',
+        displayName: 'Author',
+        objectId: manuscript.id,
+        objectType: 'manuscript',
+      })
+
+      await Team.addMember(authorTeam.id, user.id)
+
+      await migrationManager.migrate({ to: MISSING_TEAMS_MIGRATION })
+
+      const teams = await teamsOf(manuscript.id)
+      const authorTeams = teams.filter(team => team.role === 'author')
+      const { result: members } = await TeamMember.find({
+        teamId: authorTeam.id,
+      })
+
+      expect(teams).toHaveLength(7)
+      expect(authorTeams.map(team => team.id)).toEqual([authorTeam.id])
+      expect(members.map(member => member.userId)).toEqual([user.id])
+    })
+
+    it('creates the teams for every manuscript', async () => {
+      const manuscripts = await Promise.all([
+        Manuscript.insert({}),
+        Manuscript.insert({}),
+      ])
+
+      await migrationManager.migrate({ to: MISSING_TEAMS_MIGRATION })
+
+      const counts = await Promise.all(
+        manuscripts.map(
+          async manuscript => (await teamsOf(manuscript.id)).length,
+        ),
+      )
+
+      expect(counts).toEqual([7, 7])
+    })
+
+    it('leaves group and global teams alone', async () => {
+      const group = await Group.insert({})
+
+      await Team.insert({
+        role: 'user',
+        displayName: 'User',
+        objectId: group.id,
+        objectType: 'group',
+      })
+
+      const { result: globalTeamsBefore } = await Team.find({ global: true })
+
+      await migrationManager.migrate({ to: MISSING_TEAMS_MIGRATION })
+
+      const { result: globalTeamsAfter } = await Team.find({ global: true })
+
+      expect((await teamsOf(group.id)).map(team => team.role)).toEqual(['user'])
+      expect(globalTeamsAfter).toEqual(globalTeamsBefore)
+    })
+
+    it('does nothing when rolled back', async () => {
+      const manuscript = await Manuscript.insert({})
+      await migrationManager.migrate({ to: MISSING_TEAMS_MIGRATION })
+
+      await migrationManager.rollback({ step: 1 })
+
+      expect(await teamsOf(manuscript.id)).toHaveLength(7)
+    })
   })
 })

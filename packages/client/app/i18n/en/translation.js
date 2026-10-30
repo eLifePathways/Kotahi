@@ -30,6 +30,7 @@ const en = {
       notAssignedForThisVersion: 'Not a reviewer of the current version',
     },
     common: {
+      Loading: 'Loading',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -713,7 +714,6 @@ const en = {
       Submission: 'Submission',
       SubmissionPage: {
         title: 'Title',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Allow an author to upload a manuscript file only',
         allowAuthorUploadWithForm:
@@ -1455,15 +1455,26 @@ const en = {
 
     newSubmission: {
       'New submission': 'New submission',
-      'Submission created': 'Submission created',
-      'Upload Manuscript': 'Upload Manuscript',
-      dragNDrop: 'Drag and drop or click to select file',
-      acceptedFiletypes: 'Accepted file types: pdf, epub, zip, docx, latex',
-      converting:
-        'Your manuscript is being converted into a directly editable version. This might take a few seconds.',
-      skipManuscriptUpload:
-        'Skip manuscript upload, and proceed to the submission form',
       errorUploading: '{{error}}',
+      uploadTitle: 'Upload a manuscript',
+      uploadDescription:
+        'Drag and drop your manuscript file here, or click to choose one.',
+      skipTitle: 'Start without a file',
+      skipDescription:
+        'Go straight to the submission form without uploading a manuscript.',
+      stepUploading: 'Uploading your manuscript...',
+      stepConverting: 'Converting your document...',
+      stepCleaning: 'Preparing your document...',
+      stepInferringMetadata: 'Using AI to fill in the submission details...',
+      stepCreating: 'Creating your submission...',
+      redirecting: 'Submission created. Redirecting...',
+      fileRequirements:
+        'Accepted file types: {{fileTypes}}. Maximum size: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'This file type is not supported.',
+      errorFileTooLarge: 'This file is larger than {{maxSizeMb}} MB.',
+      errorConversionFailed: 'Your document could not be converted.',
+      errorCreationFailed: 'Your submission could not be created.',
+      errorUnknown: 'Something went wrong. Please try again.',
     },
     formBuilder: {
       'New Form': 'New Form',

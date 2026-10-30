@@ -191,7 +191,7 @@ const addToGroupTeam = async (
     (await Team.findOne({ objectId: group, role })) ||
     (await Team.insert({
       objectId: group,
-      objectType: 'Group',
+      objectType: 'group',
       role,
       displayName,
     }))

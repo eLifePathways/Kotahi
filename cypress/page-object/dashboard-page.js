@@ -10,8 +10,6 @@
 const BUTTON = 'button'
 const SUBMISSION_TITLE = '[data-testid="submission.$title"] > div'
 const SUBMISSION_BUTTON = 'New submission'
-const SUBMISSION_FILE_UPLOAD_INPUT = 'input[type=file]'
-const SUBMISSION_CREATED = 'Submission created'
 
 /* My Submissions */
 const SUBMISSION_ACTION_LINK = 'submission-action-link'
@@ -44,12 +42,6 @@ export const DashboardPage = {
   },
   getSubmitButton() {
     return cy.getByDataTestId('menu-nav').contains(BUTTON, SUBMISSION_BUTTON)
-  },
-  getSubmissionFileUploadInput() {
-    return cy.get(SUBMISSION_FILE_UPLOAD_INPUT)
-  },
-  confirmSubmissionCreated() {
-    cy.contains(SUBMISSION_CREATED, { timeout: 10000 }).should('exist')
   },
   clickSubmitButton() {
     this.getSubmitButton().click()

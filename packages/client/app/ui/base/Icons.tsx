@@ -21,6 +21,7 @@ export {
   ReadOutlined as Book,
   TableOutlined as Table,
   UnorderedListOutlined as Tasks,
+  UploadOutlined as Upload,
   UserOutlined as User,
   VerticalAlignTopOutlined as ExpandMenu,
 } from '@ant-design/icons'

@@ -30,6 +30,7 @@ const esLa = {
       notAssignedForThisVersion: 'No es revisor de la versión actual',
     },
     common: {
+      Loading: 'Cargando',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -724,7 +725,6 @@ const esLa = {
       Submission: 'Envío',
       SubmissionPage: {
         title: 'Título',
-        description: 'Descripción',
         allowAuthorUploadOnly:
           'Permitir a un autor subir solo un archivo de manuscrito',
         allowAuthorUploadWithForm:
@@ -1486,16 +1486,27 @@ const esLa = {
     },
     newSubmission: {
       'New submission': 'Nueva presentación',
-      'Submission created': 'Presentación creada',
-      'Upload Manuscript': 'Subir Manuscrito',
-      dragNDrop: 'Arrastra y suelta o haz clic para seleccionar un archivo',
-      acceptedFiletypes:
-        'Tipos de archivo aceptados: pdf, epub, zip, docx, latex',
-      converting:
-        'Tu manuscrito se está convirtiendo en una versión directamente editable. Esto podría tomar unos segundos.',
-      skipManuscriptUpload:
-        'Omitir la carga del manuscrito y continuar al formulario de envío',
       errorUploading: '{{error}}',
+      uploadTitle: 'Subir un manuscrito',
+      uploadDescription:
+        'Arrastra y suelta aquí el archivo de tu manuscrito, o haz clic para elegir uno.',
+      skipTitle: 'Comenzar sin archivo',
+      skipDescription:
+        'Ve directamente al formulario de envío sin subir un manuscrito.',
+      stepUploading: 'Subiendo tu manuscrito...',
+      stepConverting: 'Convirtiendo tu documento...',
+      stepCleaning: 'Preparando tu documento...',
+      stepInferringMetadata:
+        'Usando IA para completar los detalles del envío...',
+      stepCreating: 'Creando tu envío...',
+      redirecting: 'Envío creado. Redirigiendo...',
+      fileRequirements:
+        'Tipos de archivo aceptados: {{fileTypes}}. Tamaño máximo: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'Este tipo de archivo no es compatible.',
+      errorFileTooLarge: 'Este archivo supera los {{maxSizeMb}} MB.',
+      errorConversionFailed: 'No se pudo convertir tu documento.',
+      errorCreationFailed: 'No se pudo crear tu envío.',
+      errorUnknown: 'Algo salió mal. Inténtalo de nuevo.',
     },
     formBuilder: {
       'New Form': 'Nuevo Formulario',
