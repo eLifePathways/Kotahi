@@ -57,6 +57,7 @@ describe('Form builder', () => {
     cy.get('[class*="react-select__option"]')
       .contains('Rich text')
       .click({ force: true })
+    FormsPage.getTitleField().type('New field')
     FormsPage.getNameField().click().type('newField')
     cy.contains('Save').click()
 
@@ -79,6 +80,7 @@ describe('Form builder', () => {
     cy.get('[class*="react-select__option"]')
       .contains('Rich text')
       .click({ force: true })
+    FormsPage.getTitleField().type('New field')
     FormsPage.getNameField().click().type('newField')
     cy.contains('Save').click()
   })
