@@ -4,7 +4,9 @@ import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import styled, { ThemeContext } from 'styled-components'
 import { Check, AlertCircle } from 'react-feather'
-import { th, grid, rotate360 } from '@coko/client'
+import { th, grid } from '@coko/client'
+
+import Spinner from '../../ui/shared/Spinner'
 
 const BaseButton = styled.button`
   border: 2px solid ${th('color.brand1.base')};
@@ -49,23 +51,9 @@ const LabelOnlySpan = styled.span.attrs({
   padding: 0 ${grid(2)};
 `
 
-const Spinner = styled.div`
-  display: inline-block;
-  padding-left: ${grid(2)};
+const StatusSpinner = styled(Spinner)`
+  margin-left: ${grid(2)};
   vertical-align: -2px;
-
-  &::after {
-    animation: ${rotate360} 1s linear infinite;
-    border: 2.5px solid ${props => props.fgColor};
-    border-color: ${props => props.fgColor} transparent
-      ${props => props.fgColor} transparent;
-    border-radius: 50%;
-    box-sizing: border-box;
-    content: '';
-    display: block;
-    height: ${grid(4)};
-    width: ${grid(4)};
-  }
 `
 
 const IconContainer = styled.div`
@@ -96,7 +84,7 @@ const SecondaryActionButton = ({
   let statusIndicator = null
 
   if (status === 'pending') {
-    statusIndicator = <Spinner fgColor={fgColor} />
+    statusIndicator = <StatusSpinner size={4} />
   }
 
   if (status === 'success') {

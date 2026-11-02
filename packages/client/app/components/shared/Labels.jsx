@@ -7,7 +7,7 @@ export const ControlLabel = styled.div`
 `
 
 export const CompactDetailLabel = styled.div`
-  color: ${props => th(props.isWarning ? 'colorError' : 'colorBorder')};
+  color: ${props => th(props.isWarning ? 'colorError' : 'color.gray50')};
   font-size: ${th('fontSizeBaseSmall')};
   line-height: ${th('fontSizeBaseSmall')};
 `

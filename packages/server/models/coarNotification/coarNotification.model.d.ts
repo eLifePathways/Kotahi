@@ -1,10 +1,44 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
+
+import Group from '../group/group.model'
+import Manuscript from '../manuscript/manuscript.model'
+
+type Options = { trx?: Transaction }
+
+type Filter = { field: string; value: string }
 
 declare class CoarNotification extends BaseModel {
   payload: Record<string, unknown>
-  manuscriptId: string
-  groupId: string
+  manuscriptId: string | null
+  groupId: string | null
   status: boolean
+  group?: Group | null
+  manuscript?: Manuscript | null
+
+  static getNotificationsForManuscript(
+    manuscriptId: string,
+    options?: Options,
+  ): Promise<CoarNotification[]>
+
+  static getPaginatedNotificationsAndManuscriptsByGroupOrNone(
+    groupId: string,
+    filters: Filter[] | null | undefined,
+    offset: number | null | undefined,
+    limit: number | null | undefined,
+    options?: Options,
+  ): Promise<{ messages: CoarNotification[]; totalCount: number }>
+
+  static getOfferNotificationForManuscript(
+    manuscriptId: string,
+    options?: Options,
+  ): Promise<CoarNotification | undefined>
+
+  static getOfferNotificationForGroupByIdOrDoi(
+    groupId: string,
+    notificationId: string | null | undefined,
+    doi: string | null | undefined,
+    options?: Options,
+  ): Promise<CoarNotification | undefined>
 }
 
 export = CoarNotification

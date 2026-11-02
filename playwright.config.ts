@@ -8,6 +8,7 @@ export default defineConfig<{ apiUrl: string }>({
   fullyParallel: true,
   retries: 1,
   reporter: 'list',
+  globalSetup: './playwright/utils/globalSetup.ts',
   globalTeardown: './playwright/utils/globalTeardown.ts',
 
   use: {

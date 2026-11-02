@@ -15,10 +15,6 @@ const Button = styled.button`
   padding: 0;
   width: 24px;
 
-  &:focus {
-    outline: 0;
-  }
-
   svg {
     height: 24px;
     width: 24px;

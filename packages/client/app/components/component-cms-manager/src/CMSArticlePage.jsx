@@ -3,7 +3,8 @@ import { useQuery, useMutation } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import Article from './article/article'
 import { ConfigContext } from '../../config/src'
-import { Spinner, CommsErrorBanner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 
 import {
   ARTICLE_TEMPLATE,
@@ -46,7 +47,7 @@ const CMSArticlePage = () => {
     setSubmitButtonText(t('cmsPage.layout.Published'))
   }
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   const { submissionForm, articleTemplate } = data

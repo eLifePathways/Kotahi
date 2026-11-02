@@ -63,7 +63,7 @@ const queryFunctions = {
       .findOne({
         role: 'groupAdmin',
         objectId: groupId,
-        objectType: 'Group',
+        objectType: 'group',
         userId,
       })
 
@@ -102,6 +102,10 @@ const queryFunctions = {
 
     const isEditor = !!record
     return isEditor
+  },
+  userHasRoleInMsFamily: async (userId, manuscriptId) => {
+    const Manuscript = require('../models/manuscript/manuscript.model')
+    return Manuscript.userHasRoleInAnyVersion(userId, manuscriptId)
   },
   defaultIdentityOfUser: async userId => {
     const User = require('../models/user/user.model')

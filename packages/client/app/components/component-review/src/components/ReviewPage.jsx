@@ -5,7 +5,8 @@ import { useMutation, useQuery, useSubscription } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
 import ReviewLayout from './review/ReviewLayout'
-import { AccessErrorPage, Heading, Page, Spinner } from '../../../shared'
+import { AccessErrorPage, Heading, Page } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import manuscriptVersions from '../../../../shared/manuscript_versions'
 import {
   UPDATE_PENDING_COMMENT,
@@ -159,7 +160,9 @@ const ReviewPage = () => {
     }, collapseTimeMs)
   }
 
-  if (loading || currentUser === null) return <Spinner />
+  if ((loading && !data) || currentUser === null) {
+    return <Spinner fullpage />
+  }
 
   if (error) {
     console.warn(error.message)

@@ -7,7 +7,8 @@ import { grid, th, DateParser } from '@coko/client'
 import { values } from 'lodash'
 import { useNavigate } from 'react-router-dom'
 
-import { ActionButton, Collapse, FlexRow, Spinner } from '../../../../shared'
+import { ActionButton, Collapse, FlexRow } from '../../../../shared'
+import Spinner from '../../../../../ui/shared/Spinner'
 import { articleStatuses } from '../../../../../globals'
 import EditPayloadModal from './EditPayloadModal'
 import Badge from '../../../../../ui/shared/Badge'
@@ -228,7 +229,7 @@ const CoarMessages = ({
   const [currentMessage, setCurrentMessage] = useState(null)
 
   if (loading) {
-    return <Spinner />
+    return <Spinner fullpage />
   }
 
   if (!messages.length) {

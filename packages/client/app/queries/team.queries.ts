@@ -30,14 +30,6 @@ const teamFields = `
   }
 `
 
-export const CREATE_TEAM = gql`
-  mutation CreateTeam($input: TeamInput!) {
-    createTeam(input: $input) {
-      ${teamFields}
-    }
-  }
-`
-
 export const UPDATE_TEAM = gql`
   mutation UpdateTeam($id: ID!, $input: TeamInput) {
     updateTeam(id: $id, input: $input) {
@@ -159,47 +151,6 @@ export const REMOVE_REVIEWER = gql`
   mutation RemoveReviewer($manuscriptId: ID!, $userId: ID!) {
     removeReviewer(manuscriptId: $manuscriptId, userId: $userId) {
       ${teamFields}
-    }
-  }
-`
-
-export const NEW_TEAM_FRAGMENT = gql`
-  fragment NewTeam on Team {
-    id
-    role
-    members {
-      id
-      user {
-        id
-      }
-    }
-  }
-`
-
-export const CREATED_TEAM_FRAGMENT = gql`
-  fragment CreatedTeam on Team {
-    id
-    displayName
-    role
-    objectId
-    objectType
-    members {
-      id
-      updated
-      status
-      isShared
-      user {
-        id
-        username
-        email
-        defaultIdentity {
-          id
-          name
-          identifier
-        }
-        profilePicture
-        isOnline
-      }
     }
   }
 `

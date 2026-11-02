@@ -121,7 +121,7 @@ const Heading = styled.div.attrs({
 })`
   color: ${props =>
     props.$warning
-      ? props.theme.color.warning.shade10
+      ? props.theme.color.warning.base
       : props.theme.color.brand1.base};
   font-family: ${th('fontReading')};
   font-size: ${th('fontSizeHeading3')};

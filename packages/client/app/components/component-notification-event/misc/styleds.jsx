@@ -159,7 +159,7 @@ export const InputWrapper = styled.div`
   }
 
   &:active,
-  &:focus-visible {
+  &:focus-within {
     border: 1px solid ${th('color.brand1.base')};
     outline: none;
     transition: ${theme.transitionDuration};

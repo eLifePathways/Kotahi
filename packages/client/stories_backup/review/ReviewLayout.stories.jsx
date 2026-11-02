@@ -1,32 +1,29 @@
 import { JournalProvider } from '../../app/components/xpub-journal'
-import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import DesignEmbed from '../common/utils'
 import journal from '../../config/journal'
 import ReviewLayout from '../../app/components/component-review/src/components/review/ReviewLayout'
 
 export const Base = args => (
-  <XpubProvider>
-    <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
-      <>
-        {args.figmaEmbedLink && (
-          <>
-            <h2 style={{ color: '#333333' }}>Design</h2>
-            <iframe
-              allowFullScreen
-              height={350}
-              src={args.figmaEmbedLink}
-              style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
-              title="figma embed"
-              width="100%"
-            />
-            <h2 style={{ color: '#333333' }}>Component</h2>
-          </>
-        )}
+  <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
+    <>
+      {args.figmaEmbedLink && (
+        <>
+          <h2 style={{ color: '#333333' }}>Design</h2>
+          <iframe
+            allowFullScreen
+            height={350}
+            src={args.figmaEmbedLink}
+            style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
+            title="figma embed"
+            width="100%"
+          />
+          <h2 style={{ color: '#333333' }}>Component</h2>
+        </>
+      )}
 
-        <ReviewLayout {...args} />
-      </>
-    </JournalProvider>
-  </XpubProvider>
+      <ReviewLayout {...args} />
+    </>
+  </JournalProvider>
 )
 
 const baseProps = {

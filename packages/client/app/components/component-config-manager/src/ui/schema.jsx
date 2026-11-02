@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 // NOTE: If you're modifying the schema here, ensure updating those changes to the files 'packages/client/config/sampleConfigFormData.js' and 'packages/server/scripts/seedConfig.js' as well.
-import React from 'react'
+
 import BrandIcon from './BrandIcon'
 import ListSubmissionFields from './ListSubmissionFields'
 
-import { Button, Select, TextField } from '../../../pubsweet'
-import { ActionButton, ColorPicker } from '../../../shared'
+import { Select } from '../../../pubsweet'
+import { ColorPicker } from '../../../shared'
 import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
 import CoarAuthToken from './CoarAuthToken'
 
@@ -48,6 +48,7 @@ export const generateSchemas = ({
   defaultCollaborativeReviewerInvitationTemplate,
   defaultAuthorProofingInvitationTemplate,
   defaultAuthorProofingSubmittedTemplate,
+  hasCoarToken,
   onRefreshCoarAuthToken,
   t,
   logoAndFavicon,
@@ -108,12 +109,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -449,11 +450,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -1323,12 +1319,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -1666,11 +1662,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -2558,12 +2549,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -2927,11 +2918,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -3823,12 +3809,12 @@ export const generateSchemas = ({
             primaryColor: {
               type: 'string',
               description: t('configPage.Brand primary colour'),
-              default: '#3aae2a',
+              default: '#4a7c59',
             },
             secondaryColor: {
               type: 'string',
               description: t('configPage.Brand secondary colour'),
-              default: '#9e9e9e',
+              default: '#6b7280',
             },
             // Default logo
             logoPath: {
@@ -4193,11 +4179,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -5180,11 +5161,6 @@ export const generateSchemas = ({
         },
         submissionPage: {
           classNames: 'col-md-12 col-md-offset-0',
-          submissionPagedescription: {
-            'ui:widget': ({ value, onChange }) => (
-              <SimpleWaxEditor onChange={onChange} value={value} />
-            ),
-          },
           submitOptions: {
             'ui:widget': 'radio',
           },
@@ -5230,7 +5206,10 @@ export const generateSchemas = ({
           classNames: 'col-md-12 col-md-offset-0',
           authToken: {
             'ui:widget': props => (
-              <CoarAuthToken onRefreshCoarAuthToken={onRefreshCoarAuthToken} />
+              <CoarAuthToken
+                hasToken={hasCoarToken}
+                onRefreshCoarAuthToken={onRefreshCoarAuthToken}
+              />
             ),
           },
         },

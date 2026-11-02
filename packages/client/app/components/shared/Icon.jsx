@@ -33,6 +33,7 @@ export const Icon = ({
   inline,
   top,
   onClick,
+  'data-testid': dataTestId,
 }) => {
   const name = upperFirst(camelCase(children))
   const IconComponent = icons[name]
@@ -43,6 +44,7 @@ export const Icon = ({
       $inline={inline}
       $noPadding={noPadding}
       className={className}
+      data-testid={dataTestId}
       onClick={onClick}
       role="img"
       size={size}

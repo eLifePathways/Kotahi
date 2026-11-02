@@ -1,23 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const GET_SUBMISSION_FORM_COMPONENTS = gql`
-  query FormForPurposeAndCategory($groupId: ID!) {
-    formForPurposeAndCategory(
-      purpose: "submit"
-      category: "submission"
-      groupId: $groupId
-    ) {
-      structure {
-        children {
-          name
-          component
-          aiPrompt
-        }
-      }
-    }
-  }
-`
-
 export const GET_SUBMISSION_FORM = gql`
   query SubmissionForm($groupId: ID!) {
     submissionForm: formForPurposeAndCategory(

@@ -6,7 +6,9 @@ import styled, { ThemeContext } from 'styled-components'
 import PropTypes from 'prop-types'
 import Color from 'color'
 import { Check, AlertCircle } from 'react-feather'
-import { th, grid, rotate360 } from '@coko/client'
+import { th, grid } from '@coko/client'
+
+import Spinner from '../../ui/shared/Spinner'
 
 const BaseButton = styled.button`
   border: none;
@@ -59,35 +61,22 @@ const Button = styled(BaseButton)`
       : ''}
 `
 
+// Flex so the label, icons and status indicator share one centre line
 const LabelOnlySpan = styled.span`
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
   padding: 0 ${grid(3)};
 `
 
-const Spinner = styled.div`
-  display: inline-block;
-  padding-left: ${grid(2)};
-  vertical-align: -2px;
-
-  &::after {
-    animation: ${rotate360} 1s linear infinite;
-    border: 2.5px solid ${props => props.$fgColor};
-    border-color: ${props => props.$fgColor} transparent
-      ${props => props.$fgColor} transparent;
-    border-radius: 50%;
-    box-sizing: border-box;
-    /* stylelint-disable-next-line string-quotes */
-    content: '';
-    display: block;
-    height: ${grid(4)};
-    width: ${grid(4)};
-  }
+const StatusSpinner = styled(Spinner)`
+  margin-left: ${grid(2)};
 `
 
 const IconContainer = styled.div`
-  display: inline-block;
+  display: flex;
   height: ${grid(4)};
   margin-left: ${grid(2)};
-  vertical-align: -2px;
   width: ${grid(4)};
 `
 
@@ -104,10 +93,20 @@ const ActionButton = ({
   'data-testid': dataTestid,
   title,
   type,
+  // Anything else (aria-*, data-cy, ...) goes straight to the <button>
+  ...rest
 }) => {
   if (disabled)
     return (
-      <DisabledButton $isCompact={isCompact} className={className} disabled>
+      <DisabledButton
+        {...rest}
+        $isCompact={isCompact}
+        className={className}
+        data-testid={dataTestid}
+        disabled
+        title={title}
+        type={type || 'button'}
+      >
         <LabelOnlySpan>{children}</LabelOnlySpan>
       </DisabledButton>
     )
@@ -132,7 +131,8 @@ const ActionButton = ({
     : themeContext.color.textReverse
 
   let statusIndicator = null
-  if (status === 'pending') statusIndicator = <Spinner $fgColor={fgColor} />
+  if (status === 'pending')
+    statusIndicator = <StatusSpinner reverse={!isLight} size={4} />
 
   if (status === 'success')
     statusIndicator = (
@@ -155,6 +155,7 @@ const ActionButton = ({
 
   return (
     <Button
+      {...rest}
       $bgColor={bgColor}
       $fgColor={fgColor}
       $isCompact={isCompact}

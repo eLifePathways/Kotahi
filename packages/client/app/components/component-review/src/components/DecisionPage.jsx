@@ -5,6 +5,7 @@
 import { useEffect, useState, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { CombinedGraphQLErrors } from '@apollo/client'
 import {
   useApolloClient,
   useMutation,
@@ -14,7 +15,8 @@ import {
 import { set, debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { ConfigContext } from '../../../config/src'
-import { AccessErrorPage, CommsErrorBanner, Spinner } from '../../../shared'
+import { AccessErrorPage, CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import DecisionVersions from './DecisionVersions'
 import { roles } from '../../../../globals'
 import { waxAiToolSystem } from '../../../component-production/helpers'
@@ -48,7 +50,6 @@ import {
   DELETE_PENDING_COMMENT,
   UPDATE_PENDING_COMMENT,
   UPDATE_MANUSCRIPT,
-  CREATE_TEAM,
   UPDATE_TEAM_MEMBER,
   UPDATE_COLLABORATIVE_TEAM_MEMBER,
   UPDATE_TEAM,
@@ -57,8 +58,6 @@ import {
   CHAT_GPT,
   REVIEW_FORM_UPDATED,
   NEW_REVIEW_FRAGMENT,
-  NEW_TEAM_FRAGMENT,
-  CREATED_TEAM_FRAGMENT,
   UPDATE_ADA,
 } from '../../../../queries'
 
@@ -210,22 +209,6 @@ const DecisionPage = () => {
   const [makeDecision] = useMutation(MAKE_DECISION)
   const [publishManuscript] = useMutation(PUBLISH_MANUSCRIPT)
   const [updateTeam] = useMutation(UPDATE_TEAM)
-  const [createTeam] = useMutation(CREATE_TEAM, {
-    update(cache, { data: { createTeam: newTeam } }) {
-      cache.modify({
-        id: cache.identify({ __typename: 'Manuscript', id: newTeam.objectId }),
-        fields: {
-          teams: existingRefs => {
-            const ref = cache.writeFragment({
-              data: newTeam,
-              fragment: CREATED_TEAM_FRAGMENT,
-            })
-            return [...existingRefs, ref]
-          },
-        },
-      })
-    },
-  })
   const [updateTeamMember] = useMutation(UPDATE_TEAM_MEMBER)
 
   const [updateCollaborativeTeamMember] = useMutation(
@@ -303,26 +286,7 @@ const DecisionPage = () => {
     UPDATE_SHARED_STATUS_FOR_INVITED_REVIEWER,
   )
 
-  const [addReviewer] = useMutation(ADD_REVIEWER, {
-    update: (cache, { data: { addReviewer: revisedReviewersObject } }) => {
-      cache.modify({
-        id: cache.identify({
-          __typename: 'Manuscript',
-          id: revisedReviewersObject.objectId,
-        }),
-        fields: {
-          teams(existingTeamRefs = []) {
-            const newTeamRef = cache.writeFragment({
-              data: revisedReviewersObject,
-              fragment: NEW_TEAM_FRAGMENT,
-            })
-
-            return [...existingTeamRefs, newTeamRef]
-          },
-        },
-      })
-    },
-  })
+  const [addReviewer] = useMutation(ADD_REVIEWER)
 
   const [removeAuthor] = useMutation(REMOVE_AUTHOR)
   const [removeReviewer] = useMutation(REMOVE_REVIEWER)
@@ -457,10 +421,13 @@ const DecisionPage = () => {
     })
   }
 
-  if ((loading && !data) || !currentUser) return <Spinner />
+  if ((loading && !data) || !currentUser) return <Spinner fullpage />
 
   if (error) {
-    if (error.graphQLErrors?.find(e => e.message === 'Not Authorised!')) {
+    if (
+      CombinedGraphQLErrors.is(error) &&
+      error.errors.some(e => e.message === 'Not Authorised!')
+    ) {
       return <AccessErrorPage message={t('decisionPage.unauthorized')} />
     }
 
@@ -545,6 +512,7 @@ const DecisionPage = () => {
 
   if (
     !(
+      currentUser.globalRoles.includes('admin') ||
       currentUser.groupRoles.includes('groupManager') ||
       currentUser.groupRoles.includes('groupAdmin') ||
       ['seniorEditor', 'handlingEditor', 'editor'].some(editorRole =>
@@ -586,10 +554,6 @@ const DecisionPage = () => {
     await refetchData()
 
     return response
-  }
-
-  const handleCreateTeam = async createTeamVariables => {
-    return await createTeam(createTeamVariables)
   }
 
   const sendChannelMessage = async messageData => {
@@ -641,6 +605,14 @@ const DecisionPage = () => {
     deletePendingComment,
     currentUser,
     firstVersionManuscriptId: manuscript.parentId || manuscript.id,
+    // Mirrors userCanAddComment in threadedDiscussion.controllers.js, which
+    // only applies once a discussion exists. Global admins are deliberately excluded.
+    userCanAddThread:
+      currentUser.groupRoles.includes('groupManager') ||
+      currentUser.groupRoles.includes('groupAdmin') ||
+      ['seniorEditor', 'handlingEditor', 'editor'].some(editorRole =>
+        currentUserRoles.includes(editorRole),
+      ),
   }
 
   return (
@@ -654,7 +626,6 @@ const DecisionPage = () => {
       coarMessages={coarNotificationsForManuscript}
       createFile={createFile}
       createTaskEmailNotificationLog={createTaskEmailNotificationLog}
-      createTeam={handleCreateTeam}
       currentUser={currentUser}
       decisionForm={decisionForm}
       deleteFile={deleteFile}

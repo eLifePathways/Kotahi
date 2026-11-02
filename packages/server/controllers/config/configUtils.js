@@ -1,24 +1,28 @@
+const { get, set } = require('lodash')
 const schedule = require('node-schedule')
 const { initiateJobSchedules } = require('../../utils/jobUtils')
 
-const redact = str => {
-  return str && str.replace(/./g, '*')
-}
+const MASK = '**********'
+
+const SECRET_PATHS = [
+  'publishing.crossref.password',
+  'publishing.datacite.password',
+  'publishing.doaj.password',
+  'publishing.hypothesis.apiKey',
+  'publishing.webhook.token',
+  'integrations.aiDesignStudio.apiKey',
+  'integrations.localContextApiKey.apiKey',
+  'emailNotification.pass',
+  'notification.gmailAuthPassword',
+]
 
 const hideSensitiveInformation = async configData => {
   const config = configData
 
-  // Publishing - Crossref password
-  if (config.formData.publishing.crossref.password)
-    config.formData.publishing.crossref.password = redact(
-      config.formData.publishing.crossref.password,
-    )
-
-  // Publishing - Datacite password
-  if (config.formData.publishing.datacite?.password)
-    config.formData.publishing.datacite.password = redact(
-      config.formData.publishing.datacite.password,
-    )
+  SECRET_PATHS.forEach(path => {
+    const value = get(config.formData, path)
+    if (value) set(config.formData, path, MASK)
+  })
 
   return config
 }
@@ -29,27 +33,14 @@ const revertHiddenSensitiveInformation = async (
 ) => {
   const formData = inputFormData
 
-  // Publishing - Crossref password
-  if (formData.publishing.crossref?.password) {
-    const passwordIsHidden =
-      redact(existingConfig.formData.publishing.crossref.password) ===
-      formData.publishing.crossref.password
+  SECRET_PATHS.forEach(path => {
+    const value = get(formData, path)
+    const existingValue = get(existingConfig.formData, path)
 
-    if (passwordIsHidden)
-      formData.publishing.crossref.password =
-        existingConfig.formData.publishing.crossref.password
-  }
-
-  // Publishing - Datacite password
-  if (formData.publishing.datacite?.password) {
-    const passwordIsHidden =
-      redact(existingConfig.formData.publishing.datacite?.password) ===
-      formData.publishing.datacite.password
-
-    if (passwordIsHidden)
-      formData.publishing.datacite.password =
-        existingConfig.formData.publishing.datacite?.password
-  }
+    if (existingValue && value === MASK) {
+      set(formData, path, existingValue)
+    }
+  })
 
   return formData
 }

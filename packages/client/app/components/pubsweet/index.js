@@ -10,7 +10,6 @@ import Link from './Link'
 import PlainButton from './PlainButton'
 import RadioGroup from './RadioGroup'
 import Select from './Select'
-import Spinner from './Spinner'
 import TextArea from './TextArea'
 import TextField from './TextField'
 import ValidatedFieldFormik from './ValidatedFieldFormik'
@@ -28,7 +27,6 @@ export {
   RadioGroup,
   PlainButton,
   Select,
-  Spinner,
   TextArea,
   TextField,
   ValidatedFieldFormik,

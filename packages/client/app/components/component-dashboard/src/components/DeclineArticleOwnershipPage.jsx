@@ -5,7 +5,8 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Field, Formik } from 'formik'
 
-import { Button, Checkbox, Spinner, TextArea } from '../../../pubsweet'
+import { Checkbox, TextArea } from '../../../pubsweet'
+import Spinner from '../../../../ui/shared/Spinner'
 import {
   ADD_EMAIL_TO_BLACKLIST,
   UPDATE_INVITATION_RESPONSE,
@@ -29,7 +30,7 @@ import {
 
 import AuthorsInput from '../../../component-submit/src/components/AuthorsInput'
 import { validateAuthors } from '../../../../shared/authorsFieldDefinitions'
-import { InvalidLabel, LinkAction } from '../../../shared'
+import { ActionButton, InvalidLabel, LinkAction } from '../../../shared'
 import InvitationError from './InvitationError'
 
 const SuggestedReviewersContainer = styled.div`
@@ -167,7 +168,7 @@ const DeclineArticleOwnershipPage = () => {
     )
   }
 
-  if (loading || loggedInUserLoading) return <Spinner />
+  if (loading || loggedInUserLoading) return <Spinner fullpage />
 
   if (errorMessage) {
     localStorage.removeItem('invitationId')
@@ -312,9 +313,9 @@ const DeclineArticleOwnershipPage = () => {
                         />
                       </StyledFormInput>
                       <ButtonWrapper>
-                        <Button $primary type="submit">
+                        <ActionButton primary type="submit">
                           {t('declineReviewPage.Decline Invitation')}
-                        </Button>
+                        </ActionButton>
                       </ButtonWrapper>
                     </FeedbackForm>
                   </form>
@@ -327,7 +328,7 @@ const DeclineArticleOwnershipPage = () => {
     )
   }
 
-  return <Spinner />
+  return <Spinner fullpage />
 }
 
 export default DeclineArticleOwnershipPage

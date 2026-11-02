@@ -7,8 +7,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  # Using a separate variable because the Upload type hides other data
-  uploadFile(file: Upload!): FileNotInDb!
   createFile(file: Upload!, meta: FileMetaInput!): File!
   uploadFiles(files: [Upload]!, fileType: String, entityId: ID): [File]!
   deleteFile(id: ID!): ID
@@ -56,11 +54,6 @@ extend type File {
   tags: [String]
   objectId: ID
   inUse: Boolean
-}
-
-type FileNotInDb {
-  name: String!
-  storedObjects: [StoredObjects!]!
 }
 
 extend type StoredObjects {

@@ -542,7 +542,7 @@
       ]
     }
   ],
-  "name": "NCRC Submission Form",
-  "description": "<p>NCRC Form</p>",
+  "name": "Submission Form",
+  "description": "<p>Please fill out the form below to complete the submission.</p>",
   "haspopup": "false"
 }

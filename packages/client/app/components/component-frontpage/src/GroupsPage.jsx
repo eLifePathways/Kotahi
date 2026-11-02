@@ -5,7 +5,8 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { th, grid } from '@coko/client'
 import styled from 'styled-components'
-import { Spinner, CommsErrorBanner, Select } from '../../shared'
+import { CommsErrorBanner, Select } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import { GET_GROUPS } from '../../../queries'
 
 const Container = styled.div`
@@ -45,7 +46,7 @@ const GroupsPage = () => {
   const [selectedOption, setSelectedOption] = useState('')
   const { loading, error, data } = useQuery(GET_GROUPS)
 
-  if (loading && !data) return <Spinner />
+  if (loading && !data) return <Spinner fullpage />
   if (error)
     return (
       <Container>

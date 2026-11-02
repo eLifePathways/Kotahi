@@ -3,7 +3,8 @@
 import fnv from 'fnv-plus'
 import { useTranslation } from 'react-i18next'
 
-import { LayoutMainHeading, WarningBlock } from '../style'
+import { Alert } from '../../../shared'
+import { LayoutMainHeading } from '../style'
 
 const SiteStatus = ({ cmsLayout, flaxSiteUrlForGroup, triggerAutoSave }) => {
   const { t } = useTranslation()
@@ -39,7 +40,12 @@ const SiteStatus = ({ cmsLayout, flaxSiteUrlForGroup, triggerAutoSave }) => {
         />
         {t('cmsPage.layout.DraftCheckbox')}
       </label>
-      <WarningBlock>{t('cmsPage.layout.draftModeWarning')}</WarningBlock>
+      <Alert
+        bottomMargin={2}
+        description={t('cmsPage.layout.draftModeWarning')}
+        showIcon
+        type="warning"
+      />
       <div>
         <a href={`${url}`} target="blank">{`${url}`}</a>
       </div>

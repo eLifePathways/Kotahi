@@ -77,6 +77,7 @@ const ActionRow = styled.div`
 const URI_PARAMS = {
   SEARCH: 'search',
   PAGENUM: 'pagenum',
+  PAGESIZE: 'pagesize',
   SORT: 'sort',
   ARCHIVED: 'archived',
   REVIEWER_STATUS: 'reviewerStatusBadge', // 'your status' column on reviews dashboard tab
@@ -221,7 +222,12 @@ const extractFilters = (
   params: URLSearchParams,
 ): { field: string; value: string | null }[] =>
   Array.from(params.keys())
-    .filter(field => field !== URI_PARAMS.PAGENUM && field !== URI_PARAMS.SORT)
+    .filter(
+      field =>
+        field !== URI_PARAMS.PAGENUM &&
+        field !== URI_PARAMS.PAGESIZE &&
+        field !== URI_PARAMS.SORT,
+    )
     .map(field => ({ field, value: params.get(field) }))
 
 const extractArchived = (params: URLSearchParams): boolean =>
@@ -232,6 +238,7 @@ type QueryState = {
   sortName: string | undefined
   sortDirection: 'ascend' | 'descend' | undefined
   page: number
+  pageSize: number | null
   archived: boolean
 }
 
@@ -243,6 +250,7 @@ const deriveQueryState = (params: URLSearchParams): QueryState => {
     sortName: name,
     sortDirection: direction,
     page: Number(params.get(URI_PARAMS.PAGENUM)) || 1,
+    pageSize: Number(params.get(URI_PARAMS.PAGESIZE)) || null,
     archived: extractArchived(params),
   }
 }
@@ -431,7 +439,7 @@ type UseManuscriptsTableResult = {
   onDownloadSelected: (ids: string[]) => void
   onFiltersChange: (filters: Record<string, string[]>) => void
   onOptionChange: (columnKey: string, id: string, value: string | null) => void
-  onPageChange: (page: number) => void
+  onPageChange: (page: number, pageSize: number) => void
   onReviewerStatusViewModeChange: (viewMode: 'compact' | 'detailed') => void
   onSearch: (value: string) => void
   onSortChange: (sortState: ManuscriptsTableSortState | null) => void
@@ -488,7 +496,8 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
   const currentSearchQuery =
     filters.find(f => f.field === URI_PARAMS.SEARCH)?.value ?? null
 
-  const pageSize = config?.manuscript?.paginationCount || 10
+  const defaultPageSize = config?.manuscript?.paginationCount || 10
+  const pageSize = queryState.pageSize ?? defaultPageSize
 
   const specialColumnTitles = useMemo(
     () => ({
@@ -688,9 +697,21 @@ const useManuscriptsTable = (variant: Variant): UseManuscriptsTableResult => {
     })
   }
 
-  const handlePageChange = (newPage: number): void => {
-    setQueryState(prev => ({ ...prev, page: newPage }))
-    applyQueryParams({ [URI_PARAMS.PAGENUM]: newPage })
+  const handlePageChange = (newPage: number, newPageSize: number): void => {
+    const pageSizeChanged = newPageSize !== pageSize
+    const resolvedPage = pageSizeChanged ? 1 : newPage
+
+    setQueryState(prev => ({
+      ...prev,
+      page: resolvedPage,
+      pageSize: newPageSize === defaultPageSize ? null : newPageSize,
+    }))
+
+    applyQueryParams({
+      [URI_PARAMS.PAGENUM]: resolvedPage,
+      [URI_PARAMS.PAGESIZE]:
+        newPageSize === defaultPageSize ? null : newPageSize,
+    })
   }
 
   const handleSearch = (value: string): void => {

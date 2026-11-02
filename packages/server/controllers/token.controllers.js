@@ -10,6 +10,10 @@ const generateToken = async (name, groupId) => {
   return value
 }
 
+const hasToken = async (name, groupId) =>
+  !!(await Token.getTokenByNameAndGroupId(name, groupId))
+
 module.exports = {
   generateToken,
+  hasToken,
 }

@@ -1,7 +1,7 @@
-const { subscriptionManager } = require('@coko/server')
+const { GraphQLError } = require('graphql')
+const { config, subscriptionManager, withFilter } = require('@coko/server')
 
 const {
-  createManuscript,
   importManuscripts,
   archiveManuscripts,
   archiveManuscript,
@@ -34,6 +34,7 @@ const {
   getManuscriptsData,
   versionsOfManuscriptCurrentUserIsReviewerOf,
   getManuscriptFiles,
+  getManuscriptFilesForRequest,
   getRelatedPublishedArtifacts,
   getRelatedReviews,
   authorFeedback,
@@ -54,13 +55,43 @@ const {
   supplementaryFiles,
   updateAda,
   metaSource,
-  publishedReviewUsers,
   removeAuthor,
 } = require('../../../controllers/manuscript/manuscript.controllers')
 
+const {
+  createManuscriptFromFile,
+  getNewSubmissionSettings,
+  NewSubmissionError,
+} = require('../../../controllers/manuscript/newSubmission.controllers')
+
+const { getRequestLoaders } = require('../requestLoaders')
+
+// turns graphql upload into a web-standard File for the controllers to work with
+const uploadToFile = async upload => {
+  const { createReadStream, filename, mimetype } = await upload
+  const maxSizeMb = config.get('manuscripts.maxUploadSizeMb')
+  const chunks = []
+  let size = 0
+
+  for await (const chunk of createReadStream()) {
+    size += chunk.length
+
+    if (size > maxSizeMb * 1024 * 1024) {
+      throw new GraphQLError(`${filename} is larger than ${maxSizeMb} MB`, {
+        extensions: { code: 'FILE_TOO_LARGE' },
+      })
+    }
+
+    chunks.push(chunk)
+  }
+
+  return new File(chunks, filename, { type: mimetype })
+}
+
 const manuscriptAndPublishedManuscriptSharedResolvers = {
-  async files(parent) {
-    return getManuscriptFiles(parent.id, parent.files)
+  async files(parent, _, ctx) {
+    if (parent.files) return getManuscriptFiles(parent.id, parent.files)
+    return getManuscriptFilesForRequest(ctx, parent.id)
   },
 
   async meta(parent) {
@@ -85,8 +116,31 @@ const manuscriptAndPublishedManuscriptSharedResolvers = {
 
 const resolvers = {
   Mutation: {
-    async createManuscript(_, vars, ctx) {
-      return createManuscript(ctx.userId, vars.input)
+    async createSubmission(_, { groupId, file, operationId }, ctx) {
+      const onProgress = operationId
+        ? step =>
+            subscriptionManager.publish(
+              `NEW_SUBMISSION_PROGRESS.${operationId}`,
+              { userId: ctx.userId, step },
+            )
+        : undefined
+
+      try {
+        return await createManuscriptFromFile(
+          ctx.userId,
+          groupId,
+          file && (await uploadToFile(file)),
+          { onProgress },
+        )
+      } catch (error) {
+        if (error instanceof NewSubmissionError) {
+          throw new GraphQLError(error.message, {
+            extensions: { code: error.code },
+          })
+        }
+
+        throw error
+      }
     },
 
     async importManuscripts(_, { groupId }, ctx) {
@@ -186,10 +240,24 @@ const resolvers = {
         return subscriptionManager.asyncIterator(['IMPORT_MANUSCRIPTS_STATUS'])
       },
     },
+    newSubmissionProgress: {
+      subscribe: withFilter(
+        (_, { operationId }) =>
+          subscriptionManager.asyncIterator([
+            `NEW_SUBMISSION_PROGRESS.${operationId}`,
+          ]),
+        (payload, _, ctx) => payload.userId === ctx.userId,
+      ),
+      resolve: payload => payload.step,
+    },
   },
   Query: {
     async manuscript(_, { id }) {
       return getManuscript(id)
+    },
+
+    newSubmissionSettings() {
+      return getNewSubmissionSettings()
     },
 
     async manuscriptsUserHasCurrentRoleIn(
@@ -329,7 +397,7 @@ const resolvers = {
     },
 
     async reviews(parent, _, ctx) {
-      return getRelatedReviews(parent, ctx.userId)
+      return getRelatedReviews(parent, ctx.userId, false, { ctx })
     },
 
     async submitter(parent) {
@@ -346,12 +414,21 @@ const resolvers = {
   },
   PublishedManuscript: {
     ...manuscriptAndPublishedManuscriptSharedResolvers,
+    async files(parent, _, ctx) {
+      const options = { onlyImagesUsedInSource: parent.meta?.source }
+
+      if (parent.files)
+        return getManuscriptFiles(parent.id, parent.files, options)
+
+      return getManuscriptFilesForRequest(ctx, parent.id, options)
+    },
+
     async css() {
       return getCss()
     },
 
     async decisions(parent, _, ctx) {
-      return publishedManuscriptDecisions(parent, ctx.userId)
+      return publishedManuscriptDecisions(parent, ctx.userId, { ctx })
     },
 
     async editors(parent) {
@@ -367,7 +444,7 @@ const resolvers = {
     },
 
     async reviews(parent, _, ctx) {
-      return publishedManuscriptReviews(parent, ctx.userId)
+      return publishedManuscriptReviews(parent, ctx.userId, { ctx })
     },
 
     async styledHtml(parent) {
@@ -389,16 +466,32 @@ const resolvers = {
     },
   },
   ManuscriptMeta: {
-    async source(parent) {
-      return metaSource(parent)
+    async source(parent, _, ctx) {
+      return metaSource(parent, ctx)
     },
     async comments(parent) {
       return JSON.stringify(parent.comments)
     },
   },
   PublishedReview: {
-    async users(parent) {
-      return publishedReviewUsers(parent)
+    async users(review, _, ctx) {
+      if (review.isHiddenReviewerName) {
+        return [{ id: '', username: 'Anonymous User' }]
+      }
+
+      return getRequestLoaders(ctx).reviewUsers.load(review)
+    },
+  },
+  ReviewUser: {
+    // Published reviews are public, so never expose the reviewer's email
+    async defaultIdentity(user, _, ctx) {
+      if (!user.id) return null
+
+      const identity = await getRequestLoaders(ctx).defaultIdentities.load(
+        user.id,
+      )
+
+      return identity && { ...identity, email: null }
     },
   },
 }

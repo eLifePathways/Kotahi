@@ -3,7 +3,7 @@
 
 import { FormsPage } from '../../page-object/forms-page'
 import { Menu } from '../../page-object/page-component/menu'
-import { dashboard } from '../../support/routes1'
+import { dashboard, dashboardSubmissions } from '../../support/routes1'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
 
@@ -98,7 +98,7 @@ describe('Form builder and Submission pages', () => {
 
     beforeEach(() => {
       cy.fixture('role_names').then(name => {
-        cy.login(name.role.author, dashboard)
+        cy.login(name.role.author, dashboardSubmissions)
       })
       cy.contains('Continue Submission').click()
     })
@@ -152,9 +152,8 @@ describe('Form builder and Submission pages', () => {
         // Submit the form
         SubmissionFormPage.clickSubmitYourManuscript()
 
-        cy.get('[data-testid="tab-container"]:nth(0)')
-          .should('contain', 'My Submissions')
-          .should('exist')
+        cy.url().should('match', /\/dashboard$/)
+        cy.visit(dashboardSubmissions)
         // Contains new title
         DashboardPage.getSubmissionTitle(0).should('contain', data.newTitle)
       })

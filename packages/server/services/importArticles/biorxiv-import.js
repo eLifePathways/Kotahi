@@ -175,21 +175,6 @@ const getData = async (groupId, ctx) => {
           },
           meta: {},
           submitterId: ctx.userId,
-          channels: [
-            {
-              topic: 'Manuscript discussion',
-              type: 'all',
-              groupId,
-            },
-            {
-              topic: 'Editorial discussion',
-              type: 'editorial',
-              groupId,
-            },
-          ],
-          files: [],
-          reviews: [],
-          teams: [],
           groupId,
         }
       },
@@ -199,9 +184,10 @@ const getData = async (groupId, ctx) => {
   if (!newManuscripts.length) return []
 
   try {
-    const inserted = await Manuscript.query().upsertGraphAndFetch(
-      newManuscripts,
-      { relate: true },
+    const inserted = await Promise.all(
+      newManuscripts.map(manuscript =>
+        Manuscript.createNewManuscript(manuscript, { assignSubmitter: false }),
+      ),
     )
 
     // const teamsToInsert = insertedManuscripts.map(manuscript => {

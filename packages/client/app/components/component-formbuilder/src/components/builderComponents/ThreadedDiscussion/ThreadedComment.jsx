@@ -3,7 +3,6 @@
 import { useContext, useState } from 'react'
 import { DateParser } from '@coko/client'
 import { useTranslation } from 'react-i18next'
-import { Button } from '../../../../../pubsweet'
 import Tooltip from '../../../../../component-reporting/src/Tooltip'
 import {
   CommentMetaWrapper,
@@ -14,10 +13,13 @@ import {
   ActionWrapper,
   Collapse,
   ModalContainer,
-  CancelButton,
   CommentContainer,
 } from '../../style'
-import { FieldPublishingSelector, Icon } from '../../../../../shared'
+import {
+  ActionButton,
+  FieldPublishingSelector,
+  Icon,
+} from '../../../../../shared'
 import { UserAvatar } from '../../../../../component-avatar/src'
 import Modal from '../../../../../component-modal/src/ConfirmationModal'
 import SimpleWaxEditor from '../../../../../wax-collab/src/SimpleWaxEditor'
@@ -91,6 +93,7 @@ const ThreadedComment = ({
       commentBelongsToDifferentManuscriptVersion={
         commentBelongsToDifferentManuscriptVersion
       }
+      data-testid="threaded-comment"
     >
       <CommentWrapper
         commentBelongsToDifferentManuscriptVersion={
@@ -120,7 +123,8 @@ const ThreadedComment = ({
                     JSON.parse(formData).controlPanel
                       ?.editorsEditDiscussionPostsEnabled &&
                     updatedAt &&
-                    updatedAt !== createdAt && (
+                    updatedAt !== createdAt &&
+                    updatedBy && (
                       <div>
                         {`${updatedBy.username} ${t('formBuilder.updatedAt')}`}{' '}
                         &nbsp;
@@ -152,7 +156,11 @@ const ThreadedComment = ({
             />
           )}
           {shouldShowEditIcon && (
-            <Icon noPadding onClick={() => setOpenModal(true)}>
+            <Icon
+              data-testid="edit-comment"
+              noPadding
+              onClick={() => setOpenModal(true)}
+            >
               edit
             </Icon>
           )}
@@ -167,7 +175,7 @@ const ThreadedComment = ({
           </Collapse>
         </ActionWrapper>
       </CommentWrapper>
-      <SimpleWaxEditorWrapper collapse={collapse}>
+      <SimpleWaxEditorWrapper $collapse={collapse ?? null}>
         <SimpleWaxEditor
           {...simpleWaxEditorProps}
           key={counter}
@@ -178,7 +186,7 @@ const ThreadedComment = ({
               : 'Comment is either deleted or is unsubmitted'
           }
         />
-        <CollapseOverlay collapse={collapse} />
+        <CollapseOverlay $collapse={collapse ?? null} />
       </SimpleWaxEditorWrapper>
       <Modal isOpen={openModal}>
         <ModalContainer>
@@ -190,24 +198,24 @@ const ThreadedComment = ({
             }}
             value={modalFieldValue}
           />
-          <Button
-            $primary
+          <ActionButton
             onClick={() => {
               onSubmitClick()
             }}
+            primary
           >
             {t('modals.editDiscussion.saveEdit')}
-          </Button>
+          </ActionButton>
           &nbsp;
-          <CancelButton
+          <ActionButton
             onClick={() => {
               setOpenModal(false)
               setModalFieldValue(existingComment?.comment || value)
               onCancel()
             }}
           >
-            {t('modals.editDiscussion.cancel')}
-          </CancelButton>
+            {t('modals.editDiscussion.canwecel')}
+          </ActionButton>
         </ModalContainer>
       </Modal>
     </CommentContainer>

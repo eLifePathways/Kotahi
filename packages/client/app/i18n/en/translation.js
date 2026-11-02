@@ -30,6 +30,7 @@ const en = {
       notAssignedForThisVersion: 'Not a reviewer of the current version',
     },
     common: {
+      Loading: 'Loading',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -38,6 +39,7 @@ const en = {
       No: 'No',
       Save: 'Save',
       Update: 'Update',
+      next: 'Next',
       Activate: 'Activate',
       Create: 'Create',
       Deactivate: 'Deactivate',
@@ -159,6 +161,8 @@ const en = {
       Email: 'Email',
       Language: 'Language',
       Change: 'Change',
+      enterEmail: 'Enter Email',
+      enterYourEmail: 'Enter your email',
       usernameWarn:
         'Cannot begin with a numeral or start or end with space characters',
       userPrivilegeAlert: `User Privileges Required
@@ -243,7 +247,8 @@ const en = {
     },
     dashboardPage: {
       Dashboard: 'Dashboard',
-      'New submission': '+ New submission',
+      'New submission': 'New submission',
+      backToDashboard: 'Back to Dashboard',
       'New Alerts': 'New Alerts',
       'My Submissions': 'My Submissions',
       'To Review': 'Review Assignments',
@@ -251,6 +256,83 @@ const en = {
       mySubmissions: {
         'Provide production feedback': 'Provide production feedback',
         'View production feedback': 'View production feedback',
+      },
+      greeting: {
+        goodMorning: 'Good morning',
+        goodAfternoon: 'Good afternoon',
+        goodEvening: 'Good evening',
+        and: 'and',
+        allCaughtUp: "You're all caught up",
+        nothingNeedsAttention:
+          'There is nothing that needs your attention right now.',
+        itemsNeedAttention: 'You have {{count}} item that needs attention',
+        itemsNeedAttention_plural:
+          'You have {{count}} items that need attention',
+        actionSummary: {
+          authorSubmit: '{{count}} submission pending completion',
+          authorSubmit_plural: '{{count}} submissions pending completion',
+          authorRevise: '{{count}} manuscript pending revision',
+          authorRevise_plural: '{{count}} manuscripts pending revision',
+          authorSubmitRevision: '{{count}} revision pending submission',
+          authorSubmitRevision_plural: '{{count}} revisions pending submission',
+          reviewerRespond: '{{count}} reviewer invitation waiting on you',
+          reviewerRespond_plural:
+            '{{count}} reviewer invitations waiting on you',
+          reviewerSubmit: '{{count}} review pending',
+          reviewerSubmit_plural: '{{count}} reviews pending',
+          editorDecide: '{{count}} editor decision pending',
+          editorDecide_plural: '{{count}} editor decisions pending',
+          taskAlmostOverdue: '{{count}} task almost overdue',
+          taskAlmostOverdue_plural: '{{count}} tasks almost overdue',
+          taskOverdue: '{{count}} task overdue',
+          taskOverdue_plural: '{{count}} tasks overdue',
+        },
+      },
+      actionCards: {
+        scrollLeft: 'Scroll action list left',
+        scrollRight: 'Scroll action list right',
+        types: {
+          authorSubmit: 'Submit',
+          authorRevise: 'Revise',
+          authorSubmitRevision: 'Submit revision',
+          reviewerRespond: 'Review invitation',
+          reviewerSubmit: 'Review',
+          editorDecide: 'Decide on',
+          taskAlmostOverdue: 'Task almost overdue',
+          taskOverdue: 'Task overdue',
+        },
+      },
+      tableCards: {
+        needsAttention: '{{count}} needs attention',
+        needsAttention_plural: '{{count}} need attention',
+        author: 'Author',
+        reviewer: 'Reviewer',
+        editor: 'Editor',
+      },
+      activity: {
+        title: 'Activity',
+        clearAll: 'Clear all',
+        dismissNotification: 'Dismiss notification',
+        showingOfTotal: 'Showing {{shown}} of {{total}}',
+        noActivityYet: 'No activity yet',
+        activityWillAppearHere: 'Updates on your manuscripts will appear here.',
+        manuscriptReference: 'manuscript #{{shortId}}',
+        notifications: {
+          addedAsEditor: 'You were added as an editor on',
+          addedAsHandlingEditor: 'You were added as the handling editor on',
+          addedAsReviewer: 'You were added as a reviewer on',
+          addedAsSeniorEditor: 'You were added as the senior editor on',
+          decisionMade: 'A decision was made on',
+          removedAsEditor: 'You were removed as an editor from',
+          removedAsHandlingEditor:
+            'You were removed as the handling editor from',
+          removedAsReviewer: 'You were removed as a reviewer from',
+          removedAsSeniorEditor: 'You were removed as the senior editor from',
+          reviewerAcceptedInvitation: 'A reviewer accepted your invitation for',
+          reviewerCompletedReview: 'A review was completed for',
+          reviewerRejectedInvitation: 'A reviewer declined your invitation for',
+          revisionSubmitted: 'A revision was submitted for',
+        },
       },
     },
     submitPage: {
@@ -421,7 +503,8 @@ const en = {
     },
     editorSection: {
       noFileLoaded: 'No manuscript file loaded',
-      noSupportedView: 'No supported view of the file',
+      noSupportedView:
+        'Unsupported file uploaded, or editor has not been enabled',
     },
     reviewDecisionSection: {
       noDecisionUpdated: 'No decision has been updated for this manuscript yet',
@@ -547,7 +630,8 @@ const en = {
       'read-only': ' (read-only)',
       'Previous Feedback Submissions': 'Previous Feedback Submissions',
       'No feedback submissions': 'No feedback submissions',
-      'No supported view of the file': 'No supported view of the file',
+      noSupportedView:
+        'Unsupported file uploaded, or editor has not been enabled',
       Download: 'Download',
       Editor: 'Editor',
       'PDF CSS': 'PDF CSS',
@@ -564,6 +648,11 @@ const en = {
       accepted: 'Accepted {{invitationType}} invitation',
     },
     configPage: {
+      colorPicker: {
+        poorContrastTitle: 'Colour has poor accessibility',
+        poorContrastDescription:
+          'Colour selected fails to meet WCAG AA accessibility standard. Users may have difficulty with usability and navigation. Please consider a different colour.',
+      },
       generalTab: 'General',
       workflowTab: 'Workflow',
       productionTab: 'Production',
@@ -625,7 +714,6 @@ const en = {
       Submission: 'Submission',
       SubmissionPage: {
         title: 'Title',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Allow an author to upload a manuscript file only',
         allowAuthorUploadWithForm:
@@ -750,9 +838,9 @@ const en = {
       editorsCanPublish: 'Editors can Publish articles/reviews',
       editorsDeleteReviews: 'Editors can delete submitted reviews',
       Reports: 'Reports',
-      reportShowInMenu: 'Group Manager and admin can access Reports',
+      reportShowInMenu: 'Show Reports option in the menu',
       'User Management': 'User Management',
-      userIsAdmin: 'All users are assigned Group Manager and Admin roles',
+      userIsAdmin: 'All users are assigned Admin and Group Admin roles',
       kotahiApis: 'Kotahi APIs',
       tokens: 'Tokens',
       Update: 'Update',
@@ -1067,8 +1155,7 @@ const en = {
     loginPage: {
       kotahiUses:
         'Kotahi uses ORCID <0>icon</0> to identify authors and staff.',
-      'Login with ORCID': 'Login with ORCID',
-      'Register with ORCID': 'Register with ORCID',
+      loginWithOrcid: 'Login with ORCID',
     },
     frontPage: {
       recent: 'Recent publications in {{brandName}}',
@@ -1368,14 +1455,26 @@ const en = {
 
     newSubmission: {
       'New submission': 'New submission',
-      'Submission created': 'Submission created',
-      'Upload Manuscript': 'Upload Manuscript',
-      dragNDrop: 'Drag and drop or click to select file',
-      acceptedFiletypes: 'Accepted file types: pdf, epub, zip, docx, latex',
-      converting:
-        'Your manuscript is being converted into a directly editable version. This might take a few seconds.',
-      'Submit a URL instead': 'Submit a URL instead',
       errorUploading: '{{error}}',
+      uploadTitle: 'Upload a manuscript',
+      uploadDescription:
+        'Drag and drop your manuscript file here, or click to choose one.',
+      skipTitle: 'Start without a file',
+      skipDescription:
+        'Go straight to the submission form without uploading a manuscript.',
+      stepUploading: 'Uploading your manuscript...',
+      stepConverting: 'Converting your document...',
+      stepCleaning: 'Preparing your document...',
+      stepInferringMetadata: 'Using AI to fill in the submission details...',
+      stepCreating: 'Creating your submission...',
+      redirecting: 'Submission created. Redirecting...',
+      fileRequirements:
+        'Accepted file types: {{fileTypes}}. Maximum size: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'This file type is not supported.',
+      errorFileTooLarge: 'This file is larger than {{maxSizeMb}} MB.',
+      errorConversionFailed: 'Your document could not be converted.',
+      errorCreationFailed: 'Your submission could not be created.',
+      errorUnknown: 'Something went wrong. Please try again.',
     },
     formBuilder: {
       'New Form': 'New Form',

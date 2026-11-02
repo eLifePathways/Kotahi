@@ -27,9 +27,9 @@ const StyledActionButton = styled(ActionButton)`
   padding: 0 ${grid(4)};
 `
 
-const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
+const CoarAuthToken = ({ hasToken, onRefreshCoarAuthToken }) => {
   const { t } = useTranslation()
-  const [token, setToken] = useState('*********')
+  const [token, setToken] = useState('')
   const [status, setStatus] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -47,6 +47,14 @@ const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
     }
   }
 
+  let displayToken = '****************'
+
+  if (token) {
+    displayToken = token
+  } else if (!hasToken) {
+    displayToken = ''
+  }
+
   return (
     <Wrapper>
       {status && !['pending', 'failure'].includes(status) && (
@@ -61,7 +69,7 @@ const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
         <Alert description={errorMessage} showIcon type="error" />
       )}
       <CoarAuthFieldWrapper>
-        <StyledTextField inline readonly value={token} />
+        <StyledTextField inline readonly value={displayToken} />
         <StyledActionButton onClick={handleRefresh} primary status={status}>
           {t('configPage.coar.refreshAuthToken')}
         </StyledActionButton>
@@ -71,6 +79,7 @@ const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
 }
 
 CoarAuthToken.propTypes = {
+  hasToken: PropTypes.bool.isRequired,
   onRefreshCoarAuthToken: PropTypes.func.isRequired,
 }
 

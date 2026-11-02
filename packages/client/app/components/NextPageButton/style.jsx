@@ -27,8 +27,8 @@ export const NextPageButton = styled.span`
   width: 100%;
 
   &:hover {
-    background: ${th('color.brand1.tint50')};
-    color: ${th('color.brand1.base')};
+    background: ${th('color.brand1.tint90')};
+    color: ${th('color.brand1.shade25')};
     cursor: pointer;
   }
 `

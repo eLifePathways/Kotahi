@@ -4,7 +4,8 @@
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { Checkbox, Button } from '../../../../pubsweet'
+import { Checkbox } from '../../../../pubsweet'
+import { ActionButton } from '../../../../shared'
 
 import Reviewer from './Reviewer'
 
@@ -157,16 +158,17 @@ const ReviewHeading = ({
           </>
         )}
       <Controls>
-        <Button onClick={toggleOpen}>
+        <ActionButton onClick={toggleOpen}>
           {open
             ? t('decisionPage.decisionTab.reviewModalHide')
             : t('decisionPage.decisionTab.reviewModalShow')}
-        </Button>
+        </ActionButton>
       </Controls>
       {users.length > 1 && (
         <UsersList>
           {users.map(user => (
             <Reviewer
+              // TODO: cleanup these three props up, as this feature has been removed
               canBePublishedPublicly={canBePublishedPublicly}
               currentUser={currentUser}
               currentUserIsEditor={currentUserIsEditor}

@@ -58,7 +58,7 @@ const getRecipient = async (recipient, manuscriptId, groupId, getTeam) => {
     const groupManagerTeam = await Team.findOne({
       role: recipient,
       objectId: groupId,
-      objectType: 'Group',
+      objectType: 'group',
     })
 
     const groupManager = await TeamMember.findOne({

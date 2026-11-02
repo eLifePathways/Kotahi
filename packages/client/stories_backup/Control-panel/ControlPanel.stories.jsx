@@ -1,6 +1,5 @@
 import DecisionVersion from '../../app/components/component-review/src/components/DecisionVersion'
 import { JournalProvider } from '../../app/components/xpub-journal'
-import { XpubProvider } from '../../app/components/xpub-with-context/src'
 import { ConfigProvider } from '../../app/components/config/src'
 import journal from '../../config/journal'
 import config from '../../config/sampleConfigFormData'
@@ -8,13 +7,11 @@ import DesignEmbed from '../common/utils'
 import { roles } from '../../app/globals'
 
 export const Base = () => (
-  <XpubProvider>
-    <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
-      <ConfigProvider config={config}>
-        <DecisionVersion {...props} />
-      </ConfigProvider>
-    </JournalProvider>
-  </XpubProvider>
+  <JournalProvider journal={JSON.parse(JSON.stringify(journal))}>
+    <ConfigProvider config={config}>
+      <DecisionVersion {...props} />
+    </ConfigProvider>
+  </JournalProvider>
 )
 
 const props = {

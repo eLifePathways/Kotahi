@@ -378,25 +378,9 @@ const extractManuscriptFromNotification = async (payload, groupId, doiRa) => {
     importSourceServer: 'COAR',
     groupId,
     doi,
-    // Create two channels: 1. free for all involved, 2. editorial
-    channels: [
-      {
-        topic: 'Manuscript discussion',
-        type: 'all',
-        groupId,
-      },
-      {
-        topic: 'Editorial discussion',
-        type: 'editorial',
-        groupId,
-      },
-    ],
   }
 
-  const manuscript = await Manuscript.query().upsertGraphAndFetch(
-    newManuscript,
-    { relate: true },
-  )
+  const manuscript = await Manuscript.createNewManuscript(newManuscript)
 
   return manuscript
 }

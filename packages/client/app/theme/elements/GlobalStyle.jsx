@@ -45,9 +45,23 @@ const globalStyles = css`
     text-rendering: optimizelegibility;
   }
 
+  /* :root a beats antd's low-contrast a:focus-visible ring */
+  :focus-visible,
+  :root a:focus-visible {
+    outline: 2px solid ${th('color.brand1.base')};
+    outline-offset: 2px;
+  }
+
   a {
     color: ${th('color.brand1.base')};
     text-decoration: none !important;
+  }
+
+  button {
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
   }
 
   strong,
@@ -96,6 +110,19 @@ const globalStyles = css`
 
   .ant-notification-notice-info {
     border-left: 5px solid ${th('colorInfo')};
+  }
+
+  /* Ant table filter dropdown - portaled outside the table, so this can't
+     live in Table.tsx's scoped styles */
+
+  .ant-table-filter-dropdown-btns .ant-btn:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+    outline-offset: 2px;
+  }
+
+  .ant-table-filter-dropdown [role='menu']:focus-visible {
+    outline: 3px solid ${th('colorPrimary')};
+    outline-offset: -2px;
   }
 `
 

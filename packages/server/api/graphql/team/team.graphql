@@ -1,5 +1,4 @@
 extend type Mutation {
-  createTeam(input: TeamInput): Team
   # deleteTeam(id: ID): Team
   updateTeam(id: ID, input: TeamInput): Team
   updateTeamMember(id: ID!, input: String): TeamMember

@@ -48,11 +48,11 @@ type FormField = {
   options: FormFieldOption[]
 }
 
-type Api = {
+export type Api = {
   createManuscripts: (opts: {
     amount: number
     submitter?: string
-  }) => Promise<{ manuscriptIds: string[] }>
+  }) => Promise<{ manuscriptIds: string[]; shortIds: number[] }>
   assignRole: (opts: {
     username: string
     role: string
@@ -62,12 +62,22 @@ type Api = {
     manuscriptId: string
     username: string
     status: string
+    isShared?: boolean
   }) => Promise<unknown>
   createReview: (opts: {
     manuscriptId: string
     username: string
     isHiddenFromAuthor?: boolean
     isHiddenReviewerName?: boolean
+    jsonData?: Record<string, unknown>
+  }) => Promise<{ id: string }>
+  // A user with no role outside this test's group - see createGroupUser in
+  // packages/server/api/rest/e2e/actions.js
+  createGroupUser: (name: string) => Promise<{ username: string }>
+  createDecision: (opts: {
+    manuscriptId: string
+    username: string
+    jsonData?: Record<string, unknown>
   }) => Promise<{ id: string }>
   updateGroupConfig: (patch: Record<string, unknown>) => Promise<unknown>
   updateFormFields: (opts: {
@@ -87,6 +97,36 @@ type Api = {
     manuscriptId: string
     created: string
   }) => Promise<unknown>
+  addManuscriptFile: (opts: {
+    manuscriptId: string
+    filename?: string
+  }) => Promise<{ id: string }>
+  createThreadedDiscussion: (opts: {
+    manuscriptId: string
+    fieldName: string
+    comments?: { username: string; comment: string }[]
+    pendingComments?: {
+      username: string
+      comment: string
+      commentIndex?: number
+    }[]
+  }) => Promise<{
+    threadedDiscussionId: string
+    threadId: string
+    commentIds: string[]
+  }>
+  createTask: (opts: {
+    manuscriptId: string
+    username: string
+    dueDate: string
+    status?: string
+  }) => Promise<{ id: string }>
+  createUserNotification: (opts: {
+    manuscriptId: string
+    username: string
+    eventType: string
+    created?: string
+  }) => Promise<{ id: string }>
 }
 
 export const test = base.extend<{
@@ -179,20 +219,27 @@ export const test = base.extend<{
           ),
         ),
 
-      setReviewerStatus: ({ manuscriptId, username, status }) =>
-        jsonOrThrow(
+      setReviewerStatus: ({ manuscriptId, username, status, isShared }) => {
+        const params = new URLSearchParams({ status })
+        if (isShared !== undefined) params.set('isShared', String(isShared))
+
+        return jsonOrThrow(
           request.post(
-            `${apiUrl}/setReviewerStatus/${manuscriptId}/${encodeURIComponent(username)}?status=${encodeURIComponent(status)}`,
+            `${apiUrl}/setReviewerStatus/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
           ),
-        ),
+        )
+      },
 
       createReview: ({
         manuscriptId,
         username,
         isHiddenFromAuthor,
         isHiddenReviewerName,
+        jsonData,
       }) => {
         const params = new URLSearchParams()
+        if (jsonData) params.set('jsonData', JSON.stringify(jsonData))
+
         if (isHiddenFromAuthor !== undefined)
           params.set('isHiddenFromAuthor', String(isHiddenFromAuthor))
 
@@ -202,6 +249,24 @@ export const test = base.extend<{
         return jsonOrThrow(
           request.post(
             `${apiUrl}/createReview/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
+          ),
+        )
+      },
+
+      createGroupUser: name =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/groupUser/${testGroup.groupName}/${encodeURIComponent(name)}`,
+          ),
+        ),
+
+      createDecision: ({ manuscriptId, username, jsonData }) => {
+        const params = new URLSearchParams()
+        if (jsonData) params.set('jsonData', JSON.stringify(jsonData))
+
+        return jsonOrThrow(
+          request.post(
+            `${apiUrl}/createDecision/${manuscriptId}/${encodeURIComponent(username)}?${params.toString()}`,
           ),
         )
       },
@@ -233,6 +298,47 @@ export const test = base.extend<{
             `${apiUrl}/setManuscriptCreated/${manuscriptId}?created=${encodeURIComponent(created)}`,
           ),
         ),
+
+      addManuscriptFile: ({ manuscriptId, filename }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/addManuscriptFile/${manuscriptId}${
+              filename ? `?filename=${encodeURIComponent(filename)}` : ''
+            }`,
+          ),
+        ),
+
+      createThreadedDiscussion: ({ manuscriptId, ...discussion }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/createThreadedDiscussion/${manuscriptId}?discussion=${encodeURIComponent(JSON.stringify(discussion))}`,
+          ),
+        ),
+
+      createTask: ({
+        manuscriptId,
+        username,
+        dueDate,
+        status = 'In progress',
+      }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/createTask/${manuscriptId}/${encodeURIComponent(username)}?dueDate=${encodeURIComponent(dueDate)}&status=${encodeURIComponent(status)}`,
+          ),
+        ),
+
+      createUserNotification: ({
+        manuscriptId,
+        username,
+        eventType,
+        created,
+      }) =>
+        jsonOrThrow(
+          request.post(
+            `${apiUrl}/createUserNotification/${manuscriptId}/${encodeURIComponent(username)}`,
+            { params: { eventType, ...(created && { created }) } },
+          ),
+        ),
     })
   },
 
@@ -242,4 +348,9 @@ export const test = base.extend<{
 })
 
 export { expect } from '@playwright/test'
-export type { APIRequestContext, APIResponse, Page } from '@playwright/test'
+export type {
+  APIRequestContext,
+  APIResponse,
+  Locator,
+  Page,
+} from '@playwright/test'

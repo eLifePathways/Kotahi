@@ -4,8 +4,10 @@
 import { useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
-import { rotate360, th } from '@coko/client'
+import { th } from '@coko/client'
+
 import PropTypes from 'prop-types'
+import Spinner from '../../ui/shared/Spinner'
 
 import SendIcon from './SendButton'
 import { CssAssistantContext } from './hooks/CssAssistantContext'
@@ -31,6 +33,11 @@ const StyledForm = styled.form`
   transition: all 0.5s;
   width: 500px;
 
+  &:focus-within {
+    outline: 2px solid var(--color);
+    outline-offset: 2px;
+  }
+
   textarea {
     --height: ${p => p.height || `24px`};
     background: none;
@@ -46,31 +53,11 @@ const StyledForm = styled.form`
   }
 `
 
-const StyledSpinner = styled.div`
-  display: flex;
-  height: fit-content;
-  width: 24px;
-
-  &::after {
-    animation: ${rotate360} 1s linear infinite;
-    border: 2px solid ${th('color.brand1.base')};
-    border-color: ${th('color.brand1.base')} transparent;
-    border-radius: 50%;
-    /* stylelint-disable-next-line string-quotes */
-    content: ' ';
-    display: block;
-    height: 18px;
-    margin: 1px;
-    width: 18px;
-  }
-`
-
 const SendButton = styled.button`
   aspect-ratio: 1 /1;
   background: none;
   border: none;
   cursor: pointer;
-  outline: none;
   padding: 0;
   width: 24px;
 
@@ -158,7 +145,7 @@ const PromptsInput = ({
         {...rest}
       />
       {loading ? (
-        <StyledSpinner />
+        <Spinner size={5} />
       ) : (
         <SendButton onClick={onSend}>
           <SendIcon size="18" />

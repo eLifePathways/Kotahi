@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import styled, { css, useTheme } from 'styled-components'
-import { th, grid, rotate360 } from '@coko/client'
+import { th, grid } from '@coko/client'
+
 import { Check, AlertCircle } from 'react-feather'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
+import Spinner from '../../ui/shared/Spinner'
 
 const ActionLink = styled.button`
   background: transparent;
@@ -32,23 +34,8 @@ const ActionLink = styled.button`
         `}
 `
 
-const Spinner = styled.div`
-  display: inline-block;
+const StatusSpinner = styled(Spinner)`
   vertical-align: -2px;
-
-  &::after {
-    animation: ${rotate360} 1s linear infinite;
-    border: 2.5px solid ${th('color.brand1.base')};
-    border-color: ${th('color.brand1.base')} transparent
-      ${th('color.brand1.base')} transparent;
-    border-radius: 50%;
-    box-sizing: border-box;
-    /* stylelint-disable-next-line string-quotes */
-    content: '';
-    display: block;
-    height: ${grid(4)};
-    width: ${grid(4)};
-  }
 `
 
 const IconContainer = styled.div`
@@ -114,7 +101,7 @@ const Action = ({
       type="button"
     >
       {children}
-      {isInProgress && <Spinner />}
+      {isInProgress && <StatusSpinner size={4} />}
       {!isInProgress && resultStatus === 'success' && (
         <IconContainer>
           <Check

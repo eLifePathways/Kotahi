@@ -1,6 +1,15 @@
-const { randomUUID } = require('crypto')
-const { useTransaction, db } = require('@coko/server')
+const crypto = require('crypto')
+const { Readable } = require('stream')
+const {
+  useTransaction,
+  db,
+  createFile,
+  deleteFiles,
+  File,
+  uuid,
+} = require('@coko/server')
 const merge = require('lodash/merge')
+const mergeWith = require('lodash/mergeWith')
 
 const Group = require('../../../models/group/group.model')
 const Config = require('../../../models/config/config.model')
@@ -13,6 +22,8 @@ const ChannelMember = require('../../../models/channelMember/channelMember.model
 const Form = require('../../../models/form/form.model')
 const Manuscript = require('../../../models/manuscript/manuscript.model')
 const Review = require('../../../models/review/review.model')
+const ThreadedDiscussion = require('../../../models/threadedDiscussion/threadedDiscussion.model')
+const Task = require('../../../models/task/task.model')
 const seedForms = require('../../../scripts/seedForms')
 const { seedNotifications } = require('../../../scripts/seedNotifications')
 const EmailTemplate = require('../../../models/emailTemplate/emailTemplate.model')
@@ -56,6 +67,24 @@ const SHARED_USERS = {
 
 const TEST_ORCID = '0000-0001-2345-6789'
 
+const testOrcidFor = username => {
+  const digits = BigInt(
+    `0x${crypto.createHash('md5').update(username).digest('hex').slice(0, 12)}`,
+  )
+    .toString()
+    .padStart(12, '0')
+    .slice(-12)
+
+  return `0000-${digits.slice(0, 4)}-${digits.slice(4, 8)}-${digits.slice(8)}`
+}
+
+const ensureIdentity = (userId, identifier) =>
+  findOrCreate(
+    Identity,
+    { userId, isDefault: true },
+    { userId, isDefault: true, type: 'orcid', identifier },
+  )
+
 const findOrCreate = async (Model, findQuery, insertData) => {
   const existing = await Model.findOne(findQuery)
   if (existing) return existing
@@ -69,12 +98,15 @@ const findOrCreate = async (Model, findQuery, insertData) => {
   }
 }
 
-const deleteAllMatching = async (Model, filter, trx) => {
-  const { result } = await Model.find(filter, { trx })
-  if (result.length === 0) return
+const deleteAllMatching = async (Model, rowsOrFilter, trx) => {
+  const rows = Array.isArray(rowsOrFilter)
+    ? rowsOrFilter
+    : (await Model.find(rowsOrFilter, { trx })).result
+
+  if (rows.length === 0) return
 
   await Model.deleteByIds(
-    result.map(row => row.id),
+    rows.map(row => row.id),
     { trx },
   )
 }
@@ -82,12 +114,17 @@ const deleteAllMatching = async (Model, filter, trx) => {
 const ensureSharedUsers = async () => {
   const adminTeam = await Team.findOne({ global: true, role: 'admin' })
 
-  const ensureUser = async username =>
-    findOrCreate(
+  const ensureUser = async (username, orcid = testOrcidFor(username)) => {
+    const user = await findOrCreate(
       User,
       { username },
       { username, email: `${username}@example.com` },
     )
+
+    await ensureIdentity(user.id, orcid)
+
+    return user
+  }
 
   const [
     adminUser,
@@ -99,8 +136,8 @@ const ensureSharedUsers = async () => {
     ensureUser(SHARED_USERS.admin),
     ensureUser(SHARED_USERS.groupAdmin),
     ensureUser(SHARED_USERS.groupManager),
-    ensureUser(SHARED_USERS.userWithOrcid),
-    ...SHARED_USERS.generic.map(ensureUser),
+    ensureUser(SHARED_USERS.userWithOrcid, TEST_ORCID),
+    ...SHARED_USERS.generic.map(username => ensureUser(username)),
   ])
 
   // Add admin user to the admin group
@@ -108,17 +145,6 @@ const ensureSharedUsers = async () => {
     TeamMember,
     { userId: adminUser.id, teamId: adminTeam.id },
     { userId: adminUser.id, teamId: adminTeam.id },
-  )
-
-  await findOrCreate(
-    Identity,
-    { userId: userWithOrcid.id, isDefault: true },
-    {
-      userId: userWithOrcid.id,
-      isDefault: true,
-      type: 'orcid',
-      identifier: TEST_ORCID,
-    },
   )
 
   return {
@@ -142,6 +168,20 @@ const deleteGroupData = async (group, trx) => {
     ),
   )
 
+  // files.object_id has no FK to manuscripts, so these would otherwise be orphaned
+  if (manuscripts.length > 0) {
+    const files = await File.query(trx).whereIn(
+      'objectId',
+      manuscripts.map(manuscript => manuscript.id),
+    )
+
+    if (files.length > 0)
+      await deleteFiles(
+        files.map(file => file.id),
+        { trx },
+      )
+  }
+
   const { result: channels } = await Channel.find(
     { groupId: group.id },
     { trx },
@@ -157,6 +197,16 @@ const deleteGroupData = async (group, trx) => {
   }
 
   await deleteAllMatching(Manuscript, { groupId: group.id }, trx)
+  // Users made by createGroupUser
+  const groupUsers = await User.findByUsernamePrefix(`${group.name}-`, { trx })
+
+  await Promise.all(
+    groupUsers.map(user =>
+      deleteAllMatching(Identity, { userId: user.id }, trx),
+    ),
+  )
+
+  await deleteAllMatching(User, groupUsers, trx)
   await deleteAllMatching(Team, { objectId: group.id }, trx)
   await deleteAllMatching(Config, { groupId: group.id }, trx)
   await deleteAllMatching(Channel, { groupId: group.id }, trx)
@@ -360,7 +410,7 @@ const createGroup = async groupName => {
           role: 'groupAdmin',
           global: false,
           objectId: group.id,
-          objectType: 'Group',
+          objectType: 'group',
         },
         { trx },
       ),
@@ -370,7 +420,7 @@ const createGroup = async groupName => {
           role: 'groupManager',
           global: false,
           objectId: group.id,
-          objectType: 'Group',
+          objectType: 'group',
         },
         { trx },
       ),
@@ -380,7 +430,7 @@ const createGroup = async groupName => {
           role: 'user',
           global: false,
           objectId: group.id,
-          objectType: 'Group',
+          objectType: 'group',
         },
         { trx },
       ),
@@ -433,82 +483,39 @@ const createManuscripts = async ({ groupName, count, submitterUsername }) => {
   }
 
   return useTransaction(async trx => {
-    const manuscripts = await Manuscript.insert(
-      Array.from({ length: count }, (_, index) => ({
-        groupId: group.id,
-        submitterId: submitters[index % submitters.length].id,
-        status: 'new',
-        // A real submission always has this (see manuscript.controllers.js's
-        // createManuscript) - the updateManuscript resolver re-validates the
-        // whole row on every patch, and Manuscript's schema requires meta to
-        // be an object (not null) whenever it's present.
-        meta: {},
-        submission: {
-          $title: `Test manuscript ${index + 1}`,
-          $abstract: `Abstract for test manuscript ${index + 1}`,
+    const manuscripts = []
+
+    for (let index = 0; index < count; index += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const manuscript = await Manuscript.createNewManuscript(
+        {
+          groupId: group.id,
+          submitterId: submitters[index % submitters.length].id,
+          status: 'new',
+          meta: {},
+          submission: {
+            $title: `Test manuscript ${index + 1}`,
+            $abstract: `Abstract for test manuscript ${index + 1}`,
+          },
         },
-      })),
-      { trx },
-    )
+        { trx },
+      )
 
-    await Promise.all(
-      manuscripts.map(async (manuscript, index) => {
-        const authorTeam = await Team.insert(
-          {
-            displayName: 'Author',
-            role: 'author',
-            global: false,
-            objectId: manuscript.id,
-            objectType: 'manuscript',
-          },
-          { trx },
-        )
+      manuscripts.push(manuscript)
+    }
 
-        await TeamMember.insert(
-          {
-            userId: submitters[index % submitters.length].id,
-            teamId: authorTeam.id,
-          },
-          { trx },
-        )
+    const manuscriptIds = manuscripts.map(manuscript => manuscript.id)
 
-        await Promise.all(
-          Object.entries(ASSIGNABLE_MANUSCRIPT_ROLES).map(
-            ([role, displayName]) =>
-              Team.insert(
-                {
-                  displayName,
-                  role,
-                  global: false,
-                  objectId: manuscript.id,
-                  objectType: 'manuscript',
-                },
-                { trx },
-              ),
-          ),
-        )
+    const inserted = await Manuscript.query(trx)
+      .findByIds(manuscriptIds)
+      .select('id', 'shortId')
 
-        await Channel.insert(
-          [
-            {
-              topic: 'Manuscript discussion',
-              type: 'all',
-              groupId: group.id,
-              manuscriptId: manuscript.id,
-            },
-            {
-              topic: 'Editorial discussion',
-              type: 'editorial',
-              groupId: group.id,
-              manuscriptId: manuscript.id,
-            },
-          ],
-          { trx },
-        )
-      }),
-    )
+    const shortIdsById = new Map(inserted.map(m => [m.id, m.shortId]))
 
-    return { manuscriptIds: manuscripts.map(manuscript => manuscript.id) }
+    return {
+      manuscriptIds,
+      shortIds: manuscriptIds.map(id => shortIdsById.get(id)),
+    }
   })
 }
 
@@ -564,10 +571,10 @@ const updateFormFields = async ({ groupName, purpose, category, fields }) => {
 
   fields.forEach(field => {
     const fieldWithIds = {
-      id: randomUUID(),
+      id: uuid(),
       ...field,
       options: field.options?.map(option => ({
-        id: randomUUID(),
+        id: uuid(),
         ...option,
       })),
     }
@@ -626,7 +633,78 @@ const setManuscriptCreated = async ({ manuscriptId, created }) => {
   return Manuscript.findById(manuscriptId)
 }
 
-const setReviewerStatus = async ({ manuscriptId, username, status }) => {
+const createTask = async ({ manuscriptId, username, dueDate, status }) => {
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  if (!manuscript) {
+    throw new Error(`No manuscript found with id "${manuscriptId}"`)
+  }
+
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  return Task.query().insertAndFetch({
+    manuscriptId,
+    groupId: manuscript.groupId,
+    title: 'Test task',
+    assigneeUserId: user.id,
+    assigneeType: 'registeredUser',
+    dueDate,
+    status,
+    sequenceIndex: 0,
+  })
+}
+
+const createUserNotification = async ({
+  manuscriptId,
+  username,
+  eventType,
+  created,
+}) => {
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  if (!manuscript) {
+    throw new Error(`No manuscript found with id "${manuscriptId}"`)
+  }
+
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  // use db so that we can backdate notifications
+  const [notification] = await db('user_notifications')
+    .insert({
+      id: uuid(),
+      user_id: user.id,
+      group_id: manuscript.groupId,
+      manuscript_id: manuscriptId,
+      event_type: eventType,
+      data: {
+        userId: user.id,
+        groupId: manuscript.groupId,
+        manuscriptId,
+        shortId: manuscript.shortId,
+      },
+      ...(created && { created }),
+    })
+    .returning('*')
+
+  return notification
+}
+
+// isShared: whether this reviewer's review is shared with the other shared
+// reviewers (left unchanged when omitted)
+const setReviewerStatus = async ({
+  manuscriptId,
+  username,
+  status,
+  isShared,
+}) => {
   const user = await User.findOne({ username })
 
   if (!user) {
@@ -650,7 +728,10 @@ const setReviewerStatus = async ({ manuscriptId, username, status }) => {
     )
   }
 
-  return TeamMember.patchAndFetchById(teamMember.id, { status })
+  return TeamMember.patchAndFetchById(teamMember.id, {
+    status,
+    ...(isShared !== undefined && { isShared }),
+  })
 }
 
 const createReview = async ({
@@ -658,6 +739,7 @@ const createReview = async ({
   username,
   isHiddenFromAuthor = true,
   isHiddenReviewerName = true,
+  jsonData = {},
 }) => {
   const user = await User.findOne({ username })
 
@@ -690,7 +772,65 @@ const createReview = async ({
     isDecision: false,
     isHiddenFromAuthor,
     isHiddenReviewerName,
-    jsonData: '{}',
+    jsonData: JSON.stringify(jsonData),
+  })
+}
+
+// A user belonging only to this group, for tests that need someone with no
+// role anywhere else - the shared pw-user-* users pick up manuscript roles
+// across every suite. Deleted along with the group.
+const createGroupUser = async ({ groupName, name }) => {
+  const group = await Group.findOne({ name: groupName })
+
+  if (!group) {
+    throw new Error(`No group found named "${groupName}"`)
+  }
+
+  const username = `${groupName}-${name}`
+
+  return useTransaction(async trx => {
+    const user = await User.insert(
+      { username, email: `${username}@example.com` },
+      { trx },
+    )
+
+    const userTeam = await Team.findOne(
+      { objectId: group.id, role: 'user' },
+      { trx },
+    )
+
+    await TeamMember.insert({ userId: user.id, teamId: userTeam.id }, { trx })
+
+    await Identity.insert(
+      {
+        userId: user.id,
+        isDefault: true,
+        type: 'orcid',
+        identifier: testOrcidFor(username),
+      },
+      { trx },
+    )
+
+    return { username }
+  })
+}
+
+// The editor's decision on a manuscript, as the decision form saves it. Set
+// the manuscript's decision/status separately (eg. with patchManuscript).
+const createDecision = async ({ manuscriptId, username, jsonData = {} }) => {
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    throw new Error(`No user found named "${username}"`)
+  }
+
+  return Review.insert({
+    manuscriptId,
+    userId: user.id,
+    isDecision: true,
+    isHiddenFromAuthor: false,
+    isHiddenReviewerName: false,
+    jsonData: JSON.stringify(jsonData),
   })
 }
 
@@ -707,9 +847,145 @@ const updateGroupConfig = async ({ groupName, patch }) => {
     throw new Error(`No active config found for group "${groupName}"`)
   }
 
-  const formData = merge({}, config.formData, patch)
+  const formData = mergeWith({}, config.formData, patch, (_, value) =>
+    Array.isArray(value) ? value : undefined,
+  )
 
   return Config.patchAndFetchById(config.id, { formData })
+}
+
+// Attaches a real (tiny) stored file to a manuscript, so queries that select
+// manuscript.files exercise the File permission rule.
+const addManuscriptFile = async ({ manuscriptId, filename = 'test.txt' }) => {
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  if (!manuscript) {
+    throw new Error(`No manuscript found with id "${manuscriptId}"`)
+  }
+
+  const file = await createFile(Readable.from('e2e test file'), filename, {
+    tags: ['supplementary'],
+    objectId: manuscriptId,
+  })
+
+  return { id: file.id }
+}
+
+// Seeds a threaded discussion on a manuscript's decision form field, in the
+// same shape threadedDiscussion.controllers.js writes, and points the
+// decision review's jsonData at it (which is how the decision form finds it).
+//
+// comments: submitted comments, in order - [{ username, comment }]
+// pendingComments: unsubmitted drafts - [{ username, comment, commentIndex }].
+//   With commentIndex, the draft is an edit of that submitted comment;
+//   without it, it's a new, never-submitted comment. Lets tests set up states
+//   the UI no longer allows (eg. a draft by a user who can't comment).
+const createThreadedDiscussion = async ({
+  manuscriptId,
+  fieldName,
+  comments = [],
+  pendingComments = [],
+}) => {
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  if (!manuscript) {
+    throw new Error(`No manuscript found with id "${manuscriptId}"`)
+  }
+
+  const findUserId = async username => {
+    const user = await User.findOne({ username })
+    if (!user) throw new Error(`No user found named "${username}"`)
+    return user.id
+  }
+
+  // Distinct, increasing timestamps keep comment ordering deterministic
+  const baseTime = Date.now() - 60 * 60 * 1000
+  const at = offset => new Date(baseTime + offset * 1000).toISOString()
+
+  const submittedComments = await Promise.all(
+    comments.map(async ({ username, comment }, index) => ({
+      id: uuid(),
+      manuscriptVersionId: manuscriptId,
+      created: at(index),
+      updated: at(index),
+      commentVersions: [
+        {
+          id: uuid(),
+          created: at(index),
+          updated: at(index),
+          userId: await findUserId(username),
+          comment,
+        },
+      ],
+      pendingVersions: [],
+    })),
+  )
+
+  const newDraftComments = []
+
+  await Promise.all(
+    pendingComments.map(async ({ username, comment, commentIndex }) => {
+      const pendingVersion = {
+        userId: await findUserId(username),
+        created: at(100),
+        updated: at(100),
+        comment,
+      }
+
+      if (commentIndex === undefined) {
+        newDraftComments.push({
+          id: uuid(),
+          manuscriptVersionId: manuscriptId,
+          created: at(100),
+          commentVersions: [],
+          pendingVersions: [pendingVersion],
+        })
+      } else {
+        submittedComments[commentIndex].pendingVersions.push(pendingVersion)
+      }
+    }),
+  )
+
+  const threadId = uuid()
+  const allComments = [...submittedComments, ...newDraftComments]
+
+  const discussion = await ThreadedDiscussion.query().insertAndFetch({
+    manuscriptId,
+    threads: JSON.stringify([
+      { id: threadId, created: at(0), updated: at(0), comments: allComments },
+    ]),
+  })
+
+  const existingDecision = await Review.query().findOne({
+    manuscriptId,
+    isDecision: true,
+  })
+
+  if (existingDecision) {
+    const jsonData =
+      typeof existingDecision.jsonData === 'string'
+        ? JSON.parse(existingDecision.jsonData)
+        : existingDecision.jsonData || {}
+
+    await Review.query().patchAndFetchById(existingDecision.id, {
+      jsonData: JSON.stringify({ ...jsonData, [fieldName]: discussion.id }),
+    })
+  } else {
+    await Review.insert({
+      manuscriptId,
+      userId: manuscript.submitterId,
+      isDecision: true,
+      isHiddenFromAuthor: false,
+      isHiddenReviewerName: false,
+      jsonData: JSON.stringify({ [fieldName]: discussion.id }),
+    })
+  }
+
+  return {
+    threadedDiscussionId: discussion.id,
+    threadId,
+    commentIds: allComments.map(c => c.id),
+  }
 }
 
 // Deletes the shared pw-* users (and, via cascade, their team memberships).
@@ -749,10 +1025,16 @@ module.exports = {
   assignRole,
   setReviewerStatus,
   createReview,
+  createDecision,
+  createGroupUser,
   updateGroupConfig,
   updateFormFields,
   updateManuscriptSubmission,
   patchManuscript,
   setManuscriptCreated,
+  createTask,
+  createUserNotification,
   deleteSharedUsers,
+  addManuscriptFile,
+  createThreadedDiscussion,
 }

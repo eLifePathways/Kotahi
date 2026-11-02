@@ -64,7 +64,6 @@ describe('Manuscript API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('reads wax comments', async () => {
@@ -81,7 +80,7 @@ describe('Manuscript API', () => {
       role: 'groupManager',
       displayName: 'Group Manager',
       objectId: group.id,
-      objectType: group.type,
+      objectType: 'group',
     })
 
     await Team.addMember(team.id, user.id)
@@ -152,7 +151,7 @@ describe('Manuscript API', () => {
       role: 'groupManager',
       displayName: 'Group Manager',
       objectId: group.id,
-      objectType: group.type,
+      objectType: 'group',
     })
 
     await Team.addMember(team.id, user.id)

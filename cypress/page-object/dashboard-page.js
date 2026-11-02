@@ -9,9 +9,7 @@
 
 const BUTTON = 'button'
 const SUBMISSION_TITLE = '[data-testid="submission.$title"] > div'
-const SUBMISSION_BUTTON = '+ New submission'
-const SUBMISSION_FILE_UPLOAD_INPUT = 'input[type=file]'
-const SUBMISSION_CREATED = 'Submission created'
+const SUBMISSION_BUTTON = 'New submission'
 
 /* My Submissions */
 const SUBMISSION_ACTION_LINK = 'submission-action-link'
@@ -43,13 +41,7 @@ export const DashboardPage = {
     this.getSubmissionActionLink().click()
   },
   getSubmitButton() {
-    return cy.get(BUTTON).contains(SUBMISSION_BUTTON)
-  },
-  getSubmissionFileUploadInput() {
-    return cy.get(SUBMISSION_FILE_UPLOAD_INPUT)
-  },
-  confirmSubmissionCreated() {
-    cy.contains(SUBMISSION_CREATED, { timeout: 10000 }).should('exist')
+    return cy.getByDataTestId('menu-nav').contains(BUTTON, SUBMISSION_BUTTON)
   },
   clickSubmitButton() {
     this.getSubmitButton().click()
@@ -60,14 +52,11 @@ export const DashboardPage = {
   clickSubmit() {
     this.getSubmitButton().click()
   },
-  getSectionTitleWithText(title) {
-    return cy.getByDataTestId('section-title').contains(title)
-  },
   getSubmissionTitle() {
     return cy.get(SUBMISSION_TITLE)
   },
   getSubmissionButton() {
-    return cy.get('button').should('have.text', '＋ New submission')
+    return cy.get(BUTTON).contains(SUBMISSION_BUTTON)
   },
   clickSubmissionButton() {
     return this.getSubmitButton().click()
@@ -146,16 +135,5 @@ export const DashboardPage = {
   },
   clickCompletedReviewButton() {
     this.getCompletedReviewButton().click({ force: true })
-  },
-  getDashboardTab() {
-    return cy
-      .getByDataTestId('tab-container')
-      .filter(':has(a[href*="/dashboard/"])')
-  },
-  clickDashboardTab(nth) {
-    this.getDashboardTab().eq(nth).find('a').click()
-  },
-  clickEditingQueueTab() {
-    cy.getByDataTestId('tab-container').contains('Editing Queue').click()
   },
 }

@@ -21,6 +21,10 @@ declare class Task extends BaseModel {
     status?: string | null,
     options?: { trx?: Transaction },
   ): Promise<TaskEmailNotification[]>
+  static findTemplates(
+    groupId: string,
+    options?: { trx?: Transaction },
+  ): Promise<Task[]>
 }
 
 export = Task

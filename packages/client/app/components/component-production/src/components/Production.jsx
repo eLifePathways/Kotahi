@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/use-memo */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useEffect, useState, useContext } from 'react'
+import { useCallback, useEffect, useMemo, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { debounce } from 'lodash'
@@ -18,11 +18,11 @@ import { DownloadDropdown } from './DownloadDropdown'
 import {
   ErrorBoundary,
   HiddenTabsContainer,
-  Spinner,
   Tab,
   TabContainer,
   VersionSwitcher,
 } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { Info } from './styles'
 import { ControlsContainer } from '../../../component-manuscripts/src/style'
 import AuthorFeedbackForm from '../../../component-author-feedback/src/components/AuthorFeedbackForm'
@@ -188,15 +188,23 @@ const Production = ({
   const config = useContext(ConfigContext)
   const getDataFromDatacite = config?.production?.getDataFromDatacite
 
-  const aiConfig = {
-    AskAiContentTransformation: queryAI,
-    AiOn:
-      config?.groupIdentity?.toggleAi &&
-      config?.groupIdentity?.AiProductionEditor,
-    FreeTextPromptsOn: config?.groupIdentity?.AiFreeTextPrompts,
-    CustomPromptsOn: config?.groupIdentity?.customAiPrompts,
-    CustomPrompts: config?.groupIdentity?.customAiInputs || [],
-  }
+  const aiConfig = useMemo(
+    () => ({
+      AskAiContentTransformation: queryAI,
+      AiOn:
+        config?.groupIdentity?.toggleAi &&
+        config?.groupIdentity?.AiProductionEditor,
+      FreeTextPromptsOn: config?.groupIdentity?.AiFreeTextPrompts,
+      CustomPromptsOn: config?.groupIdentity?.customAiPrompts,
+      CustomPrompts: config?.groupIdentity?.customAiInputs || [],
+    }),
+    [queryAI, config?.groupIdentity],
+  )
+
+  const getManuscriptComments = useCallback(
+    () => JSON.parse(manuscript.meta.comments) || [],
+    [manuscript.meta.comments],
+  )
 
   let showContent = false
 
@@ -235,16 +243,16 @@ const Production = ({
                 onAssetManager={onAssetManager}
                 readonly={isReadOnlyVersion || false}
                 saveSource={debouncedSave}
-                setComments={() => JSON.parse(manuscript.meta.comments) || []}
+                setComments={getManuscriptComments}
                 user={currentUser}
                 value={manuscript.meta.source}
               />
             ) : (
-              <Spinner />
+              <Spinner fullpage />
             )}
           </>
         ) : (
-          <Info>{t('productionPage.No supported view of the file')}</Info>
+          <Info>{t('productionPage.noSupportedView')}</Info>
         )}
       </ScrollableTabContent>
     ),
@@ -350,7 +358,7 @@ const Production = ({
           <AiPDFDesigner
             currentUser={currentUser}
             manuscript={manuscript}
-            setComments={() => JSON.parse(manuscript.meta.comments) || []}
+            setComments={getManuscriptComments}
           />
         </CssAssistantProvider>
       </ScrollableTabContent>
@@ -374,7 +382,7 @@ const Production = ({
           key={manuscript.meta.previousVersions?.length}
           manuscript={manuscript}
           saveCurrentVersion={saveCurrentVersion}
-          setComments={() => JSON.parse(manuscript.meta.comments) || []}
+          setComments={getManuscriptComments}
         />
       </ScrollableTabContent>
     ),

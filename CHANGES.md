@@ -6,6 +6,42 @@
 
 #### Bug fixes
 
+### Version 2026.10.21-0
+
+#### Features
+
+#### Bug fixes
+* Improves calls for published manuscripts with large files.
+* Refactored S3 file signing, and changed how dataloaders prep queries.
+* Split manuscript version files from their parent.
+
+### Version 2026.10.12-0
+
+#### Features
+* Colour pickers will now warn admins if the colours are not at least WCAG AA compliant.
+* Improved accessibility for keyboard navigation.
+
+#### Bug fixes
+
+* Simplify and clean up wording, and removed hardcoded client names from seed files.
+* Fixed group roles and access to resources.
+* Made system colours compliant with WCAG AA.
+
+#### Features
+
+#### Bug fixes
+
+### Version 2026.09.17-0
+
+#### Features
+
+* A new Manuscripts Table has been introduced, for a more responsive and cleaner UI.
+* Chat toggle button has been refreshed, with a simpler and streamlined look.
+
+#### Bug fixes
+
+* Pipeline fixes to the deployment of Kotahi dev docs.
+
 ### Version 2026.09.03-0
 
 #### Features

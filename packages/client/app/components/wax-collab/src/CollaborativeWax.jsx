@@ -5,7 +5,7 @@ import YjsContext from '../../provider-yjs/YjsProvider'
 
 import Editor from '.'
 
-import { Spinner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 
 const CollaborativeWax = ({
   editorMode,
@@ -22,7 +22,7 @@ const CollaborativeWax = ({
 
   const Component = editorMode ? Editor[editorMode] : component
 
-  if (!wsProvider || !ydoc) return <Spinner />
+  if (!wsProvider || !ydoc) return <Spinner fullpage />
 
   return Component ? (
     <Component

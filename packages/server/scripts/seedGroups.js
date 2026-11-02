@@ -98,7 +98,7 @@ const createGroupAndRelatedData = async (
       role: 'user',
       global: false,
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
     },
     { trx },
   )
@@ -109,7 +109,7 @@ const createGroupAndRelatedData = async (
       role: 'user',
       global: false,
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
     })
 
     logger.info(`    Added ${userTeam.displayName} team for "${group.name}".`)
@@ -125,7 +125,7 @@ const createGroupAndRelatedData = async (
       role: 'groupAdmin',
       global: false,
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
     },
     { trx },
   )
@@ -136,7 +136,7 @@ const createGroupAndRelatedData = async (
       role: 'groupAdmin',
       global: false,
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
     })
 
     logger.info(
@@ -154,7 +154,7 @@ const createGroupAndRelatedData = async (
       role: 'groupManager',
       global: false,
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
     },
     { trx },
   )
@@ -165,7 +165,7 @@ const createGroupAndRelatedData = async (
       role: 'groupManager',
       global: false,
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
     })
 
     logger.info(

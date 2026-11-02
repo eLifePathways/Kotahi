@@ -36,51 +36,34 @@ describe('Login page tests', () => {
     })
   })
 
-  context(
-    'admin can see branding settings, and verifies the pages in the menu',
-    () => {
-      // before(() => {
-      //   cy.fixture('branding_settings').then(settings => {
-      //     const restoreUrl = Cypress.config('restoreUrl')
-      //     cy.request('POST', `${restoreUrl}/commons.elife_bootstrap`)
-      //   })
-      // })
+  context('admin can see branding settings', () => {
+    // before(() => {
+    //   cy.fixture('branding_settings').then(settings => {
+    //     const restoreUrl = Cypress.config('restoreUrl')
+    //     cy.request('POST', `${restoreUrl}/commons.elife_bootstrap`)
+    //   })
+    // })
 
-      beforeEach(() => {
-        // login as admin
-        cy.fixture('role_names').then(name => {
-          cy.login(name.role.admin, manuscripts)
-        })
+    beforeEach(() => {
+      // login as admin
+      cy.fixture('role_names').then(name => {
+        cy.login(name.role.admin, manuscripts)
       })
+    })
 
-      it('branding settings should be visible after login', () => {
-        cy.fixture('branding_settings').then(settings => {
-          cy.awaitDisappearSpinner()
-          const [primarySolidColor] =
-            settings.preprint1.primaryColor.match(/rgb\([^)]+\)/)
-
-          Menu.getBackground()
-            .should('have.css', 'background-color')
-            .and('contains', primarySolidColor)
-          ManuscriptsPage.getSubmitButton()
-            .should('have.css', 'background-color')
-            .should('contain', settings.preprint1.tertiaryColor)
-        })
-      })
-
-      it('dashboard page should not be visible to the logged in user', () => {
+    it('branding settings should be visible after login', () => {
+      cy.fixture('branding_settings').then(settings => {
         cy.awaitDisappearSpinner()
-        Menu.getDashboardButton().should('not.exist')
-      })
+        const [primarySolidColor] =
+          settings.preprint1.primaryColor.match(/rgb\([^)]+\)/)
 
-      it('Manuscripts, Reports and Settings page should be visible to the logged in user', () => {
-        cy.awaitDisappearSpinner()
-        Menu.getManuscriptsButton().should('be.visible')
-        Menu.getReportsButton().should('be.visible')
-        Menu.getSettingsButton().click()
-        Menu.getFormsButton().should('be.visible')
-        Menu.getUsersButton().should('be.visible')
+        Menu.getBackground()
+          .should('have.css', 'background-color')
+          .and('contains', primarySolidColor)
+        ManuscriptsPage.getSubmitButton()
+          .should('have.css', 'background-color')
+          .should('contain', settings.preprint1.tertiaryColor)
       })
-    },
-  )
+    })
+  })
 })

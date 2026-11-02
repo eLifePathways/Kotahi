@@ -1,6 +1,6 @@
 const chunk = require('lodash/chunk')
 
-const { File, fileStorage, logger, useTransaction } = require('@coko/server')
+const { fileStorage, logger, useTransaction } = require('@coko/server')
 
 const {
   Channel,
@@ -88,7 +88,7 @@ const channelUsersForMention = async (channelId, groupId) => {
           Team.query(trx)
             .where({
               objectId: groupId,
-              objectType: 'Group',
+              objectType: 'group',
             })
             .whereIn('role', ['groupManager', 'groupAdmin']),
         )
@@ -301,8 +301,8 @@ const getUsers = async groupId => {
     .withGraphFetched('defaultIdentity')
 }
 
-const getUsersById = async userIds =>
-  User.findByIds(userIds, { throwIfNotFound: false })
+const getUsersById = async (userIds, options = {}) =>
+  User.findByIds(userIds, { throwIfNotFound: false, ...options })
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()
@@ -364,11 +364,9 @@ const paginatedUsers = async (userId, groupId, sort, offset, limit) => {
   }
 }
 
-const profilePicture = async user => {
-  if (!user.profilePicture) return null
-  const file = await File.findById(user.profilePicture, {
-    throwIfNotFound: false,
-  })
+// URL of the small version of a profile picture file
+const profilePictureUrl = async file => {
+  if (!file) return null
 
   let small
 
@@ -821,14 +819,6 @@ const updateLanguage = async (id, preferredLanguage) => {
   return User.query().patchAndFetchById(id, { preferredLanguage })
 }
 
-const updateRecentTab = async (userId, tab) => {
-  const user = await User.query().patchAndFetchById(userId, {
-    recentTab: tab,
-  })
-
-  return user
-}
-
 const updateUser = async (id, input) => {
   if (input.password) {
     input.passwordHash = await User.hashPassword(input.password)
@@ -867,7 +857,7 @@ module.exports = {
   getUsersById,
   isUserOnline,
   paginatedUsers,
-  profilePicture,
+  profilePictureUrl,
   searchUsers,
   sendEmail: sendEmailFn,
   sendEmailWithPreparedData,
@@ -875,7 +865,6 @@ module.exports = {
   setGroupRole,
   updateEmail,
   updateLanguage,
-  updateRecentTab,
   updateUser,
   updateUsername,
   userIdentities,

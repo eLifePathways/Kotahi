@@ -7,6 +7,7 @@ const FORM_TITLE_TAB = '[data-testid="tab-container"] > div'
 const FORM_OPTION_LIST =
   '[data-testid=formbuilder-element] > button:nth-child(1)'
 const NAME_FIELD = '[data-testid="name"]'
+const TITLE_FIELD = '[data-testid="title"]'
 const COMPONENT_TYPE = '[role=listbox]'
 const FIELD_TYPE = '[data-testid="fieldType"]'
 const UPDATE_FORM_BUTTON = '[type=submit]'
@@ -36,6 +37,9 @@ export const FormsPage = {
   },
   getNameField() {
     return cy.get(NAME_FIELD)
+  },
+  getTitleField() {
+    return cy.get(TITLE_FIELD)
   },
   getComponentType() {
     return cy.get(COMPONENT_TYPE)

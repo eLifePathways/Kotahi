@@ -82,7 +82,7 @@ const Footer = styled.div`
   padding-top: 0.6rem;
 
   > div {
-    color: ${th('color.brand1.tint10')};
+    color: ${th('color.brand1.base')};
     opacity: ${p => (p.$pending ? 1 : 0)};
     padding: 0 0.6rem;
     transition: opacity 0.2s;
@@ -220,6 +220,7 @@ const ConfigManagerForm = ({
   configId,
   disabled,
   formData: passedFormData,
+  hasCoarToken,
   submissionForm,
   deleteFile,
   createFile,
@@ -267,6 +268,7 @@ const ConfigManagerForm = ({
       deleteFile,
       createFile,
       config,
+      hasCoarToken,
       t,
       logoAndFavicon,
       onRefreshCoarAuthToken,

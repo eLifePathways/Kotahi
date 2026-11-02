@@ -46,13 +46,13 @@ export const validateColor = colorCode => {
 // warm, dark gray like #2C2A29
 // or #333230
 
-// const defaultBrandColor1 = '#3aae2a'
-// const defaultBrandColor2 = '#9e9e9e'
 const defaultBrandColor1 = '#4a7c59'
 const defaultBrandColor2 = '#6b7280'
 
 const borderRadius = '3px'
-const colorTextReverse = '#fff'
+export const colorBackground = '#FFFFFF'
+export const colorText = '#111111'
+export const colorTextReverse = '#fff'
 const colorBackgroundHue = '#f4f5f7'
 
 export const makeTheme = (
@@ -72,7 +72,7 @@ export const makeTheme = (
       gray30: '#4F4F4F', // 30%
       // gray35: '#595959', // 35%: colorTextPlaceholder
       gray40: '#666666', // 40%: colorIconPrimary
-      gray50: '#888888', // 53%
+      gray50: '#6E6E6E', // 43%: passes 4.5:1 as text on white, gray97 and backgroundC
       gray60: '#A5A5A5', // 65%: near colorBorder:#AAAAAA
       gray70: '#BFBFBF', // 75%
       gray80: '#DEDEDE', // 87%: colorContainerBorder
@@ -83,18 +83,19 @@ export const makeTheme = (
       // gray100: '#FFFFFF',
       white: '#FFFFFF',
 
-      text: '#111111',
+      text: colorText,
       textReverse: '#FFFFFF',
       textPlaceholder: '#666666',
 
-      backgroundA: '#FFFFFF',
+      backgroundA: colorBackground,
       backgroundB: '#f9fafb',
       // backgroundC: '#f4f5f7',
       backgroundC: '#f2f2f2',
 
       brand1: {
-        shade50: Color(colorBrand1).darken(0.52),
-        shade25: Color(colorBrand1).darken(0.27),
+        // .hex(): styled-components drops Color objects, so these must be strings
+        shade50: Color(colorBrand1).darken(0.52).hex(),
+        shade25: Color(colorBrand1).darken(0.27).hex(),
         // shade15: Color(colorBrand1).darken(0.17),
         // shade10: Color(colorBrand1).darken(0.11),
         base: colorBrand1,
@@ -118,59 +119,44 @@ export const makeTheme = (
       },
 
       success: {
-        // shade50: '#133a0e',
-        // shade25: '#1b5414',
-        // shade15: '#25721c',
-        // shade10: '#2c8a21',
-        base: '#329a25',
-        // tint10: '#3bb32b',
-        // tint25: '#4fcb3e',
-        // tint50: '#8ddf83',
-        // tint70: '#bcedb6',
-        // tint90: '#e3f8e0',
+        base: '#25721c', // text on white: 6:1
+        // tint10: '#2f9023',
+        // tint25: '#3ebf2f',
+        // tint50: '#7fdd74',
+        // tint70: '#b6ebaf',
+        // tint90: '#ecfaea',
       },
       warning: {
-        shade50: '#6f3f00',
-        // shade25: '#8e5000',
-        // shade15: '#ae6200',
-        shade10: '#c56f00',
-        base: '#e48100',
-        // tint10: '#f69414',
-        // tint25: '#f8ae4c',
-        tint50: '#f6c88d',
-        tint70: '#fadfbe',
-        tint90: '#fdf1df',
+        base: '#a65d00', // text on white: 5:1, on #f9f9f9: 4.8:1
+        // tint10: '#c87000',
+        // tint25: '#ff8f00',
+        tint50: '#ffb85d',
+        tint70: '#ffd6a2',
+        tint90: '#fff4e7',
       },
       error: {
-        // shade50: '#6f1919',
-        // shade25: '#8a1e1e',
-        // shade15: '#a52424',
-        // shade10: '#bf2828',
-        base: '#d22b2b',
-        // tint10: '#d94747',
-        // tint25: '#e06969',
-        // tint50: '#e88e8e',
-        // tint70: '#f0b4b4',
-        // tint90: '#f8dcdc',
-      },
-      additional: {
-        // blue: '#71AED2',
-        // purple: '#615CCF',
-        // aqua: '#7ED3A6',
-        green: '#89D46C',
-        // mustard: '#CCD66E',
+        base: '#a52424', // text on white: 7.3:1, on colorFurniture: 6:1
+        // tint10: '#be2a2a',
+        // tint25: '#d64343',
+        // tint50: '#e58888',
+        // tint70: '#f0bbbb',
+        // tint90: '#fbeded',
       },
     },
 
-    colorBackground: '#FFFFFF',
+    colorBackground,
     colorBackgroundHue,
-    colorBorder: '#A5A5A5',
+    colorBorder: '#8F8F8F', // 3:1 minimum for input borders (WCAG 1.4.11)
     colorContainerBorder: '#DEDEDE',
     colorDisabled: '#bfbfbf',
     colorError: '#B53930',
     colorFurniture: '#E8E8E8',
     colorIconPrimary: '#666666',
     colorInfo: '#666666',
+    colorOverlayBlackHover: 'rgb(0 0 0 / 12%)',
+    colorOverlayBlackPressed: 'rgb(0 0 0 / 20%)',
+    colorOverlayWhiteHover: 'rgb(255 255 255 / 12%)',
+    colorOverlayWhitePressed: 'rgb(255 255 255 / 20%)',
     colorPrimary: colorBrand1,
     colorPrimaryVeryLight: colorPrimaryVeryLight,
     colorSecondary: colorBrand2,
@@ -178,10 +164,11 @@ export const makeTheme = (
     colorSuccess: '#008800',
     colorSuccessDark: '#17510F',
     colorSuccessLight: '#d2ffcc',
-    colorText: '#111111',
-    colorTextHeading: '#111111',
+    colorText,
+    colorTextHeading: colorText,
+    colorTextMuted: '#666666',
     colorTextPlaceholder: '#666666',
-    colorTextReverse: colorTextReverse,
+    colorTextReverse,
     colorWallpaper: '#f2f2f2',
     colorWarning: '#C18D33',
     colorWarningDark: '#503303',
@@ -229,7 +216,8 @@ export const makeTheme = (
     // Does not exist
     // $borderColor: var($colorFurniture);
 
-    boxShadow200: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+    boxShadow: '0 2px 6px 0 rgb(0 0 0 / 10%)',
+    boxShadow200: '0 2px 6px 0 rgb(0 0 0 / 10%)', // deprecated
 
     /* Transition */
     // transitionDuration: '0.2s', // TODO -- julien: not 0.05s

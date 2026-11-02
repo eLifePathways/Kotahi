@@ -13,6 +13,7 @@ const {
 
 const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 const seekEvent = require('../services/notification.service')
+const { emitEvent } = require('../services/eventManager/eventManager')
 
 const { getUserRolesInManuscript } = require('./user.controllers')
 
@@ -20,6 +21,26 @@ const {
   ensureJsonIsParsed,
   deepMergeObjectsReplacingArrays,
 } = require('../utils/objectUtils')
+
+const getFileFieldNames = form =>
+  form.structure.children
+    .filter(field =>
+      ['SupplementaryFiles', 'VisualAbstract'].includes(field.component),
+    )
+    .map(field => field.name)
+
+// Paranoia, in case some files are already in full object form
+const toFileIds = value =>
+  (Array.isArray(value) ? value : []).map(file => file.id || file)
+
+/** IDs of the files in a review's file fields */
+const getReviewFileIds = (review, form) => {
+  const fileFieldNames = getFileFieldNames(form)
+
+  return Object.entries(ensureJsonIsParsed(review.jsonData))
+    .filter(([key]) => fileFieldNames.includes(key))
+    .flatMap(([, value]) => toFileIds(value))
+}
 
 /**
  * For all fields containing files, convert files expressed as simple IDs into
@@ -32,20 +53,14 @@ const convertFilesToFullObjects = async (
   /** Function to return full file objects from DB, for an array of file IDs */
   getFilesByIds,
 ) => {
-  const fileFieldNames = form.structure.children
-    .filter(field =>
-      ['SupplementaryFiles', 'VisualAbstract'].includes(field.component),
-    )
-    .map(field => field.name)
+  const fileFieldNames = getFileFieldNames(form)
 
   review.jsonData = ensureJsonIsParsed(review.jsonData)
 
   for (const [key, value] of Object.entries(review.jsonData)) {
     if (fileFieldNames.includes(key)) {
-      const fileRecords = Array.isArray(value) ? value : []
-      const fileIds = fileRecords.map(file => file.id || file) // Paranoia, in case some files are already in full object form
       /* eslint-disable-next-line no-await-in-loop */
-      const files = await getFilesByIds(fileIds)
+      const files = await getFilesByIds(toFileIds(value))
       /* eslint-disable-next-line no-await-in-loop */
       review.jsonData[key] = await getFilesWithUrl(files)
     }
@@ -62,11 +77,7 @@ const convertFilesToIdsOnly = (reviewDelta, form) => {
   if (typeof reviewDelta.jsonData === 'string')
     reviewDelta.jsonData = JSON.parse(reviewDelta.jsonData)
 
-  const fileFieldNames = form.structure.children
-    .filter(field =>
-      ['SupplementaryFiles', 'VisualAbstract'].includes(field.component),
-    )
-    .map(field => field.name)
+  const fileFieldNames = getFileFieldNames(form)
 
   for (const [key, value] of Object.entries(reviewDelta.jsonData)) {
     if (fileFieldNames.includes(key) && Array.isArray(value)) {
@@ -283,6 +294,20 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
       manuscript,
       groupId: manuscript.groupId,
     })
+
+    const editorIds = await Manuscript.getEditorIds(manuscriptId)
+
+    await Promise.all(
+      editorIds.map(editorId =>
+        emitEvent('reviewerCompletedReview', {
+          userId: editorId,
+          groupId: manuscript.groupId,
+          manuscriptId,
+          shortId: manuscript.shortId,
+          reviewerId: userId,
+        }),
+      ),
+    )
   }
 
   return member.patch({
@@ -294,6 +319,7 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
 module.exports = {
   convertFilesToFullObjects,
   getDecisionForm,
+  getReviewFileIds,
   getReviewForm,
   getSubmissionForm,
   isReviewSharedWithCurrentUser,

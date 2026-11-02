@@ -6,7 +6,7 @@ import { indexOf } from 'lodash'
 
 import { dateTimeFormatter, fileSizeFormatter } from './helpers'
 import IconButton from './IconButton'
-import { Loading } from './Modal'
+import Spinner from '../../../../ui/shared/Spinner'
 
 const TableWrapper = styled.div`
   align-items: center;
@@ -123,7 +123,7 @@ const FilesTable = ({
   checkboxHandler,
 }) => {
   const renderTableBody = () => {
-    if (loading || !files) return <Loading />
+    if (loading || !files) return <Spinner fullpage />
 
     return files.length > 0 ? (
       <TableBody>

@@ -39,10 +39,6 @@ const Button = styled.button`
     line-height: ${th('lineHeightBase')} !important;
   }
 
-  &:focus {
-    outline: 0;
-  }
-
   &:not(:disabled):hover {
     color: ${th('color.brand1.base')};
 

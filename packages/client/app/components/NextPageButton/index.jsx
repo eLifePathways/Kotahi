@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { Spinner } from '../shared'
+import Spinner from '../../ui/shared/Spinner'
 import { HasNextPage, NextPageButton } from './style'
 
 const NextPageButtonWrapper = props => {
@@ -44,11 +44,7 @@ const NextPageButtonWrapper = props => {
       to={href}
     >
       <NextPageButton ref={sentinelRef}>
-        {isFetchingMore ? (
-          <Spinner color="brand.default" size={16} />
-        ) : (
-          children || 'Load more'
-        )}
+        {isFetchingMore ? <Spinner size={4} /> : children || 'Load more'}
       </NextPageButton>
     </HasNextPage>
   )

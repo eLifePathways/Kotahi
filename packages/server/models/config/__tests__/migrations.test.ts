@@ -18,7 +18,6 @@ describe('Config Migrations', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('moves gmail credentials to generic smtp', async () => {
@@ -101,8 +100,8 @@ describe('Config Migrations', () => {
     const smtpConfig = await Config.findById(gmailConfig.id)
 
     expect(smtpConfig.formData.notification.gmailAuthEmail).toBeUndefined()
-    expect(gmailConfig.formData.notification.gmailAuthPassword).toBeUndefined()
-    expect(gmailConfig.formData.notification.gmailSenderName).toBeUndefined()
+    expect(smtpConfig.formData.notification.gmailAuthPassword).toBeUndefined()
+    expect(smtpConfig.formData.notification.gmailSenderName).toBeUndefined()
     expect(smtpConfig.formData.emailNotification.user).toBeUndefined()
     expect(smtpConfig.formData.emailNotification.pass).toBeUndefined()
     expect(smtpConfig.formData.emailNotification.from).toBeUndefined()
@@ -259,5 +258,277 @@ describe('Config Migrations', () => {
       .forEach(e => {
         expect(config1.formData.notification.eventsConfig[e].active).toBe(true)
       })
+  })
+
+  it('changes the default group identity colours', async () => {
+    await migrationManager.migrate({ to: '1790663316-remove-recent-tab.ts' })
+
+    const noncompliantGroupIdentity = {
+      primaryColor: '#3aae2a',
+      secondaryColor: '#9e9e9e',
+    }
+
+    const compliantGroupIdentity = {
+      primaryColor: '#4a7c59',
+      secondaryColor: '#6b7280',
+    }
+
+    // non-compliant
+    const group1 = await Group.insert({})
+
+    let config1ForGroup1 = await Config.insert({
+      active: true,
+      groupId: group1.id,
+      formData: {
+        groupIdentity: noncompliantGroupIdentity,
+      },
+    })
+
+    let config2ForGroup1 = await Config.insert({
+      active: false,
+      groupId: group1.id,
+      formData: {
+        groupIdentity: noncompliantGroupIdentity,
+      },
+    })
+
+    // mixed
+    const group2 = await Group.insert({})
+
+    let configForGroup2 = await Config.insert({
+      active: true,
+      groupId: group2.id,
+      formData: {
+        groupIdentity: {
+          primaryColor: noncompliantGroupIdentity.primaryColor,
+          secondaryColor: compliantGroupIdentity.secondaryColor,
+        },
+      },
+    })
+
+    // compliant
+    const group3 = await Group.insert({})
+
+    let configForGroup3 = await Config.insert({
+      active: true,
+      groupId: group3.id,
+      formData: {
+        groupIdentity: compliantGroupIdentity,
+      },
+    })
+
+    // non-compliant, uppercase (as stored by 1678694877-create-config-data-from-env)
+    const group4 = await Group.insert({})
+
+    let configForGroup4 = await Config.insert({
+      active: true,
+      groupId: group4.id,
+      formData: {
+        groupIdentity: {
+          primaryColor: noncompliantGroupIdentity.primaryColor.toUpperCase(),
+          secondaryColor:
+            noncompliantGroupIdentity.secondaryColor.toUpperCase(),
+        },
+      },
+    })
+
+    // mixed, the other way round
+    const group5 = await Group.insert({})
+
+    let configForGroup5 = await Config.insert({
+      active: true,
+      groupId: group5.id,
+      formData: {
+        groupIdentity: {
+          primaryColor: compliantGroupIdentity.primaryColor,
+          secondaryColor: noncompliantGroupIdentity.secondaryColor,
+        },
+      },
+    })
+
+    // no group identity
+    const group6 = await Group.insert({})
+
+    let configForGroup6 = await Config.insert({
+      active: true,
+      groupId: group6.id,
+      formData: {},
+    })
+
+    await migrationManager.migrate({ step: 1 })
+
+    config1ForGroup1 = await Config.findById(config1ForGroup1.id)
+    config2ForGroup1 = await Config.findById(config2ForGroup1.id)
+    configForGroup2 = await Config.findById(configForGroup2.id)
+    configForGroup3 = await Config.findById(configForGroup3.id)
+    configForGroup4 = await Config.findById(configForGroup4.id)
+    configForGroup5 = await Config.findById(configForGroup5.id)
+    configForGroup6 = await Config.findById(configForGroup6.id)
+
+    expect(config1ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(config1ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(config2ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(config2ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup2.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup2.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup3.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup3.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup4.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup4.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup5.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup5.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup6.formData.groupIdentity).toBeUndefined()
+
+    await migrationManager.rollback({ step: 1 })
+
+    config1ForGroup1 = await Config.findById(config1ForGroup1.id)
+    config2ForGroup1 = await Config.findById(config2ForGroup1.id)
+    configForGroup2 = await Config.findById(configForGroup2.id)
+    configForGroup3 = await Config.findById(configForGroup3.id)
+    configForGroup5 = await Config.findById(configForGroup5.id)
+    configForGroup6 = await Config.findById(configForGroup6.id)
+
+    expect(config1ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(config1ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(config2ForGroup1.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(config2ForGroup1.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup2.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup2.formData.groupIdentity.secondaryColor).toBe(
+      compliantGroupIdentity.secondaryColor,
+    )
+
+    // what uses the compliant defaults should now be non-compliant
+    expect(configForGroup3.formData.groupIdentity.primaryColor).toBe(
+      noncompliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup3.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup5.formData.groupIdentity.primaryColor).toBe(
+      compliantGroupIdentity.primaryColor,
+    )
+    expect(configForGroup5.formData.groupIdentity.secondaryColor).toBe(
+      noncompliantGroupIdentity.secondaryColor,
+    )
+
+    expect(configForGroup6.formData.groupIdentity).toBeUndefined()
+  })
+
+  describe('remove submission page description', () => {
+    const MIGRATION = '1793267709-remove-submission-page-description.ts'
+    const MIGRATION_BEFORE = '1793265002-lowercase-group-team-object-type.ts'
+
+    beforeEach(async () => {
+      await migrationManager.migrate({ to: MIGRATION_BEFORE })
+    })
+
+    it('removes the description and keeps the rest of the submission page settings', async () => {
+      const group = await Group.insert({})
+
+      const { id } = await Config.insert({
+        active: true,
+        groupId: group.id,
+        formData: {
+          submission: {
+            allowAuthorsSubmitNewVersion: true,
+            submissionPage: {
+              title: 'Submit',
+              submissionPagedescription: '<p>Read our guidelines</p>',
+              submitOptions: 'allowAuthorUploadWithForm',
+            },
+          },
+        },
+      })
+
+      await migrationManager.migrate({ to: MIGRATION })
+
+      const { formData } = await Config.findById(id)
+
+      expect(formData.submission).toEqual({
+        allowAuthorsSubmitNewVersion: true,
+        submissionPage: {
+          title: 'Submit',
+          submitOptions: 'allowAuthorUploadWithForm',
+        },
+      })
+    })
+
+    it('removes a description stored as null', async () => {
+      const group = await Group.insert({})
+
+      const { id } = await Config.insert({
+        active: true,
+        groupId: group.id,
+        formData: {
+          submission: {
+            submissionPage: { title: null, submissionPagedescription: null },
+          },
+        },
+      })
+
+      await migrationManager.migrate({ to: MIGRATION })
+
+      const { formData } = await Config.findById(id)
+
+      expect(formData.submission.submissionPage).toEqual({ title: null })
+    })
+
+    it('leaves configs without a description alone', async () => {
+      const group = await Group.insert({})
+      const formData = { submission: { submissionPage: { title: 'Submit' } } }
+
+      const { id } = await Config.insert({
+        active: true,
+        groupId: group.id,
+        formData,
+      })
+
+      await migrationManager.migrate({ to: MIGRATION })
+
+      expect((await Config.findById(id)).formData).toEqual(formData)
+    })
   })
 })

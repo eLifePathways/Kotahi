@@ -4,21 +4,16 @@ const axios = require('axios')
 
 const { config } = require('@coko/server')
 
-const { port, protocol, host } = config.get('flax-site')
-
-const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
-
-const { clientId, clientSecret } = config.get('flax-site')
-
-const currentApiUrl = config.get('flax-site').clientAPIURL
-
-const buff = Buffer.from(`${clientId}:${clientSecret}`, 'utf8')
-const base64data = buff.toString('base64')
-
 const rebuildCMSSite = async (groupId, params) => {
+  const { clientId, clientSecret, clientAPIURL, port, protocol, host } =
+    config.get('flax-site')
+  const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
+  const buff = Buffer.from(`${clientId}:${clientSecret}`, 'utf8')
+  const base64data = buff.toString('base64')
+
   const requestData = JSON.stringify({
     updatedConfig: {
-      url: `${currentApiUrl}/graphql`,
+      url: `${clientAPIURL}/graphql`,
     },
     buildConfigs: params,
     groupId,
@@ -62,7 +57,13 @@ const rebuildCMSSite = async (groupId, params) => {
 }
 
 const healthCheck = async () => {
+  const { clientId, clientSecret, port, protocol, host } =
+    config.get('flax-site')
+  const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
   const url = `${serverUrl}/healthcheck`
+
+  const buff = Buffer.from(`${clientId}:${clientSecret}`, 'utf8')
+  const base64data = buff.toString('base64')
 
   try {
     const serviceHealthCheck = await axios({

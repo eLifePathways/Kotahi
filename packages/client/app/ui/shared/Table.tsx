@@ -53,6 +53,19 @@ const Table = styled(OriginalTable)`
     background-color: ${th('colorTextReverse')} !important;
   }
 
+  /* keep header text legible on keyboard focus */
+  /* show the focus ring on the sorter icon instead of antd's default of recoloring the whole label */
+  .ant-table-thead th.ant-table-column-has-sorters:focus-visible {
+    color: ${th('colorTextReverse')} !important;
+  }
+
+  .ant-table-thead
+    th.ant-table-column-has-sorters:focus-visible
+    .ant-table-column-sorter {
+    outline: 2px solid ${th('colorTextReverse')};
+    outline-offset: 2px;
+  }
+
   .ant-table-column-sorter-up,
   .ant-table-column-sorter-down {
     opacity: 0.1;

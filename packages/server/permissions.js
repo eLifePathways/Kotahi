@@ -1,6 +1,5 @@
 const { authorization } = require('@coko/server')
 
-const { File } = require('@coko/server')
 const { cachedGet } = require('./services/queryCache.service')
 
 const Channel = require('./models/channel/channel.model')
@@ -11,6 +10,7 @@ const Review = require('./models/review/review.model')
 const Team = require('./models/team/team.model')
 const TeamMember = require('./models/teamMember/teamMember.model')
 const User = require('./models/user/user.model')
+const UserNotification = require('./models/userNotification/userNotification.model')
 
 // Shield's `race` rule is misnamed, as it doesn't race the different rules but applies them sequentially until one succeeds. `or`, on the other hand, applies all rules in parallel.
 const { rule, and, or, allow, deny, race: lazyOr } = authorization
@@ -72,16 +72,15 @@ const userOwnsMessage = rule({ cache: 'contextual' })(async (
   return message?.userId === ctx.userId
 })
 
-const getLatestVersionOfManuscriptOfFile = async (file, ctx) => {
-  const manuscript = await cachedGet(`msOfFile:${file.id}`)
-
-  if (!manuscript) return null
-
-  const firstVersionId = manuscript.parentId || manuscript.id
-  const latestVersion = await getLatestVersionOfManuscript(ctx, firstVersionId)
-
-  return latestVersion
-}
+const userOwnsUserNotification = rule({ cache: 'contextual' })(async (
+  parent,
+  args,
+  ctx,
+) => {
+  if (!ctx.userId) return false
+  const userNotification = await UserNotification.findById(args.id)
+  return userNotification.userId === ctx.userId
+})
 
 const getLatestVersionOfManuscript = async (ctx, manuscriptVersionId) => {
   const latestVersion = await Manuscript.query()
@@ -133,6 +132,18 @@ const isExportTemplatingFile = rule({ cache: 'strict' })(async parent => {
   return parent.tags && parent.tags.includes('templateGroupAsset')
 })
 
+// Files owned by the group itself (eg. export template assets, listed on the
+// production page for authors doing proofing too)
+const isFileOfCurrentGroup = rule({ cache: 'strict' })(async (
+  parent,
+  args,
+  ctx,
+) => {
+  const groupId = ctx.req?.headers['group-id']
+  if (!ctx.userId || !groupId || groupId === 'undefined') return false
+  return !!parent.objectId && parent.objectId === groupId
+})
+
 const isPublicReviewFromPublishedManuscript = rule({ cache: 'strict' })(
   async parent => {
     if (parent.isHiddenFromAuthor || !parent.manuscriptId) return false
@@ -147,20 +158,16 @@ const isPublicReviewFromPublishedManuscript = rule({ cache: 'strict' })(
   },
 )
 
-// TODO This appears only to check if the user is a reviewer of ANY manuscript!??
-const reviewIsByUser = rule({ cache: 'contextual' })(async (
-  parent,
+// Authors, reviewers and editors of the manuscript (any version) can see its reviews.
+// Which reviews, and which of their fields, each of them gets is decided by
+// stripConfidentialDataFromReviews when the reviews are fetched.
+const userHasRoleInManuscriptOfReview = rule({ cache: 'strict' })(async (
+  review,
   args,
   ctx,
 ) => {
-  if (!ctx.userId) return false
-
-  const user = await User.findById(ctx.userId, { throwIfNotFound: false })
-
-  const rows =
-    user && user.$relatedQuery('teams').where({ role: 'reviewer' }).resultSize()
-
-  return !!rows
+  if (!ctx.userId || !review.manuscriptId) return false
+  return cachedGet(`userHasRoleInMsFamily:${ctx.userId}:${review.manuscriptId}`)
 })
 
 const isAuthenticated = rule({ cache: 'contextual' })(async (
@@ -169,6 +176,38 @@ const isAuthenticated = rule({ cache: 'contextual' })(async (
   ctx,
 ) => {
   return !!ctx.userId
+})
+
+const userCanCreateSubmission = rule({ cache: 'no_cache' })(async (
+  parent,
+  { groupId, file },
+  ctx,
+) => {
+  if (!ctx.userId) return false
+
+  const roleChecks = await Promise.all([
+    User.hasGlobalRole(ctx.userId, 'admin'),
+    ...['user', 'groupManager', 'groupAdmin'].map(role =>
+      User.hasRoleOnObject(ctx.userId, role, groupId),
+    ),
+  ])
+
+  if (!roleChecks.some(Boolean)) return false
+
+  const config = await Config.getActive(groupId)
+  const { submitOptions } = config?.formData?.submission?.submissionPage ?? {}
+
+  if (!submitOptions) return true
+
+  return file
+    ? ['allowAuthorUploadOnly', 'allowAuthorUploadWithForm'].includes(
+        submitOptions,
+      )
+    : [
+        'allowAuthorUploadWithForm',
+        'allowAuthorSubmitForm',
+        'allowAuthorSubmitFormWithBlankEditor',
+      ].includes(submitOptions)
 })
 
 // Who can send a message to a channel?
@@ -396,7 +435,9 @@ const userIsAuthorOfManuscript = rule({ cache: 'strict' })(async (
 //   return false
 // })
 
-const userIsAuthorOfTheManuscriptOfTheFile = rule({ cache: 'strict' })(async (
+// Authors, reviewers and editors of the manuscript (any version) can see its files,
+// including files attached to its reviews.
+const userHasRoleInManuscriptOfFile = rule({ cache: 'strict' })(async (
   file,
   args,
   ctx,
@@ -405,50 +446,11 @@ const userIsAuthorOfTheManuscriptOfTheFile = rule({ cache: 'strict' })(async (
 
   if (file.storedObjects && !file.id) return true // only on uploading manuscript docx this will be validated
 
-  const manuscript = await cachedGet(`msOfFile:${file.id}`, ctx)
+  if (!file.id) return false
+  const manuscript = await cachedGet(`msOfFile:${file.id}`)
   if (!manuscript) return false
 
-  const team = await Team.findOne({
-    objectId: manuscript.id,
-    objectType: 'manuscript',
-    role: 'author',
-  })
-
-  if (!team) return false
-
-  const members = await team
-    .$relatedQuery('members')
-    .where('userId', ctx.userId)
-
-  if (members && members[0]) return true
-  return false
-})
-
-// ¯\_(ツ)_/¯
-const userIsTheReviewerOfTheManuscriptOfTheFileAndReviewNotComplete = rule({
-  cache: 'strict',
-})(async (parent, args, ctx) => {
-  if (!ctx.userId) return false
-  if (!parent.id) return false
-
-  const file = await File.findById(parent.id)
-  const manuscript = await getLatestVersionOfManuscriptOfFile(file, ctx)
-  if (!manuscript) return false
-
-  const team = await Team.findOne({
-    objectId: manuscript.id,
-    objectType: 'manuscript',
-    role: 'reviewer',
-  })
-
-  if (!team) return false
-
-  const members = await team
-    .$relatedQuery('members')
-    .where('userId', ctx.userId)
-
-  if (members && members[0] && members[0].status !== 'completed') return true
-  return false
+  return cachedGet(`userHasRoleInMsFamily:${ctx.userId}:${manuscript.id}`)
 })
 
 const manuscriptIsPublished = rule({
@@ -527,6 +529,9 @@ const permissions = {
   Query: {
     authorsActivity: or(userIsGroupAdmin, userIsAdmin),
     builtCss: isAuthenticated,
+    cmsLayout: allow, // read by the public Flax site
+    cmsPage: or(userIsGroupAdmin, userIsAdmin),
+    cmsPages: allow, // read by the public Flax site
     config: isAuthenticated,
     convertToJats: or(
       userIsEditorOfAnyManuscript,
@@ -541,6 +546,7 @@ const permissions = {
       userIsAdmin,
     ),
     currentUser: isAuthenticated,
+    dashboardData: isAuthenticated,
     docmap: allow,
     editorsActivity: or(userIsGroupAdmin, userIsAdmin),
     file: deny, // Never used
@@ -549,12 +555,15 @@ const permissions = {
     formForPurposeAndCategory: allow,
     forms: allow,
     formsByCategory: or(userIsGroupAdmin, userIsAdmin),
+    getActiveCmsFilesTree: allow, // read by the public Flax site
     getBlacklistInformation: or(
       userIsEditorOfAnyManuscript,
       userIsGm,
       userIsGroupAdmin,
       userIsAdmin,
     ),
+    getCmsFileContent: or(userIsGroupAdmin, userIsAdmin),
+    getCmsFilesTree: or(userIsGroupAdmin, userIsAdmin),
     getEntityFiles: isAuthenticated,
     getInvitationsForManuscript: or(
       userIsEditorOfAnyManuscript,
@@ -563,10 +572,12 @@ const permissions = {
       userIsAdmin,
     ),
     getFilesByTagOrId: allow,
+    getFoldersList: or(userIsGroupAdmin, userIsAdmin),
     getSpecificFiles: isAuthenticated,
     globalTeams: deny, // Never used
     group: allow,
     groups: allow,
+    hasToken: or(userIsGroupAdmin, userIsAdmin),
     invitationManuscriptId: isAuthenticated,
     invitationStatus: allow,
     manuscript: or(
@@ -584,6 +595,7 @@ const permissions = {
     manuscriptsUserHasCurrentRoleIn: isAuthenticated,
     message: deny, // Never used
     messages: isAuthenticated,
+    newSubmissionSettings: isAuthenticated,
     orcidValidate: isAuthenticated,
     paginatedManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     paginatedUsers: or(userIsGroupAdmin, userIsAdmin),
@@ -603,6 +615,7 @@ const permissions = {
     unreviewedPreprints: allow, // This has its own token-based authentication.
     user: isAuthenticated,
     userHasTaskAlerts: isAuthenticated,
+    userNotifications: isAuthenticated,
     users: or(
       userIsEditorOfAnyManuscript,
       userIsGm,
@@ -627,7 +640,7 @@ const permissions = {
     createFile: isAuthenticated,
     createForm: or(userIsGroupAdmin, userIsAdmin),
     createCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    createManuscript: isAuthenticated,
+    createSubmission: userCanCreateSubmission,
     createMessage: userIsAllowedToChat,
     createNewTaskAlerts: or(userIsGm, userIsGroupAdmin, userIsAdmin), // Only used when test code is enabled
     createNewVersion: or(
@@ -637,12 +650,6 @@ const permissions = {
       userIsGroupAdmin,
       userIsAdmin,
     ),
-    createTeam: or(
-      userIsEditorOfAnyManuscript,
-      userIsGm,
-      userIsGroupAdmin,
-      userIsAdmin,
-    ), // TODO scrap this mutation in favour of an 'assignEditor' mutation
     deleteCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     deleteFile: isAuthenticated,
     deleteFiles: isAuthenticated,
@@ -656,6 +663,7 @@ const permissions = {
       userOwnsMessage,
       and(userIsGm, userIsGroupAdmin, userIsAdmin),
     ),
+    generateNewToken: or(userIsGroupAdmin, userIsAdmin),
     importManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     makeDecision: or(
       userIsEditorOfAnyManuscript,
@@ -775,7 +783,6 @@ const permissions = {
       userIsEditorOfTheManuscriptOfTheReview,
     ),
     updateUser: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    uploadFile: isAuthenticated,
     uploadFiles: isAuthenticated,
     updateTaskStatus: isAuthenticated,
     updateCMSPage: or(userIsGroupAdmin, userIsAdmin),
@@ -783,12 +790,19 @@ const permissions = {
     deleteCMSPage: or(userIsGroupAdmin, userIsAdmin),
     updateCMSLayout: or(userIsGroupAdmin, userIsAdmin),
     rebuildFlaxSite: or(userIsGroupAdmin, userIsAdmin),
+    addResourceToFolder: or(userIsGroupAdmin, userIsAdmin),
+    deleteResource: or(userIsGroupAdmin, userIsAdmin),
+    renameResource: or(userIsGroupAdmin, userIsAdmin),
+    updateResource: or(userIsGroupAdmin, userIsAdmin),
+    updateFlaxRootFolder: or(userIsGroupAdmin, userIsAdmin),
     updateMessage: or(userOwnsMessage, userIsGm, userIsGroupAdmin, userIsAdmin),
     createNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     updateNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     deleteNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setNotificationActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setEventActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
+    dismissUserNotification: userOwnsUserNotification,
+    dismissAllUserNotifications: isAuthenticated,
   },
   Subscription: {
     fileUpdated: isAuthenticated,
@@ -796,6 +810,7 @@ const permissions = {
     filesUploaded: isAuthenticated,
     reviewFormUpdated: isAuthenticated,
     manuscriptsImportStatus: isAuthenticated,
+    newSubmissionProgress: isAuthenticated,
     /**
      * This was not being triggered at all before the v3 upgrade.
      * It doesn't work because userIsAllowedToChat dependends on req, and req
@@ -820,14 +835,13 @@ const permissions = {
     isLogoFile,
     isFaviconFile,
     isPublicFileFromPublishedManuscript,
-    userIsAuthorOfTheManuscriptOfTheFile,
-    userIsTheReviewerOfTheManuscriptOfTheFileAndReviewNotComplete,
+    isFileOfCurrentGroup,
+    userHasRoleInManuscriptOfFile,
     userIsEditorOfAnyManuscript,
-    reviewIsByUser,
     userIsGm,
+    userIsGroupAdmin,
     userIsAdmin,
   ),
-  FileNotInDb: allow,
   Form: allow,
   FormStructure: allow,
   FormElement: allow,
@@ -835,7 +849,7 @@ const permissions = {
   FormElementValidation: allow,
   Review: or(
     isPublicReviewFromPublishedManuscript,
-    reviewIsByUser,
+    userHasRoleInManuscriptOfReview,
     userIsEditorOfAnyManuscript,
     userIsGm,
     userIsGroupAdmin,

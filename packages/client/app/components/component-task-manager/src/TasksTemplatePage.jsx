@@ -7,7 +7,8 @@ import {
   UPDATE_TASK_NOTIFICATION,
   GET_TASKS,
 } from '../../../queries'
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import TasksTemplate from './TasksTemplate'
 import { roles } from '../../../globals'
 import { ConfigContext } from '../../config/src'
@@ -43,7 +44,7 @@ const TasksTemplatePage = () => {
     variables: { groupId: config.groupId },
   })
 
-  if (loading && !data) return <Spinner />
+  if (loading && !data) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   return (
