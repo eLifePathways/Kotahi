@@ -30,6 +30,7 @@ const en = {
       notAssignedForThisVersion: 'Not a reviewer of the current version',
     },
     common: {
+      Loading: 'Loading',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -246,7 +247,7 @@ const en = {
     },
     dashboardPage: {
       Dashboard: 'Dashboard',
-      'New submission': 'New submission',
+      backToDashboard: 'Back to Dashboard',
       'New Alerts': 'New Alerts',
       'My Submissions': 'My Submissions',
       'To Review': 'Review Assignments',
@@ -254,6 +255,83 @@ const en = {
       mySubmissions: {
         'Provide production feedback': 'Provide production feedback',
         'View production feedback': 'View production feedback',
+      },
+      greeting: {
+        goodMorning: 'Good morning',
+        goodAfternoon: 'Good afternoon',
+        goodEvening: 'Good evening',
+        and: 'and',
+        allCaughtUp: "You're all caught up",
+        nothingNeedsAttention:
+          'There is nothing that needs your attention right now.',
+        itemsNeedAttention: 'You have {{count}} item that needs attention',
+        itemsNeedAttention_plural:
+          'You have {{count}} items that need attention',
+        actionSummary: {
+          authorSubmit: '{{count}} submission pending completion',
+          authorSubmit_plural: '{{count}} submissions pending completion',
+          authorRevise: '{{count}} manuscript pending revision',
+          authorRevise_plural: '{{count}} manuscripts pending revision',
+          authorSubmitRevision: '{{count}} revision pending submission',
+          authorSubmitRevision_plural: '{{count}} revisions pending submission',
+          reviewerRespond: '{{count}} reviewer invitation waiting on you',
+          reviewerRespond_plural:
+            '{{count}} reviewer invitations waiting on you',
+          reviewerSubmit: '{{count}} review pending',
+          reviewerSubmit_plural: '{{count}} reviews pending',
+          editorDecide: '{{count}} editor decision pending',
+          editorDecide_plural: '{{count}} editor decisions pending',
+          taskAlmostOverdue: '{{count}} task almost overdue',
+          taskAlmostOverdue_plural: '{{count}} tasks almost overdue',
+          taskOverdue: '{{count}} task overdue',
+          taskOverdue_plural: '{{count}} tasks overdue',
+        },
+      },
+      actionCards: {
+        scrollLeft: 'Scroll action list left',
+        scrollRight: 'Scroll action list right',
+        types: {
+          authorSubmit: 'Submit',
+          authorRevise: 'Revise',
+          authorSubmitRevision: 'Submit revision',
+          reviewerRespond: 'Review invitation',
+          reviewerSubmit: 'Review',
+          editorDecide: 'Decide on',
+          taskAlmostOverdue: 'Task almost overdue',
+          taskOverdue: 'Task overdue',
+        },
+      },
+      tableCards: {
+        needsAttention: '{{count}} needs attention',
+        needsAttention_plural: '{{count}} need attention',
+        author: 'Author',
+        reviewer: 'Reviewer',
+        editor: 'Editor',
+      },
+      activity: {
+        title: 'Activity',
+        clearAll: 'Clear all',
+        dismissNotification: 'Dismiss notification',
+        showingOfTotal: 'Showing {{shown}} of {{total}}',
+        noActivityYet: 'No activity yet',
+        activityWillAppearHere: 'Updates on your manuscripts will appear here.',
+        manuscriptReference: 'manuscript #{{shortId}}',
+        notifications: {
+          addedAsEditor: 'You were added as an editor on',
+          addedAsHandlingEditor: 'You were added as the handling editor on',
+          addedAsReviewer: 'You were added as a reviewer on',
+          addedAsSeniorEditor: 'You were added as the senior editor on',
+          decisionMade: 'A decision was made on',
+          removedAsEditor: 'You were removed as an editor from',
+          removedAsHandlingEditor:
+            'You were removed as the handling editor from',
+          removedAsReviewer: 'You were removed as a reviewer from',
+          removedAsSeniorEditor: 'You were removed as the senior editor from',
+          reviewerAcceptedInvitation: 'A reviewer accepted your invitation for',
+          reviewerCompletedReview: 'A review was completed for',
+          reviewerRejectedInvitation: 'A reviewer declined your invitation for',
+          revisionSubmitted: 'A revision was submitted for',
+        },
       },
     },
     submitPage: {
@@ -615,8 +693,6 @@ const en = {
         'Number of days a manuscript should remain in the Manuscripts page before being automatically archived (leave empty if you do not wish to use auto-archiving)',
       importFromSematic:
         'Import manuscripts from Semantic Scholar no older than ‘x’ number of days',
-      newSubmissionActionVisisble:
-        '‘Add new submission’ action visible on the Manuscripts page',
       displayActionToSelect:
         'Display action to ‘Select’ manuscripts for review from the Manuscripts page',
       importManuscriptsManually:
@@ -635,7 +711,6 @@ const en = {
       Submission: 'Submission',
       SubmissionPage: {
         title: 'Title',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Allow an author to upload a manuscript file only',
         allowAuthorUploadWithForm:
@@ -853,6 +928,8 @@ const en = {
       coar: {
         authToken: 'COAR Notify auth token',
         refreshAuthToken: 'Refresh auth token',
+        copy: 'Copy',
+        copied: 'Copied!',
         copyMessage: 'Auth token is only shown once!',
         copyDescription:
           'Please copy the auth token now, and store it in your third-party COAR Notify system. You can always refresh the token here, but previous tokens will be invalidated.',
@@ -1077,8 +1154,7 @@ const en = {
     loginPage: {
       kotahiUses:
         'Kotahi uses ORCID <0>icon</0> to identify authors and staff.',
-      'Login with ORCID': 'Login with ORCID',
-      'Register with ORCID': 'Register with ORCID',
+      loginWithOrcid: 'Login with ORCID',
     },
     frontPage: {
       recent: 'Recent publications in {{brandName}}',
@@ -1378,15 +1454,26 @@ const en = {
 
     newSubmission: {
       'New submission': 'New submission',
-      'Submission created': 'Submission created',
-      'Upload Manuscript': 'Upload Manuscript',
-      dragNDrop: 'Drag and drop or click to select file',
-      acceptedFiletypes: 'Accepted file types: pdf, epub, zip, docx, latex',
-      converting:
-        'Your manuscript is being converted into a directly editable version. This might take a few seconds.',
-      skipManuscriptUpload:
-        'Skip manuscript upload, and proceed to the submission form',
       errorUploading: '{{error}}',
+      uploadTitle: 'Upload a manuscript',
+      uploadDescription:
+        'Drag and drop your manuscript file here, or click to choose one.',
+      skipTitle: 'Start without a file',
+      skipDescription:
+        'Go straight to the submission form without uploading a manuscript.',
+      stepUploading: 'Uploading your manuscript...',
+      stepConverting: 'Converting your document...',
+      stepCleaning: 'Preparing your document...',
+      stepInferringMetadata: 'Using AI to fill in the submission details...',
+      stepCreating: 'Creating your submission...',
+      redirecting: 'Submission created. Redirecting...',
+      fileRequirements:
+        'Accepted file types: {{fileTypes}}. Maximum size: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'This file type is not supported.',
+      errorFileTooLarge: 'This file is larger than {{maxSizeMb}} MB.',
+      errorConversionFailed: 'Your document could not be converted.',
+      errorCreationFailed: 'Your submission could not be created.',
+      errorUnknown: 'Something went wrong. Please try again.',
     },
     formBuilder: {
       'New Form': 'New Form',

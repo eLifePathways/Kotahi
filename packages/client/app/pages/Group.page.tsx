@@ -7,7 +7,8 @@ import { AntConfigProvider } from '@coko/client'
 import { GET_GROUPS } from '../queries'
 import { reloadTranslationsForGroup } from '../i18n'
 import { validateColor, makeTheme } from '../theme'
-import { Spinner, PageError } from '../components/shared'
+import { PageError } from '../components/shared'
+import Spinner from '../ui/shared/Spinner'
 import ErrorPageFallback from '../ui/base/ErrorPageFallback'
 import { ConfigProvider } from '../components/config/src'
 import { YjsProvider } from '../components/provider-yjs/YjsProvider'
@@ -85,7 +86,7 @@ const GroupPage = (): ReactNode => {
     return makeTheme(primaryColor, secondaryColor)
   }, [config])
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
 
   if (error) {
     return <ErrorPageFallback error={error} />

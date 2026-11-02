@@ -9,7 +9,6 @@ const {
   getFilesByTagOrId,
   updateFile,
   updateTagsFile,
-  uploadFile,
   uploadFiles,
 } = require('../../../controllers/file.controllers')
 
@@ -44,9 +43,6 @@ const resolvers = {
       })
 
       return deletedIds
-    },
-    async uploadFile(_, { file }) {
-      return uploadFile(file)
     },
     async uploadFiles(_, { files, fileType, entityId }) {
       const uploaded = await uploadFiles(files, fileType, entityId)

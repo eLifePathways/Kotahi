@@ -62,7 +62,7 @@ const FullWaxEditor = ({
   const debouncedSave = useCallback(
     debounce(source => {
       if (saveSource && !ydoc) saveSource(source)
-    }, 6000),
+    }, 500),
     [],
   )
 
@@ -80,6 +80,12 @@ const FullWaxEditor = ({
     if (hideImages) removeToolFromConfig('Images')
 
     return () => !ydoc && debouncedSave.flush()
+  }, [])
+
+  useEffect(() => {
+    const flushSave = () => debouncedSave.flush()
+    window.addEventListener('pagehide', flushSave)
+    return () => window.removeEventListener('pagehide', flushSave)
   }, [])
 
   const waxUser = {

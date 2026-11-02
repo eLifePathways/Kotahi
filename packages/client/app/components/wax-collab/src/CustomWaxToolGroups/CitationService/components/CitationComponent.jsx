@@ -15,7 +15,7 @@ import striptags from 'striptags'
 import { Loader, List, CheckCircle } from 'react-feather'
 import { useTheme } from 'styled-components'
 
-import { Spinner } from '../../../../../shared'
+import Spinner from '../../../../../../ui/shared/Spinner'
 import Modal from '../../../../../component-modal/src/Modal'
 import CitationVersion from './CitationVersion'
 import EditModal from './EditModal'
@@ -695,7 +695,7 @@ const CitationComponent = ({ node, getPos }) => {
               : null}
             {loading ? (
               <div style={{ marginTop: '16px' }}>
-                <Spinner />
+                <Spinner fullpage />
               </div>
             ) : null}
             {structures.custom ? (

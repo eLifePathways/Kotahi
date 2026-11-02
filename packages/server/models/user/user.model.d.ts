@@ -20,7 +20,6 @@ declare class User extends BaseModel {
   passwordResetTimestamp: string | Record<string, unknown> | null
   profilePicture: string | null
   lastOnline: string | Record<string, unknown> | null
-  recentTab: string | null
   preferredLanguage: string | null
   identities?: Identity[]
   defaultIdentity?: Identity | null
@@ -37,6 +36,7 @@ declare class User extends BaseModel {
   static findOneWithIdentity(
     userId: string,
     identityType: string,
+    options?: Options,
   ): Promise<User | undefined>
   static findByUsernamePrefix(
     prefix: string,
@@ -45,6 +45,17 @@ declare class User extends BaseModel {
   static ownersWithUsername(object: {
     owners: string[]
   }): Promise<Pick<User, 'id' | 'username'>[]>
+  static hasGlobalRole(
+    userId: string,
+    role: string,
+    options?: Options,
+  ): Promise<boolean>
+  static hasRoleOnObject(
+    userId: string,
+    role: string,
+    objectId: string,
+    options?: Options,
+  ): Promise<boolean>
 }
 
 export = User

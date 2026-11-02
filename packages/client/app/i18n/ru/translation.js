@@ -30,6 +30,7 @@ const ru = {
       notAssignedForThisVersion: 'Не рецензент текущей версии',
     },
     common: {
+      Loading: 'Загрузка',
       cms: 'CMS',
       pdf: 'PDF',
       Ok: 'OK',
@@ -249,14 +250,90 @@ const ru = {
     },
     dashboardPage: {
       Dashboard: 'Панель управления',
-      'New submission': 'Загрузить новую статью',
-      'New Alerts': 'Новые оповещения',
+      backToDashboard: 'Назад на панель управления',
       'My Submissions': 'Мои статьи',
       'To Review': 'Обзор назначений',
       "Manuscripts I'm editor of": 'Очередь редактирования',
       mySubmissions: {
         'Provide production feedback': 'Оставьте отзыв о производстве',
         'View production feedback': 'Посмотреть отзывы о производстве',
+      },
+      greeting: {
+        goodMorning: 'Доброе утро',
+        goodAfternoon: 'Добрый день',
+        goodEvening: 'Добрый вечер',
+        and: 'и',
+        allCaughtUp: 'Все дела сделаны',
+        nothingNeedsAttention:
+          'Сейчас нет ничего, что требует вашего внимания.',
+        itemsNeedAttention: 'У вас {{count}} элемент, требующий внимания',
+        itemsNeedAttention_plural:
+          'У вас {{count}} элементов, требующих внимания',
+        actionSummary: {
+          authorSubmit: '{{count}} статья ожидает завершения подачи',
+          authorSubmit_plural: '{{count}} статей ожидают завершения подачи',
+          authorRevise: '{{count}} статья ожидает доработки',
+          authorRevise_plural: '{{count}} статей ожидают доработки',
+          authorSubmitRevision: '{{count}} доработка ожидает отправки',
+          authorSubmitRevision_plural: '{{count}} доработок ожидают отправки',
+          reviewerRespond: '{{count}} приглашение рецензента ожидает ответа',
+          reviewerRespond_plural:
+            '{{count}} приглашений рецензента ожидают ответа',
+          reviewerSubmit: '{{count}} рецензия в ожидании',
+          reviewerSubmit_plural: '{{count}} рецензий в ожидании',
+          editorDecide: '{{count}} решение редактора ожидает',
+          editorDecide_plural: '{{count}} решений редактора ожидают',
+          taskAlmostOverdue: '{{count}} задача почти просрочена',
+          taskAlmostOverdue_plural: '{{count}} задач почти просрочены',
+          taskOverdue: '{{count}} задача просрочена',
+          taskOverdue_plural: '{{count}} задач просрочены',
+        },
+      },
+      actionCards: {
+        scrollLeft: 'Прокрутить список действий влево',
+        scrollRight: 'Прокрутить список действий вправо',
+        types: {
+          authorSubmit: 'Отправить',
+          authorRevise: 'Доработать',
+          authorSubmitRevision: 'Отправить доработку',
+          reviewerRespond: 'Приглашение к рецензированию',
+          reviewerSubmit: 'Рецензировать',
+          editorDecide: 'Принять решение по',
+          taskAlmostOverdue: 'Задача почти просрочена',
+          taskOverdue: 'Задача просрочена',
+        },
+      },
+      tableCards: {
+        needsAttention: '{{count}} требует внимания',
+        needsAttention_plural: '{{count}} требуют внимания',
+        author: 'Автор',
+        reviewer: 'Рецензент',
+        editor: 'Редактор',
+      },
+      activity: {
+        title: 'Активность',
+        clearAll: 'Очистить всё',
+        dismissNotification: 'Скрыть уведомление',
+        showingOfTotal: 'Показано {{shown}} из {{total}}',
+        noActivityYet: 'Пока нет активности',
+        activityWillAppearHere:
+          'Здесь будут отображаться обновления по вашим статьям.',
+        manuscriptReference: 'статья №{{shortId}}',
+        notifications: {
+          addedAsEditor: 'Вас добавили редактором',
+          addedAsHandlingEditor: 'Вас добавили ответственным редактором',
+          addedAsReviewer: 'Вас добавили рецензентом',
+          addedAsSeniorEditor: 'Вас добавили старшим редактором',
+          decisionMade: 'Было принято решение по',
+          removedAsEditor: 'Вас удалили из редакторов',
+          removedAsHandlingEditor: 'Вас удалили из ответственных редакторов',
+          removedAsReviewer: 'Вас удалили из рецензентов',
+          removedAsSeniorEditor: 'Вас удалили из старших редакторов',
+          reviewerAcceptedInvitation: 'Рецензент принял ваше приглашение по',
+          reviewerCompletedReview: 'Рецензия была завершена по',
+          reviewerRejectedInvitation: 'Рецензент отклонил ваше приглашение по',
+          revisionSubmitted: 'Доработка была отправлена по',
+        },
       },
     },
     submitPage: {
@@ -617,8 +694,6 @@ const ru = {
         'Срок, в течение которого статья находится в разделе “Рукописи”, прежде чем будет автоматически помещена в архив (оставьте поле пустым, если вы не хотите использовать автоматическое архивирование)',
       importFromSematic:
         "Импортировать рукописи из Semantic Scholar не позже, чем через 'x' дней",
-      newSubmissionActionVisisble:
-        'Функция “Добавить новую рукопись”, доступная в разделе “Рукописи”',
       displayActionToSelect:
         'Отображать в разделе "Рукописи” функцию "Выбрать" для рукописей на рецензирование',
       importManuscriptsManually:
@@ -644,7 +719,6 @@ const ru = {
       Submission: 'Подача',
       SubmissionPage: {
         title: 'Название',
-        description: 'Описание',
         allowAuthorUploadOnly:
           'Разрешить автору загружать только файл рукописи',
         allowAuthorUploadWithForm:
@@ -863,6 +937,8 @@ const ru = {
       coar: {
         authToken: 'Токен аутентификации COAR Notify',
         refreshAuthToken: 'Обновить токен аутентификации',
+        copy: 'Копировать',
+        copied: 'Скопировано!',
         copyMessage: 'Токен аутентификации отображается только один раз!',
         copyDescription:
           'Пожалуйста, скопируйте токен аутентификации сейчас и сохраните его в вашей сторонней системе COAR Notify. Вы всегда можете обновить токен здесь, но предыдущие токены будут аннулированы.',
@@ -1095,8 +1171,7 @@ const ru = {
     loginPage: {
       kotahiUses:
         'Мы используем ORCID <0>icon</0> для идентификации Авторов и сотрудников редакции.',
-      'Login with ORCID': 'Войти с ORCID',
-      'Register with ORCID': 'Зарегистрироваться с ORCID',
+      loginWithOrcid: 'Войти с ORCID',
     },
     frontPage: {
       recent: 'Последние публикации {{brandName}}',
@@ -1396,15 +1471,25 @@ const ru = {
     },
     newSubmission: {
       'New submission': 'Загрузить новую статью',
-      'Submission created': 'Загружено',
-      'Upload Manuscript': 'Загрузить рукопись',
-      dragNDrop: 'Перетащите файлы сюда',
-      acceptedFiletypes: 'Принимаемые форматы файлов: pdf,epub,zip,docx,latex',
-      converting:
-        'Ваша рукопись преобразуется в редактируемую версию. Это может занять некоторое время.',
-      skipManuscriptUpload:
-        'Пропустить загрузку рукописи и перейти к форме подачи',
-      errorUploading: 'Файл не распознан',
+      errorUploading: '{{error}}',
+      uploadTitle: 'Загрузить рукопись',
+      uploadDescription:
+        'Перетащите файл рукописи сюда или нажмите, чтобы выбрать файл.',
+      skipTitle: 'Начать без файла',
+      skipDescription: 'Перейти сразу к форме подачи без загрузки рукописи.',
+      stepUploading: 'Загрузка рукописи...',
+      stepConverting: 'Преобразование документа...',
+      stepCleaning: 'Подготовка документа...',
+      stepInferringMetadata: 'Заполнение сведений о подаче с помощью ИИ...',
+      stepCreating: 'Создание подачи...',
+      redirecting: 'Подача создана. Перенаправление...',
+      fileRequirements:
+        'Принимаемые форматы файлов: {{fileTypes}}. Максимальный размер: {{maxSizeMb}} МБ.',
+      errorUnsupportedFileType: 'Этот формат файла не поддерживается.',
+      errorFileTooLarge: 'Размер файла превышает {{maxSizeMb}} МБ.',
+      errorConversionFailed: 'Не удалось преобразовать документ.',
+      errorCreationFailed: 'Не удалось создать подачу.',
+      errorUnknown: 'Что-то пошло не так. Попробуйте ещё раз.',
     },
     formBuilder: {
       'New Form': 'Новая форма',

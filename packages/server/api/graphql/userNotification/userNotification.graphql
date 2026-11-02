@@ -1,0 +1,37 @@
+enum UserNotificationEventType {
+  addedAsEditor
+  addedAsHandlingEditor
+  addedAsReviewer
+  addedAsSeniorEditor
+  decisionMade
+  removedAsEditor
+  removedAsHandlingEditor
+  removedAsReviewer
+  removedAsSeniorEditor
+  reviewerAcceptedInvitation
+  reviewerCompletedReview
+  reviewerRejectedInvitation
+  revisionSubmitted
+}
+
+type UserNotification {
+  id: ID!
+  manuscriptId: ID
+  eventType: UserNotificationEventType!
+  data: String!
+  created: DateTime!
+}
+
+type UserNotificationsResponse {
+  notifications: [UserNotification!]!
+  totalCount: Int!
+}
+
+extend type Query {
+  userNotifications(limit: Int = 50): UserNotificationsResponse!
+}
+
+extend type Mutation {
+  dismissUserNotification(id: ID!): Boolean!
+  dismissAllUserNotifications: Boolean!
+}

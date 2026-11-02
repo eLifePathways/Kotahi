@@ -142,7 +142,6 @@ const seedConfig = async (group, instanceName, index, options) => {
           dashboard: { loginRedirectUrl: '/admin/manuscripts' },
           manuscript: {
             tableColumns: process.env.MANUSCRIPTS_TABLE_COLUMNS,
-            newSubmission: true,
             paginationCount: 10,
           },
           submission: {
@@ -194,7 +193,6 @@ const seedConfig = async (group, instanceName, index, options) => {
             labelColumn: true,
             tableColumns: process.env.MANUSCRIPTS_TABLE_COLUMNS,
             manualImport: process.env.ALLOW_MANUAL_IMPORT === 'true',
-            newSubmission: true,
             paginationCount: 50,
           },
           submission: {
@@ -245,7 +243,6 @@ const seedConfig = async (group, instanceName, index, options) => {
           manuscript: {
             labelColumn: true,
             tableColumns: process.env.MANUSCRIPTS_TABLE_COLUMNS,
-            newSubmission: true,
             autoImportHourUtc: process.env.AUTO_IMPORT_HOUR_UTC
               ? Number(process.env.AUTO_IMPORT_HOUR_UTC)
               : 21,

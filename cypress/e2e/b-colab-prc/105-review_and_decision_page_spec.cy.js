@@ -2,7 +2,11 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 // import { beforeEach } from 'mocha'
-import { dashboard, manuscripts } from '../../support/routes1'
+import {
+  dashboardEdits,
+  dashboardReviews,
+  manuscripts,
+} from '../../support/routes1'
 import { ManuscriptsPage } from '../../page-object/manuscripts-page'
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { ControlPage } from '../../page-object/control-page'
@@ -22,13 +26,13 @@ describe('review page tests', () => {
       const reviewer = name.role.reviewers[0]
       cy.addReviewer(0)
 
-      cy.login(reviewer, dashboard)
+      cy.login(reviewer, dashboardReviews)
       cy.submitReview('accept', 'everything is ok', 'great submission!')
 
       cy.login(name.role.admin, manuscripts)
       cy.submitDecision('great paper!', 'accept')
 
-      cy.login(reviewer, dashboard)
+      cy.login(reviewer, dashboardReviews)
       cy.verifyDecision('great paper')
     })
   })
@@ -38,13 +42,13 @@ describe('review page tests', () => {
       const reviewer = name.role.reviewers[1]
       cy.addReviewer(1)
 
-      cy.login(reviewer, dashboard)
+      cy.login(reviewer, dashboardReviews)
       cy.submitReview('revise', 'everything is ok', 'paper should be revised')
 
       cy.login(name.role.admin, manuscripts)
       cy.submitDecision('please revise', 'revise')
 
-      cy.login(reviewer, dashboard)
+      cy.login(reviewer, dashboardReviews)
       cy.verifyDecision('please revise')
     })
   })
@@ -53,13 +57,13 @@ describe('review page tests', () => {
     cy.fixture('role_names').then(name => {
       const reviewer = name.role.reviewers[3]
       cy.addReviewer(3)
-      cy.login(reviewer, dashboard)
+      cy.login(reviewer, dashboardReviews)
       cy.submitReview('reject', 'everything is ok', 'not good enough')
 
       cy.login(name.role.admin, manuscripts)
       cy.submitDecision('it does not fit our standards', 'reject')
 
-      cy.login(reviewer, dashboard)
+      cy.login(reviewer, dashboardReviews)
       cy.verifyDecision('it does not fit our standards')
     })
   })
@@ -70,11 +74,10 @@ Cypress.Commands.add('addReviewer', reviewerIndex => {
     const reviewer = name.role.reviewers[`${reviewerIndex}`]
     // login as seniorEditor
 
-    cy.login(name.role.seniorEditor, dashboard)
+    cy.login(name.role.seniorEditor, dashboardEdits)
     cy.url().should('include', '/dashboard')
 
     cy.wait(1000)
-    DashboardPage.clickDashboardTab(2)
     DashboardPage.clickControl() // Navigate to Control Page
     cy.url().should('include', '/prc/versions')
     cy.contains('Team').should('exist')
@@ -94,7 +97,6 @@ Cypress.Commands.add(
   'submitReview',
   (reviewType, comment, confidentialComment) => {
     cy.wait(1000)
-    DashboardPage.clickDashboardTab(1)
     DashboardPage.clickAcceptReviewButton()
     cy.contains('Accept this review invitation?').should('be.visible')
     cy.contains('button', 'OK').click()

@@ -15,7 +15,7 @@ import { Content } from './misc/styleds'
 import { getUserRecipients, getRoleRecipients } from './misc/helpers'
 import EventContent from './components/EventContent'
 import EventsList from './components/EventsList'
-import { Spinner } from '../shared'
+import Spinner from '../../ui/shared/Spinner'
 import { COLLAPSED_STATE_INIT, T } from './misc/constants'
 
 const NotificationPage = ({ emailTemplates, wrapper: Root = Fragment }) => {
@@ -84,7 +84,7 @@ const NotificationPage = ({ emailTemplates, wrapper: Root = Fragment }) => {
     }
   }, [groupId])
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <div>Error: {error.message}</div>
 
   return (

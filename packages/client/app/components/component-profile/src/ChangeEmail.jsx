@@ -10,9 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { TextField } from '../../pubsweet'
 import { ActionButton } from '../../shared'
 
-const InlineTextField = styled(TextField)`
-  border-color: ${props => (props.$error ? '#ff2d1a' : '#AAA')};
-  display: inline;
+const StyledTextField = styled(TextField)`
   width: ${grid(48)};
 `
 
@@ -56,10 +54,10 @@ const ChangeEmail = ({ user, updateUserEmail }) => {
   return (
     <>
       <Row>
-        <InlineTextField
-          $error={updateEmailError}
+        <StyledTextField
           inline
           onChange={e => setEmail(e.target.value)}
+          validationStatus={updateEmailError ? 'error' : undefined}
           value={email}
         />
         <ActionButton onClick={() => updateEmail(user.id, email)} primary>

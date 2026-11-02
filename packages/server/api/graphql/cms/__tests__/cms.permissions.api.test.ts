@@ -191,7 +191,7 @@ const addToGroupTeam = async (
     (await Team.findOne({ objectId: group, role })) ||
     (await Team.insert({
       objectId: group,
-      objectType: 'Group',
+      objectType: 'group',
       role,
       displayName,
     }))
@@ -260,7 +260,6 @@ describe('CMS permissions', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   describe.each(Object.entries(ADMIN_ONLY_OPERATIONS))('%s', (_, operation) => {

@@ -13,7 +13,8 @@ import { json } from '@codemirror/lang-json'
 import { grid, th } from '@coko/client'
 import { isFunction } from 'lodash'
 
-import { ActionButton, Spinner } from '../../../../shared'
+import { ActionButton } from '../../../../shared'
+import Spinner from '../../../../../ui/shared/Spinner'
 import { CloseButton, PopUpH2 } from '../styles'
 import { FlexRow } from '../../../../../globals'
 import dataciteLogo from '../../../../../../public/datacite-logo-vector.svg'
@@ -337,7 +338,7 @@ const VerifyPayloadModal = ({
                   ) : (
                     <LoadingWindow apiToCheck={apiToCheck}>
                       <PopUpH2>Checking {apiToCheck} payload...</PopUpH2>
-                      <Spinner />
+                      <Spinner fullpage />
                     </LoadingWindow>
                   )}
                 </FlexColCentered>

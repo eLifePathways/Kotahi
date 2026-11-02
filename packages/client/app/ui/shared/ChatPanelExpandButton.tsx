@@ -35,11 +35,9 @@ const UnreadBadge = styled.span`
 const ExpandButton = styled.button<{ $visible: boolean }>`
   color: ${th('colorTextReverse')};
   background-color: ${th('colorPrimary')};
-  border: none;
   border-radius: 50%;
   position: relative;
 
-  cursor: pointer;
   pointer-events: ${(props): string => (props.$visible ? 'auto' : 'none')};
 
   display: inline-flex;

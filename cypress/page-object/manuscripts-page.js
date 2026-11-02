@@ -65,7 +65,7 @@ export const ManuscriptsPage = {
     this.getPublishLink().click()
   },
   getSubmitButton() {
-    return cy.get(BUTTON).contains('New submission')
+    return cy.getByDataTestId('menu-nav').contains(BUTTON, 'New submission')
   },
   clickSubmit() {
     this.getSubmitButton().scrollIntoView().click()

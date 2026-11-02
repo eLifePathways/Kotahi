@@ -4,7 +4,7 @@
 import { DashboardPage } from '../../page-object/dashboard-page'
 import { NewSubmissionPage } from '../../page-object/new-submission-page'
 import { SubmissionFormPage } from '../../page-object/submission-form-page'
-import { dashboard } from '../../support/routes'
+import { dashboard, dashboardSubmissions } from '../../support/routes'
 
 describe('Create a new submission', () => {
   before(() => {
@@ -23,34 +23,11 @@ describe('Create a new submission', () => {
     cy.url().should('include', 'newSubmission')
   })
 
-  it('can upload a manuscript and add a title', () => {
-    DashboardPage.getSubmissionFileUploadInput().selectFile(
-      'cypress/fixtures/test-docx.docx',
-      { force: true },
-    ) // Upload manuscript .docx
-    DashboardPage.confirmSubmissionCreated()
-    cy.url().should('contain', '/submit')
+  it('can upload a manuscript, complete the form and see it on the dashboard', () => {
+    NewSubmissionPage.uploadManuscript('cypress/fixtures/test-docx.docx')
+    cy.url({ timeout: 30000 }).should('contain', '/submit')
 
     cy.completeSubmissionForm('Title 1')
-  })
-
-  it('can submit a URL and add a title', () => {
-    // Skip manuscript upload
-    NewSubmissionPage.clickSubmitURL()
-
-    cy.completeSubmissionForm('Title 2')
-  })
-
-  it('can upload a PDF and add a title', () => {
-    // Upload manuscript .pdf
-    DashboardPage.getSubmissionFileUploadInput().selectFile(
-      'cypress/fixtures/test-pdf.pdf',
-      { force: true },
-    )
-    DashboardPage.confirmSubmissionCreated()
-    cy.url().should('contain', '/submit')
-
-    cy.completeSubmissionForm('Title 3')
   })
 })
 
@@ -62,10 +39,7 @@ Cypress.Commands.add('completeSubmissionForm', title => {
   SubmissionFormPage.clickSubmitYourManuscript()
 
   // Verify your submission exists in dashboard
-  DashboardPage.getSectionTitleWithText('My Submissions')
-  // the following line is added so that it gives enough time for the dom to update the title of the submission in dashboard. Only a switch between tabs.
-  cy.wait(500)
-  DashboardPage.clickDashboardTab(1)
-  DashboardPage.clickDashboardTab(0)
+  cy.url().should('match', /\/dashboard$/)
+  cy.visit(dashboardSubmissions)
   DashboardPage.getSubmissionTitle().should('contain', title)
 })

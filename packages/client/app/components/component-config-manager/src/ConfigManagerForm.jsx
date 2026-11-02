@@ -165,6 +165,7 @@ const FieldTemplate = props => {
     'form-emailNotifications_emailNotification_advancedSettings_requireTLS',
   ]
 
+  // TODO: remove `form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress`
   const alertFields = [
     'form-integrationsAndPublishing_integrations_coarNotify_repoIpAddress',
   ]
@@ -220,6 +221,7 @@ const ConfigManagerForm = ({
   configId,
   disabled,
   formData: passedFormData,
+  hasCoarToken,
   submissionForm,
   deleteFile,
   createFile,
@@ -267,6 +269,7 @@ const ConfigManagerForm = ({
       deleteFile,
       createFile,
       config,
+      hasCoarToken,
       t,
       logoAndFavicon,
       onRefreshCoarAuthToken,

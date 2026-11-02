@@ -9,7 +9,7 @@ import Color from 'color'
 import { TextAreaBinding } from 'y-textarea'
 
 import { TextField } from '../../../../pubsweet'
-import { Spinner } from '../../../../shared'
+import Spinner from '../../../../../ui/shared/Spinner'
 import YjsContext from '../../../../provider-yjs/YjsProvider'
 
 const TextFieldSyled = styled(TextField)`
@@ -97,7 +97,7 @@ const CollaborativeTextFieldBuilder = ({ collaborativeObject, ...input }) => {
     [wsProvider, ydoc],
   )
 
-  if (!wsProvider || !ydoc) return <Spinner />
+  if (!wsProvider || !ydoc) return <Spinner fullpage />
 
   return (
     <TextFieldSyled

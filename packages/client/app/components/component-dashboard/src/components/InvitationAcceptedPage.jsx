@@ -14,7 +14,8 @@ import {
   REVIEWER_RESPONSE,
 } from '../../../../queries'
 import { ConfigContext } from '../../../config/src'
-import { LinkAction, Spinner } from '../../../shared'
+import { LinkAction } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import InvitationError from './InvitationError'
 
 const InvitationAcceptedPage = () => {
@@ -178,7 +179,7 @@ const InvitationAcceptedPage = () => {
     )
   }
 
-  return <Spinner />
+  return <Spinner fullpage />
 }
 
 export default InvitationAcceptedPage

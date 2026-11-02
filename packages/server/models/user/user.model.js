@@ -112,7 +112,6 @@ class User extends BaseModel {
             { type: 'null' },
           ],
         },
-        recentTab: { type: ['string', 'null'] },
         preferredLanguage: { type: ['string', 'null'] },
       },
     }
@@ -176,8 +175,9 @@ class User extends BaseModel {
   //   return this.findByField('username', username).then(users => users[0])
   // }
 
-  static async findOneWithIdentity(userId, identityType) {
-    const user = await this.query()
+  static async findOneWithIdentity(userId, identityType, options = {}) {
+    const { trx } = options
+    const user = await this.query(trx)
       .findById(userId)
       .withGraphFetched('identities')
       .modifyGraph('identities', builder => builder.where('type', identityType))
@@ -191,6 +191,26 @@ class User extends BaseModel {
     const escapedPrefix = prefix.replace(/[\\%_]/g, '\\$&')
 
     return this.query(trx).where('username', 'like', `${escapedPrefix}%`)
+  }
+
+  static async hasGlobalRole(userId, role, options = {}) {
+    const TeamMember = require('../teamMember/teamMember.model')
+
+    const member = await TeamMember.query(options.trx)
+      .join('teams', 'team_members.teamId', 'teams.id')
+      .findOne({ 'teams.global': true, 'teams.role': role, userId })
+
+    return !!member
+  }
+
+  static async hasRoleOnObject(userId, role, objectId, options = {}) {
+    const TeamMember = require('../teamMember/teamMember.model')
+
+    const member = await TeamMember.query(options.trx)
+      .join('teams', 'team_members.teamId', 'teams.id')
+      .findOne({ 'teams.role': role, 'teams.objectId': objectId, userId })
+
+    return !!member
   }
 
   static get modifiers() {

@@ -60,7 +60,7 @@ const queryFunctions = {
       .findOne({
         role: 'groupAdmin',
         objectId: groupId,
-        objectType: 'Group',
+        objectType: 'group',
         userId,
       })
 

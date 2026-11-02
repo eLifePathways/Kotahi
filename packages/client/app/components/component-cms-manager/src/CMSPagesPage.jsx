@@ -4,7 +4,8 @@ import { useMutation, useQuery } from '@apollo/client/react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
-import { Spinner, CommsErrorBanner, SectionContent } from '../../shared'
+import { CommsErrorBanner, SectionContent } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 
 import CMSPageEditForm from './pages/CMSPageEdit'
 
@@ -94,7 +95,7 @@ const CMSPagesPage = () => {
     setIsNewPage(true)
   }
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   const { cmsPages } = data

@@ -48,6 +48,7 @@ export const generateSchemas = ({
   defaultCollaborativeReviewerInvitationTemplate,
   defaultAuthorProofingInvitationTemplate,
   defaultAuthorProofingSubmittedTemplate,
+  hasCoarToken,
   onRefreshCoarAuthToken,
   t,
   logoAndFavicon,
@@ -320,11 +321,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: true,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -449,11 +445,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -908,10 +899,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -1537,11 +1524,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: true,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -1666,11 +1648,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -2125,10 +2102,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -2772,11 +2745,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: false,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -2927,11 +2895,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -3386,10 +3349,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -4037,11 +3996,6 @@ export const generateSchemas = ({
               minimum: 1,
               maximum: 90,
             },
-            newSubmission: {
-              type: 'boolean',
-              title: t('configPage.newSubmissionActionVisisble'),
-              default: false,
-            },
             labelColumn: {
               type: 'boolean',
               title: t('configPage.displayActionToSelect'),
@@ -4193,11 +4147,6 @@ export const generateSchemas = ({
                 title: {
                   type: ['string', 'null'],
                   description: t('configPage.SubmissionPage.title'),
-                  default: null,
-                },
-                submissionPagedescription: {
-                  type: ['string', 'null'],
-                  description: t('configPage.SubmissionPage.description'),
                   default: null,
                 },
                 submitOptions: {
@@ -4652,10 +4601,6 @@ export const generateSchemas = ({
               type: 'object',
               title: t('configPage.api'),
               properties: {
-                repoIpAddress: {
-                  type: ['string', 'null'],
-                  description: t('configPage.allowedIPs'),
-                },
                 authToken: {
                   type: ['string', 'null'],
                   description: t('configPage.coar.authToken'),
@@ -5180,11 +5125,6 @@ export const generateSchemas = ({
         },
         submissionPage: {
           classNames: 'col-md-12 col-md-offset-0',
-          submissionPagedescription: {
-            'ui:widget': ({ value, onChange }) => (
-              <SimpleWaxEditor onChange={onChange} value={value} />
-            ),
-          },
           submitOptions: {
             'ui:widget': 'radio',
           },
@@ -5230,7 +5170,10 @@ export const generateSchemas = ({
           classNames: 'col-md-12 col-md-offset-0',
           authToken: {
             'ui:widget': props => (
-              <CoarAuthToken onRefreshCoarAuthToken={onRefreshCoarAuthToken} />
+              <CoarAuthToken
+                hasToken={hasCoarToken}
+                onRefreshCoarAuthToken={onRefreshCoarAuthToken}
+              />
             ),
           },
         },

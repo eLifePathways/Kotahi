@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 declare class Task extends BaseModel {
   manuscriptId: string | null
@@ -14,6 +14,11 @@ declare class Task extends BaseModel {
   assigneeName: string | null
   assigneeEmail: string | null
   description: string | null
+
+  static findTemplates(
+    groupId: string,
+    options?: { trx?: Transaction },
+  ): Promise<Task[]>
 }
 
 export = Task

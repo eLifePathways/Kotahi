@@ -1,3 +1,7 @@
+extend type Query {
+  hasToken(name: String!, groupId: ID!): Boolean!
+}
+
 extend type Mutation {
   generateNewToken(name: String!, groupId: ID!): String!
 }

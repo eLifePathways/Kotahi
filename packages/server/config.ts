@@ -6,6 +6,12 @@ import modelComponents from './models/modelComponents.js'
 
 const isProduction = env('NODE_ENV') === 'production'
 
+// `env(name, { type: 'boolean' })` only checks that the variable is set, so
+// 'false' is read as true. Parse the value here until @coko/server v6, which
+// is when that flag can be used instead.
+const envFlag = (name: string): boolean =>
+  ['true', '1'].includes(env(name)?.toLowerCase() ?? '')
+
 const components = [
   '@coko/server/dist/models/team',
   '@coko/server/dist/models/teamMember',
@@ -29,7 +35,7 @@ if (!isProduction && env('E2E_TESTING_API')) {
 export default {
   adaKey: env('ADA_KEY'),
   'auth-orcid': {
-    useSandboxedOrcid: env('USE_SANDBOXED_ORCID'),
+    useSandboxedOrcid: envFlag('USE_SANDBOXED_ORCID'),
     clientID: env('ORCID_CLIENT_ID'),
     clientSecret: env('ORCID_CLIENT_SECRET'),
   },
@@ -85,8 +91,7 @@ export default {
     reverseFieldOrder: env('HYPOTHESIS_REVERSE_FIELD_ORDER'),
   },
   'import-for-prc': {
-    default_import:
-      env('USE_COLAB_BIOPHYSICS_IMPORT', { type: 'boolean' }) || false,
+    default_import: envFlag('USE_COLAB_BIOPHYSICS_IMPORT'),
   },
   journal: {
     recommendations: [
@@ -156,6 +161,8 @@ export default {
     semanticScholarImportsRecencyPeriodDays:
       env('SEMANTIC_SCHOLAR_IMPORTS_RECENCY_PERIOD_DAYS', { type: 'number' }) ||
       42,
+    maxUploadSizeMb:
+      env('MANUSCRIPT_MAX_UPLOAD_SIZE_MB', { type: 'number' }) || 50,
   },
   pagedjs: {
     clientId: env('SERVICE_PAGEDJS_CLIENT_ID'),
@@ -206,42 +213,52 @@ export default {
       {
         displayName: 'Senior Editor',
         role: 'seniorEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Handling Editor',
         role: 'handlingEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Editor',
         role: 'editor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Managing Editor',
         role: 'managingEditor',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Reviewers',
         role: 'reviewer',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Author',
         role: 'author',
+        objectType: 'manuscript',
       },
       {
         displayName: 'Collaborative Reviewers',
         role: 'collaborativeReviewer',
+        objectType: 'manuscript',
       },
       {
         displayName: 'User',
         role: 'user',
+        objectType: 'group',
       },
       {
         displayName: 'Group Manager',
         role: 'groupManager',
+        objectType: 'group',
       },
       {
         displayName: 'Group Admin',
         role: 'groupAdmin',
+        objectType: 'group',
       },
     ],
   },

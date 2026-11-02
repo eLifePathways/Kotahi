@@ -289,8 +289,8 @@ describe('File and Review permissions', () => {
       },
     )
 
-    await addToTeam(group.id, 'Group', 'groupManager', users.groupManager)
-    await addToTeam(group.id, 'Group', 'groupAdmin', users.groupAdmin)
+    await addToTeam(group.id, 'group', 'groupManager', users.groupManager)
+    await addToTeam(group.id, 'group', 'groupAdmin', users.groupAdmin)
 
     const adminTeam =
       (await Team.findOne({ role: 'admin', global: true })) ||
@@ -352,7 +352,6 @@ describe('File and Review permissions', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   const allowed = [

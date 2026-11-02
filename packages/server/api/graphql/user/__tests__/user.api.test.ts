@@ -49,7 +49,6 @@ describe('User API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   describe('getRequestLoaders', () => {
@@ -189,7 +188,7 @@ describe('User API', () => {
 
     const groupUsers = await Team.insert({
       objectId: group.id,
-      objectType: 'Group',
+      objectType: 'group',
       role: 'user',
       displayName: 'User',
     })

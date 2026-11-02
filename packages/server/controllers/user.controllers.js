@@ -86,7 +86,7 @@ const channelUsersForMention = async (channelId, groupId) => {
           Team.query(trx)
             .where({
               objectId: groupId,
-              objectType: 'Group',
+              objectType: 'group',
             })
             .whereIn('role', ['groupManager', 'groupAdmin']),
         )
@@ -296,8 +296,9 @@ const getUsers = async groupId => {
     .withGraphFetched('defaultIdentity')
 }
 
+// Users may have been deleted since, so callers handle missing ones
 const getUsersById = async (userIds, options = {}) =>
-  User.findByIds(userIds, options)
+  User.findByIds(userIds, { ...options, throwIfNotFound: false })
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()
@@ -806,14 +807,6 @@ const updateLanguage = async (id, preferredLanguage) => {
   return User.query().patchAndFetchById(id, { preferredLanguage })
 }
 
-const updateRecentTab = async (userId, tab) => {
-  const user = await User.query().patchAndFetchById(userId, {
-    recentTab: tab,
-  })
-
-  return user
-}
-
 const updateUser = async (id, input) => {
   if (input.password) {
     input.passwordHash = await User.hashPassword(input.password)
@@ -860,7 +853,6 @@ module.exports = {
   setGroupRole,
   updateEmail,
   updateLanguage,
-  updateRecentTab,
   updateUser,
   updateUsername,
   userIdentities,

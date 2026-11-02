@@ -76,9 +76,15 @@ export const StatusBadge = ({
   const themeValues = useTheme()
 
   const defaultColorMap = {
-    submitted: [themeValues.colorWarning, themeValues.color.warning.shade50],
-    inProgress: [themeValues.colorWarning, themeValues.color.warning.shade50],
-    underEmbargo: [themeValues.colorWarning, themeValues.color.warning.shade50],
+    submitted: [themeValues.color.warning.tint50, themeValues.colorWarningDark],
+    inProgress: [
+      themeValues.color.warning.tint50,
+      themeValues.colorWarningDark,
+    ],
+    underEmbargo: [
+      themeValues.color.warning.tint50,
+      themeValues.colorWarningDark,
+    ],
     published: [themeValues.colorSuccess, themeValues.color.textReverse],
     completed: [themeValues.colorSuccess, themeValues.color.textReverse],
     embargoReleased: [themeValues.colorSuccess, themeValues.color.textReverse],

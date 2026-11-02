@@ -3,7 +3,8 @@ import { useQuery } from '@apollo/client/react'
 import { useParams } from 'react-router-dom'
 
 import ReviewPreview from './reviewPreview/ReviewPreview'
-import { Heading, Page, Spinner } from '../../../shared'
+import { Heading, Page } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { ConfigContext } from '../../../config/src'
 import { REVIEW_PREVIEW_MANUSCRIPT } from '../../../../queries'
 
@@ -19,7 +20,7 @@ const ReviewPreviewPage = () => {
     partialRefetch: true,
   })
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
 
   if (error) {
     console.warn(error.message)

@@ -9,7 +9,6 @@ const AssignEditorsReviewers = ({
   AssignEditor,
   allUsers,
   updateTeam,
-  createTeam,
   teamLabels,
 }) => {
   const { t } = useTranslation()
@@ -22,7 +21,6 @@ const AssignEditorsReviewers = ({
       <SectionRowGrid>
         <AssignEditor
           allUsers={allUsers}
-          createTeam={createTeam}
           manuscript={manuscript}
           teamLabels={teamLabels}
           teamRole="seniorEditor"
@@ -30,7 +28,6 @@ const AssignEditorsReviewers = ({
         />
         <AssignEditor
           allUsers={allUsers}
-          createTeam={createTeam}
           manuscript={manuscript}
           teamLabels={teamLabels}
           teamRole="handlingEditor"
@@ -38,7 +35,6 @@ const AssignEditorsReviewers = ({
         />
         <AssignEditor
           allUsers={allUsers}
-          createTeam={createTeam}
           manuscript={manuscript}
           teamLabels={teamLabels}
           teamRole="editor"

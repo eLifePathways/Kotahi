@@ -8,8 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { TextField } from '../../pubsweet'
 import { ActionButton } from '../../shared'
 
-const InlineTextField = styled(TextField)`
-  display: inline;
+const StyledTextField = styled(TextField)`
   width: ${grid(48)};
 `
 
@@ -39,7 +38,7 @@ const ChangeUsername = ({ user, updateUsername }) => {
   return (
     <>
       <Row>
-        <InlineTextField
+        <StyledTextField
           inline
           onChange={e => setUsername(e.target.value)}
           value={username}

@@ -3,7 +3,7 @@ const { chunk, orderBy, uniqBy, flatten } = require('lodash')
 const { ref, raw } = require('objection')
 const axios = require('axios')
 
-const { File, logger } = require('@coko/server')
+const { File, logger, useTransaction } = require('@coko/server')
 
 const {
   CoarNotification,
@@ -34,6 +34,7 @@ const { getActiveForms } = require('../form.controllers')
 const checkIsAbstractValueEmpty = require('../../utils/checkIsAbstractValueEmpty')
 const { cachedGet } = require('../../services/queryCache.service')
 const seekEvent = require('../../services/notification.service')
+const { emitEvent } = require('../../services/eventManager/eventManager')
 const sanitizeWaxImages = require('../../utils/sanitizeWaxImages')
 const { publishToDatacite } = require('../../services/publishing/datacite')
 
@@ -131,12 +132,23 @@ const addReviewer = async (
   invitationId,
   isCollaborative,
 ) => {
-  return Manuscript.addReviewer(
+  const manuscript = await Manuscript.findById(manuscriptId)
+
+  const result = await Manuscript.addReviewer(
     manuscriptId,
     userId,
     invitationId,
     isCollaborative,
   )
+
+  emitEvent('addedAsReviewer', {
+    userId,
+    groupId: manuscript.groupId,
+    manuscriptId,
+    shortId: manuscript.shortId,
+  })
+
+  return result
 }
 
 const archiveManuscript = async (id, options = {}) => {
@@ -265,109 +277,6 @@ const authorFeedback = async manuscript => {
   }
 
   return manuscript.authorFeedback || {}
-}
-
-const createManuscript = async (userId, input) => {
-  const { meta, files, groupId } = input
-  const group = await Group.query().findById(groupId)
-  if (!group)
-    throw new Error(`Cannot create manuscript for unknown group ${groupId}`)
-  const submissionForm = await getSubmissionForm(group.id)
-
-  const parsedFormStructure = submissionForm.structure.children
-    .map(formElement => {
-      const parsedName = formElement.name && formElement.name.split('.')[1]
-
-      if (parsedName) {
-        return {
-          name: parsedName,
-          component: formElement.component,
-        }
-      }
-
-      return undefined
-    })
-    .filter(x => x !== undefined)
-
-  const emptySubmission = parsedFormStructure.reduce((acc, curr) => {
-    acc[curr.name] =
-      curr.component === 'CheckboxGroup' || curr.component === 'LinksInput'
-        ? []
-        : ''
-    return {
-      ...acc,
-    }
-  }, {})
-
-  // We want the submission information to be stored as JSONB
-  // but we want the input to come in as a JSON string
-  const submission = input.submission
-    ? JSON.parse(input.submission)
-    : emptySubmission
-
-  const emptyManuscript = {
-    meta,
-    status: 'new',
-    submission,
-    submitterId: userId,
-    // Create two channels: 1. free for all involved, 2. editorial
-    channels: [
-      {
-        topic: 'Manuscript discussion',
-        type: 'all',
-        groupId: group.id,
-      },
-      {
-        topic: 'Editorial discussion',
-        type: 'editorial',
-        groupId: group.id,
-      },
-    ],
-    files: files.map(file => {
-      return {
-        ...file,
-      }
-    }),
-    reviews: [],
-    teams: [
-      {
-        role: 'author',
-        displayName: 'Author',
-        members: [{ user: { id: userId } }],
-        objectType: 'manuscript',
-      },
-    ],
-    groupId: group.id,
-    authorFeedback: {},
-  }
-
-  emptyManuscript.submission.$editDate = new Date().toISOString().split('T')[0]
-
-  const manuscript = await Manuscript.query().upsertGraphAndFetch(
-    emptyManuscript,
-    { relate: true },
-  )
-
-  manuscript.meta.source = await sanitizeWaxImages(
-    manuscript.meta.source,
-    manuscript.id,
-  )
-
-  const updatedManuscript = await Manuscript.query().updateAndFetchById(
-    manuscript.id,
-    manuscript,
-  )
-
-  // newly uploaded files get tasks populated
-  await populateTemplatedTasksForManuscript(manuscript.id)
-
-  // add user to author discussion channel
-  await addUserToManuscriptChatChannel({
-    manuscriptId: updatedManuscript.id,
-    userId,
-  })
-
-  return updatedManuscript
 }
 
 const createNewVersion = async id => {
@@ -945,6 +854,14 @@ const makeDecision = async (id, decisionKey, userId) => {
         currentUser: currentUser?.username,
         context: { recipient: recipientEmail, messageContent },
         groupId: manuscript.groupId,
+      })
+
+      emitEvent('decisionMade', {
+        userId: manuscript.submitterId,
+        groupId: manuscript.groupId,
+        manuscriptId: manuscript.id,
+        shortId: manuscript.shortId,
+        decision: decisionKey,
       })
     }
   }
@@ -1775,60 +1692,65 @@ const publishOnCMS = async (groupId, manuscriptId) => {
 }
 
 const removeReviewer = async (manuscriptId, userId) => {
-  const manuscript = await Manuscript.findById(manuscriptId)
+  const { manuscript, reviewerTeam } = await useTransaction(async trx => {
+    const reviewerRoles = (
+      await Promise.all(
+        ['reviewer', 'collaborativeReviewer'].map(async role =>
+          (await User.hasRoleOnObject(userId, role, manuscriptId, { trx }))
+            ? role
+            : null,
+        ),
+      )
+    ).filter(Boolean)
 
-  const reviewerTeams = await manuscript
-    .$relatedQuery('teams')
-    .whereIn('role', ['reviewer', 'collaborativeReviewer'])
+    if (!reviewerRoles.length) throw new Error('Invalid reviewer team member')
 
-  const [deletedTeamMember] = await TeamMember.query()
-    .whereIn(
-      'teamId',
-      reviewerTeams.map(reviewerTeam => reviewerTeam.id),
+    const [team] = await Promise.all(
+      reviewerRoles.map(role =>
+        Manuscript.removeRole(userId, manuscriptId, role, { trx }),
+      ),
     )
-    .andWhere({
-      userId,
-    })
-    .delete()
-    .returning('*')
 
-  await removeUserFromManuscriptChatChannel({
-    manuscriptId,
+    await removeUserFromManuscriptChatChannel(
+      { manuscriptId, userId, type: 'editorial' },
+      { trx },
+    )
+
+    return {
+      manuscript: await Manuscript.findById(manuscriptId, { trx }),
+      reviewerTeam: await Team.findById(team.id, {
+        related: 'members.user',
+        trx,
+      }),
+    }
+  })
+
+  emitEvent('removedAsReviewer', {
     userId,
-    type: 'editorial',
+    groupId: manuscript.groupId,
+    manuscriptId,
+    shortId: manuscript.shortId,
   })
 
-  const reviewerTeam = await Team.query().findOne({
-    id: deletedTeamMember.teamId,
-  })
-
-  return reviewerTeam.$query().withGraphFetched('members.user')
+  return reviewerTeam
 }
 
 const removeAuthor = async (manuscriptId, userId) => {
-  const manuscript = await Manuscript.findById(manuscriptId)
-
-  const authorTeam = await Team.findTeamByRoleAndObject('author', manuscript.id)
-
-  const [deletedTeamMember] = await TeamMember.query()
-    .where({
-      teamId: authorTeam.id,
+  return useTransaction(async trx => {
+    const authorTeam = await Manuscript.removeRole(
       userId,
-    })
-    .delete()
-    .returning('*')
+      manuscriptId,
+      'author',
+      { throwIfNotAssigned: true, trx },
+    )
 
-  if (!deletedTeamMember) {
-    throw new Error('Invalid author team member')
-  }
+    await removeUserFromManuscriptChatChannel(
+      { manuscriptId, userId, type: 'all' },
+      { trx },
+    )
 
-  await removeUserFromManuscriptChatChannel({
-    manuscriptId,
-    userId,
-    type: 'all',
+    return Team.findById(authorTeam.id, { related: 'members.user', trx })
   })
-
-  return authorTeam.$query().withGraphFetched('members.user')
 }
 
 // TODO Rename to something like 'setReviewerResponse'
@@ -1914,6 +1836,36 @@ const reviewerResponse = async (action, teamId, userId) => {
     },
     groupId: manuscript.groupId,
   })
+
+  const editorTeams = manuscript.teams.filter(manuscriptTeam =>
+    ['editor', 'handlingEditor', 'seniorEditor'].includes(manuscriptTeam.role),
+  )
+
+  const editorUserIds = [
+    ...new Set(
+      editorTeams.flatMap(editorTeam =>
+        editorTeam.members.map(member => member.userId),
+      ),
+    ),
+  ]
+
+  const responseEventType =
+    action === 'accepted'
+      ? 'reviewerAcceptedInvitation'
+      : 'reviewerRejectedInvitation'
+
+  await Promise.all(
+    editorUserIds.map(editorUserId =>
+      emitEvent(responseEventType, {
+        userId: editorUserId,
+        groupId: manuscript.groupId,
+        manuscriptId: team.objectId,
+        shortId: manuscript.shortId,
+        reviewerId: userId,
+        teamId,
+      }),
+    ),
+  )
 
   return team
 }
@@ -2177,6 +2129,21 @@ const submitManuscript = async (id, input, userId) => {
     groupId: manuscript.groupId,
   })
 
+  if (manuscript.parentId) {
+    const editorIds = await Manuscript.getEditorIds(id)
+
+    await Promise.all(
+      editorIds.map(editorId =>
+        emitEvent('revisionSubmitted', {
+          userId: editorId,
+          groupId: manuscript.groupId,
+          manuscriptId: id,
+          shortId: manuscript.shortId,
+        }),
+      ),
+    )
+  }
+
   return updateManuscript(id, input)
 }
 
@@ -2379,7 +2346,6 @@ module.exports = {
   archiveManuscripts,
   assignAuthorForProofingManuscript,
   authorFeedback,
-  createManuscript,
   createNewVersion,
   deleteManuscript,
   deleteManuscripts,

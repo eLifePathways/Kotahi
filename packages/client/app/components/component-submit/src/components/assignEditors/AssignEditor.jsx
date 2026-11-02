@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps, react-hooks/immutability, react-hooks/set-state-in-effect */
-/* eslint-disable promise/catch-or-return, promise/always-return */
 
 import { useContext, useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client/react'
 import PropTypes from 'prop-types'
 import { Select } from '../../../../shared'
-import { CREATE_TEAM, UPDATE_TEAM, GET_ALL_USERS } from '../../../../../queries'
+import { UPDATE_TEAM, GET_ALL_USERS } from '../../../../../queries'
 import { ConfigContext } from '../../../../config/src'
 
 const editorOption = user => ({
@@ -40,43 +39,15 @@ const AssignEditor = ({ teamRole, manuscript }) => {
 
   useEffect(() => {
     if (selectedEditor) {
-      // TODO most of this logic should be in the server. We should call an 'assignEditor' mutation rather than 'updateTeam' or 'createTeam'
-      if (teams.find(t => t.role === teamRole)) {
-        updateTeam({
-          variables: {
-            id: team.id,
-            input: {
-              members: [{ user: { id: selectedEditor } }],
-            },
+      // TODO most of this logic should be in the server. We should call an 'assignEditor' mutation rather than 'updateTeam'
+      updateTeam({
+        variables: {
+          id: team.id,
+          input: {
+            members: [{ user: { id: selectedEditor } }],
           },
-        })
-      } else {
-        const editor = teamRole === 'editor' ? 'Editor' : 'Handling Editor'
-
-        const input = {
-          // Editors are always linked to the parent manuscript
-          objectId: manuscript.id,
-          objectType: 'manuscript',
-          displayName: teamRole === 'seniorEditor' ? 'Senior Editor' : editor,
-          role: teamRole,
-          members: [{ user: { id: selectedEditor } }],
-        }
-
-        createTeam({
-          variables: {
-            input,
-          },
-        }).then(({ data }) => {
-          setTeams([
-            ...teams,
-            {
-              id: data.createTeam.id,
-              role: teamRole,
-              members: [{ user: { id: selectedEditor } }],
-            },
-          ])
-        })
-      }
+        },
+      })
     }
   }, [selectedEditor])
 
@@ -87,7 +58,6 @@ const AssignEditor = ({ teamRole, manuscript }) => {
   const { data, loading, error } = useQuery(GET_ALL_USERS)
 
   const [updateTeam] = useMutation(UPDATE_TEAM)
-  const [createTeam] = useMutation(CREATE_TEAM)
 
   if (loading || error) {
     return null

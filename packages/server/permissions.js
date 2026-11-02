@@ -10,6 +10,7 @@ const Review = require('./models/review/review.model')
 const Team = require('./models/team/team.model')
 const TeamMember = require('./models/teamMember/teamMember.model')
 const User = require('./models/user/user.model')
+const UserNotification = require('./models/userNotification/userNotification.model')
 
 // Shield's `race` rule is misnamed, as it doesn't race the different rules but applies them sequentially until one succeeds. `or`, on the other hand, applies all rules in parallel.
 const { rule, and, or, allow, deny, race: lazyOr } = authorization
@@ -67,6 +68,16 @@ const userOwnsMessage = rule({ cache: 'contextual' })(async (
   const message = await Message.query().findById(args.messageId)
 
   return message?.userId === ctx.userId
+})
+
+const userOwnsUserNotification = rule({ cache: 'contextual' })(async (
+  parent,
+  args,
+  ctx,
+) => {
+  if (!ctx.userId) return false
+  const userNotification = await UserNotification.findById(args.id)
+  return userNotification.userId === ctx.userId
 })
 
 const getLatestVersionOfManuscript = async (ctx, manuscriptVersionId) => {
@@ -161,6 +172,38 @@ const isAuthenticated = rule({ cache: 'contextual' })(async (
   ctx,
 ) => {
   return !!ctx.userId
+})
+
+const userCanCreateSubmission = rule({ cache: 'no_cache' })(async (
+  parent,
+  { groupId, file },
+  ctx,
+) => {
+  if (!ctx.userId) return false
+
+  const roleChecks = await Promise.all([
+    User.hasGlobalRole(ctx.userId, 'admin'),
+    ...['user', 'groupManager', 'groupAdmin'].map(role =>
+      User.hasRoleOnObject(ctx.userId, role, groupId),
+    ),
+  ])
+
+  if (!roleChecks.some(Boolean)) return false
+
+  const config = await Config.getActive(groupId)
+  const { submitOptions } = config?.formData?.submission?.submissionPage ?? {}
+
+  if (!submitOptions) return true
+
+  return file
+    ? ['allowAuthorUploadOnly', 'allowAuthorUploadWithForm'].includes(
+        submitOptions,
+      )
+    : [
+        'allowAuthorUploadWithForm',
+        'allowAuthorSubmitForm',
+        'allowAuthorSubmitFormWithBlankEditor',
+      ].includes(submitOptions)
 })
 
 // Who can send a message to a channel?
@@ -514,6 +557,7 @@ const permissions = {
       userIsAdmin,
     ),
     currentUser: isAuthenticated,
+    dashboardData: isAuthenticated,
     docmap: allow,
     editorsActivity: or(userIsGroupAdmin, userIsAdmin),
     file: deny, // Never used
@@ -544,6 +588,7 @@ const permissions = {
     globalTeams: deny, // Never used
     group: allow,
     groups: allow,
+    hasToken: or(userIsGroupAdmin, userIsAdmin),
     invitationManuscriptId: isAuthenticated,
     invitationStatus: allow,
     manuscript: or(
@@ -561,6 +606,7 @@ const permissions = {
     manuscriptsUserHasCurrentRoleIn: isAuthenticated,
     message: deny, // Never used
     messages: isAuthenticated,
+    newSubmissionSettings: isAuthenticated,
     orcidValidate: isAuthenticated,
     paginatedManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     paginatedUsers: or(userIsGroupAdmin, userIsAdmin),
@@ -580,6 +626,7 @@ const permissions = {
     unreviewedPreprints: allow, // This has its own token-based authentication.
     user: isAuthenticated,
     userHasTaskAlerts: isAuthenticated,
+    userNotifications: isAuthenticated,
     users: or(
       userIsEditorOfAnyManuscript,
       userIsGm,
@@ -604,7 +651,7 @@ const permissions = {
     createFile: isAuthenticated,
     createForm: or(userIsGroupAdmin, userIsAdmin),
     createCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    createManuscript: isAuthenticated,
+    createSubmission: userCanCreateSubmission,
     createMessage: userIsAllowedToChat,
     createNewTaskAlerts: or(userIsGm, userIsGroupAdmin, userIsAdmin), // Only used when test code is enabled
     createNewVersion: or(
@@ -614,12 +661,6 @@ const permissions = {
       userIsGroupAdmin,
       userIsAdmin,
     ),
-    createTeam: or(
-      userIsEditorOfAnyManuscript,
-      userIsGm,
-      userIsGroupAdmin,
-      userIsAdmin,
-    ), // TODO scrap this mutation in favour of an 'assignEditor' mutation
     deleteCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     deleteFile: isAuthenticated,
     deleteFiles: isAuthenticated,
@@ -633,6 +674,7 @@ const permissions = {
       userOwnsMessage,
       and(userIsGm, userIsGroupAdmin, userIsAdmin),
     ),
+    generateNewToken: or(userIsGroupAdmin, userIsAdmin),
     importManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     makeDecision: or(
       userIsEditorOfAnyManuscript,
@@ -752,7 +794,6 @@ const permissions = {
       userIsEditorOfTheManuscriptOfTheReview,
     ),
     updateUser: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    uploadFile: isAuthenticated,
     uploadFiles: isAuthenticated,
     updateTaskStatus: isAuthenticated,
     updateCMSPage: or(userIsGroupAdmin, userIsAdmin),
@@ -771,6 +812,8 @@ const permissions = {
     deleteNotification: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setNotificationActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     setEventActive: or(userIsGm, userIsGroupAdmin, userIsAdmin),
+    dismissUserNotification: userOwnsUserNotification,
+    dismissAllUserNotifications: isAuthenticated,
   },
   Subscription: {
     fileUpdated: isAuthenticated,
@@ -778,6 +821,7 @@ const permissions = {
     filesUploaded: isAuthenticated,
     reviewFormUpdated: isAuthenticated,
     manuscriptsImportStatus: isAuthenticated,
+    newSubmissionProgress: isAuthenticated,
     /**
      * This was not being triggered at all before the v3 upgrade.
      * It doesn't work because userIsAllowedToChat dependends on req, and req
@@ -809,7 +853,6 @@ const permissions = {
     userIsGroupAdmin,
     userIsAdmin,
   ),
-  FileNotInDb: allow,
   Form: allow,
   FormStructure: allow,
   FormElement: allow,

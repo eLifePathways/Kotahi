@@ -124,7 +124,7 @@ const setUp = async ({
     role: 'groupAdmin',
     displayName: 'Group Admin',
     objectId: group.id,
-    objectType: 'Group',
+    objectType: 'group',
   })
 
   const editorTeam = await Team.insert({
@@ -235,7 +235,6 @@ describe('Threaded discussion API', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   describe('updatePendingComment', () => {

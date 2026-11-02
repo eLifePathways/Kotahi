@@ -3,8 +3,7 @@
 
 import { ControlPage } from '../../page-object/control-page'
 import { DashboardPage } from '../../page-object/dashboard-page'
-import { Menu } from '../../page-object/page-component/menu'
-import { dashboard } from '../../support/routes'
+import { dashboardEdits } from '../../support/routes'
 
 describe('Editor assigning reviewers', () => {
   before(() => {
@@ -17,10 +16,9 @@ describe('Editor assigning reviewers', () => {
 
   it('can assign 6 reviewers', () => {
     cy.fixture('role_names').then(name => {
-      cy.login(name.role.seniorEditor, dashboard)
+      cy.login(name.role.seniorEditor, dashboardEdits)
       cy.reload()
       cy.wait(1000)
-      DashboardPage.clickDashboardTab(2)
       DashboardPage.clickControl() // Navigate to Control Page
 
       // Invite all the reviewers
@@ -40,7 +38,7 @@ describe('Editor assigning reviewers', () => {
     })
 
     // Go to dashboard and verify number of invited reviewer
-    Menu.clickDashboard()
+    cy.visit(dashboardEdits)
     cy.getByDataTestId('statusCounts')
       .find('[data-testid="reviewer-status-square"]')
       .should('have.length', 6)

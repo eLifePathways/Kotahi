@@ -27,11 +27,12 @@ const StyledActionButton = styled(ActionButton)`
   padding: 0 ${grid(4)};
 `
 
-const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
+const CoarAuthToken = ({ hasToken, onRefreshCoarAuthToken }) => {
   const { t } = useTranslation()
-  const [token, setToken] = useState('*********')
+  const [token, setToken] = useState('')
   const [status, setStatus] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [copied, setCopied] = useState(false)
 
   const handleRefresh = async () => {
     setStatus('pending')
@@ -45,6 +46,19 @@ const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
       setToken(authToken)
       setStatus('success')
     }
+  }
+
+  let displayToken = '****************'
+
+  if (token) {
+    displayToken = token
+  } else if (!hasToken) {
+    displayToken = ''
+  }
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(token)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
   }
 
   return (
@@ -61,7 +75,12 @@ const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
         <Alert description={errorMessage} showIcon type="error" />
       )}
       <CoarAuthFieldWrapper>
-        <StyledTextField inline readonly value={token} />
+        <StyledTextField inline readonly value={displayToken} />
+        {status === 'success' && (
+          <StyledActionButton onClick={handleCopy}>
+            {copied ? t('configPage.coar.copied') : t('configPage.coar.copy')}
+          </StyledActionButton>
+        )}
         <StyledActionButton onClick={handleRefresh} primary status={status}>
           {t('configPage.coar.refreshAuthToken')}
         </StyledActionButton>
@@ -71,6 +90,7 @@ const CoarAuthToken = ({ onRefreshCoarAuthToken }) => {
 }
 
 CoarAuthToken.propTypes = {
+  hasToken: PropTypes.bool.isRequired,
   onRefreshCoarAuthToken: PropTypes.func.isRequired,
 }
 

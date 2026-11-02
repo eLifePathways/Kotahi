@@ -1,11 +1,12 @@
 /* eslint-disable no-console, no-await-in-loop, no-plusplus */
 
-const { uuid } = require('@coko/server')
-const { chunk } = require('lodash')
+const { useTransaction, uuid } = require('@coko/server')
+const { chunk, omit } = require('lodash')
 
 const ArticleImportHistory = require('../../models/articleImportHistory/articleImportHistory.model')
 const ArticleImportSources = require('../../models/articleImportSources/articleImportSources.model')
 const Manuscript = require('../../models/manuscript/manuscript.model')
+const Review = require('../../models/review/review.model')
 
 const importWorkersByGroup = {}
 
@@ -25,6 +26,28 @@ const flatten = items => {
   return result
 }
 
+const saveImportedManuscript = async (item, options = {}) =>
+  useTransaction(
+    async trx => {
+      const { reviews = [] } = item
+
+      const manuscript = await Manuscript.createNewManuscript(
+        omit(item, ['reviews', 'files', 'teams', 'channels']),
+        { trx, assignSubmitter: false },
+      )
+
+      if (reviews.length) {
+        await Review.insert(
+          reviews.map(review => ({ ...review, manuscriptId: manuscript.id })),
+          { trx },
+        )
+      }
+
+      return manuscript
+    },
+    { trx: options.trx },
+  )
+
 const saveImportedManuscripts = async (
   allNewManuscripts,
   groupId,
@@ -41,10 +64,9 @@ const saveImportedManuscripts = async (
     const chunks = chunk(firstVersions, 10).concat(laterVersions.map(x => [x]))
 
     for (const ch of chunks) {
-      await Manuscript.query(trx).upsertGraphAndFetch(ch, {
-        relate: true,
-        insertMissing: true,
-      })
+      await Promise.all(
+        ch.map(manuscript => saveImportedManuscript(manuscript, { trx })),
+      )
     }
   } catch (e) {
     console.error(e)
@@ -136,24 +158,7 @@ const runImports = async (
         isImported: true,
         importSource,
         submitterId,
-        files: [],
-        teams: [],
         groupId,
-      }
-
-      if (!preprint.parentId) {
-        result.channels = [
-          {
-            topic: 'Manuscript discussion',
-            type: 'all',
-            groupId,
-          },
-          {
-            topic: 'Editorial discussion',
-            type: 'editorial',
-            groupId,
-          },
-        ]
       }
 
       if (

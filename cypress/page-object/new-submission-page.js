@@ -6,16 +6,18 @@ import { SubmissionFormPage } from './submission-form-page'
  * Page object representing the available submission options:
  * submission through uploading a manuscript or through using an URL.
  */
-const UPLOAD_MANUSCRIPT_BUTTON = 'UploadManuscript__Info'
-const SUBMIT_URL_BUTTON = 'skipManuscriptUploadButton'
+const UPLOAD_MANUSCRIPT_BUTTON = 'card-upload-upload'
+const SUBMIT_URL_BUTTON = 'card-button-skip'
 const SUBMISSION_MESSAGE = 'body'
 
 export const NewSubmissionPage = {
   getUploadManuscriptButton() {
-    return cy.getByContainsClass(UPLOAD_MANUSCRIPT_BUTTON)
+    return cy.getByDataTestId(UPLOAD_MANUSCRIPT_BUTTON)
   },
-  clickUploadManuscript() {
-    this.getUploadManuscriptButton().click()
+  uploadManuscript(file) {
+    this.getUploadManuscriptButton()
+      .find('input[type=file]')
+      .selectFile(file, { force: true })
   },
   getSubmitURLButton() {
     return cy.getByDataTestId(SUBMIT_URL_BUTTON)

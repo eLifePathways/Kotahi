@@ -36,7 +36,6 @@ describe('Review model', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   it('gets the users of solo and collaborative reviews', async () => {

@@ -1,3 +1,5 @@
+const { useTransaction } = require('@coko/server')
+
 const Team = require('../models/team/team.model')
 const TeamMember = require('../models/teamMember/teamMember.model')
 const User = require('../models/user/user.model')
@@ -15,6 +17,7 @@ const {
 const { evictFromCacheByPrefix } = require('../services/queryCache.service')
 
 const seekEvent = require('../services/notification.service')
+const { emitEvent } = require('../services/eventManager/eventManager')
 
 const {
   sendTentativeAcceptCoarNotification,
@@ -22,151 +25,175 @@ const {
 
 const EDITOR_ROLES = ['editor', 'handlingEditor', 'seniorEditor']
 
-const createTeam = async (input, groupId) => {
-  // TODO Only the relate option appears to be used by insertGraphAndFetch, according to Objection docs?
-  const options = {
-    relate: ['members.user'],
-    unrelate: ['members.user'],
-    allowUpsert: '[members]',
-    eager: '[members.[user.teams]]',
-  }
+const ADDED_EVENT_BY_ROLE = {
+  editor: 'addedAsEditor',
+  handlingEditor: 'addedAsHandlingEditor',
+  seniorEditor: 'addedAsSeniorEditor',
+}
 
-  await Promise.all(
-    input.members.map(async member => {
-      await addUserToManuscriptChatChannel({
-        manuscriptId: input.objectId,
-        userId: member.user.id,
-        type: 'all',
-      })
-      await addUserToManuscriptChatChannel({
-        manuscriptId: input.objectId,
-        userId: member.user.id,
-        type: 'editorial',
-      })
-    }),
-  )
-
-  if (EDITOR_ROLES.includes(input.role)) {
-    const manuscript = await Manuscript.query().findById(input.objectId)
-    const handlingEditorIds = input.members.map(m => m.user.id)
-
-    if (input.role === 'handlingEditor' && handlingEditorIds.length > 0) {
-      await sendTentativeAcceptCoarNotification(manuscript, handlingEditorIds)
-    }
-
-    seekEvent('team-editor-assigned', {
-      manuscript,
-      membersAdded: input.members,
-      role: input.role,
-      groupId,
-    })
-  }
-
-  return Team.query().insertGraphAndFetch(input, options)
+const REMOVED_EVENT_BY_ROLE = {
+  editor: 'removedAsEditor',
+  handlingEditor: 'removedAsHandlingEditor',
+  seniorEditor: 'removedAsSeniorEditor',
 }
 
 const updateTeam = async (id, input, groupId) => {
+  const { team, manuscript, membersAdded, membersRemoved } =
+    await useTransaction(async trx => {
+      const { objectId, role } = await Team.findById(id, { trx })
+
+      const { result: existingMembers } = await TeamMember.find(
+        { teamId: id },
+        { trx },
+      )
+
+      const existingMemberIds = existingMembers.map(member => member.userId)
+      const newMemberIds = input.members.map(member => member.user.id)
+
+      const added = newMemberIds.filter(
+        userId => !existingMemberIds.includes(userId),
+      )
+
+      const removed = existingMemberIds.filter(
+        userId => !newMemberIds.includes(userId),
+      )
+
+      let editedManuscript = null
+
+      if (EDITOR_ROLES.includes(role)) {
+        editedManuscript = await Manuscript.query(trx).findById(objectId)
+
+        await updateAlertsUponTeamUpdate(objectId, added, removed, { trx })
+
+        const channels = await Manuscript.relatedQuery('channels', trx).for(
+          objectId,
+        )
+
+        await Promise.all(
+          removed.map(async userId => {
+            // Check if the user has any messages in the channels before removing them from the channelMember
+            const hasPostedToChannel = await Message.query(trx)
+              .where({ userId })
+              .whereIn(
+                'channelId',
+                channels.map(channel => channel.id),
+              )
+              .first()
+
+            // Editors share the manuscript chat, so only remove the user once they're in no editor team
+            const isStillEditor = await Team.isUserInRolesForObject(
+              userId,
+              objectId,
+              EDITOR_ROLES,
+              { trx, excludeTeamId: id },
+            )
+
+            if (!hasPostedToChannel && !isStillEditor) {
+              await removeUserFromManuscriptChatChannel(
+                { manuscriptId: objectId, userId, type: 'all' },
+                { trx },
+              )
+              await removeUserFromManuscriptChatChannel(
+                { manuscriptId: objectId, userId, type: 'editorial' },
+                { trx },
+              )
+              const pathStrings = channels.map(channel => `chat/${channel.id}`)
+              await NotificationDigest.query(trx)
+                .delete()
+                .where({ user_id: userId })
+                .whereIn('path_string', pathStrings)
+            }
+          }),
+        )
+
+        await Promise.all(
+          input.members.map(async member => {
+            await addUserToManuscriptChatChannel(
+              { manuscriptId: objectId, userId: member.user.id, type: 'all' },
+              { trx },
+            )
+            await addUserToManuscriptChatChannel(
+              {
+                manuscriptId: objectId,
+                userId: member.user.id,
+                type: 'editorial',
+              },
+              { trx },
+            )
+          }),
+        )
+      }
+
+      await Promise.all(
+        removed.map(userId =>
+          Manuscript.removeRole(userId, objectId, role, { trx }),
+        ),
+      )
+
+      await Promise.all(
+        added.map(userId =>
+          Manuscript.assignRole(userId, objectId, role, { trx }),
+        ),
+      )
+
+      return {
+        team: await Team.findById(id, { related: 'members.user', trx }),
+        manuscript: editedManuscript,
+        membersAdded: added,
+        membersRemoved: removed,
+      }
+    })
+
+  // Only once committed, so nothing goes out (or gets cached) for a change
+  // that was rolled back.
   evictFromCacheByPrefix('userIs')
   evictFromCacheByPrefix('membersOfTeam')
-  const existing = await Team.query().select('role').findById(id)
 
-  if (existing && EDITOR_ROLES.includes(existing.role)) {
-    const existingMemberIds = (
-      await TeamMember.query().select('userId').where({ teamId: id })
-    ).map(m => m.userId)
-
-    const newMemberIds = input.members.map(m => m.user.id)
-
-    const membersAdded = newMemberIds.filter(
-      userId => !existingMemberIds.includes(userId),
-    )
-
-    const membersRemoved = existingMemberIds.filter(
-      userId => !newMemberIds.includes(userId),
-    )
-
-    const { objectId } = await Team.query().select('objectId').findById(id)
-    const manuscript = await Manuscript.query().findById(objectId)
+  if (manuscript) {
+    const { role } = team
 
     const eventData = {
       manuscript,
       membersAdded,
       membersRemoved,
       groupId,
-      role: existing.role,
+      role,
     }
 
     if (membersAdded.length) {
-      if (existing.role === 'handlingEditor') {
-        await sendTentativeAcceptCoarNotification(manuscript, membersAdded)
-      }
+      await sendTentativeAcceptCoarNotification(manuscript, membersAdded)
 
       seekEvent('team-editor-assigned', eventData)
+
+      await Promise.all(
+        membersAdded.map(memberId =>
+          emitEvent(ADDED_EVENT_BY_ROLE[role], {
+            userId: memberId,
+            groupId,
+            manuscriptId: manuscript.id,
+            shortId: manuscript.shortId,
+          }),
+        ),
+      )
     }
 
     if (membersRemoved.length) {
       seekEvent('team-editor-unassigned', eventData)
+
+      await Promise.all(
+        membersRemoved.map(memberId =>
+          emitEvent(REMOVED_EVENT_BY_ROLE[role], {
+            userId: memberId,
+            groupId,
+            manuscriptId: manuscript.id,
+            shortId: manuscript.shortId,
+          }),
+        ),
+      )
     }
-
-    await updateAlertsUponTeamUpdate(objectId, membersAdded, membersRemoved)
-
-    const channels = await Manuscript.relatedQuery('channels').for(objectId)
-
-    await Promise.all(
-      membersRemoved.map(async userId => {
-        // Check if the user has any messages in the channels before removing them from the channelMember
-        const hasPostedToChannel = await Message.query()
-          .where({ userId })
-          .whereIn(
-            'channelId',
-            channels.map(channel => channel.id),
-          )
-          .first()
-
-        if (!hasPostedToChannel) {
-          await removeUserFromManuscriptChatChannel({
-            manuscriptId: objectId,
-            userId,
-            type: 'all',
-          })
-          await removeUserFromManuscriptChatChannel({
-            manuscriptId: objectId,
-            userId,
-            type: 'editorial',
-          })
-          const pathStrings = channels.map(channel => `chat/${channel.id}`)
-          await NotificationDigest.query()
-            .delete()
-            .where({ user_id: userId })
-            .whereIn('path_string', pathStrings)
-        }
-      }),
-    )
-
-    await Promise.all(
-      input.members.map(async member => {
-        await addUserToManuscriptChatChannel({
-          manuscriptId: objectId,
-          userId: member.user.id,
-          type: 'all',
-        })
-        await addUserToManuscriptChatChannel({
-          manuscriptId: objectId,
-          userId: member.user.id,
-          type: 'editorial',
-        })
-      }),
-    )
   }
 
-  return Team.query().upsertGraphAndFetch(
-    { id, ...input, role: existing?.role },
-    {
-      relate: ['members.user'],
-      unrelate: ['members.user'],
-      eager: 'members.user.teams', // TODO This appears to be ignored, according to Objection documentation?
-    },
-  )
+  return team
 }
 
 const updateTeamMember = async (id, input) => {
@@ -195,7 +222,6 @@ const userTeams = async userId => {
 }
 
 module.exports = {
-  createTeam,
   updateTeam,
   updateTeamMember,
   updateCollaborativeTeamMembers,

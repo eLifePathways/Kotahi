@@ -40,24 +40,6 @@ export const CHAT_GPT = gql`
   }
 `
 
-export const EXTRACT_USING_OPEN_AI_TEXT_MODEL = gql`
-  query OpenAi(
-    $input: UserMessage!
-    $groupId: ID!
-    $history: [OpenAiMessage]
-    $system: SystemMessage
-    $format: String
-  ) {
-    openAi(
-      input: $input
-      groupId: $groupId
-      history: $history
-      format: $format
-      system: $system
-    )
-  }
-`
-
 export const SEARCH_ROR = gql`
   query SearchRor($input: String!) {
     searchRor(input: $input) {
@@ -81,6 +63,12 @@ export const GET_COAR_NOTIFICATIONS_FOR_MANUSCRIPT = gql`
 export const GENERATE_NEW_COAR_AUTH_TOKEN = gql`
   mutation GenerateNewToken($name: String!, $groupId: ID!) {
     generateNewToken(name: $name, groupId: $groupId)
+  }
+`
+
+export const HAS_TOKEN = gql`
+  query HasToken($name: String!, $groupId: ID!) {
+    hasToken(name: $name, groupId: $groupId)
   }
 `
 

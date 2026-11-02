@@ -1,7 +1,8 @@
 import { Fragment, useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
-import { CommsErrorBanner, Spinner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 import EmailTemplates from './EmailTemplates'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
 import { handlebars } from './handlebarsAutocomplete/constants'
@@ -23,7 +24,7 @@ const EmailTemplatesPage = ({ wrapper: Wrapper = Fragment }) => {
 
   const { loading, error, emailTemplates } = useEmailTemplatesContext()
 
-  if (loading || !emailTemplates) return <Spinner />
+  if (loading || !emailTemplates) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   return (

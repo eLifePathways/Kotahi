@@ -126,6 +126,7 @@ describe('Form builder', () => {
         .contains('Rich text')
         .scrollIntoView()
         .click({ force: true })
+      FormsPage.getTitleField().type('New field')
       FormsPage.getNameField().click().type('newField')
       cy.contains('Save').click()
 
@@ -144,6 +145,7 @@ describe('Form builder', () => {
         .contains('Rich text')
         .scrollIntoView()
         .click()
+      FormsPage.getTitleField().type('New field')
       FormsPage.getNameField().click().type('newField')
       cy.contains('Save').click()
     })

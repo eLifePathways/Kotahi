@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 declare class TaskEmailNotification extends BaseModel {
   taskId: string
@@ -10,6 +10,11 @@ declare class TaskEmailNotification extends BaseModel {
   recipientName: string | null
   recipientEmail: string | null
   sentAt: string | Record<string, unknown> | null
+
+  static findByTaskId(
+    taskId: string,
+    options?: { trx?: Transaction },
+  ): Promise<TaskEmailNotification[]>
 }
 
 export = TaskEmailNotification

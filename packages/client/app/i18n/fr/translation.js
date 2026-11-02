@@ -30,6 +30,7 @@ const fr = {
       notAssignedForThisVersion: "N'est pas évaluateur de la version actuelle",
     },
     common: {
+      Loading: 'Chargement',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'Ok',
@@ -247,7 +248,7 @@ const fr = {
     },
     dashboardPage: {
       Dashboard: 'Tableau de bord',
-      'New submission': 'Nouvelle soumission',
+      backToDashboard: 'Retour au tableau de bord',
       'New Alerts': 'Nouvelles alertes',
       'My Submissions': 'Mes soumissions',
       'To Review': 'Affectations de révision',
@@ -257,6 +258,92 @@ const fr = {
           'Fournir des commentaires sur la production',
         'View production feedback':
           'Afficher les commentaires sur la production',
+      },
+      greeting: {
+        goodMorning: 'Bonjour',
+        goodAfternoon: 'Bon après-midi',
+        goodEvening: 'Bonsoir',
+        and: 'et',
+        allCaughtUp: 'Vous êtes à jour',
+        nothingNeedsAttention:
+          "Rien ne nécessite votre attention pour l'instant.",
+        itemsNeedAttention:
+          'Vous avez {{count}} élément qui nécessite votre attention',
+        itemsNeedAttention_plural:
+          'Vous avez {{count}} éléments qui nécessitent votre attention',
+        actionSummary: {
+          authorSubmit: '{{count}} soumission en attente de finalisation',
+          authorSubmit_plural:
+            '{{count}} soumissions en attente de finalisation',
+          authorRevise: '{{count}} manuscrit en attente de révision',
+          authorRevise_plural: '{{count}} manuscrits en attente de révision',
+          authorSubmitRevision: '{{count}} révision en attente de soumission',
+          authorSubmitRevision_plural:
+            '{{count}} révisions en attente de soumission',
+          reviewerRespond:
+            '{{count}} invitation de réviseur en attente de votre réponse',
+          reviewerRespond_plural:
+            '{{count}} invitations de réviseur en attente de votre réponse',
+          reviewerSubmit: '{{count}} révision en attente',
+          reviewerSubmit_plural: '{{count}} révisions en attente',
+          editorDecide: "{{count}} décision d'édition en attente",
+          editorDecide_plural: "{{count}} décisions d'édition en attente",
+          taskAlmostOverdue: '{{count}} tâche presque en retard',
+          taskAlmostOverdue_plural: '{{count}} tâches presque en retard',
+          taskOverdue: '{{count}} tâche en retard',
+          taskOverdue_plural: '{{count}} tâches en retard',
+        },
+      },
+      actionCards: {
+        scrollLeft: "Faire défiler la liste d'actions vers la gauche",
+        scrollRight: "Faire défiler la liste d'actions vers la droite",
+        types: {
+          authorSubmit: 'Soumettre',
+          authorRevise: 'Réviser',
+          authorSubmitRevision: 'Soumettre la révision',
+          reviewerRespond: 'Invitation à réviser',
+          reviewerSubmit: 'Réviser',
+          editorDecide: 'Décider de',
+          taskAlmostOverdue: 'Tâche presque en retard',
+          taskOverdue: 'Tâche en retard',
+        },
+      },
+      tableCards: {
+        needsAttention: '{{count}} nécessite votre attention',
+        needsAttention_plural: '{{count}} nécessitent votre attention',
+        author: 'Auteur',
+        reviewer: 'Réviseur',
+        editor: 'Éditeur',
+      },
+      activity: {
+        title: 'Activité',
+        clearAll: 'Tout effacer',
+        dismissNotification: 'Ignorer la notification',
+        showingOfTotal: 'Affichage de {{shown}} sur {{total}}',
+        noActivityYet: "Pas encore d'activité",
+        activityWillAppearHere:
+          'Les mises à jour de vos manuscrits apparaîtront ici.',
+        manuscriptReference: 'manuscrit #{{shortId}}',
+        notifications: {
+          addedAsEditor: 'Vous avez été ajouté comme éditeur de',
+          addedAsHandlingEditor:
+            'Vous avez été ajouté comme éditeur en charge de',
+          addedAsReviewer: 'Vous avez été ajouté comme réviseur de',
+          addedAsSeniorEditor: 'Vous avez été ajouté comme éditeur senior de',
+          decisionMade: 'Une décision a été prise concernant',
+          removedAsEditor: "Vous avez été retiré en tant qu'éditeur de",
+          removedAsHandlingEditor:
+            "Vous avez été retiré en tant qu'éditeur en charge de",
+          removedAsReviewer: 'Vous avez été retiré en tant que réviseur de',
+          removedAsSeniorEditor:
+            "Vous avez été retiré en tant qu'éditeur senior de",
+          reviewerAcceptedInvitation:
+            'Un réviseur a accepté votre invitation pour',
+          reviewerCompletedReview: 'Une révision a été complétée pour',
+          reviewerRejectedInvitation:
+            'Un réviseur a décliné votre invitation pour',
+          revisionSubmitted: 'Une révision a été soumise pour',
+        },
       },
     },
     submitPage: {
@@ -625,8 +712,6 @@ const fr = {
         "Nombre de jours pendant lesquels un manuscrit doit rester sur la page des manuscrits avant d'être automatiquement archivé (laissez-le vide si vous ne souhaitez pas utiliser l'archivage automatique)",
       importFromSematic:
         'Importer des manuscrits de Semantic Scholar datant de moins de « x » nombre de jours',
-      newSubmissionActionVisisble:
-        'Action « Ajouter une nouvelle soumission » visible sur la page des manuscrits',
       displayActionToSelect:
         "Afficher l'action pour « Sélectionner » des manuscrits pour l'évaluation à partir de la page des manuscrits",
       importManuscriptsManually:
@@ -647,7 +732,6 @@ const fr = {
       Submission: 'Soumission',
       SubmissionPage: {
         title: 'Titre',
-        description: 'Description',
         allowAuthorUploadOnly:
           'Autoriser un auteur à télécharger un fichier de manuscrit uniquement',
         allowAuthorUploadWithForm:
@@ -879,6 +963,8 @@ const fr = {
       coar: {
         authToken: "Jeton d'authentification COAR Notify",
         refreshAuthToken: "Actualiser le jeton d'authentification",
+        copy: 'Copier',
+        copied: 'Copié !',
         copyMessage:
           "Le jeton d'authentification n'est affiché qu'une seule fois !",
         copyDescription:
@@ -1112,8 +1198,7 @@ const fr = {
     loginPage: {
       kotahiUses:
         'Kotahi utilise ORCID <0>icône</0> pour identifier les auteurs et le personnel.',
-      'Login with ORCID': 'Se connecter avec ORCID',
-      'Register with ORCID': "S'inscrire avec ORCID",
+      loginWithOrcid: 'Se connecter avec ORCID',
     },
     frontPage: {
       recent: 'Publications récentes dans {{brandName}}',
@@ -1420,16 +1505,27 @@ const fr = {
 
     newSubmission: {
       'New submission': 'Nouvelle soumission',
-      'Submission created': 'Soumission créée',
-      'Upload Manuscript': 'Télécharger le manuscrit',
-      dragNDrop: 'Glisser-déposer ou cliquer pour sélectionner un fichier',
-      acceptedFiletypes:
-        'Types de fichiers acceptés : pdf, epub, zip, docx, latex',
-      converting:
-        "Votre manuscrit est en train d'être converti en une version directement éditable. Cela peut prendre quelques secondes.",
-      skipManuscriptUpload:
-        'Ignorer le téléversement du manuscrit et passer au formulaire de soumission',
       errorUploading: '{{error}}',
+      uploadTitle: 'Téléverser un manuscrit',
+      uploadDescription:
+        'Glissez-déposez ici le fichier de votre manuscrit, ou cliquez pour en choisir un.',
+      skipTitle: 'Commencer sans fichier',
+      skipDescription:
+        'Passez directement au formulaire de soumission sans téléverser de manuscrit.',
+      stepUploading: 'Téléversement de votre manuscrit...',
+      stepConverting: 'Conversion de votre document...',
+      stepCleaning: 'Préparation de votre document...',
+      stepInferringMetadata:
+        "Utilisation de l'IA pour remplir les informations de soumission...",
+      stepCreating: 'Création de votre soumission...',
+      redirecting: 'Soumission créée. Redirection...',
+      fileRequirements:
+        'Types de fichiers acceptés : {{fileTypes}}. Taille maximale : {{maxSizeMb}} Mo.',
+      errorUnsupportedFileType: "Ce type de fichier n'est pas pris en charge.",
+      errorFileTooLarge: 'Ce fichier dépasse {{maxSizeMb}} Mo.',
+      errorConversionFailed: "Votre document n'a pas pu être converti.",
+      errorCreationFailed: "Votre soumission n'a pas pu être créée.",
+      errorUnknown: "Une erreur s'est produite. Veuillez réessayer.",
     },
     formBuilder: {
       'New Form': 'Nouveau formulaire',

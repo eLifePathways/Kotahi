@@ -117,28 +117,6 @@ export const UPLOAD_FILES = gql`
   }
 `
 
-export const UPLOAD_FILE = gql`
-  mutation UploadFile($file: Upload!) {
-    uploadFile(file: $file) {
-      name
-      storedObjects {
-        type
-        key
-        size
-        mimetype
-        extension
-        url
-        imageMetadata {
-          width
-          height
-          space
-          density
-        }
-      }
-    }
-  }
-`
-
 export const UPDATE_FILE_TAGS = gql`
   mutation UpdateTagsFile($input: UpdateTagsFileInput!) {
     updateTagsFile(input: $input) {

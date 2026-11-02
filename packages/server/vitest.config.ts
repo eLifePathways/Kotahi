@@ -7,7 +7,7 @@ export default defineConfig({
     silent: true,
     testTimeout: 10000,
     globalSetup: ['./vitest.setup.ts'],
-    setupFiles: ['./vitest.workerDb.ts'],
+    setupFiles: ['./vitest.tsNodeRegister.ts', './vitest.workerDb.ts'],
 
     coverage: {
       provider: 'v8',

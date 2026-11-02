@@ -7,7 +7,8 @@ import { useQuery, useMutation } from '@apollo/client/react'
 import { serverUrl } from '@coko/client'
 
 import Profile from './Profile'
-import { Spinner, CommsErrorBanner } from '../../shared'
+import { CommsErrorBanner } from '../../shared'
+import Spinner from '../../../ui/shared/Spinner'
 
 import packageJson from '../../../../package.json'
 import { useCurrentUser } from '../../../pages/hooks/useCurrentUser'
@@ -68,7 +69,7 @@ const ProfilePage = () => {
     })
   }
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
 
   const logoutUser = () => {

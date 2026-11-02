@@ -2,7 +2,8 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 
 import Manuscript from './Manuscript'
-import { Spinner, CommsErrorBanner } from '../../../shared'
+import { CommsErrorBanner } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { MANUSCRIPT_FOR_MANUSCRIPT_PAGE } from '../../../../queries'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
 
@@ -16,7 +17,7 @@ const ManuscriptPage = () => {
     },
   })
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner fullpage />
   if (error) return <CommsErrorBanner error={error} />
   const { manuscript } = data
 

@@ -2,7 +2,7 @@ DO $$
 DECLARE
   g_id UUID;
 BEGIN
-SELECT object_id  INTO g_id FROM team_members JOIN teams ON teams.id  = team_members.team_id WHERE object_type = 'Group' LIMIT 1;
+SELECT object_id  INTO g_id FROM team_members JOIN teams ON teams.id  = team_members.team_id WHERE object_type = 'group' LIMIT 1;
 
 -- -------------------------------------------------------------
 -- Senior Editor Assigned 
@@ -80,5 +80,19 @@ INSERT INTO "public"."messages" ("id", "user_id", "channel_id", "created", "upda
 INSERT INTO "public"."reviews" ("id", "created", "updated", "is_decision", "user_id", "manuscript_id", "type", "is_hidden_from_author", "is_hidden_reviewer_name", "can_be_published_publicly", "json_data") VALUES
 ('0d16a291-cc62-46b6-a5cb-87d137690f62', '2022-09-14 06:45:41.913+00', '2022-09-14 06:45:41.913+00', 't', '85e1300e-003c-4e96-987b-23812f902477', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'Review', 'f', 'f', 'f', '{"files": ["9eed538f-4f91-4f42-8484-58aba35ad206"], "comment": "<p class=\"paragraph\">Great Paper!</p>", "$verdict": "accept"}'),
 ('62879dfb-c04f-4206-abf3-1f7060794e39', '2022-09-14 06:45:21.694+00', '2022-09-14 06:45:21.694+00', 't', '85e1300e-003c-4e96-987b-23812f902477', '908587ed-c5f8-4532-aa56-bc94f805d336', 'Review', 'f', 'f', 'f', '{"files": ["62813649-bfca-47d5-9b73-c23ffef4bd69"], "comment": "<p class=\"paragraph\">Please fix Foo in the Paper!</p>", "$verdict": "revise"}');
+
+-- Teams every manuscript has, one per manuscript role
+INSERT INTO "public"."teams" ("id", "created", "updated", "display_name", "role", "global", "type", "object_id", "object_type") VALUES
+('57ca6227-89b3-5d1b-bd8a-8a44b3318bec', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Collaborative Reviewers', 'collaborativeReviewer', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('f4690e4a-dbd8-5540-be3d-c66ff8d1a64f', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Editor', 'editor', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('9612cc38-a2bd-5a93-acf5-0b9b92a08823', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Handling Editor', 'handlingEditor', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('5f85f7fc-6eb8-5da3-9028-a70522248bb2', '2022-09-13 14:07:25.565+00', '2022-09-13 14:07:25.565+00', 'Managing Editor', 'managingEditor', 'f', 'team', '908587ed-c5f8-4532-aa56-bc94f805d336', 'manuscript'),
+('1410ad09-d5d7-5b47-8aa8-554a3492f19e', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Author', 'author', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript'),
+('ec0c49dd-81f7-53cd-9901-e9bb19e3304c', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Reviewers', 'reviewer', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript'),
+('2ef62541-41c3-59f6-be50-27d046910920', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Collaborative Reviewers', 'collaborativeReviewer', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript'),
+('c1ac234a-e1de-5e0f-9e83-5943f6dbc0c3', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Editor', 'editor', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript'),
+('928155be-3460-59aa-b680-f992a280c45a', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Senior Editor', 'seniorEditor', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript'),
+('256e65ea-1aee-5cb3-ab90-d596acf7b8df', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Handling Editor', 'handlingEditor', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript'),
+('a95c649e-5ef3-568d-ad23-40b5d27119ad', '2022-09-14 06:45:34.099+00', '2022-09-14 06:45:34.099+00', 'Managing Editor', 'managingEditor', 'f', 'team', '2bca7987-b4d9-4a33-aa1a-ab4666d0942a', 'manuscript');
 
 END $$;

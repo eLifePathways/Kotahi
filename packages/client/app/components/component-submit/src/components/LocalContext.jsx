@@ -5,7 +5,8 @@ import { last } from 'lodash'
 import styled from 'styled-components'
 import { grid, th, uuid } from '@coko/client'
 
-import { ActionButton, Spinner } from '../../../shared'
+import { ActionButton } from '../../../shared'
+import Spinner from '../../../../ui/shared/Spinner'
 import { ConfigContext } from '../../../config/src'
 import { SubNote } from '../style'
 import { SEARCH_LOCAL_CONTEXT } from '../../../../queries'
@@ -158,7 +159,7 @@ const LocalContext = ({
           </StyledButton>
         </div>
       )}
-      {isSearching && <Spinner />}
+      {isSearching && <Spinner fullpage />}
       {!isAuthorized && !isSearching && (
         <NoProjectFound>Unauthorized. Please check you API KEY</NoProjectFound>
       )}

@@ -6,7 +6,8 @@ import { grid } from '@coko/client'
 import { useDropzone } from 'react-dropzone'
 import styled, { useTheme } from 'styled-components'
 
-import { Icon, Spinner } from '../../../../shared'
+import { Icon } from '../../../../shared'
+import Spinner from '../../../../../ui/shared/Spinner'
 
 const Message = styled.div`
   align-items: center;
@@ -60,7 +61,7 @@ const UploadComponent = ({ uploadAssetsFn, label }) => {
       </Message>
     </DropZoneContainer>
   ) : (
-    <Spinner />
+    <Spinner fullpage />
   )
 }
 

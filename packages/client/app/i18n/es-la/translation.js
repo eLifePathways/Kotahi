@@ -30,6 +30,7 @@ const esLa = {
       notAssignedForThisVersion: 'No es revisor de la versión actual',
     },
     common: {
+      Loading: 'Cargando',
       cms: 'CMS',
       pdf: 'PDF',
       OK: 'OK',
@@ -247,7 +248,7 @@ const esLa = {
     },
     dashboardPage: {
       Dashboard: 'Tablero',
-      'New submission': 'Nueva presentación',
+      backToDashboard: 'Volver al Tablero',
       'New Alerts': 'Nuevas Alertas',
       'My Submissions': 'Mis presentaciones',
       'To Review': 'Asignaciones de revisión',
@@ -255,6 +256,86 @@ const esLa = {
       mySubmissions: {
         'Provide production feedback': 'Proporcionar comentarios de producción',
         'View production feedback': 'Ver comentarios de producción',
+      },
+      greeting: {
+        goodMorning: 'Buenos días',
+        goodAfternoon: 'Buenas tardes',
+        goodEvening: 'Buenas noches',
+        and: 'y',
+        allCaughtUp: 'Estás al día',
+        nothingNeedsAttention:
+          'No hay nada que requiera tu atención en este momento.',
+        itemsNeedAttention: 'Tienes {{count}} elemento que requiere atención',
+        itemsNeedAttention_plural:
+          'Tienes {{count}} elementos que requieren atención',
+        actionSummary: {
+          authorSubmit: '{{count}} presentación pendiente de finalizar',
+          authorSubmit_plural:
+            '{{count}} presentaciones pendientes de finalizar',
+          authorRevise: '{{count}} manuscrito pendiente de revisión',
+          authorRevise_plural: '{{count}} manuscritos pendientes de revisión',
+          authorSubmitRevision: '{{count}} revisión pendiente de envío',
+          authorSubmitRevision_plural:
+            '{{count}} revisiones pendientes de envío',
+          reviewerRespond:
+            '{{count}} invitación de revisor esperando respuesta',
+          reviewerRespond_plural:
+            '{{count}} invitaciones de revisor esperando respuesta',
+          reviewerSubmit: '{{count}} revisión pendiente',
+          reviewerSubmit_plural: '{{count}} revisiones pendientes',
+          editorDecide: '{{count}} decisión editorial pendiente',
+          editorDecide_plural: '{{count}} decisiones editoriales pendientes',
+          taskAlmostOverdue: '{{count}} tarea casi vencida',
+          taskAlmostOverdue_plural: '{{count}} tareas casi vencidas',
+          taskOverdue: '{{count}} tarea vencida',
+          taskOverdue_plural: '{{count}} tareas vencidas',
+        },
+      },
+      actionCards: {
+        scrollLeft: 'Desplazar la lista de acciones a la izquierda',
+        scrollRight: 'Desplazar la lista de acciones a la derecha',
+        types: {
+          authorSubmit: 'Enviar',
+          authorRevise: 'Revisar',
+          authorSubmitRevision: 'Enviar revisión',
+          reviewerRespond: 'Invitación a revisar',
+          reviewerSubmit: 'Revisar',
+          editorDecide: 'Decidir sobre',
+          taskAlmostOverdue: 'Tarea casi vencida',
+          taskOverdue: 'Tarea vencida',
+        },
+      },
+      tableCards: {
+        needsAttention: '{{count}} requiere atención',
+        needsAttention_plural: '{{count}} requieren atención',
+        author: 'Autor',
+        reviewer: 'Revisor',
+        editor: 'Editor',
+      },
+      activity: {
+        title: 'Actividad',
+        clearAll: 'Borrar todo',
+        dismissNotification: 'Descartar notificación',
+        showingOfTotal: 'Mostrando {{shown}} de {{total}}',
+        noActivityYet: 'Todavía no hay actividad',
+        activityWillAppearHere:
+          'Las novedades de tus manuscritos aparecerán aquí.',
+        manuscriptReference: 'manuscrito #{{shortId}}',
+        notifications: {
+          addedAsEditor: 'Se te agregó como editor de',
+          addedAsHandlingEditor: 'Se te agregó como editor a cargo de',
+          addedAsReviewer: 'Se te agregó como revisor de',
+          addedAsSeniorEditor: 'Se te agregó como editor senior de',
+          decisionMade: 'Se tomó una decisión sobre',
+          removedAsEditor: 'Se te eliminó como editor de',
+          removedAsHandlingEditor: 'Se te eliminó como editor a cargo de',
+          removedAsReviewer: 'Se te eliminó como revisor de',
+          removedAsSeniorEditor: 'Se te eliminó como editor senior de',
+          reviewerAcceptedInvitation: 'Un revisor aceptó tu invitación para',
+          reviewerCompletedReview: 'Se completó una revisión de',
+          reviewerRejectedInvitation: 'Un revisor rechazó tu invitación para',
+          revisionSubmitted: 'Se envió una revisión de',
+        },
       },
     },
     submitPage: {
@@ -618,8 +699,6 @@ const esLa = {
         'Número de días que un manuscrito debe permanecer en la página de Manuscritos antes de ser archivado automáticamente (déjelo vacío si no desea utilizar el archivado automático)',
       importFromSematic:
         'Importar manuscritos de Semantic Scholar no más antiguos que ‘x’ días',
-      newSubmissionActionVisisble:
-        'Acción de "Agregar nuevo envío" visible en la página de Manuscritos',
       displayActionToSelect:
         'Mostrar acción para "Seleccionar" manuscritos para revisión desde la página de Manuscritos',
       importManuscriptsManually:
@@ -643,7 +722,6 @@ const esLa = {
       Submission: 'Envío',
       SubmissionPage: {
         title: 'Título',
-        description: 'Descripción',
         allowAuthorUploadOnly:
           'Permitir a un autor subir solo un archivo de manuscrito',
         allowAuthorUploadWithForm:
@@ -867,6 +945,8 @@ const esLa = {
       coar: {
         authToken: 'Token de autenticación de COAR Notify',
         refreshAuthToken: 'Actualizar token de autenticación',
+        copy: 'Copiar',
+        copied: '¡Copiado!',
         copyMessage: '¡El token de autenticación solo se muestra una vez!',
         copyDescription:
           'Por favor copie el token de autenticación ahora y guárdelo en su sistema COAR Notify de terceros. Siempre puede actualizar el token aquí, pero los tokens anteriores quedarán invalidados.',
@@ -1099,8 +1179,7 @@ const esLa = {
     loginPage: {
       kotahiUses:
         'Kotahi utiliza ORCID <0>icon</0> para identificar autores y personal.',
-      'Login with ORCID': 'Iniciar sesión con ORCID',
-      'Register with ORCID': 'Registrarse con ORCID',
+      loginWithOrcid: 'Iniciar sesión con ORCID',
     },
     frontPage: {
       recent: 'Publicaciones recientes en {{brandName}}',
@@ -1406,16 +1485,27 @@ const esLa = {
     },
     newSubmission: {
       'New submission': 'Nueva presentación',
-      'Submission created': 'Presentación creada',
-      'Upload Manuscript': 'Subir Manuscrito',
-      dragNDrop: 'Arrastra y suelta o haz clic para seleccionar un archivo',
-      acceptedFiletypes:
-        'Tipos de archivo aceptados: pdf, epub, zip, docx, latex',
-      converting:
-        'Tu manuscrito se está convirtiendo en una versión directamente editable. Esto podría tomar unos segundos.',
-      skipManuscriptUpload:
-        'Omitir la carga del manuscrito y continuar al formulario de envío',
       errorUploading: '{{error}}',
+      uploadTitle: 'Subir un manuscrito',
+      uploadDescription:
+        'Arrastra y suelta aquí el archivo de tu manuscrito, o haz clic para elegir uno.',
+      skipTitle: 'Comenzar sin archivo',
+      skipDescription:
+        'Ve directamente al formulario de envío sin subir un manuscrito.',
+      stepUploading: 'Subiendo tu manuscrito...',
+      stepConverting: 'Convirtiendo tu documento...',
+      stepCleaning: 'Preparando tu documento...',
+      stepInferringMetadata:
+        'Usando IA para completar los detalles del envío...',
+      stepCreating: 'Creando tu envío...',
+      redirecting: 'Envío creado. Redirigiendo...',
+      fileRequirements:
+        'Tipos de archivo aceptados: {{fileTypes}}. Tamaño máximo: {{maxSizeMb}} MB.',
+      errorUnsupportedFileType: 'Este tipo de archivo no es compatible.',
+      errorFileTooLarge: 'Este archivo supera los {{maxSizeMb}} MB.',
+      errorConversionFailed: 'No se pudo convertir tu documento.',
+      errorCreationFailed: 'No se pudo crear tu envío.',
+      errorUnknown: 'Algo salió mal. Inténtalo de nuevo.',
     },
     formBuilder: {
       'New Form': 'Nuevo Formulario',

@@ -45,7 +45,6 @@ describe('Team model', () => {
 
   afterAll(async () => {
     await DbTestUtils.clearDb()
-    await db.destroy()
   })
 
   describe('findWithUsers', () => {
