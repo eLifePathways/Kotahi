@@ -1,4 +1,4 @@
-const { serverUrl, uuid, request, logger } = require('@coko/server')
+const { serverUrl, uuid, logger } = require('@coko/server')
 
 const {
   getFlaxUrl,
@@ -6,6 +6,8 @@ const {
   isReviewDoi,
   isFlaxSetup,
 } = require('./announcement')
+
+const { postToInbox } = require('./utils')
 
 const { CoarNotification, Config, Group } = require('../../models')
 
@@ -97,18 +99,11 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
   const payload = JSON.parse(requestData)
 
   try {
+    await postToInbox(inboxUrl, requestData)
+
     await CoarNotification.query().insert({ groupId, manuscriptId, payload })
 
-    const response = await request({
-      method: 'POST',
-      url: inboxUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: requestData,
-    })
-
-    return response?.status < 300
+    return true
   } catch (err) {
     logger.error(err)
     throw err

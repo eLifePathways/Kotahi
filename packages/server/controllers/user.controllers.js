@@ -296,8 +296,9 @@ const getUsers = async groupId => {
     .withGraphFetched('defaultIdentity')
 }
 
+// Users may have been deleted since, so callers handle missing ones
 const getUsersById = async (userIds, options = {}) =>
-  User.findByIds(userIds, options)
+  User.findByIds(userIds, { ...options, throwIfNotFound: false })
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()

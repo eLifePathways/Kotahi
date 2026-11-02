@@ -528,7 +528,7 @@ const updateAlertsUponTeamUpdate = async (
     async trx => {
       if (!(await manuscriptIsActive(manuscriptId, { trx }))) return
       const now = new Date()
-      const tasks = await Task.query(trx).where({ manuscriptId })
+      const tasks = (await Task.find({ manuscriptId }, { trx })).result
 
       const overdueTaskIds = tasks
         .filter(

@@ -1,6 +1,6 @@
 const { config } = require('@coko/server')
 
-const { clientUrl, serverUrl, request, uuid, logger } = require('@coko/server')
+const { clientUrl, serverUrl, uuid, logger } = require('@coko/server')
 
 const {
   Config,
@@ -9,6 +9,8 @@ const {
   Review,
   CoarNotification,
 } = require('../../models')
+
+const { postToInbox } = require('./utils')
 
 // TODO: What is the purpose of this?
 const isReviewDoi = () => {
@@ -195,22 +197,13 @@ const makeAnnouncementOnCOAR = async (
   const payload = JSON.parse(requestData)
 
   const inboxUrl = payload.target.inbox
-  const requestLength = requestData.length
 
   if (!isReviewDoi() && !isFlaxSetup() && type === 'review') {
     return false
   }
 
   try {
-    const response = await request({
-      method: 'post',
-      url: inboxUrl,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': `${requestLength}`,
-      },
-      data: requestData,
-    })
+    const response = await postToInbox(inboxUrl, requestData)
 
     const { groupId, id: manuscriptId } = manuscript
 

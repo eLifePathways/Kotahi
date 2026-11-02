@@ -8,30 +8,37 @@ const addUserToManuscriptChatChannel = async (
 ) => {
   return useTransaction(
     async trx => {
-      const manuscript = await Manuscript.query(trx)
-        .findById(manuscriptId)
-        .select('parentId')
+      const manuscript = await Manuscript.findById(manuscriptId, { trx })
 
-      const channel = await Channel.query(trx)
-        .where({
-          manuscriptId: manuscript.parentId || manuscriptId,
-          type,
-        })
-        .first()
+      const [channel] = (
+        await Channel.find(
+          {
+            manuscriptId: manuscript.parentId || manuscriptId,
+            type,
+          },
+          { trx },
+        )
+      ).result
 
-      const channelMember = await ChannelMember.query(trx)
-        .where({
-          channelId: channel.id,
-          userId,
-        })
-        .first()
+      const [channelMember] = (
+        await ChannelMember.find(
+          {
+            channelId: channel.id,
+            userId,
+          },
+          { trx },
+        )
+      ).result
 
       if (!channelMember) {
-        await ChannelMember.query(trx).insert({
-          channelId: channel.id,
-          userId,
-          lastViewed: new Date(),
-        })
+        await ChannelMember.insert(
+          {
+            channelId: channel.id,
+            userId,
+            lastViewed: new Date(),
+          },
+          { trx },
+        )
       }
     },
     { trx: options.trx },
@@ -72,7 +79,7 @@ const removeUserFromManuscriptChatChannel = async (
   return useTransaction(
     async trx => {
       await ChannelMember.query(trx).delete().where({ userId }).whereExists(
-        ChannelMember.relatedQuery('channel').where({
+        ChannelMember.relatedQuery('channel', trx).where({
           manuscriptId,
           type,
         }),

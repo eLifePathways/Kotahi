@@ -65,19 +65,17 @@ const getAuthors = async data => {
     author.map(async a => {
       const { affiliation, family, given, ORCID } = a
 
-      const ror =
-        (await Promise.all(
-          affiliation?.map(async af => {
-            const value = af.id[0]?.id ?? ''
+      const ror = await Promise.all(
+        (affiliation ?? []).map(async af => {
+          const value = af.id?.[0]?.id ?? ''
 
-            const label =
-              value !== '' && af.name
-                ? af.name
-                : await getRorOrganisation(value)
+          // Prefer Crossref's name, and only look up the ROR record when it's missing
+          const label =
+            af.name || (value !== '' ? await getRorOrganisation(value) : '')
 
-            return { label, value }
-          }),
-        )) ?? []
+          return { label, value }
+        }),
+      )
 
       const orcid = ORCID?.match(/\d{4}-\d{4}-\d{4}-\d{3}[0-9X]\b/) ?? ''
 

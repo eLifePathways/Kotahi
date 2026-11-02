@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useContext, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
@@ -19,7 +18,6 @@ import {
   ScrollableContent,
 } from '../../shared'
 import { ControlsContainer } from './style'
-import { ConfigContext } from '../../config/src'
 
 const OuterContainer = styled(Container)`
   overflow: hidden;
@@ -61,10 +59,7 @@ const Manuscripts = props => {
     onAdminChatChange,
   } = props
 
-  const navigate = useNavigate()
-  const { groupName } = useParams()
   const { t } = useTranslation()
-  const config = useContext(ConfigContext)
 
   const channelData = chatProps?.channelsData?.find(
     channel => channel?.channelId === groupManagerDiscussionChannel?.id,
@@ -93,15 +88,6 @@ const Manuscripts = props => {
           <ManuscriptsPane>
             <FlexRow>
               <ControlsContainer>
-                {config?.manuscript?.newSubmission &&
-                  !tableProps.viewingArchived && (
-                    <ActionButton
-                      onClick={() => navigate(`/${groupName}/newSubmission`)}
-                      primary
-                    >
-                      {t('dashboardPage.New submission')}
-                    </ActionButton>
-                  )}
                 {shouldAllowBulkImport && !tableProps.viewingArchived && (
                   <ActionButton
                     onClick={importManuscripts}
