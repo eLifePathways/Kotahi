@@ -2,7 +2,7 @@ import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
 import { db, config, migrationManager, DbTestUtils } from '@coko/server'
 
 const MIGRATION_BEFORE_PRIMARY_KEY =
-  '1792576418-remap-version-image-file-ids.ts'
+  '1793088854-create-missing-manuscript-teams.ts'
 
 const offerId = '205dc110-39f6-4c70-ae59-af61dd24a471'
 const undoId = '1473730f-7dbd-4063-b6e5-eac8f7d2b625'
