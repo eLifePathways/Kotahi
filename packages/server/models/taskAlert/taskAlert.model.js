@@ -19,7 +19,7 @@ class TaskAlert extends BaseModel {
     return TaskAlert.query(options.trx)
       .insert(alerts)
       .onConflict(['taskId', 'userId'])
-      .ignore()
+      .merge(['taskId'])
   }
 
   static async deleteByManuscriptId(manuscriptId, options = {}) {

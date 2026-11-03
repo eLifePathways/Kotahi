@@ -111,7 +111,6 @@ const deleteUser = async (id, groupId) => {
 
     await Invitation.deleteByUserId(id, { trx })
 
-    // TODO: Fix database validation error sender_id is set not null 1647493905-invitations.sql
     await Invitation.clearSender(id, { trx })
 
     await User.deleteById(id, { trx })

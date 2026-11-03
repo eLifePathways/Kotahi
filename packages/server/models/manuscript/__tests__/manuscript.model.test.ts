@@ -21,6 +21,21 @@ import Invitation from '../../invitation/invitation.model'
 import Group from '../../group/group.model'
 import Config from '../../config/config.model'
 import Task from '../../task/task.model'
+import Identity from '../../identity/identity.model'
+
+const DAY = 24 * 60 * 60 * 1000
+
+const daysAgo = (days: number): Date => new Date(Date.now() - days * DAY)
+
+const fileStoredObjects = [
+  {
+    type: 'original',
+    key: 'file.png',
+    mimetype: 'image/png',
+    extension: 'png',
+    size: 1,
+  },
+]
 
 const MANUSCRIPT_TEAMS = [
   ['author', 'Author'],
@@ -1363,6 +1378,819 @@ describe('Manuscript model', () => {
       expect(reviews).toHaveLength(1)
       expect(reviews[0].isDecision).toBe(true)
       expect(reviews[0].jsonData).toEqual({ discussion: 'thread-1' })
+    })
+  })
+
+  describe('queries', () => {
+    /** Inserts and re-fetches, so that DB-generated fields like shortId are present */
+    const createManuscript = async (
+      data: Partial<Manuscript> = {},
+    ): Promise<Manuscript> => {
+      const { id } = await Manuscript.insert({ groupId, ...data })
+      return Manuscript.findById(id)
+    }
+
+    const createVersion = async (
+      firstVersion: Manuscript,
+      data: Partial<Manuscript> = {},
+    ): Promise<Manuscript> =>
+      createManuscript({
+        parentId: firstVersion.id,
+        shortId: firstVersion.shortId,
+        groupId: firstVersion.groupId,
+        ...data,
+      })
+
+    const createManuscriptWithTeams = async (
+      data: Partial<Manuscript> = {},
+    ): Promise<Manuscript> => {
+      const manuscript = await createManuscript(data)
+      await Manuscript.createTeams(manuscript.id)
+      return manuscript
+    }
+
+    const now = (): number => Date.now()
+
+    beforeEach(async () => {
+      groupId = (await Group.insert({})).id
+    })
+
+    describe('versions', () => {
+      it('getFirstVersionId returns the parent of a version, or the id itself', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+
+        expect(await Manuscript.getFirstVersionId(second.id)).toBe(first.id)
+        expect(await Manuscript.getFirstVersionId(first.id)).toBe(first.id)
+      })
+
+      it('getFirstVersionId falls back to the given id when the manuscript does not exist', async () => {
+        const missingId = '00000000-0000-0000-0000-000000000000'
+        expect(await Manuscript.getFirstVersionId(missingId)).toBe(missingId)
+      })
+
+      it('getFirstVersionIds maps each id to its first version, skipping missing ones', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+        const other = await createManuscript()
+
+        const ids = await Manuscript.getFirstVersionIds([
+          second.id,
+          other.id,
+          '00000000-0000-0000-0000-000000000000',
+        ])
+
+        expect(ids.sort()).toEqual([first.id, other.id].sort())
+      })
+
+      it('getLatestVersionId and getLatestVersion return the newest version from any version', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+        const third = await createVersion(first)
+
+        await Manuscript.backdateCreated(first.id, daysAgo(3))
+        await Manuscript.backdateCreated(second.id, daysAgo(1))
+        await Manuscript.backdateCreated(third.id, daysAgo(2))
+
+        expect(await Manuscript.getLatestVersionId(first.id)).toBe(second.id)
+        expect(await Manuscript.getLatestVersionId(third.id)).toBe(second.id)
+        expect((await Manuscript.getLatestVersion(first.id))?.id).toBe(
+          second.id,
+        )
+      })
+
+      it('getLatestVersion returns the manuscript itself when it has no versions', async () => {
+        const manuscript = await createManuscript()
+        expect((await Manuscript.getLatestVersion(manuscript.id))?.id).toBe(
+          manuscript.id,
+        )
+      })
+
+      it('getOtherVersions returns the later versions of a first version, newest first', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+        const third = await createVersion(first)
+
+        await Manuscript.backdateCreated(second.id, daysAgo(2))
+        await Manuscript.backdateCreated(third.id, daysAgo(1))
+
+        const others = await Manuscript.getOtherVersions(first.id)
+
+        expect(others.map(m => m.id)).toEqual([third.id, second.id])
+      })
+
+      it('getOtherVersions returns the siblings and then the first version for a later version', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+        const third = await createVersion(first)
+
+        const others = await Manuscript.getOtherVersions(second.id)
+
+        expect(others.map(m => m.id)).toEqual([third.id, first.id])
+      })
+
+      it('getFirstVersionCreated returns the creation date of the first version', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+        const created = daysAgo(5)
+        await Manuscript.backdateCreated(first.id, created)
+
+        const result = await Manuscript.getFirstVersionCreated(second)
+
+        expect(new Date(result).getTime()).toBe(created.getTime())
+      })
+
+      it('getFirstVersionCreated uses the given created date for a first version', async () => {
+        const first = await createManuscript()
+
+        const result = await Manuscript.getFirstVersionCreated({
+          id: first.id,
+          parentId: null,
+          created: '2020-01-01T00:00:00.000Z',
+        })
+
+        expect(result).toBe('2020-01-01T00:00:00.000Z')
+      })
+
+      it('getGroupId returns the group of the manuscript', async () => {
+        const manuscript = await createManuscript()
+        expect(await Manuscript.getGroupId(manuscript.id)).toBe(groupId)
+      })
+    })
+
+    describe('isActive', () => {
+      it('is true for the latest, visible version', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+
+        expect(await Manuscript.isActive(second.id)).toBe(true)
+      })
+
+      it('is false for an older version', async () => {
+        const first = await createManuscript()
+        await createVersion(first)
+
+        expect(await Manuscript.isActive(first.id)).toBe(false)
+      })
+
+      it('is false for a hidden manuscript', async () => {
+        const manuscript = await createManuscript({ isHidden: true })
+        expect(await Manuscript.isActive(manuscript.id)).toBe(false)
+      })
+
+      it('is false for a manuscript that does not exist', async () => {
+        expect(
+          await Manuscript.isActive('00000000-0000-0000-0000-000000000000'),
+        ).toBe(false)
+      })
+    })
+
+    describe('hiding and archiving', () => {
+      it('setIsHiddenOnAllVersions hides and unhides every version of the given manuscripts', async () => {
+        const first = await createManuscript()
+        const second = await createVersion(first)
+        const other = await createManuscript()
+
+        const hiddenIds = await Manuscript.setIsHiddenOnAllVersions(
+          [first.id],
+          true,
+        )
+
+        expect(hiddenIds.sort()).toEqual([first.id, second.id].sort())
+        expect((await Manuscript.findById(second.id)).isHidden).toBe(true)
+        expect((await Manuscript.findById(other.id)).isHidden).toBeFalsy()
+
+        const unhiddenIds = await Manuscript.setIsHiddenOnAllVersions(
+          [first.id],
+          false,
+        )
+
+        expect(unhiddenIds.sort()).toEqual([first.id, second.id].sort())
+        expect((await Manuscript.findById(first.id)).isHidden).toBe(false)
+      })
+
+      it('archiveNewUnlabelledCreatedBefore only archives old, new, unlabelled manuscripts of the group', async () => {
+        const otherGroupId = (await Group.insert({})).id
+
+        const archivable = await createManuscript({
+          status: 'new',
+          submission: {},
+        })
+
+        const emptyLabel = await createManuscript({
+          status: 'new',
+          submission: { $customStatus: '' },
+        })
+
+        const labelled = await createManuscript({
+          status: 'new',
+          submission: { $customStatus: 'readyToEvaluate' },
+        })
+
+        const submitted = await createManuscript({
+          status: 'submitted',
+          submission: {},
+        })
+
+        const recent = await createManuscript({ status: 'new', submission: {} })
+
+        const otherGroup = await createManuscript({
+          groupId: otherGroupId,
+          status: 'new',
+          submission: {},
+        })
+
+        await Promise.all(
+          [archivable, emptyLabel, labelled, submitted, otherGroup].map(m =>
+            Manuscript.backdateCreated(m.id, daysAgo(10)),
+          ),
+        )
+
+        const count = await Manuscript.archiveNewUnlabelledCreatedBefore(
+          groupId,
+          daysAgo(5),
+        )
+
+        expect(count).toBe(2)
+
+        const hidden = async (m: Manuscript): Promise<boolean | null> =>
+          (await Manuscript.findById(m.id)).isHidden
+
+        expect(await hidden(archivable)).toBe(true)
+        expect(await hidden(emptyLabel)).toBe(true)
+        expect(await hidden(labelled)).toBeFalsy()
+        expect(await hidden(submitted)).toBeFalsy()
+        expect(await hidden(recent)).toBeFalsy()
+        expect(await hidden(otherGroup)).toBeFalsy()
+      })
+
+      it('backdateCreated changes created without touching updated', async () => {
+        const manuscript = await createManuscript()
+        const created = daysAgo(3)
+
+        await Manuscript.backdateCreated(manuscript.id, created)
+
+        const updated = await Manuscript.findById(manuscript.id)
+
+        expect(new Date(updated.created).getTime()).toBe(created.getTime())
+        expect(new Date(updated.updated).getTime()).toBe(
+          new Date(manuscript.updated).getTime(),
+        )
+      })
+    })
+
+    describe('submitter', () => {
+      it('getSubmitter returns the submitting user', async () => {
+        const user = await User.insert({ username: 'submitter' })
+        const manuscript = await createManuscript({ submitterId: user.id })
+
+        expect((await Manuscript.getSubmitter(manuscript.id))?.id).toBe(user.id)
+      })
+
+      it('clearSubmitter removes the user as submitter in every group', async () => {
+        const otherGroupId = (await Group.insert({})).id
+        const user = await User.insert({})
+        const mine = await createManuscript({ submitterId: user.id })
+
+        const otherGroup = await createManuscript({
+          groupId: otherGroupId,
+          submitterId: user.id,
+        })
+
+        expect(await Manuscript.clearSubmitter(user.id)).toBe(2)
+        expect((await Manuscript.findById(mine.id)).submitterId).toBeNull()
+        expect(
+          (await Manuscript.findById(otherGroup.id)).submitterId,
+        ).toBeNull()
+      })
+
+      it('clearSubmitterInGroup only removes the user as submitter in the given group', async () => {
+        const otherGroupId = (await Group.insert({})).id
+        const user = await User.insert({})
+        const mine = await createManuscript({ submitterId: user.id })
+
+        const otherGroup = await createManuscript({
+          groupId: otherGroupId,
+          submitterId: user.id,
+        })
+
+        expect(await Manuscript.clearSubmitterInGroup(user.id, groupId)).toBe(1)
+        expect((await Manuscript.findById(mine.id)).submitterId).toBeNull()
+        expect((await Manuscript.findById(otherGroup.id)).submitterId).toBe(
+          user.id,
+        )
+      })
+    })
+
+    describe('lookups by submission fields', () => {
+      it('findByDoi matches either $doi or doi within the group', async () => {
+        const otherGroupId = (await Group.insert({})).id
+
+        const withDollarDoi = await createManuscript({
+          submission: { $doi: '10.1/one' },
+        })
+
+        const withDoi = await createManuscript({
+          submission: { doi: '10.1/two' },
+        })
+
+        await createManuscript({
+          groupId: otherGroupId,
+          submission: { $doi: '10.1/three' },
+        })
+
+        expect((await Manuscript.findByDoi(groupId, '10.1/one'))?.id).toBe(
+          withDollarDoi.id,
+        )
+        expect((await Manuscript.findByDoi(groupId, '10.1/two'))?.id).toBe(
+          withDoi.id,
+        )
+        expect(
+          await Manuscript.findByDoi(groupId, '10.1/three'),
+        ).toBeUndefined()
+      })
+
+      it('findBySourceUri matches either $sourceUri or link within the group', async () => {
+        const withSourceUri = await createManuscript({
+          submission: { $sourceUri: 'https://example.com/one' },
+        })
+
+        const withLink = await createManuscript({
+          submission: { link: 'https://example.com/two' },
+        })
+
+        expect(
+          (await Manuscript.findBySourceUri(groupId, 'https://example.com/one'))
+            ?.id,
+        ).toBe(withSourceUri.id)
+        expect(
+          (await Manuscript.findBySourceUri(groupId, 'https://example.com/two'))
+            ?.id,
+        ).toBe(withLink.id)
+        expect(
+          await Manuscript.findBySourceUri(groupId, 'https://example.com/none'),
+        ).toBeUndefined()
+      })
+
+      it('getDoisInGroup returns the non-empty DOIs of manuscripts with the given hidden state', async () => {
+        await createManuscript({ submission: { $doi: '10.1/visible' } })
+        await createManuscript({ submission: { $doi: '' } })
+
+        await createManuscript({
+          isHidden: true,
+          submission: { $doi: '10.1/hidden' },
+        })
+
+        expect(await Manuscript.getDoisInGroup(groupId, false)).toEqual([
+          '10.1/visible',
+        ])
+        expect(await Manuscript.getDoisInGroup(groupId, true)).toEqual([
+          '10.1/hidden',
+        ])
+      })
+
+      it('findReadyToEvaluate returns new manuscripts labelled readyToEvaluate in the group', async () => {
+        const ready = await createManuscript({
+          status: 'new',
+          submission: { $customStatus: 'readyToEvaluate' },
+        })
+
+        await createManuscript({
+          status: 'submitted',
+          submission: { $customStatus: 'readyToEvaluate' },
+        })
+
+        await createManuscript({ status: 'new', submission: {} })
+
+        const found = await Manuscript.findReadyToEvaluate(groupId)
+
+        expect(found.map(m => m.id)).toEqual([ready.id])
+      })
+    })
+
+    describe('listing', () => {
+      it('findNonHiddenFirstVersions returns visible first versions, newest first', async () => {
+        const older = await createManuscript()
+        const newer = await createManuscript()
+        await createVersion(older)
+        await createManuscript({ isHidden: true })
+
+        await Manuscript.backdateCreated(older.id, daysAgo(2))
+        await Manuscript.backdateCreated(newer.id, daysAgo(1))
+
+        const found = await Manuscript.findNonHiddenFirstVersions()
+
+        expect(found.map(m => m.id)).toEqual([newer.id, older.id])
+      })
+
+      it('findPublishedById only returns published manuscripts', async () => {
+        const published = await createManuscript({
+          published: new Date().toISOString(),
+        })
+
+        const unpublished = await createManuscript()
+
+        expect((await Manuscript.findPublishedById(published.id))?.id).toBe(
+          published.id,
+        )
+        expect(
+          await Manuscript.findPublishedById(unpublished.id),
+        ).toBeUndefined()
+      })
+
+      it('findPublishedInGroup sorts and pages, with a total count of all published', async () => {
+        const otherGroupId = (await Group.insert({})).id
+        const a = await createManuscript({
+          published: daysAgo(3).toISOString(),
+        })
+        const b = await createManuscript({
+          published: daysAgo(2).toISOString(),
+        })
+        const c = await createManuscript({
+          published: daysAgo(1).toISOString(),
+        })
+        await createManuscript()
+
+        await createManuscript({
+          groupId: otherGroupId,
+          published: daysAgo(1).toISOString(),
+        })
+
+        const all = await Manuscript.findPublishedInGroup(groupId, {
+          sort: 'published_desc',
+        })
+
+        expect(all.totalCount).toBe(3)
+        expect(all.manuscripts.map(m => m.id)).toEqual([c.id, b.id, a.id])
+
+        const page = await Manuscript.findPublishedInGroup(groupId, {
+          sort: 'published_asc',
+          limit: 1,
+          offset: 1,
+        })
+
+        expect(page.totalCount).toBe(3)
+        expect(page.manuscripts.map(m => m.id)).toEqual([b.id])
+      })
+
+      it('findPublishedLatestVersions returns the latest version of each published manuscript', async () => {
+        const first = await createManuscript({
+          published: daysAgo(3).toISOString(),
+        })
+
+        const second = await createVersion(first, {
+          published: daysAgo(1).toISOString(),
+        })
+
+        const otherPublished = await createManuscript({
+          published: daysAgo(2).toISOString(),
+        })
+
+        const latestUnpublished = await createManuscript({
+          published: daysAgo(2).toISOString(),
+        })
+
+        await createVersion(latestUnpublished)
+
+        await Manuscript.backdateCreated(first.id, daysAgo(4))
+
+        const found = await Manuscript.findPublishedLatestVersions(groupId)
+
+        expect(found.map(m => m.id)).toEqual([second.id, otherPublished.id])
+        expect(Number(found[0].totalCount)).toBe(2)
+
+        const recent = await Manuscript.findPublishedLatestVersions(groupId, {
+          startDate: daysAgo(1.5).toISOString(),
+        })
+
+        expect(recent.map(m => m.id)).toEqual([second.id])
+      })
+    })
+
+    describe('files and channels', () => {
+      it('findFilesOfManuscripts returns the files of all given manuscripts', async () => {
+        const one = await createManuscript()
+        const two = await createManuscript()
+        const three = await createManuscript()
+
+        const fileOne = await File.insert({
+          name: 'one.png',
+          objectId: one.id,
+          storedObjects: fileStoredObjects,
+        })
+
+        const fileTwo = await File.insert({
+          name: 'two.png',
+          objectId: two.id,
+          storedObjects: fileStoredObjects,
+        })
+
+        await File.insert({
+          name: 'three.png',
+          objectId: three.id,
+          storedObjects: fileStoredObjects,
+        })
+
+        const files = await Manuscript.findFilesOfManuscripts([one.id, two.id])
+
+        expect(files.map(f => f.id).sort()).toEqual(
+          [fileOne.id, fileTwo.id].sort(),
+        )
+      })
+
+      it('getSupplementaryFiles only returns files tagged supplementary', async () => {
+        const manuscript = await createManuscript()
+
+        const supplementary = await File.insert({
+          name: 'data.csv',
+          objectId: manuscript.id,
+          tags: ['supplementary'],
+          storedObjects: fileStoredObjects,
+        })
+
+        await File.insert({
+          name: 'figure.png',
+          objectId: manuscript.id,
+          tags: ['manuscriptImage'],
+          storedObjects: fileStoredObjects,
+        })
+
+        const files = await Manuscript.getSupplementaryFiles(manuscript.id)
+
+        expect(files.map(f => f.id)).toEqual([supplementary.id])
+      })
+
+      it('getChannels and findEditorialDiscussionChannel return the manuscript channels', async () => {
+        const manuscript = await createManuscript()
+        await Manuscript.createChannels(manuscript.id, groupId)
+
+        const channels = await Manuscript.getChannels(manuscript.id)
+
+        expect(channels.map(c => c.topic).sort()).toEqual([
+          'Editorial discussion',
+          'Manuscript discussion',
+        ])
+
+        const editorial = await Manuscript.findEditorialDiscussionChannel(
+          manuscript.id,
+        )
+
+        expect(editorial?.topic).toBe('Editorial discussion')
+      })
+
+      it('findByIdWithTeamUsersAndChannels loads team users with their default identity, and channels', async () => {
+        const author = await User.insert({ username: 'author' })
+
+        await Identity.insert({
+          userId: author.id,
+          isDefault: true,
+          type: 'orcid',
+          identifier: '0000-0002-1825-0097',
+        })
+
+        const manuscript = await createManuscriptWithTeams()
+        await Manuscript.createChannels(manuscript.id, groupId)
+        await Manuscript.assignRole(author.id, manuscript.id, 'author')
+
+        const found = (await Manuscript.findByIdWithTeamUsersAndChannels(
+          manuscript.id,
+        )) as Manuscript & {
+          teams: {
+            role: string
+            members: {
+              user: { id: string; defaultIdentity: { identifier: string } }
+            }[]
+          }[]
+          channels: { topic: string }[]
+        }
+
+        const authorTeam = found.teams.find(t => t.role === 'author')
+
+        expect(authorTeam?.members[0].user.id).toBe(author.id)
+        expect(authorTeam?.members[0].user.defaultIdentity.identifier).toBe(
+          '0000-0002-1825-0097',
+        )
+        expect(found.channels).toHaveLength(2)
+      })
+    })
+
+    describe('reports', () => {
+      it('getSummaryStatsForDateRange counts submitted and unsubmitted first versions in the range', async () => {
+        await createManuscript({ status: 'submitted' })
+        await createManuscript({ status: 'new' })
+        const old = await createManuscript({ status: 'submitted' })
+        await Manuscript.backdateCreated(old.id, daysAgo(10))
+
+        const stats = await Manuscript.getSummaryStatsForDateRange(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )
+
+        expect(Number(stats.submittedCount)).toBe(1)
+        expect(Number(stats.unsubmittedCount)).toBe(1)
+      })
+
+      it('countPublishedSince counts visible manuscripts published since the date', async () => {
+        await createManuscript({ published: new Date().toISOString() })
+        await createManuscript({ published: daysAgo(2).toISOString() })
+
+        await createManuscript({
+          published: new Date().toISOString(),
+          isHidden: true,
+        })
+
+        expect(await Manuscript.countPublishedSince(groupId, daysAgo(1))).toBe(
+          1,
+        )
+      })
+
+      it('countRevisingNow counts manuscripts whose latest version is being revised', async () => {
+        await createManuscript({ status: 'revise' })
+
+        const revisedInVersion = await createManuscript({ status: 'submitted' })
+        await createVersion(revisedInVersion, { status: 'revising' })
+
+        const resubmitted = await createManuscript({ status: 'revise' })
+        const resubmittedVersion = await createVersion(resubmitted, {
+          status: 'submitted',
+        })
+
+        await Manuscript.backdateCreated(resubmitted.id, daysAgo(2))
+        await Manuscript.backdateCreated(resubmittedVersion.id, daysAgo(1))
+
+        await createManuscript({ status: 'revise', isHidden: true })
+
+        expect(await Manuscript.countRevisingNow(groupId)).toBe(2)
+      })
+
+      it('getReviewAndCompletionDurations returns durations from submission to publication', async () => {
+        await createManuscript({
+          submittedDate: daysAgo(2).toISOString(),
+          published: new Date().toISOString(),
+        })
+
+        await createManuscript()
+
+        const rows = await Manuscript.getReviewAndCompletionDurations(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )
+
+        expect(rows).toHaveLength(1)
+        expect(Number(rows[0].full_duration_days)).toBeCloseTo(2, 1)
+        expect(rows[0].review_duration_days).toBeNull()
+      })
+
+      it('findFirstVersionsWithCompletedDate uses the publication or rejection date', async () => {
+        const published = await createManuscript({
+          submittedDate: daysAgo(3).toISOString(),
+          published: daysAgo(1).toISOString(),
+        })
+
+        const rejected = await createManuscript({
+          submittedDate: daysAgo(3).toISOString(),
+        })
+
+        const rejection = await Review.insert({
+          manuscriptId: rejected.id,
+          isDecision: true,
+          jsonData: { $verdict: 'reject' },
+        })
+
+        const inProgress = await createManuscript({
+          submittedDate: daysAgo(3).toISOString(),
+        })
+
+        const found = await Manuscript.findFirstVersionsWithCompletedDate(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )
+
+        const completedDate = (id: string): string | null | undefined =>
+          found.find(m => m.id === id)?.completedDate
+
+        expect(new Date(completedDate(published.id)!).getTime()).toBe(
+          new Date(published.published as string).getTime(),
+        )
+        expect(new Date(completedDate(rejected.id)!).getTime()).toBe(
+          new Date(rejection.created).getTime(),
+        )
+        expect(completedDate(inProgress.id)).toBeNull()
+      })
+
+      it('getActivityByManuscript returns each first version with its latest status and authors', async () => {
+        const author = await User.insert({ username: 'author' })
+
+        const manuscript = await createManuscriptWithTeams({
+          status: 'submitted',
+          submission: { $title: 'A title' },
+        })
+
+        await Manuscript.assignRole(author.id, manuscript.id, 'author')
+
+        const rows = (await Manuscript.getActivityByManuscript(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )) as {
+          short_id: number
+          title: string
+          status: string
+          authors: { username: string }[]
+        }[]
+
+        expect(rows).toHaveLength(1)
+        expect(rows[0].short_id).toBe(manuscript.shortId)
+        expect(rows[0].title).toBe('A title')
+        expect(rows[0].status).toBe('submitted')
+        expect(rows[0].authors.map(a => a.username)).toEqual(['author'])
+      })
+
+      it('getActivityByEditor counts the manuscripts assigned to each editor', async () => {
+        const editor = await User.insert({ username: 'editor' })
+        const one = await createManuscriptWithTeams({ status: 'rejected' })
+        const two = await createManuscriptWithTeams({ status: 'submitted' })
+        await Manuscript.assignRole(editor.id, one.id, 'editor')
+        await Manuscript.assignRole(editor.id, two.id, 'handlingEditor')
+
+        const rows = (await Manuscript.getActivityByEditor(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )) as { name: string; assignedCount: string; rejectedCount: string }[]
+
+        expect(rows).toHaveLength(1)
+        expect(rows[0].name).toBe('editor')
+        expect(Number(rows[0].assignedCount)).toBe(2)
+        expect(Number(rows[0].rejectedCount)).toBe(1)
+      })
+
+      it('getActivityByReviewer counts invitations, completed reviews and verdicts', async () => {
+        const reviewer = await User.insert({ username: 'reviewer' })
+        const manuscript = await createManuscriptWithTeams()
+
+        await Manuscript.assignRole(reviewer.id, manuscript.id, 'reviewer', {
+          status: 'completed',
+        })
+
+        await Review.insert({
+          manuscriptId: manuscript.id,
+          userId: reviewer.id,
+          isDecision: false,
+          jsonData: { $verdict: 'accept' },
+        })
+
+        const rows = (await Manuscript.getActivityByReviewer(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )) as {
+          name: string
+          invitesCount: string
+          reviewsCompletedCount: string
+          reccAcceptCount: string
+        }[]
+
+        expect(rows).toHaveLength(1)
+        expect(rows[0].name).toBe('reviewer')
+        expect(Number(rows[0].invitesCount)).toBe(1)
+        expect(Number(rows[0].reviewsCompletedCount)).toBe(1)
+        expect(Number(rows[0].reccAcceptCount)).toBe(1)
+      })
+
+      it('findFirstVersionsWithTeamUsers loads team users of the first version and its versions', async () => {
+        const author = await User.insert({ username: 'author' })
+        const first = await createManuscriptWithTeams()
+        const second = await createVersion(first)
+        await Manuscript.createTeams(second.id)
+        await Manuscript.assignRole(author.id, first.id, 'author')
+        await Manuscript.assignRole(author.id, second.id, 'author')
+
+        const found = (await Manuscript.findFirstVersionsWithTeamUsers(
+          groupId,
+          now() - DAY,
+          now() + DAY,
+        )) as (Manuscript & {
+          teams: { role: string; users: { id: string }[] }[]
+          manuscriptVersions: (Manuscript & {
+            teams: { role: string; users: { id: string }[] }[]
+          })[]
+        })[]
+
+        expect(found.map(m => m.id)).toEqual([first.id])
+
+        const authorsOf = (m: {
+          teams: { role: string; users: { id: string }[] }[]
+        }): string[] =>
+          m.teams.find(t => t.role === 'author')?.users.map(u => u.id) ?? []
+
+        expect(authorsOf(found[0])).toEqual([author.id])
+        expect(found[0].manuscriptVersions.map(v => v.id)).toEqual([second.id])
+        expect(authorsOf(found[0].manuscriptVersions[0])).toEqual([author.id])
+      })
     })
   })
 })

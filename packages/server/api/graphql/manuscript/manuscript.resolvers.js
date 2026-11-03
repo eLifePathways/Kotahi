@@ -462,7 +462,7 @@ const resolvers = {
     // Since we can not change the api response structure right now
     // So Adding the totalCount field in the manuscript itself.
     async totalCount(parent) {
-      return parent.totalcount
+      return parent.totalCount
     },
   },
   ManuscriptMeta: {

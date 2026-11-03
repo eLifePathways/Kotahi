@@ -54,7 +54,7 @@ class UserNotification extends BaseModel {
 
   /** Inserts directly into the table, so that created can be backdated
    * (the model hooks would otherwise overwrite it). Only for tests.
-   * Returns the raw row, with snake_case keys. */
+   * Returns the inserted row as a plain object, not a model instance. */
   static async insertBackdated(notification: {
     userId: string
     groupId: string

@@ -416,7 +416,7 @@ class Manuscript extends BaseModel {
       .groupBy('short_id')
 
     const query = Manuscript.query(trx)
-      .select('m.*', raw('count(*) over () as totalCount'))
+      .select('m.*', raw('count(*) over () as "totalCount"'))
       .from(Manuscript.query(trx).as('m'))
       .innerJoin(subQuery.as('sub'), 'm.short_id', 'sub.short_id')
       .andWhere('m.created', '=', raw('sub.latest_created'))
