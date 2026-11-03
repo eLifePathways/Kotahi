@@ -1,31 +1,30 @@
 // #region import
 const { chunk, orderBy, uniqBy, flatten } = require('lodash')
-const { ref, raw } = require('objection')
 const axios = require('axios')
 
 const { File, logger, useTransaction } = require('@coko/server')
 
 const {
+  Channel,
   CoarNotification,
   CollaborativeDoc,
   Config,
+  Form,
   Group,
+  Invitation,
   Manuscript,
   PublishedArtifact,
   Review: ReviewModel,
+  Task,
   Team,
   TeamMember,
   ThreadedDiscussion,
   User,
-  Channel,
-  Form,
 } = require('../../models')
 
 const {
   hasElifeStyleEvaluations,
   stripConfidentialDataFromReviews,
-  buildQueryForManuscriptSearchFilterAndOrder,
-  buildSearchSnippets,
   applyTemplatesToArtifacts,
 } = require('./manuscriptUtils')
 
@@ -160,33 +159,21 @@ const archiveManuscript = async (id, options = {}) => {
   const firstVersionId = manuscript.parentId || manuscript.id
 
   // Archive Manuscript
-  const archivedManuscript = await Manuscript.query(trx)
-    .returning('id')
-    .update({ isHidden: true })
-    .where('id', firstVersionId)
-    .orWhere('parentId', firstVersionId)
+  const archivedIds = await Manuscript.setIsHiddenOnAllVersions(
+    [firstVersionId],
+    true,
+    { trx },
+  )
 
-  return archivedManuscript[0].id
+  return archivedIds[0]
 }
 
 const archiveManuscripts = async ids => {
   await Promise.all(ids.map(id => deleteAlertsForManuscript(id)))
 
-  // finding the ids of the first versions of all manuscripts:
-  const selectedManuscripts = await Manuscript.query()
-    .select('parentId', 'id')
-    .whereIn('id', ids)
+  const firstVersionIds = await Manuscript.getFirstVersionIds(ids)
 
-  const firstVersionIds = selectedManuscripts.map(m => m.parentId || m.id)
-
-  // archiving manuscripts with either firstVersionID or parentID
-  const archivedManuscripts = await Manuscript.query()
-    .returning('id')
-    .update({ isHidden: true })
-    .whereIn('id', firstVersionIds)
-    .orWhereIn('parentId', firstVersionIds)
-
-  return archivedManuscripts.map(m => m.id)
+  return Manuscript.setIsHiddenOnAllVersions(firstVersionIds, true)
 }
 
 const assignAuthorForProofingManuscript = async (manuscriptId, userId) => {
@@ -238,9 +225,9 @@ const assignAuthorForProofingManuscript = async (manuscriptId, userId) => {
   let channelId
 
   if (manuscript.parentId) {
-    const channel = await Manuscript.relatedQuery('channels')
-      .for(manuscript.parentId)
-      .findOne({ topic: 'Editorial discussion' })
+    const channel = await Manuscript.findEditorialDiscussionChannel(
+      manuscript.parentId,
+    )
 
     channelId = channel.id
   } else {
@@ -313,7 +300,7 @@ const deleteManuscript = async id => {
   await Promise.all(
     toDeleteList.map(async toDeleteItem => {
       if (activeConfig.formData.publishing.hypothesis.apiKey) {
-        const hypothesisArtifacts = PublishedArtifact.query().where({
+        const { result: hypothesisArtifacts } = await PublishedArtifact.find({
           manuscriptId: toDeleteItem,
           platform: 'Hypothesis',
         })
@@ -331,7 +318,7 @@ const deleteManuscript = async id => {
         )
       }
 
-      Manuscript.query().deleteById(toDeleteItem)
+      await Manuscript.deleteById(toDeleteItem)
     }),
   )
 
@@ -349,9 +336,7 @@ const deleteManuscripts = async ids => {
 }
 
 const doisToRegister = async id => {
-  const manuscript = await Manuscript.query()
-    .findById(id)
-    .withGraphJoined('reviews')
+  const manuscript = await Manuscript.findById(id, { related: 'reviews' })
 
   const activeConfig = await Config.getCached(manuscript.groupId)
 
@@ -507,8 +492,7 @@ const getManuscriptFiles = async (
   const { onlyImagesUsedInSource } = options
 
   let rawFiles =
-    manuscriptFiles ||
-    (await Manuscript.relatedQuery('files').for(manuscriptId))
+    manuscriptFiles || (await File.find({ objectId: manuscriptId })).result
 
   if (typeof onlyImagesUsedInSource === 'string') {
     rawFiles = filterOutUnreferencedImages(rawFiles, onlyImagesUsedInSource)
@@ -519,7 +503,7 @@ const getManuscriptFiles = async (
 
   // Form elements hold the S3 credentials for external attachments only
   const formsElements = rawFiles.some(isExternalAttachment)
-    ? flatten((await Form.query()).map(f => f.structure.children))
+    ? flatten((await Form.find({})).result.map(f => f.structure.children))
     : []
 
   const files = rawFiles.map(f => {
@@ -621,7 +605,7 @@ const getManuscriptsData = async selectedManuscripts => {
 const getRelatedPublishedArtifacts = async (manuscript, userId) => {
   const templatedArtifacts =
     manuscript.publishedArtifacts ||
-    (await Manuscript.relatedQuery('publishedArtifacts').for(manuscript.id))
+    (await PublishedArtifact.find({ manuscriptId: manuscript.id })).result
 
   const reviews =
     manuscript.reviews || (await getRelatedReviews(manuscript, userId))
@@ -669,7 +653,7 @@ const loadReviewsWithFiles = async manuscript => {
 
   let reviews =
     manuscript.reviews ||
-    (await Manuscript.relatedQuery('reviews').for(manuscript.id)) ||
+    (await ReviewModel.find({ manuscriptId: manuscript.id })).result ||
     []
 
   reviews = await ReviewModel.orderReviewPerUsername(reviews)
@@ -769,9 +753,7 @@ const getRelatedReviews = async (
 }
 
 const getSupplementaryFiles = async manuscriptId => {
-  return Manuscript.relatedQuery('files')
-    .for(manuscriptId)
-    .where('tags', '@>', JSON.stringify(['supplementary']))
+  return Manuscript.getSupplementaryFiles(manuscriptId)
 }
 
 const importManuscripts = async (groupId, ctx) => {
@@ -864,24 +846,20 @@ const makeDecision = async (id, decisionKey, userId) => {
 const manuscriptChannels = manuscript => {
   return (
     manuscript.channels ||
-    Manuscript.relatedQuery('channels').for(
-      manuscript.parentId || manuscript.id, // chat channels belong to the first-version manuscript
-    )
+    // chat channels belong to the first-version manuscript
+    Manuscript.getChannels(manuscript.parentId || manuscript.id)
   )
 }
 
 const manuscriptInvitations = async manuscript => {
   return (
     manuscript.invitations ||
-    Manuscript.relatedQuery('invitations').for(manuscript.id)
+    (await Invitation.find({ manuscriptId: manuscript.id })).result
   )
 }
 
 const manuscripts = async () => {
-  return Manuscript.query()
-    .where({ parentId: null })
-    .whereNot({ isHidden: true })
-    .orderBy('created', 'desc')
+  return Manuscript.findNonHiddenFirstVersions()
 }
 
 const manuscriptsPublishedSinceDate = async (
@@ -900,26 +878,11 @@ const manuscriptsPublishedSinceDate = async (
 
   if (!group) throw new Error(`Group with name '${groupName}' not found`)
 
-  const subQuery = Manuscript.query()
-    .select('short_id')
-    .max('created as latest_created')
-    .where('group_id', group.id)
-    .groupBy('short_id')
-
-  const query = Manuscript.query()
-    .select('m.*', raw('count(*) over () as totalCount'))
-    .from(Manuscript.query().as('m'))
-    .innerJoin(subQuery.as('sub'), 'm.short_id', 'sub.short_id')
-    .andWhere('m.created', '=', raw('sub.latest_created'))
-    .whereNotNull('m.published')
-    .where('m.group_id', group.id)
-    .orderBy('m.published', 'desc')
-
-  if (startDate) query.where('m.published', '>=', new Date(startDate))
-  if (limit) query.limit(limit)
-  if (offset) query.offset(offset)
-
-  return query
+  return Manuscript.findPublishedLatestVersions(group.id, {
+    startDate,
+    limit,
+    offset,
+  })
 }
 
 // TODO This is overcomplicated, trying to do three things at once (find manuscripts
@@ -949,12 +912,11 @@ const manuscriptsUserHasCurrentRoleIn = async (
 
   for (const someIds of chunk(firstVersionIds, 20)) {
     // eslint-disable-next-line no-await-in-loop
-    const someManuscriptsWithInfo = await Manuscript.query()
-      .withGraphFetched(
+    const someManuscriptsWithInfo = await Manuscript.findByIds(someIds, {
+      related:
         '[teams.members, tasks, invitations, manuscriptVersions(orderByCreatedDesc).[teams.members, tasks, invitations]]',
-      )
-      .whereIn('id', someIds)
-      .orderBy('created', 'desc')
+      throwIfNotFound: false,
+    })
 
     allManuscriptsWithInfo.push(
       ...someManuscriptsWithInfo.map(m => ({
@@ -1011,36 +973,26 @@ const manuscriptsUserHasCurrentRoleIn = async (
     }
   })
 
-  // Apply filters to the manuscripts, limiting results to those the user has a role in
-  // TODO This should move into the model, as all raw DB interactions should be controlled there
-  const [rawQuery, rawParams] = buildQueryForManuscriptSearchFilterAndOrder(
+  if (!Object.keys(userManuscriptsWithInfo).length) {
+    return { totalCount: 0, manuscripts: [] }
+  }
+
+  const { totalCount, results } = await Manuscript.search({
     sort,
     offset,
     limit,
     filters,
-    false,
+    archived: false,
     submissionForm,
-    timezoneOffsetMinutes || 0,
-    Object.keys(userManuscriptsWithInfo),
+    timezoneOffsetMinutes: timezoneOffsetMinutes || 0,
+    manuscriptIds: Object.keys(userManuscriptsWithInfo),
     groupId,
-  )
+  })
 
-  const knex = Manuscript.knex()
-  const rawQResult = await knex.raw(rawQuery, rawParams)
-  let totalCount = 0
-
-  const resultRows =
-    Object.keys(userManuscriptsWithInfo).length > 0 ? rawQResult.rows : []
-
-  if (resultRows.length) {
-    totalCount = parseInt(resultRows[0].full_count, 10)
-  }
-
-  // Add in searchRank and searchSnippets
-  const result = resultRows.map(row => ({
-    ...userManuscriptsWithInfo[row.id],
-    searchRank: row.rank,
-    searchSnippets: buildSearchSnippets(row, submissionForm),
+  const result = results.map(({ id, searchRank, searchSnippets }) => ({
+    ...userManuscriptsWithInfo[id],
+    searchRank,
+    searchSnippets,
   }))
 
   return { totalCount, manuscripts: result }
@@ -1053,7 +1005,12 @@ const manuscriptSubmitter = async manuscript => {
 const manuscriptTasks = async manuscript => {
   return (
     manuscript.tasks ||
-    Manuscript.relatedQuery('tasks').for(manuscript.id).orderBy('sequenceIndex')
+    (
+      await Task.find(
+        { manuscriptId: manuscript.id },
+        { orderBy: 'sequenceIndex' },
+      )
+    ).result
   )
 }
 
@@ -1076,32 +1033,24 @@ const paginatedManuscripts = async (
 ) => {
   const submissionForm = await getSubmissionForm(groupId)
 
-  // TODO Move this to the model, as only the model should interact with DB directly
-  const [rawQuery, rawParams] = buildQueryForManuscriptSearchFilterAndOrder(
+  const { totalCount, results } = await Manuscript.search({
     sort,
     offset,
     limit,
     filters,
     archived,
     submissionForm,
-    timezoneOffsetMinutes || 0,
-    null,
+    timezoneOffsetMinutes: timezoneOffsetMinutes || 0,
+    manuscriptIds: null,
     groupId,
-  )
+  })
 
-  const knex = Manuscript.knex()
-  const rawQResult = await knex.raw(rawQuery, rawParams)
-  let totalCount = 0
-  if (rawQResult.rowCount)
-    totalCount = parseInt(rawQResult.rows[0].full_count, 10)
+  const found = await Manuscript.findByIds(results.map(({ id }) => id))
 
-  const ids = rawQResult.rows.map(row => row.id)
-  const found = await Manuscript.findByIds(ids)
-
-  const result = rawQResult.rows.map(row => ({
-    ...found.find(m => m.id === row.id),
-    searchRank: row.rank,
-    searchSnippets: buildSearchSnippets(row, submissionForm),
+  const result = results.map(({ id, searchRank, searchSnippets }) => ({
+    ...found.find(m => m.id === id),
+    searchRank,
+    searchSnippets,
   }))
 
   return { totalCount, manuscripts: result }
@@ -1110,8 +1059,7 @@ const paginatedManuscripts = async (
 const printReadyPdfUrl = async manuscript => {
   // TODO reduce shared code with files resolver
   const files = (
-    manuscript.files ||
-    (await Manuscript.relatedQuery('files').for(manuscript.id))
+    manuscript.files || (await File.find({ objectId: manuscript.id })).result
   ).map(f => ({
     ...f,
     tags: f.tags || [],
@@ -1198,23 +1146,7 @@ const publishedManuscriptEditors = async manuscript => {
 }
 
 const publishedManuscripts = async (sort, offset, limit, groupId) => {
-  const query = Manuscript.query().where({ groupId }).whereNotNull('published')
-
-  const totalCount = await query.resultSize()
-
-  if (sort) {
-    const [sortName, sortDirection] = sort.split('_')
-    query.orderBy(ref(sortName), sortDirection)
-  }
-
-  if (limit) query.limit(limit)
-  if (offset) query.offset(offset)
-  const res = await query
-
-  return {
-    totalCount,
-    manuscripts: res,
-  }
+  return Manuscript.findPublishedInGroup(groupId, { sort, limit, offset })
 }
 
 const publishedManuscriptReviews = async (manuscript, userId, options = {}) => {
@@ -1962,8 +1894,7 @@ const metaSource = async (manuscript, ctx) => {
 const styledHtml = async manuscript => {
   // TODO reduce shared code with files resolver
   let files = filterOutUnreferencedImages(
-    manuscript.files ||
-      (await Manuscript.relatedQuery('files').for(manuscript.id)),
+    manuscript.files || (await File.find({ objectId: manuscript.id })).result,
     manuscript.meta.source,
   ).map(f => ({
     ...f,
@@ -1993,9 +1924,7 @@ const submissionWithFields = async manuscript => {
 const submitAuthorProofingFeedback = async (id, input, userId) => {
   let updated = await updateManuscript(id, input)
 
-  const manuscript = await Manuscript.query()
-    .findById(id)
-    .withGraphJoined('[teams.members.user.defaultIdentity, channels]')
+  const manuscript = await Manuscript.findByIdWithTeamUsersAndChannels(id)
 
   if (updated.status === 'completed') {
     // after submission of feedback adding it to 'previousSubmissions' list
@@ -2053,9 +1982,9 @@ const submitAuthorProofingFeedback = async (id, input, userId) => {
   let channelId
 
   if (manuscript.parentId) {
-    const channel = await Manuscript.relatedQuery('channels')
-      .for(manuscript.parentId)
-      .findOne({ topic: 'Editorial discussion' })
+    const channel = await Manuscript.findEditorialDiscussionChannel(
+      manuscript.parentId,
+    )
 
     channelId = channel.id
   } else {
@@ -2093,9 +2022,9 @@ const submitManuscript = async (id, input, userId) => {
   let channelId
 
   if (manuscript.parentId) {
-    const channel = await Manuscript.relatedQuery('channels')
-      .for(manuscript.parentId)
-      .findOne({ topic: 'Editorial discussion' })
+    const channel = await Manuscript.findEditorialDiscussionChannel(
+      manuscript.parentId,
+    )
 
     channelId = channel.id
   } else {
@@ -2146,11 +2075,9 @@ const supplementaryFiles = async manuscript => {
 
 // Send the manuscriptId OR a configured ref; and send token if one is configured
 const tryPublishingWebhook = async manuscriptId => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .select('groupId')
+  const groupId = await Manuscript.getGroupId(manuscriptId)
 
-  const activeConfig = await Config.getCached(manuscript.groupId)
+  const activeConfig = await Config.getCached(groupId)
 
   const publishingWebhookUrl = activeConfig.formData.publishing.webhook.url
 
@@ -2237,25 +2164,13 @@ const updateManuscript = async (id, input) => {
   }
 
   // convert to json, otherwise you're bypassing validation
-  return Manuscript.updateAndFetchById(id, updatedMs.$toJson())
+  return Manuscript.updateAndFetchById(id, updatedMs.toJSON())
 }
 
 const unarchiveManuscripts = async ids => {
-  // finding the ids of the first versions of all manuscripts:
-  const selectedManuscripts = await Manuscript.query()
-    .select('parentId', 'id')
-    .whereIn('id', ids)
+  const firstVersionIds = await Manuscript.getFirstVersionIds(ids)
 
-  const firstVersionIds = selectedManuscripts.map(m => m.parentId || m.id)
-
-  // unarchiving manuscripts with either firstVersionID or parentID
-  const unarchivedManuscripts = await Manuscript.query()
-    .returning('id')
-    .update({ isHidden: false })
-    .whereIn('id', firstVersionIds)
-    .orWhereIn('parentId', firstVersionIds)
-
-  return unarchivedManuscripts.map(m => m.id)
+  return Manuscript.setIsHiddenOnAllVersions(firstVersionIds, false)
 }
 
 const unreviewedPreprints = async (token, groupName) => {
@@ -2276,9 +2191,7 @@ const unreviewedPreprints = async (token, groupName) => {
     throw new Error('Kotahi api tokens are not configured!')
   }
 
-  const foundManuscripts = await Manuscript.query()
-    .where({ status: 'new', groupId: group.id })
-    .whereRaw(`submission->>'$customStatus' = 'readyToEvaluate'`)
+  const foundManuscripts = await Manuscript.findReadyToEvaluate(group.id)
 
   return foundManuscripts.map(m => ({
     id: m.id,
@@ -2321,13 +2234,13 @@ const versionsOfManuscriptCurrentUserIsReviewerOf = async (
 
   const versionIds = [manuscriptId, ...otherVersions.map(v => v.id)]
 
-  const assignments = await User.relatedQuery('teams')
-    .for(userId)
-    .select('objectId')
-    .whereIn('role', ['reviewer', 'collaborativeReviewer'])
-    .whereIn('objectId', versionIds)
+  const objectIds = await User.getObjectIdsWithRoles(
+    userId,
+    ['reviewer', 'collaborativeReviewer'],
+    versionIds,
+  )
 
-  return [...new Set(assignments.map(a => a.objectId))]
+  return [...new Set(objectIds)]
 }
 
 module.exports = {

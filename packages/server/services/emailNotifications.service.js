@@ -73,12 +73,10 @@ const getRecipient = async (recipient, manuscriptId, groupId, getTeam) => {
 
   if (!manuscriptId) return ''
 
-  const [team] = await Team.query()
-    .where('objectId', manuscriptId)
-    .where('role', recipient)
+  const team = await Team.findOne({ objectId: manuscriptId, role: recipient })
 
   if (team) {
-    const members = await TeamMember.query().where('teamId', team.id)
+    const { result: members } = await TeamMember.find({ teamId: team.id })
 
     const users = await Promise.all(
       members.map(async member => {

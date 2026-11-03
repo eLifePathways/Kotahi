@@ -62,13 +62,7 @@ const getBlacklistInformation = async (email, groupId) => {
 const getEmailInvitedReviewers = async manuscriptId => {
   if (!manuscriptId) return []
 
-  const invitedReviewer = await Invitation.query()
-    .where({
-      manuscriptId,
-    })
-    .whereNot('status', 'ACCEPTED')
-
-  return invitedReviewer
+  return Invitation.findNotAcceptedForManuscript(manuscriptId)
 }
 
 const getInvitationById = async id => {
@@ -78,11 +72,10 @@ const getInvitationById = async id => {
 const getInvitationsForManuscript = async id => {
   if (!id) return []
 
-  const invitations = await Invitation.query()
-    .where({
-      manuscriptId: id,
-    })
-    .withGraphJoined('user')
+  const { result: invitations } = await Invitation.find(
+    { manuscriptId: id },
+    { related: 'user' },
+  )
 
   return invitations
 }
@@ -122,13 +115,11 @@ const updateInvitationResponse = async (
   declinedReason,
   suggestedReviewers,
 ) => {
-  const result = await Invitation.query().updateAndFetchById(id, {
+  return Invitation.patchAndFetchById(id, {
     responseComment,
     declinedReason,
     suggestedReviewers: suggestedReviewers || [],
   })
-
-  return result
 }
 
 const updateInvitationStatus = async (
@@ -138,14 +129,11 @@ const updateInvitationStatus = async (
   responseDate,
   groupId,
 ) => {
-  const [result] = await Invitation.query()
-    .patch({
-      status,
-      userId,
-      responseDate,
-    })
-    .where({ id, status: 'UNANSWERED' })
-    .returning('*')
+  const result = await Invitation.patchIfUnanswered(id, {
+    status,
+    userId,
+    responseDate,
+  })
 
   const relatedUser = await User.findOne({
     email: result.toEmail,
@@ -155,17 +143,14 @@ const updateInvitationStatus = async (
   const type = invitedPersonType.toLowerCase()
 
   if (relatedUser) {
-    await Team.relatedQuery('members')
-      .for(
-        Team.query().findOne({
-          objectId: result.manuscriptId,
-          // TODO this is a temporary solution until we have a proper
-          // solution for status with CAPITAL and UNDERSCORES.
-          role: type.replace('collaborative_reviewer', 'collaborativeReviewer'),
-        }),
-      )
-      .patch({ status: status.toLowerCase() })
-      .where({ userId: relatedUser.id, status: 'invited' })
+    await Team.patchInvitedMemberStatus(
+      result.manuscriptId,
+      // TODO this is a temporary solution until we have a proper
+      // solution for status with CAPITAL and UNDERSCORES.
+      type.replace('collaborative_reviewer', 'collaborativeReviewer'),
+      relatedUser.id,
+      status.toLowerCase(),
+    )
   }
 
   const manuscript = await Manuscript.findById(result.manuscriptId, {
@@ -224,11 +209,7 @@ const updateInvitationStatus = async (
 }
 
 const updateSharedStatusForInvitedReviewer = async (invitationId, isShared) => {
-  const result = await Invitation.query().updateAndFetchById(invitationId, {
-    isShared,
-  })
-
-  return result
+  return Invitation.patchAndFetchById(invitationId, { isShared })
 }
 
 module.exports = {

@@ -5,6 +5,11 @@ declare class Group extends BaseModel {
   isArchived: boolean | null
   configs: Record<string, unknown>[]
 
+  static findByNamePrefix(
+    prefix: string,
+    options?: { trx?: Transaction },
+  ): Promise<Group[]>
+
   static archiveByIds(
     ids: string[],
     options?: { trx?: Transaction },

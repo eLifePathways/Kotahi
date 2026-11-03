@@ -2,7 +2,6 @@ const fs = require('fs')
 
 const { createFile, fileStorage, File } = require('@coko/server')
 
-const ArticleTemplate = require('../models/articleTemplate/articleTemplate.model')
 const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 
 const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
@@ -39,8 +38,9 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
     }),
   )
 
-  const templateFiles =
-    await ArticleTemplate.relatedQuery('files').for(groupTemplateId)
+  const { result: templateFiles } = await File.find({
+    objectId: groupTemplateId,
+  })
 
   const filesWithUrl = await getFilesWithUrl(templateFiles)
   return filesWithUrl
@@ -56,9 +56,9 @@ const deleteAsset = async id => {
       await File.deleteById(id)
     }
 
-    const templateFiles = await ArticleTemplate.relatedQuery('files').for(
-      file.objectId,
-    )
+    const { result: templateFiles } = await File.find({
+      objectId: file.objectId,
+    })
 
     const filesWithUrl = await getFilesWithUrl(templateFiles)
     return filesWithUrl

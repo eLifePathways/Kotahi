@@ -2,10 +2,8 @@ const crypto = require('crypto')
 const { Readable } = require('stream')
 const {
   useTransaction,
-  db,
   createFile,
   deleteFiles,
-  File,
   uuid,
 } = require('@coko/server')
 const merge = require('lodash/merge')
@@ -28,6 +26,7 @@ const seedForms = require('../../../scripts/seedForms')
 const { seedNotifications } = require('../../../scripts/seedNotifications')
 const EmailTemplate = require('../../../models/emailTemplate/emailTemplate.model')
 const Notification = require('../../../models/notification/notification.model')
+const UserNotification = require('../../../models/userNotification/userNotification.model')
 const defaultEmailTemplates = require('../../../config/defaultEmailTemplates')
 const eventsSource = require('../../../services/notification/eventsSource')
 
@@ -170,9 +169,9 @@ const deleteGroupData = async (group, trx) => {
 
   // files.object_id has no FK to manuscripts, so these would otherwise be orphaned
   if (manuscripts.length > 0) {
-    const files = await File.query(trx).whereIn(
-      'objectId',
+    const files = await Manuscript.findFilesOfManuscripts(
       manuscripts.map(manuscript => manuscript.id),
+      { trx },
     )
 
     if (files.length > 0)
@@ -188,12 +187,10 @@ const deleteGroupData = async (group, trx) => {
   )
 
   if (channels.length > 0) {
-    await ChannelMember.query(trx)
-      .delete()
-      .whereIn(
-        'channelId',
-        channels.map(channel => channel.id),
-      )
+    await ChannelMember.deleteByChannelIds(
+      channels.map(channel => channel.id),
+      { trx },
+    )
   }
 
   await deleteAllMatching(Manuscript, { groupId: group.id }, trx)
@@ -224,7 +221,7 @@ const deleteGroup = async groupName =>
 
 const deleteGroupsByPrefix = async prefix =>
   useTransaction(async trx => {
-    const groups = await Group.query(trx).where('name', 'like', `${prefix}%`)
+    const groups = await Group.findByNamePrefix(prefix, { trx })
 
     for (const group of groups) {
       // eslint-disable-next-line no-await-in-loop
@@ -353,7 +350,7 @@ const createGroup = async groupName => {
 
     // Mirrors scripts/seedGroups.js's default email template seeding, so
     // the notification-sending UI (SelectEmailTemplate) has options to pick.
-    const insertedEmailTemplates = await EmailTemplate.query(trx).insertGraph(
+    const insertedEmailTemplates = await EmailTemplate.insert(
       defaultEmailTemplates.map(template => ({
         emailTemplateType: template.type,
         emailContent: {
@@ -365,6 +362,7 @@ const createGroup = async groupName => {
         },
         groupId: group.id,
       })),
+      { trx },
     )
 
     const findTemplateByType = type =>
@@ -506,9 +504,10 @@ const createManuscripts = async ({ groupName, count, submitterUsername }) => {
 
     const manuscriptIds = manuscripts.map(manuscript => manuscript.id)
 
-    const inserted = await Manuscript.query(trx)
-      .findByIds(manuscriptIds)
-      .select('id', 'shortId')
+    const inserted = await Manuscript.findByIds(manuscriptIds, {
+      trx,
+      throwIfNotFound: false,
+    })
 
     const shortIdsById = new Map(inserted.map(m => [m.id, m.shortId]))
 
@@ -615,12 +614,9 @@ const patchManuscript = async ({ manuscriptId, patch }) => {
   return Manuscript.patchAndFetchById(manuscriptId, patch)
 }
 
-// BaseModel's $beforeInsert/$beforeUpdate hooks unconditionally stamp
-// created/updated with the current time (see @coko/server's base.model.js),
-// so there's no way to backdate a manuscript's `created` through Manuscript's
-// own insert/patch methods - go straight to knex. Used to exercise the
-// 'date' column's relative-time rendering (today/yesterday/N days ago/
-// absolute date) for something other than "just now".
+// Backdates a manuscript's `created`. Used to exercise the 'date' column's
+// relative-time rendering (today/yesterday/N days ago/absolute date) for
+// something other than "just now".
 const setManuscriptCreated = async ({ manuscriptId, created }) => {
   const manuscript = await Manuscript.findById(manuscriptId)
 
@@ -628,7 +624,7 @@ const setManuscriptCreated = async ({ manuscriptId, created }) => {
     throw new Error(`No manuscript found with id "${manuscriptId}"`)
   }
 
-  await db('manuscripts').where({ id: manuscriptId }).update({ created })
+  await Manuscript.backdateCreated(manuscriptId, created)
 
   return Manuscript.findById(manuscriptId)
 }
@@ -646,7 +642,7 @@ const createTask = async ({ manuscriptId, username, dueDate, status }) => {
     throw new Error(`No user found named "${username}"`)
   }
 
-  return Task.query().insertAndFetch({
+  const task = await Task.insert({
     manuscriptId,
     groupId: manuscript.groupId,
     title: 'Test task',
@@ -656,6 +652,8 @@ const createTask = async ({ manuscriptId, username, dueDate, status }) => {
     status,
     sequenceIndex: 0,
   })
+
+  return Task.findById(task.id)
 }
 
 const createUserNotification = async ({
@@ -676,23 +674,19 @@ const createUserNotification = async ({
     throw new Error(`No user found named "${username}"`)
   }
 
-  // use db so that we can backdate notifications
-  const [notification] = await db('user_notifications')
-    .insert({
-      id: uuid(),
-      user_id: user.id,
-      group_id: manuscript.groupId,
-      manuscript_id: manuscriptId,
-      event_type: eventType,
-      data: {
-        userId: user.id,
-        groupId: manuscript.groupId,
-        manuscriptId,
-        shortId: manuscript.shortId,
-      },
-      ...(created && { created }),
-    })
-    .returning('*')
+  const notification = await UserNotification.insertBackdated({
+    userId: user.id,
+    groupId: manuscript.groupId,
+    manuscriptId,
+    eventType,
+    data: {
+      userId: user.id,
+      groupId: manuscript.groupId,
+      manuscriptId,
+      shortId: manuscript.shortId,
+    },
+    created,
+  })
 
   return notification
 }
@@ -949,14 +943,14 @@ const createThreadedDiscussion = async ({
   const threadId = uuid()
   const allComments = [...submittedComments, ...newDraftComments]
 
-  const discussion = await ThreadedDiscussion.query().insertAndFetch({
+  const discussion = await ThreadedDiscussion.insert({
     manuscriptId,
     threads: JSON.stringify([
       { id: threadId, created: at(0), updated: at(0), comments: allComments },
     ]),
   })
 
-  const existingDecision = await Review.query().findOne({
+  const existingDecision = await Review.findOne({
     manuscriptId,
     isDecision: true,
   })
@@ -967,7 +961,7 @@ const createThreadedDiscussion = async ({
         ? JSON.parse(existingDecision.jsonData)
         : existingDecision.jsonData || {}
 
-    await Review.query().patchAndFetchById(existingDecision.id, {
+    await Review.patchAndFetchById(existingDecision.id, {
       jsonData: JSON.stringify({ ...jsonData, [fieldName]: discussion.id }),
     })
   } else {

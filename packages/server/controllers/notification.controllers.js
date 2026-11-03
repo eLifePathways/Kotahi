@@ -18,9 +18,7 @@ const seekEvent = require('../services/notification.service')
 const deleteActionedEntries = async (groupId, options = {}) => {
   const { trx } = options
 
-  await NotificationDigest.query(trx)
-    .delete()
-    .where({ actioned: true, groupId })
+  await NotificationDigest.deleteActionedInGroup(groupId, { trx })
 }
 
 const getGroupEvents = async groupId => {
@@ -54,12 +52,11 @@ const getNotificationOptionForUser = async ({ userId, path, groupId }) => {
   // Get all records for this user in this group, that might relate to the current path,
   // skipping those set to 'inherit'.
   // A small number of non-relevant records may be included.
-  const records = await NotificationUserOption.query()
-    .where({ userId, groupId })
-    .where(builder =>
-      builder.where({ objectId: lastPathSegment }).orWhere({ objectId: null }),
-    )
-    .whereNot({ option: 'inherit' })
+  const records = await NotificationUserOption.findExplicitForObject(
+    userId,
+    groupId,
+    lastPathSegment,
+  )
 
   // We're only interested in records whose paths are subpaths of the specified path
   const relevantRecords = records.filter(record => {
@@ -199,13 +196,8 @@ const sendChatNotification = async ({
 }
 
 const sendNotifications = async groupId => {
-  // The following query results first row for every user and path string combination
-  // in the notification digest, where max notification time is in the past.
-  const notificationDigestRows = await NotificationDigest.query()
-    .distinctOn(['user_id', 'path_string'])
-    .where('max_notification_time', '<', new Date())
-    .where({ groupId })
-    .orderBy(['user_id', 'path_string', 'max_notification_time'])
+  const notificationDigestRows =
+    await NotificationDigest.findFirstDueForEachUserAndPath(groupId)
 
   let notificationCount = 0
 
@@ -221,16 +213,11 @@ const sendNotifications = async groupId => {
 
       notificationCount += 1
 
-      // query to update all notificationdigest entries where user=user and path=path
-      await NotificationDigest.query()
-        .update({
-          actioned: true,
-        })
-        .where({
-          userId: notificationDigest.userId,
-          pathString: notificationDigest.pathString,
-          groupId,
-        })
+      await NotificationDigest.markActionedForPath(
+        notificationDigest.userId,
+        notificationDigest.pathString,
+        groupId,
+      )
     }),
   )
 
@@ -262,11 +249,9 @@ const setEventActive = async (name, groupId) => {
     !notification.eventsConfig[name].active
   formData.notification = notification
 
-  await Config.query()
-    .findOne({ groupId })
-    .patch({
-      formData: JSON.stringify(formData),
-    })
+  await Config.patchByGroupId(groupId, {
+    formData: JSON.stringify(formData),
+  })
 
   return notification.eventsConfig[name].active
 }

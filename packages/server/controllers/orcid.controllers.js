@@ -119,29 +119,18 @@ const createOrcidStrategy = () => {
       const activeConfig = await Config.getCached(groupId)
 
       try {
-        user = await User.query()
-          .joinRelated('identities')
-          .where('identities.identifier', params.orcid)
-          .where('identities.type', 'orcid')
-          .throwIfNotFound()
-          .first()
+        user = await User.findByIdentity('orcid', params.orcid)
       } catch (err) {
-        // swallow not found error
-        if (err.name !== 'NotFoundError') {
-          done(err)
-          return
-        }
+        done(err)
+        return
       }
 
-      let usersCountString
+      let usersCount
       let groupUsersCount
 
       try {
-        usersCountString = (await User.query().count())[0].count
-        groupUsersCount = await User.query()
-          .joinRelated('teams')
-          .where({ 'teams.objectId': groupId })
-          .resultSize()
+        usersCount = await User.countAll()
+        groupUsersCount = await User.countInTeamsOfObject(groupId)
       } catch (err) {
         logger.error(err)
       }
@@ -168,10 +157,7 @@ const createOrcidStrategy = () => {
               { trx },
             )
 
-            if (
-              usersCountString === '0' ||
-              activeConfig.formData.user.isAdmin
-            ) {
+            if (usersCount === 0 || activeConfig.formData.user.isAdmin) {
               await addUserToAdminAndGroupAdminTeams(user.id, groupId, {
                 trx,
               })
@@ -199,14 +185,9 @@ const createOrcidStrategy = () => {
 
             firstLogin = true
           } else if (groupUsersCount === 0) {
-            const isAlreadyAdmin = await Team.query(trx)
-              .withGraphJoined('members')
-              .findOne({
-                userId: user.id,
-                objectId: null,
-                global: true,
-                role: 'admin',
-              })
+            const isAlreadyAdmin = await User.hasGlobalRole(user.id, 'admin', {
+              trx,
+            })
 
             if (!isAlreadyAdmin) {
               await addUserToAdminAndGroupAdminTeams(user.id, groupId, {
@@ -312,12 +293,7 @@ const handleOrcidOAuthResponse = async user => {
     throw new Error(`Group not found or archived!`)
   }
 
-  const isAlreadyAdmin = await Team.query().withGraphJoined('members').findOne({
-    userId: user.id,
-    objectId: null,
-    global: true,
-    role: 'admin',
-  })
+  const isAlreadyAdmin = await User.hasGlobalRole(user.id, 'admin')
 
   const activeConfig = await Config.getCached(groupId)
 
@@ -325,29 +301,13 @@ const handleOrcidOAuthResponse = async user => {
   if (activeConfig.formData.user.isAdmin && !isAlreadyAdmin)
     await addUserToAdminAndGroupAdminTeams(user.id, groupId)
 
-  const groupManagerTeam = await Team.query()
-    .withGraphJoined('members')
-    .select('role')
-    .findOne({
-      userId: user.id,
-      objectId: groupId,
-      objectType: 'group',
-      role: 'groupManager',
-    })
+  const isGroupManager = await User.hasRoleOnObject(
+    user.id,
+    'groupManager',
+    groupId,
+  )
 
-  const isGroupManager = !!groupManagerTeam
-
-  const userTeam = await Team.query()
-    .withGraphJoined('members')
-    .select('role')
-    .findOne({
-      userId: user.id,
-      objectId: groupId,
-      objectType: 'group',
-      role: 'user',
-    })
-
-  const isGroupUser = !!userTeam
+  const isGroupUser = await User.hasRoleOnObject(user.id, 'user', groupId)
 
   if (!isGroupUser) await addUserToUserTeam(user.id, groupId)
 

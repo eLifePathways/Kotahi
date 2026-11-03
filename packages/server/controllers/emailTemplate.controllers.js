@@ -30,7 +30,7 @@ const createEmailTemplate = async (groupId, input) => {
 
 const deleteEmailTemplate = async id => {
   try {
-    await TaskEmailNotification.query().delete().where('email_template_id', id)
+    await TaskEmailNotification.deleteByEmailTemplateId(id)
 
     const response = await EmailTemplate.deleteById(id)
 

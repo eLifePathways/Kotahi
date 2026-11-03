@@ -1,4 +1,3 @@
-const { raw } = require('objection')
 const { logger } = require('@coko/server')
 
 const Manuscript = require('../../models/manuscript/manuscript.model')
@@ -22,14 +21,13 @@ class DoiExistenceChecker {
       try {
         this.doiSet = 'wait' // Any other tasks trying to access simultaneously must wait until this becomes a proper Set with data loaded
 
-        const dois = await Manuscript.query(trx)
-          .select(raw("submission->>'$doi'").as('doi'))
-          .whereRaw("submission->>'$doi' IS NOT null")
-          .whereRaw("submission->>'$doi' <> ''")
-          .where({ groupId: this.groupId, isHidden: this.archiveStatus })
+        const dois = await Manuscript.getDoisInGroup(
+          this.groupId,
+          this.archiveStatus,
+          { trx },
+        )
 
-        this.doiSet = new Set()
-        dois.forEach(x => this.doiSet.add(x.doi))
+        this.doiSet = new Set(dois)
 
         // TODO If the number of manuscripts is very large we may need to be more sophisticated:
         // e.g., we could use a bloom filter to detect possible matches and then hit the database to confirm.

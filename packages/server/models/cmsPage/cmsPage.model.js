@@ -82,6 +82,14 @@ class CMSPage extends BaseModel {
       },
     }
   }
+
+  /** The group's pages ordered by title, with only id, title, url and the given flax config column */
+  static async findInGroupWithFlaxConfig(groupId, configKey, options = {}) {
+    return CMSPage.query(options.trx)
+      .where('groupId', groupId)
+      .select(['id', 'title', 'url', configKey])
+      .orderBy('title')
+  }
 }
 
 module.exports = CMSPage

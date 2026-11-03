@@ -6,8 +6,6 @@ const encoding = require('lib0/encoding')
 const decoding = require('lib0/decoding')
 const Y = require('yjs')
 
-const { db } = require('@coko/server')
-
 const { CollaborativeDoc, Form, ...otherModels } = require('../../models')
 
 let persistence = null
@@ -104,8 +102,6 @@ persistence = {
     const objectId = ydoc.name
     const state = Y.encodeStateAsUpdate(ydoc)
 
-    const timestamp = db.fn.now()
-
     const docYjs = await CollaborativeDoc.findOne({ objectId })
 
     if (!docYjs) {
@@ -143,14 +139,12 @@ persistence = {
               }
 
               const { jsonData } = object
-              await Model.query()
-                .patch({
-                  jsonData: JSON.stringify({
-                    ...jsonData,
-                    ...collaborativeFields,
-                  }),
-                })
-                .findOne({ id: objectId })
+              await object.patch({
+                jsonData: JSON.stringify({
+                  ...jsonData,
+                  ...collaborativeFields,
+                }),
+              })
             }
           }
         }
@@ -160,12 +154,7 @@ persistence = {
       }
     } else {
       try {
-        await CollaborativeDoc.query()
-          .patch({
-            yDocState: state,
-            updated: timestamp,
-          })
-          .findOne({ objectId })
+        await CollaborativeDoc.patchById(docYjs.id, { yDocState: state })
       } catch (e) {
         console.log(`Patch Query`)
         console.log(e)

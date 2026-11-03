@@ -32,6 +32,33 @@ class Invitation extends BaseModel {
     return 'invitations'
   }
 
+  static async deleteByUserId(userId, options = {}) {
+    return Invitation.query(options.trx).where({ userId }).delete()
+  }
+
+  static async findNotAcceptedForManuscript(manuscriptId, options = {}) {
+    return Invitation.query(options.trx)
+      .where({ manuscriptId })
+      .whereNot('status', 'ACCEPTED')
+  }
+
+  /** Patches the invitation only if it is still unanswered. Returns the patched
+   * invitation, or undefined if it was not found or already answered. */
+  static async patchIfUnanswered(id, data, options = {}) {
+    const [result] = await Invitation.query(options.trx)
+      .patch(data)
+      .where({ id, status: 'UNANSWERED' })
+      .returning('*')
+
+    return result
+  }
+
+  static async clearSender(senderId, options = {}) {
+    return Invitation.query(options.trx)
+      .patch({ senderId: null })
+      .where({ senderId })
+  }
+
   static get schema() {
     return {
       properties: {

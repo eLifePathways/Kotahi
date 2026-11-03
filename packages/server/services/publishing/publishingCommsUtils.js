@@ -6,7 +6,7 @@ const upsertArtifact = async artifact => {
   let priorArtifact = null
 
   if (artifact.externalId) {
-    priorArtifact = await PublishedArtifact.query().select('id').findOne({
+    priorArtifact = await PublishedArtifact.findOne({
       manuscriptId: artifact.manuscriptId,
       externalId: artifact.externalId,
     })
@@ -30,10 +30,7 @@ const upsertArtifact = async artifact => {
 }
 
 const deleteArtifact = async (manuscriptId, externalId) => {
-  await PublishedArtifact.query().delete().where({
-    manuscriptId,
-    externalId,
-  })
+  await PublishedArtifact.deleteByExternalId(manuscriptId, externalId)
 }
 
 module.exports = { upsertArtifact, deleteArtifact }

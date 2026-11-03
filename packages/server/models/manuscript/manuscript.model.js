@@ -1,7 +1,7 @@
 const omit = require('lodash/omit')
 const omitBy = require('lodash/omitBy')
 const pick = require('lodash/pick')
-const { raw } = require('objection')
+const { raw, ref } = require('objection')
 const sortBy = require('lodash/sortBy')
 
 const { BaseModel, config, useTransaction, uuid } = require('@coko/server')
@@ -10,7 +10,14 @@ const { BaseModel, config, useTransaction, uuid } = require('@coko/server')
 const { evictFromCache } = require('../../services/queryCache.service')
 const { remapImageFileIds } = require('../../utils/fileStorageUtils')
 
+const {
+  buildQueryForManuscriptSearchFilterAndOrder,
+  buildSearchSnippets,
+} = require('./manuscriptSearch')
+
 const EDITOR_ROLES = ['editor', 'handlingEditor', 'seniorEditor']
+
+const EDITOR_TEAM_DISPLAY_NAMES = ['Senior Editor', 'Handling Editor', 'Editor']
 
 const VERSION_COPIED_TEAM_ROLES = [
   'author',
@@ -185,6 +192,859 @@ class Manuscript extends BaseModel {
       .select('team_members.status')
 
     return !!reviewerStatuses.length
+  }
+
+  static async getOtherVersions(manuscriptId, options = {}) {
+    const { trx } = options
+
+    const manuscript = await Manuscript.query(trx)
+      .findById(manuscriptId)
+      .select('parentId')
+
+    if (!manuscript.parentId)
+      return Manuscript.relatedQuery('manuscriptVersions', trx)
+        .for(manuscriptId)
+        .modify('orderByCreatedDesc')
+
+    const parent = await Manuscript.findById(manuscript.parentId, { trx })
+
+    const children = await Manuscript.relatedQuery('manuscriptVersions', trx)
+      .for(parent.id)
+      .modify('orderByCreatedDesc')
+
+    return [...children.filter(v => v.id !== manuscriptId), parent]
+  }
+
+  static async getSubmitter(manuscriptId, options = {}) {
+    return Manuscript.relatedQuery('submitter', options.trx)
+      .for(manuscriptId)
+      .first()
+  }
+
+  static async getDoisInGroup(groupId, isHidden, options = {}) {
+    const rows = await Manuscript.query(options.trx)
+      .select(raw("submission->>'$doi'").as('doi'))
+      .whereRaw("submission->>'$doi' <> ''")
+      .where({ groupId, isHidden })
+
+    return rows.map(row => row.doi)
+  }
+
+  static async clearSubmitter(userId, options = {}) {
+    return Manuscript.query(options.trx)
+      .patch({ submitterId: null })
+      .where({ submitterId: userId })
+  }
+
+  static async clearSubmitterInGroup(userId, groupId, options = {}) {
+    return Manuscript.query(options.trx)
+      .patch({ submitterId: null })
+      .where({ submitterId: userId, groupId })
+  }
+
+  static async getLatestVersion(manuscriptId, options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ parentId: manuscriptId })
+      .orWhere({ id: manuscriptId })
+      .orderBy('created', 'desc')
+      .first()
+  }
+
+  static async getFirstVersionId(versionId, options = {}) {
+    return (
+      (
+        await Manuscript.query(options.trx)
+          .select('parentId')
+          .findById(versionId)
+      )?.parentId || versionId
+    )
+  }
+
+  static async getLatestVersionId(versionId, options = {}) {
+    const { trx } = options
+
+    const firstVersionId = await Manuscript.getFirstVersionId(versionId, {
+      trx,
+    })
+
+    return (
+      await Manuscript.query(trx)
+        .select('id')
+        .where({ parentId: firstVersionId })
+        .orWhere({ id: firstVersionId })
+        .orderBy('created', 'desc')
+        .limit(1)
+    )[0].id
+  }
+
+  static async isActive(manuscriptId, options = {}) {
+    const { trx } = options
+
+    const manuscript = await Manuscript.query(trx)
+      .select('isHidden')
+      .findById(manuscriptId)
+
+    if (!manuscript) return false
+    if (manuscript.isHidden) return false
+
+    const latestVersionId = await Manuscript.getLatestVersionId(manuscriptId, {
+      trx,
+    })
+
+    return manuscriptId === latestVersionId
+  }
+
+  static async archiveNewUnlabelledCreatedBefore(
+    groupId,
+    cutoffDate,
+    options = {},
+  ) {
+    return Manuscript.query(options.trx)
+      .patch({ isHidden: true })
+      .where('created', '<', cutoffDate)
+      .where('status', 'new')
+      .where('groupId', groupId)
+      .whereNot('isHidden', true)
+      .where(function subcondition() {
+        this.whereRaw(`submission->>'$customStatus' = ''`).orWhereRaw(
+          `submission->>'$customStatus' IS NULL`,
+        )
+      })
+  }
+
+  static async findByDoi(groupId, doi, options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ groupId })
+      .where(builder =>
+        builder
+          .whereRaw("submission->>'$doi' = ?", [doi])
+          .orWhereRaw("submission->>'doi' = ?", [doi]),
+      )
+      .first()
+  }
+
+  static async findBySourceUri(groupId, uri, options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ groupId })
+      .where(builder =>
+        builder
+          .whereRaw("submission->>'$sourceUri' = ?", [uri])
+          .orWhereRaw("submission->>'link' = ?", [uri]),
+      )
+      .first()
+  }
+
+  static async getGroupId(manuscriptId, options = {}) {
+    return (
+      await Manuscript.query(options.trx)
+        .findById(manuscriptId)
+        .select('groupId')
+    ).groupId
+  }
+
+  static async getFirstVersionIds(ids, options = {}) {
+    const manuscripts = await Manuscript.query(options.trx)
+      .select('parentId', 'id')
+      .whereIn('id', ids)
+
+    return manuscripts.map(m => m.parentId || m.id)
+  }
+
+  /** Sets isHidden on the given first versions and all their child versions.
+   * Returns the IDs of the updated manuscripts. */
+  static async setIsHiddenOnAllVersions(
+    firstVersionIds,
+    isHidden,
+    options = {},
+  ) {
+    const updated = await Manuscript.query(options.trx)
+      .returning('id')
+      .patch({ isHidden })
+      .whereIn('id', firstVersionIds)
+      .orWhereIn('parentId', firstVersionIds)
+
+    return updated.map(m => m.id)
+  }
+
+  static async findFilesOfManuscripts(manuscriptIds, options = {}) {
+    return Manuscript.relatedQuery('files', options.trx).for(manuscriptIds)
+  }
+
+  /** Sets created without touching updated. Only for tests.
+   * This writes to the table directly: a patch would work for created (only
+   * $beforeInsert stamps it), but BaseModel's $beforeUpdate would also set
+   * updated to the current time. */
+  static async backdateCreated(manuscriptId, created, options = {}) {
+    return (options.trx || Manuscript.knex())('manuscripts')
+      .where({ id: manuscriptId })
+      .update({ created })
+  }
+
+  static async getSupplementaryFiles(manuscriptId, options = {}) {
+    return Manuscript.relatedQuery('files', options.trx)
+      .for(manuscriptId)
+      .where('tags', '@>', JSON.stringify(['supplementary']))
+  }
+
+  static async getChannels(manuscriptId, options = {}) {
+    return Manuscript.relatedQuery('channels', options.trx).for(manuscriptId)
+  }
+
+  static async findEditorialDiscussionChannel(manuscriptId, options = {}) {
+    return Manuscript.relatedQuery('channels', options.trx)
+      .for(manuscriptId)
+      .findOne({ topic: 'Editorial discussion' })
+  }
+
+  static async findNonHiddenFirstVersions(options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ parentId: null })
+      .whereNot({ isHidden: true })
+      .orderBy('created', 'desc')
+  }
+
+  /** Latest versions of published manuscripts in the group, most recently published first.
+   * Each row includes a totalCount of all matching rows. */
+  static async findPublishedLatestVersions(groupId, params = {}, options = {}) {
+    const { startDate, limit, offset } = params
+    const { trx } = options
+
+    const subQuery = Manuscript.query(trx)
+      .select('short_id')
+      .max('created as latest_created')
+      .where('group_id', groupId)
+      .groupBy('short_id')
+
+    const query = Manuscript.query(trx)
+      .select('m.*', raw('count(*) over () as totalCount'))
+      .from(Manuscript.query(trx).as('m'))
+      .innerJoin(subQuery.as('sub'), 'm.short_id', 'sub.short_id')
+      .andWhere('m.created', '=', raw('sub.latest_created'))
+      .whereNotNull('m.published')
+      .where('m.group_id', groupId)
+      .orderBy('m.published', 'desc')
+
+    if (startDate) query.where('m.published', '>=', new Date(startDate))
+    if (limit) query.limit(limit)
+    if (offset) query.offset(offset)
+
+    return query
+  }
+
+  static async findPublishedInGroup(groupId, params = {}, options = {}) {
+    const { sort, limit, offset } = params
+
+    const query = Manuscript.query(options.trx)
+      .where({ groupId })
+      .whereNotNull('published')
+
+    const totalCount = await query.resultSize()
+
+    if (sort) {
+      const [sortName, sortDirection] = sort.split('_')
+      query.orderBy(ref(sortName), sortDirection)
+    }
+
+    if (limit) query.limit(limit)
+    if (offset) query.offset(offset)
+    const manuscripts = await query
+
+    return { totalCount, manuscripts }
+  }
+
+  static async findByIdWithTeamUsersAndChannels(id, options = {}) {
+    return Manuscript.query(options.trx)
+      .findById(id)
+      .withGraphJoined('[teams.members.user.defaultIdentity, channels]')
+  }
+
+  static async findReadyToEvaluate(groupId, options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ status: 'new', groupId })
+      .whereRaw(`submission->>'$customStatus' = 'readyToEvaluate'`)
+  }
+
+  /** Reports: summary counts and averages for first versions created in the date range */
+  static async getSummaryStatsForDateRange(
+    groupId,
+    startDate,
+    endDate,
+    options = {},
+  ) {
+    const formattedStartDate = new Date(startDate)
+    const formattedEndDate = new Date(endDate)
+
+    const query = Manuscript.query(options.trx)
+      .with('all_versions', qb =>
+        qb
+          .select('*', Manuscript.raw('COALESCE(parent_id, id) AS root_id'))
+          .from('manuscripts')
+          .where('group_id', groupId)
+          .whereNot('is_hidden', true),
+      )
+      .with('root_manuscripts', qb =>
+        qb
+          .select('*')
+          .from('all_versions')
+          .whereNull('parent_id')
+          .whereBetween('created', [formattedStartDate, formattedEndDate]),
+      )
+      .with('latest_versions', qb =>
+        qb
+          .distinctOn('root_id')
+          .select('*')
+          .from('all_versions')
+          .orderBy('root_id')
+          .orderBy('created', 'desc'),
+      )
+
+    return query
+      .from('root_manuscripts as r')
+      .leftJoin('latest_versions as lv', 'lv.root_id', 'r.id')
+      .select(
+        Manuscript.raw(`
+        COUNT(*) FILTER (
+          WHERE r.status IS NOT NULL
+  		AND r.status <> 'new'
+        ) AS "submittedCount",
+
+        COUNT(*) FILTER (
+          WHERE r.status IS NULL
+          OR r.status = 'new'
+        ) AS "unsubmittedCount",
+
+        COUNT(*) FILTER (
+          WHERE EXISTS (
+            SELECT 1 FROM all_versions v
+              WHERE v.root_id = r.id
+              AND v.status IS NOT NULL
+              AND v.status <> 'new'
+            )
+            AND NOT EXISTS (
+              SELECT 1 FROM all_versions v
+              JOIN teams t ON t.object_id = v.id
+              WHERE v.root_id = r.id
+              AND t.display_name IN ('Editor', 'Senior Editor', 'Handling Editor')
+            )
+        ) AS "unassignedCount",
+
+        COUNT(*) FILTER (
+          WHERE EXISTS (
+            SELECT 1 FROM all_versions v
+            JOIN teams t ON t.object_id = v.id
+            WHERE v.root_id = r.id
+              AND t.display_name = 'Reviewers'
+          )
+        ) AS "reviewInvitedCount",
+
+        COUNT(*) FILTER (
+          WHERE EXISTS (
+            SELECT 1 FROM all_versions v
+            JOIN reviews rev ON rev.manuscript_id = v.id
+            WHERE v.root_id = r.id
+              AND rev.is_decision = false
+          )
+        ) AS "reviewInviteAcceptedCount",
+
+        COUNT(*) FILTER (
+          WHERE EXISTS (
+            SELECT 1 FROM all_versions v
+            JOIN reviews rev ON rev.manuscript_id = v.id
+            WHERE v.root_id = r.id
+              AND rev.is_decision = false
+              AND rev.json_data->>'$verdict' IS NOT NULL
+          )
+        ) AS "reviewedCount",
+
+        COUNT(*) FILTER (WHERE lv.status = 'rejected') AS "rejectedCount",
+        COUNT(*) FILTER (WHERE lv.status IN ('revise','revising')) AS "revisingCount",
+        COUNT(*) FILTER (WHERE lv.status IN ('accepted','published')) AS "acceptedCount",
+
+        COUNT(*) FILTER (
+          WHERE EXISTS (
+            SELECT 1 FROM all_versions v
+            WHERE v.root_id = r.id
+              AND v.published IS NOT NULL
+          )
+        ) AS "publishedCount",
+
+        COALESCE(AVG(
+          EXTRACT(EPOCH FROM (
+            (
+              SELECT MAX(rev.updated)
+              FROM all_versions v
+              JOIN reviews rev ON rev.manuscript_id = v.id
+              WHERE v.root_id = r.id
+                AND rev.is_decision = false
+            ) -
+            (
+              SELECT MIN(t.created)
+              FROM all_versions v
+              JOIN teams t ON t.object_id = v.id
+              WHERE v.root_id = r.id
+                AND t.display_name = 'Reviewers'
+            )
+          ))
+        ) / 86400, 0) AS "avgReviewTimeDays",
+
+        COALESCE(AVG(
+          EXTRACT(EPOCH FROM (
+            (
+              SELECT MAX(v.published)
+              FROM all_versions v
+              WHERE v.root_id = r.id
+            ) -
+            COALESCE(r.submitted_date, r.created)
+          ))
+        ) / 86400, 0) AS "avgPublishTimeDays"
+      `),
+      )
+      .first()
+  }
+
+  /** Reports: number of manuscript versions published since the given date */
+  static async countPublishedSince(groupId, since, options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ groupId })
+      .whereNot({ isHidden: true })
+      .where('published', '>=', since) // TODO this will double-count manuscripts republished twice today
+      .resultSize()
+  }
+
+  /** Reports: number of manuscripts whose latest version is being revised */
+  static async countRevisingNow(groupId, options = {}) {
+    return Manuscript.query(options.trx)
+      .where({ parentId: null, groupId })
+      .whereNot({ isHidden: true })
+      .whereRaw(
+        `
+          COALESCE(
+            (
+              SELECT status 
+              FROM manuscripts AS versions
+              WHERE versions.parent_id = manuscripts.id
+              ORDER BY versions.created DESC, versions.id DESC
+              LIMIT 1
+            ),
+            manuscripts.status
+          ) IN ('revise', 'revising')
+  	`,
+      )
+      .resultSize()
+  }
+
+  /** Reports: review and full durations of first versions submitted in the date range */
+  static async getReviewAndCompletionDurations(
+    groupId,
+    dataStart,
+    endDate,
+    options = {},
+  ) {
+    const rows = await (options.trx || Manuscript.knex()).raw(
+      `
+      WITH all_versions AS (
+        SELECT
+          m.*,
+          COALESCE(m.parent_id, m.id) AS root_id
+        FROM manuscripts m
+        WHERE m.group_id = :groupId
+          AND m.is_hidden IS NOT TRUE
+      ),
+      root_manuscripts AS (
+        SELECT *
+        FROM all_versions
+        WHERE parent_id IS NULL
+          AND created >= to_timestamp(:dataStart / 1000.0)
+          AND created <  to_timestamp(:endDate / 1000.0)
+      ),
+      review_bounds AS (
+        SELECT
+          v.root_id,
+          MIN(t.created) FILTER (WHERE t.display_name = 'Reviewers') AS review_start,
+          MAX(r.updated) FILTER (WHERE r.is_decision = false) AS review_end
+        FROM all_versions v
+        LEFT JOIN teams t ON t.object_id = v.id
+        LEFT JOIN reviews r ON r.manuscript_id = v.id
+        GROUP BY v.root_id
+      ),
+      completion_dates AS (
+        SELECT
+          v.root_id,
+          MAX(v.published) AS published_date,
+          MAX(r.updated) FILTER (
+            WHERE r.is_decision = true
+              AND r.json_data->>'$verdict' = 'reject'
+          ) AS rejected_date
+        FROM all_versions v
+        LEFT JOIN reviews r ON r.manuscript_id = v.id
+        GROUP BY v.root_id
+      )
+      SELECT
+        EXTRACT(EPOCH FROM rm.submitted_date) * 1000 AS submitted_ms,
+        EXTRACT(
+          EPOCH FROM (
+            rb.review_end - rb.review_start
+          )
+        ) / 86400 AS review_duration_days,
+        EXTRACT(
+          EPOCH FROM (
+            COALESCE(cd.published_date, cd.rejected_date) - rm.submitted_date
+          )
+        ) / 86400 AS full_duration_days
+      FROM root_manuscripts rm
+      LEFT JOIN review_bounds rb ON rb.root_id = rm.id
+      LEFT JOIN completion_dates cd ON cd.root_id = rm.id
+      WHERE rm.submitted_date IS NOT NULL
+        AND rm.submitted_date < to_timestamp(:endDate / 1000.0)
+      ORDER BY rm.submitted_date ASC
+      `,
+      {
+        groupId,
+        dataStart,
+        endDate,
+      },
+    )
+
+    return rows.rows
+  }
+
+  /** Reports: first versions created in the date range, with submitted, published and completed dates */
+  static async findFirstVersionsWithCompletedDate(
+    groupId,
+    dataStart,
+    endDate,
+    options = {},
+  ) {
+    return Manuscript.query(options.trx)
+      .select([
+        'manuscripts.id',
+        'manuscripts.submittedDate',
+        'manuscripts.published',
+        Manuscript.raw(`
+        COALESCE(
+          manuscripts.published,
+          (
+            SELECT r.created
+            FROM reviews r
+            WHERE r.manuscript_id = manuscripts.id
+              AND r.is_decision = true
+              AND r.json_data->>'$verdict' = 'reject'
+            ORDER BY r.created DESC
+            LIMIT 1
+          )
+        ) AS "completedDate"
+      `),
+      ])
+      .where('manuscripts.created', '>=', new Date(dataStart))
+      .where('manuscripts.created', '<', new Date(endDate))
+      .where({ parentId: null, groupId })
+      .whereNot({ isHidden: true })
+      .orderBy('manuscripts.created')
+  }
+
+  /** Reports: activity per first version created in the date range */
+  static async getActivityByManuscript(
+    groupId,
+    startDate,
+    endDate,
+    options = {},
+  ) {
+    const rows = await (options.trx || Manuscript.knex()).raw(
+      `
+      WITH all_versions AS (
+        SELECT
+          m.*,
+          COALESCE(m.parent_id, m.id) AS root_id
+        FROM manuscripts m
+        WHERE m.group_id = ?
+          AND m.is_hidden IS NOT TRUE
+      ),
+
+      root_manuscripts AS (
+        SELECT *
+        FROM all_versions
+        WHERE parent_id IS NULL
+          AND created >= to_timestamp(? / 1000.0)
+          AND created <  to_timestamp(? / 1000.0)
+      ),
+
+      latest_versions AS (
+        SELECT DISTINCT ON (root_id)
+          *
+        FROM all_versions
+        ORDER BY root_id, created DESC
+      ),
+
+      team_users AS (
+        SELECT
+          t.object_id AS manuscript_id,
+          t.display_name,
+          json_agg(
+            json_build_object(
+              'id', u.id,
+              'name', COALESCE(u.username, u.email, di.identifier, u.id::text),
+              'status', tm.status,
+  			'username', u.username,
+  			'email', u.email
+            )
+            ORDER BY tm.created
+          ) AS users
+        FROM teams t
+        JOIN team_members tm ON tm.team_id = t.id
+        JOIN users u ON u.id = tm.user_id
+        LEFT JOIN identities di
+          ON di.user_id = u.id
+         AND di.is_default = true
+        GROUP BY t.object_id, t.display_name
+      )
+
+      SELECT
+        r.short_id,
+        r.created AS entry_date,
+        lv.submission->>'$title' AS title,
+
+        CASE
+          WHEN lv.published IS NOT NULL
+            AND lv.status IN ('accepted','published')
+            THEN 'published'
+          WHEN lv.published IS NOT NULL
+            THEN 'published, ' || lv.status
+          ELSE lv.status
+        END AS status,
+
+        lv.published AS published_date,
+
+        json_agg(tu.users) FILTER (WHERE tu.display_name = 'Author') -> 0 AS authors,
+  		json_agg(tu.users) FILTER (
+  		WHERE tu.display_name IN ('Editor','Senior Editor','Handling Editor')
+  		) -> 0 AS editors,
+  		json_agg(tu.users) FILTER (WHERE tu.display_name = 'Reviewers') -> 0 AS reviewers
+
+      FROM root_manuscripts r
+      JOIN latest_versions lv ON lv.root_id = r.id
+      LEFT JOIN team_users tu ON tu.manuscript_id = lv.id
+
+      GROUP BY
+        r.id,
+        r.short_id,
+        r.created,
+        lv.status,
+        lv.published,
+        lv.submission
+
+      ORDER BY r.created;
+      `,
+      [groupId, startDate, endDate],
+    )
+
+    return rows.rows
+  }
+
+  /** Reports: activity per editor, for first versions created in the date range */
+  static async getActivityByEditor(groupId, startDate, endDate, options = {}) {
+    const { rows } = await (options.trx || Manuscript.knex()).raw(
+      `
+      WITH root_manuscripts AS (
+        SELECT m.*
+        FROM manuscripts m
+        WHERE m.parent_id IS NULL
+          AND m.group_id = ?
+          AND m.is_hidden IS NOT TRUE
+          AND m.created >= to_timestamp(? / 1000.0)
+          AND m.created <  to_timestamp(? / 1000.0)
+      ),
+
+      all_versions AS (
+        SELECT
+          m.id,
+          COALESCE(m.parent_id, m.id) AS root_id,
+          m.status,
+          m.published,
+          m.created
+        FROM manuscripts m
+        JOIN root_manuscripts rm
+          ON rm.id = COALESCE(m.parent_id, m.id)
+      ),
+
+      latest_status AS (
+        SELECT DISTINCT ON (root_id)
+          root_id,
+          status,
+          published
+        FROM all_versions
+        ORDER BY root_id, created DESC
+      ),
+
+      revision_flags AS (
+        SELECT
+          parent_id AS root_id,
+          TRUE AS was_revised
+        FROM manuscripts
+        WHERE parent_id IS NOT NULL
+        GROUP BY parent_id
+      ),
+
+      reviewer_flags AS (
+        SELECT DISTINCT
+          v.root_id,
+          TRUE AS given_to_reviewers
+        FROM all_versions v
+        JOIN teams t
+          ON t.object_id = v.id
+         AND t.display_name = 'Reviewers'
+      ),
+
+      editor_assignments AS (
+        SELECT
+          rm.id AS root_id,
+          tm.user_id
+        FROM root_manuscripts rm
+        JOIN teams t
+          ON t.object_id = rm.id
+         AND t.display_name = ANY (?)
+        JOIN team_members tm
+          ON tm.team_id = t.id
+      ),
+
+      editor_names AS (
+        SELECT
+          u.id AS user_id,
+          COALESCE(
+            u.username,
+            u.email,
+            di.identifier,
+            u.id::text
+          ) AS name
+        FROM users u
+        LEFT JOIN identities di
+          ON di.user_id = u.id
+         AND di.is_default = TRUE
+      )
+
+      SELECT
+        en.name,
+        COUNT(*) AS "assignedCount",
+        COUNT(*) FILTER (WHERE rf.given_to_reviewers) AS "givenToReviewersCount",
+        COUNT(*) FILTER (WHERE rv.was_revised) AS "revisedCount",
+        COUNT(*) FILTER (WHERE ls.status = 'rejected') AS "rejectedCount",
+        COUNT(*) FILTER (
+          WHERE ls.status = 'accepted' OR ls.published IS NOT NULL
+        ) AS "acceptedCount",
+        COUNT(*) FILTER (WHERE ls.published IS NOT NULL) AS "publishedCount"
+      FROM editor_assignments ea
+      JOIN editor_names en
+        ON en.user_id = ea.user_id
+      LEFT JOIN latest_status ls
+        ON ls.root_id = ea.root_id
+      LEFT JOIN reviewer_flags rf
+        ON rf.root_id = ea.root_id
+      LEFT JOIN revision_flags rv
+        ON rv.root_id = ea.root_id
+      GROUP BY en.name
+      ORDER BY en.name
+      `,
+      [groupId, startDate, endDate, EDITOR_TEAM_DISPLAY_NAMES],
+    )
+
+    return rows
+  }
+
+  /** Reports: activity per reviewer, for first versions created in the date range */
+  static async getActivityByReviewer(
+    groupId,
+    startDate,
+    endDate,
+    options = {},
+  ) {
+    const rows = await (options.trx || Manuscript.knex()).raw(
+      `
+      WITH all_versions AS (
+        SELECT
+          m.*,
+          COALESCE(m.parent_id, m.id) AS root_id
+        FROM manuscripts m
+        WHERE m.group_id = :groupId
+          AND m.is_hidden IS NOT TRUE
+      ),
+      root_manuscripts AS (
+        SELECT *
+        FROM all_versions
+        WHERE parent_id IS NULL
+          AND created >= to_timestamp(:startDate / 1000.0)
+          AND created <  to_timestamp(:endDate / 1000.0)
+      ),
+      reviewer_events AS (
+        SELECT
+          tm.user_id,
+          tm.status AS invite_status,
+          tm.created AS invite_date,
+          r.updated AS review_updated,
+          r.json_data->>'$verdict' AS verdict
+        FROM all_versions v
+        JOIN root_manuscripts rm ON rm.id = v.root_id
+        JOIN teams t ON t.object_id = v.id
+          AND t.display_name = 'Reviewers'
+        JOIN team_members tm ON tm.team_id = t.id
+        JOIN reviews r
+          ON r.manuscript_id = v.id
+         AND r.user_id = tm.user_id
+         AND r.is_decision = false
+      ),
+      reviewer_names AS (
+        SELECT
+          u.id AS user_id,
+          COALESCE(
+            u.username,
+            u.email,
+            di.identifier,
+            u.id::text
+          ) AS name
+        FROM users u
+        LEFT JOIN identities di
+          ON di.user_id = u.id
+         AND di.is_default = true
+      )
+      SELECT
+        rn.name,
+        COUNT(*) AS "invitesCount",
+        COUNT(*) FILTER (WHERE re.invite_status = 'declined') AS "declinedCount",
+        COUNT(*) FILTER (WHERE re.invite_status = 'completed') AS "reviewsCompletedCount",
+        AVG(EXTRACT(EPOCH FROM (re.review_updated - re.invite_date)) / 86400)
+          AS "avgReviewDuration",
+        COUNT(*) FILTER (WHERE re.verdict = 'revise') AS "reccReviseCount",
+        COUNT(*) FILTER (WHERE re.verdict = 'accept') AS "reccAcceptCount",
+        COUNT(*) FILTER (WHERE re.verdict = 'reject') AS "reccRejectCount"
+      FROM reviewer_events re
+      LEFT JOIN reviewer_names rn ON rn.user_id = re.user_id
+      GROUP BY rn.name
+      ORDER BY rn.name
+      `,
+      {
+        groupId,
+        startDate,
+        endDate,
+      },
+    )
+
+    return rows.rows
+  }
+
+  /** Reports: first versions created in the date range, with team users of all versions */
+  static async findFirstVersionsWithTeamUsers(
+    groupId,
+    startDate,
+    endDate,
+    options = {},
+  ) {
+    return Manuscript.query(options.trx)
+      .withGraphFetched(
+        '[teams.[users.[defaultIdentity]], manuscriptVersions(orderByCreatedDesc).[teams.[users.[defaultIdentity]]]]',
+      )
+      .where('created', '>=', new Date(startDate))
+      .where('created', '<', new Date(endDate))
+      .where({ parentId: null, groupId })
+      .whereNot({ isHidden: true })
+      .orderBy('created')
   }
 
   static async findPublishedById(id, options = {}) {
@@ -526,6 +1386,44 @@ class Manuscript extends BaseModel {
     )
 
     return manuscriptVersions
+  }
+
+  static async search(
+    {
+      sort,
+      offset,
+      limit,
+      filters,
+      archived,
+      submissionForm,
+      timezoneOffsetMinutes,
+      manuscriptIds = null,
+      groupId = null,
+    },
+    options = {},
+  ) {
+    const [query, params] = buildQueryForManuscriptSearchFilterAndOrder(
+      sort,
+      offset,
+      limit,
+      filters,
+      archived,
+      submissionForm,
+      timezoneOffsetMinutes,
+      manuscriptIds,
+      groupId,
+    )
+
+    const { rows } = await (options.trx || Manuscript.knex()).raw(query, params)
+
+    return {
+      totalCount: rows.length ? parseInt(rows[0].full_count, 10) : 0,
+      results: rows.map(row => ({
+        id: row.id,
+        searchRank: row.rank,
+        searchSnippets: buildSearchSnippets(row, submissionForm),
+      })),
+    }
   }
 
   /** Find all manuscripts (any version) for which the user serves in any role as a

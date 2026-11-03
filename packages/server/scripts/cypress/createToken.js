@@ -6,7 +6,7 @@ const createToken = async username => {
   const user = await User.findOne({ username })
 
   if (!user) {
-    const users = await User.query().select('username')
+    const { result: users } = await User.find({})
     throw new Error(
       `Could not find ${username} among users [${users
         .map(u => `'${u.username}'`)

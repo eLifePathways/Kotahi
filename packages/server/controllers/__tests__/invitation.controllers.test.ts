@@ -67,7 +67,7 @@ describe('updateInvitationStatus', () => {
     const respondingUser = await User.insert({})
     const senderUser = await User.insert({})
 
-    const invitation = await Invitation.query().insert({
+    const invitation = await Invitation.insert({
       manuscriptId: manuscript.id,
       senderId: senderUser.id,
       purpose: 'invite-reviewer',

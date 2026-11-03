@@ -8,6 +8,7 @@ const {
   Identity,
   Review,
   CoarNotification,
+  User,
 } = require('../../models')
 
 // TODO: What is the purpose of this?
@@ -160,16 +161,15 @@ const getRequestData = async (
 const getReviewer = async manuscript => {
   const manuscriptId = manuscript.id
 
-  const latestReview = await Review.query()
-    .findOne({ manuscriptId, is_decision: false })
-    .orderBy('updated', 'desc')
-    .first()
+  const latestReview = await Review.findLatestNonDecisionReview(manuscriptId)
 
   if (!latestReview || latestReview.isHiddenReviewerName) {
     return null
   }
 
-  const reviewer = await latestReview.$relatedQuery('user')
+  const reviewer = await User.findById(latestReview.userId, {
+    throwIfNotFound: false,
+  })
 
   const identity = await Identity.findOne({
     userId: reviewer.id,

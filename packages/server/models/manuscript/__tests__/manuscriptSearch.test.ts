@@ -1,31 +1,31 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
 import { db, config, migrationManager, DbTestUtils } from '@coko/server'
 
-import Group from '../../../models/group/group.model'
-import Manuscript from '../../../models/manuscript/manuscript.model'
-import Form from '../../../models/form/form.model'
+import Group from '../../group/group.model'
+import Manuscript from '../manuscript.model'
+import Form from '../../form/form.model'
 import {
   buildQueryForManuscriptSearchFilterAndOrder,
   buildSearchSnippets,
-} from '../manuscriptUtils'
+} from '../manuscriptSearch'
 
-/** Runs buildQueryForManuscriptSearchFilterAndOrder for the given form/search term/group and
- * executes it, returning the raw result rows -- the same shape buildSearchSnippets consumes. */
-const search = async (submissionForm, searchValue, groupId): Promise<any[]> => {
-  const [query, params] = buildQueryForManuscriptSearchFilterAndOrder(
-    null,
-    0,
-    10,
-    [{ field: 'search', value: searchValue }],
-    false,
+const search = async (
+  submissionForm,
+  searchValue,
+  groupId,
+): Promise<Awaited<ReturnType<typeof Manuscript.search>>['results']> => {
+  const { results } = await Manuscript.search({
+    sort: null,
+    offset: 0,
+    limit: 10,
+    filters: [{ field: 'search', value: searchValue }],
+    archived: false,
     submissionForm,
-    0,
-    null,
+    timezoneOffsetMinutes: 0,
     groupId,
-  ) as [string, any[]]
+  })
 
-  const { rows } = await db.raw(query, params)
-  return rows
+  return results
 }
 
 describe('buildSearchSnippets', () => {
@@ -168,7 +168,7 @@ describe('buildQueryForManuscriptSearchFilterAndOrder: placeholder/param safety'
   })
 })
 
-describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', () => {
+describe('Manuscript.search', () => {
   let group: Group
 
   beforeAll(async () => {
@@ -198,12 +198,12 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
       submission: { $title: 'Wombat Manuscript Title' },
     })
 
-    const rows = await search(titleOnlyForm, 'wombat', group.id)
+    const results = await search(titleOnlyForm, 'wombat', group.id)
 
-    expect(rows).toHaveLength(1)
-    expect(rows[0].id).toBe(manuscript.id)
+    expect(results).toHaveLength(1)
+    expect(results[0].id).toBe(manuscript.id)
 
-    expect(buildSearchSnippets(rows[0], titleOnlyForm)).toEqual([
+    expect(results[0].searchSnippets).toEqual([
       { field: 'Title', html: expect.stringContaining('<b>Wombat</b>') },
     ])
   })
@@ -215,11 +215,11 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
       meta: { source: '<p class="paragraph">Bacon ipsum dolor</p>' },
     })
 
-    const rows = await search(titleOnlyForm, 'bacon', group.id)
+    const results = await search(titleOnlyForm, 'bacon', group.id)
 
-    expect(rows).toHaveLength(1)
+    expect(results).toHaveLength(1)
 
-    const snippets = buildSearchSnippets(rows[0], titleOnlyForm)
+    const snippets = results[0].searchSnippets
     const articleBody = snippets.find(s => s.field === 'Article body')
 
     expect(articleBody?.html).toContain('<b>Bacon</b>')
@@ -261,19 +261,19 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
       submission: { objectType: 'ds' },
     })
 
-    const labelRows = await search(optionsForm, 'dataset', group.id)
-    expect(labelRows).toHaveLength(1)
+    const labelResults = await search(optionsForm, 'dataset', group.id)
+    expect(labelResults).toHaveLength(1)
 
-    expect(buildSearchSnippets(labelRows[0], optionsForm)).toEqual([
+    expect(labelResults[0].searchSnippets).toEqual([
       { field: 'Type', html: expect.stringContaining('<b>Dataset</b>') },
     ])
 
     // Searching by the raw stored value produces no snippet for this field, since the headline
     // is generated from the resolved label ("Dataset"), not the code ("ds").
-    const valueRows = await search(optionsForm, 'ds', group.id)
-    expect(valueRows).toHaveLength(1)
+    const valueResults = await search(optionsForm, 'ds', group.id)
+    expect(valueResults).toHaveLength(1)
 
-    const valueSnippets = buildSearchSnippets(valueRows[0], optionsForm)
+    const valueSnippets = valueResults[0].searchSnippets
     expect(valueSnippets.find(s => s.field === 'Type')).toBeUndefined()
   })
 
@@ -310,10 +310,10 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
       submission: { topics: ['a', 'b'] },
     })
 
-    const rows = await search(multiSelectForm, 'beta', group.id)
-    expect(rows).toHaveLength(1)
+    const results = await search(multiSelectForm, 'beta', group.id)
+    expect(results).toHaveLength(1)
 
-    expect(buildSearchSnippets(rows[0], multiSelectForm)).toEqual([
+    expect(results[0].searchSnippets).toEqual([
       { field: 'Topics', html: expect.stringContaining('<b>Beta</b>') },
     ])
   })
@@ -336,10 +336,10 @@ describe('buildQueryForManuscriptSearchFilterAndOrder + buildSearchSnippets', ()
       submission: { legacyField: 'removedoption' },
     })
 
-    const rows = await search(staleOptionForm, 'removedoption', group.id)
-    expect(rows).toHaveLength(1)
+    const results = await search(staleOptionForm, 'removedoption', group.id)
+    expect(results).toHaveLength(1)
 
-    expect(buildSearchSnippets(rows[0], staleOptionForm)).toEqual([
+    expect(results[0].searchSnippets).toEqual([
       {
         field: 'Legacy',
         html: expect.stringContaining('<b>removedoption</b>'),

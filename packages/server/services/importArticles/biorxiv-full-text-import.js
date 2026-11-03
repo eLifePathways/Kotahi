@@ -253,11 +253,9 @@ const getData = async (groupId, ctx) => {
   // failure doesn't cause this date range to be skipped on the next run.
   if (!hadSaveError) {
     if (lastImportDate) {
-      await ArticleImportHistory.query()
-        .update({
-          date: new Date().toISOString(),
-        })
-        .where({ sourceId, groupId })
+      await ArticleImportHistory.patchBySourceAndGroup(sourceId, groupId, {
+        date: new Date().toISOString(),
+      })
     } else {
       await ArticleImportHistory.insert({
         date: new Date().toISOString(),

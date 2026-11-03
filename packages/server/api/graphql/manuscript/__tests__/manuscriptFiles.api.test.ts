@@ -73,13 +73,11 @@ describe('Manuscript files API', () => {
       ],
     })
 
-    await Manuscript.query()
-      .patch({
-        meta: {
-          source: `<p><img data-fileid="${image.id}" src="stale-url"></p>`,
-        },
-      })
-      .findById(manuscript.id)
+    await Manuscript.patchById(manuscript.id, {
+      meta: {
+        source: `<p><img data-fileid="${image.id}" src="stale-url"></p>`,
+      },
+    })
 
     const relatedQuery = vi.spyOn(Manuscript, 'relatedQuery')
 

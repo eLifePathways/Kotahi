@@ -27,10 +27,9 @@ const collectionFormDataImage = async collectionFormData => {
 
 const collectionManuscripts = async collection => {
   if (collection.manuscripts?.length) {
-    const manuscripts = await Manuscript.query().whereIn(
-      'id',
-      collection.manuscripts,
-    )
+    const manuscripts = await Manuscript.findByIds(collection.manuscripts, {
+      throwIfNotFound: false,
+    })
 
     return collection.manuscripts.map(id => manuscripts.find(m => m.id === id))
   }
@@ -39,17 +38,19 @@ const collectionManuscripts = async collection => {
 }
 
 const createCollection = async (input, groupId) => {
-  let publishingCollection = await PublishingCollection.query()
-    .insert({
-      active: input.active,
-      formData: {
-        ...input.formData,
-        image: null,
-      },
-      groupId,
-      manuscripts: input.manuscripts,
-    })
-    .returning('*')
+  const insertedCollection = await PublishingCollection.insert({
+    active: input.active,
+    formData: {
+      ...input.formData,
+      image: null,
+    },
+    groupId,
+    manuscripts: input.manuscripts,
+  })
+
+  let publishingCollection = await PublishingCollection.findById(
+    insertedCollection.id,
+  )
 
   if (input.formData.image) {
     const { filename, createReadStream: stream } = await input.formData.image
@@ -59,15 +60,15 @@ const createCollection = async (input, groupId) => {
       objectId: publishingCollection.id,
     })
 
-    publishingCollection = await PublishingCollection.query()
-      .patch({
+    publishingCollection = await PublishingCollection.patchAndFetchById(
+      publishingCollection.id,
+      {
         formData: {
           ...publishingCollection.formData,
           image: file.id,
         },
-      })
-      .findOne({ id: publishingCollection.id })
-      .returning('*')
+      },
+    )
   }
 
   publishingCollection.formData.active = publishingCollection.active
@@ -77,10 +78,8 @@ const createCollection = async (input, groupId) => {
 
 const deleteCollection = async id => {
   try {
-    const collection = await PublishingCollection.query()
-      .delete()
-      .findOne({ id })
-      .returning('*')
+    const collection = await PublishingCollection.findById(id)
+    await PublishingCollection.deleteById(id)
 
     await deleteFiles([collection.formData.image])
     return { success: true }

@@ -181,9 +181,10 @@ const tryPublishDocMaps = async manuscript => {
   })
 
   if (existingDocmap)
-    await Docmap.query()
-      .update({ content, manuscriptId: manuscript.id })
-      .where({ externalId: uri, groupId: group.id })
+    await Docmap.patchByExternalId(uri, group.id, {
+      content,
+      manuscriptId: manuscript.id,
+    })
   else
     await Docmap.insert({
       externalId: uri,

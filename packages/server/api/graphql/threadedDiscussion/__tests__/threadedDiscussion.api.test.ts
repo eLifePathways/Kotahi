@@ -96,7 +96,7 @@ const setUp = async ({
 } = {}): Promise<Fixture> => {
   const group = await Group.insert({})
 
-  await Config.query().insert({
+  await Config.insert({
     active: true,
     groupId: group.id,
     formData: { controlPanel: { editorsEditDiscussionPostsEnabled } },
@@ -155,7 +155,7 @@ const insertDiscussion = async (
   const now = new Date().toISOString()
   const threadId = uuid()
 
-  const discussion = await ThreadedDiscussion.query().insertAndFetch({
+  const discussion = await ThreadedDiscussion.insert({
     manuscriptId,
     threads: JSON.stringify([
       {
@@ -189,8 +189,9 @@ const insertDiscussion = async (
 const storedComments = async (
   threadedDiscussionId: string,
 ): Promise<StoredComment[]> => {
-  const discussion =
-    await ThreadedDiscussion.query().findById(threadedDiscussionId)
+  const discussion = await ThreadedDiscussion.findById(threadedDiscussionId, {
+    throwIfNotFound: false,
+  })
 
   return discussion.threads[0].comments
 }
@@ -258,7 +259,9 @@ describe('Threaded discussion API', () => {
 
       expect(errors).toContain('Not Authorised!')
       expect(
-        await ThreadedDiscussion.query().findById(threadedDiscussionId),
+        await ThreadedDiscussion.findById(threadedDiscussionId, {
+          throwIfNotFound: false,
+        }),
       ).toBeUndefined()
     })
 

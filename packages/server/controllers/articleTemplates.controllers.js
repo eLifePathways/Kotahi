@@ -1,13 +1,20 @@
 const { Readable } = require('stream')
 
-const { File, fileStorage } = require('@coko/server')
+const { File, fileStorage, NotFoundError } = require('@coko/server')
 
 const { ArticleTemplate, CmsFileTemplate } = require('../models')
 
 const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 
 const getArticleTemplate = async (groupId, isCms) => {
-  return ArticleTemplate.query().findOne({ groupId, isCms }).throwIfNotFound()
+  const articleTemplate = await ArticleTemplate.findOne({ groupId, isCms })
+
+  if (!articleTemplate)
+    throw new NotFoundError(
+      `Article template not found for group ${groupId} (isCms: ${isCms})`,
+    )
+
+  return articleTemplate
 }
 
 const getTemplateArticle = async articleTemplate => {

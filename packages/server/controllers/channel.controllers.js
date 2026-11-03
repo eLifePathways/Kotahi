@@ -8,12 +8,12 @@ const addUserToManuscriptChatChannel = async (
 ) => {
   return useTransaction(
     async trx => {
-      const manuscript = await Manuscript.query(trx)
-        .findById(manuscriptId)
-        .select('parentId')
+      const firstVersionId = await Manuscript.getFirstVersionId(manuscriptId, {
+        trx,
+      })
 
       const channel = await Channel.findOne({
-        manuscriptId: manuscript.parentId || manuscriptId,
+        manuscriptId: firstVersionId,
         type,
       })
 
@@ -43,11 +43,7 @@ const addUsersToChatChannel = async (channelId, userIds) => {
     lastViewed: new Date(),
   }))
 
-  await ChannelMember.query()
-    .insert(records)
-    .onConflict(['channelId', 'userId'])
-    .merge({ lastViewed: new Date() })
-    .returning('*')
+  await ChannelMember.insertOrUpdateLastViewed(records)
 }
 
 const getChannelMemberByChannel = async (channelId, userId) => {
@@ -55,10 +51,11 @@ const getChannelMemberByChannel = async (channelId, userId) => {
 }
 
 const getSystemWideDiscussionChannel = async groupId => {
-  return Channel.query()
-    .whereNull('manuscriptId')
-    .where({ topic: 'System-wide discussion', groupId })
-    .first()
+  return Channel.findOne({
+    manuscriptId: null,
+    topic: 'System-wide discussion',
+    groupId,
+  })
 }
 
 const removeUserFromManuscriptChatChannel = async (
@@ -67,11 +64,11 @@ const removeUserFromManuscriptChatChannel = async (
 ) => {
   return useTransaction(
     async trx => {
-      await ChannelMember.query(trx).delete().where({ userId }).whereExists(
-        ChannelMember.relatedQuery('channel').where({
-          manuscriptId,
-          type,
-        }),
+      await ChannelMember.deleteForUserInManuscriptChannels(
+        userId,
+        manuscriptId,
+        type,
+        { trx },
       )
     },
     { trx: options.trx },
@@ -79,9 +76,7 @@ const removeUserFromManuscriptChatChannel = async (
 }
 
 const updateChannelLastViewed = async (channelId, userId) => {
-  await ChannelMember.query()
-    .patch({ lastViewed: new Date(), lastAlertTriggeredTime: null })
-    .where({ channelId, userId })
+  await ChannelMember.markViewed(channelId, userId)
 
   return ChannelMember.findOne({ channelId, userId })
 }

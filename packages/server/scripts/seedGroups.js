@@ -51,11 +51,13 @@ const createGroupAndRelatedData = async (
     logger.info(`  Group "${groupName}" already exists in database. Skipping.`)
   } else {
     // Seed group when a new entry is added to INSTANCE_GROUPS
-    group = await Group.query(trx).insertAndFetch({
-      name: groupName,
-      isArchived: false,
-      type: 'Group',
-    })
+    group = await Group.insert(
+      {
+        name: groupName,
+        isArchived: false,
+      },
+      { trx },
+    )
 
     logger.info(`  Added "${group.name}" group to database.`)
   }
@@ -79,11 +81,14 @@ const createGroupAndRelatedData = async (
   )
 
   if (!channelExists) {
-    const channel = await Channel.query(trx).insertAndFetch({
-      topic: 'System-wide discussion',
-      type: 'editorial',
-      groupId: group.id,
-    })
+    const channel = await Channel.insert(
+      {
+        topic: 'System-wide discussion',
+        type: 'editorial',
+        groupId: group.id,
+      },
+      { trx },
+    )
 
     logger.info(`    Added ${channel.topic} for "${group.name}".`)
   } else {
@@ -104,13 +109,16 @@ const createGroupAndRelatedData = async (
   )
 
   if (!userTeamExists) {
-    const userTeam = await Team.query(trx).insertAndFetch({
-      displayName: 'User',
-      role: 'user',
-      global: false,
-      objectId: group.id,
-      objectType: 'group',
-    })
+    const userTeam = await Team.insert(
+      {
+        displayName: 'User',
+        role: 'user',
+        global: false,
+        objectId: group.id,
+        objectType: 'group',
+      },
+      { trx },
+    )
 
     logger.info(`    Added ${userTeam.displayName} team for "${group.name}".`)
   } else {
@@ -131,13 +139,16 @@ const createGroupAndRelatedData = async (
   )
 
   if (!groupAdminTeamExists) {
-    const groupAdminTeam = await Team.query(trx).insertAndFetch({
-      displayName: 'Group Admin',
-      role: 'groupAdmin',
-      global: false,
-      objectId: group.id,
-      objectType: 'group',
-    })
+    const groupAdminTeam = await Team.insert(
+      {
+        displayName: 'Group Admin',
+        role: 'groupAdmin',
+        global: false,
+        objectId: group.id,
+        objectType: 'group',
+      },
+      { trx },
+    )
 
     logger.info(
       `    Added ${groupAdminTeam.displayName} team for "${group.name}".`,
@@ -160,13 +171,16 @@ const createGroupAndRelatedData = async (
   )
 
   if (!groupManagerTeamExists) {
-    const groupManagerTeam = await Team.query(trx).insertAndFetch({
-      displayName: 'Group Manager',
-      role: 'groupManager',
-      global: false,
-      objectId: group.id,
-      objectType: 'group',
-    })
+    const groupManagerTeam = await Team.insert(
+      {
+        displayName: 'Group Manager',
+        role: 'groupManager',
+        global: false,
+        objectId: group.id,
+        objectType: 'group',
+      },
+      { trx },
+    )
 
     logger.info(
       `    Added ${groupManagerTeam.displayName} team for "${group.name}".`,
@@ -206,12 +220,15 @@ const createGroupAndRelatedData = async (
       articleTemplate += defaultTemplateBuffer
     }
 
-    await ArticleTemplate.query(trx).insertGraph({
-      article: articleTemplate,
-      css: cssTemplate,
-      groupId: group.id,
-      isCms: false,
-    })
+    await ArticleTemplate.insert(
+      {
+        article: articleTemplate,
+        css: cssTemplate,
+        groupId: group.id,
+        isCms: false,
+      },
+      { trx },
+    )
 
     logger.info(`Added default group template for "${group.name}".`)
   } else {
@@ -230,12 +247,15 @@ const createGroupAndRelatedData = async (
   )
 
   if (existingCmsArticleTemplate.length === 0) {
-    await ArticleTemplate.query(trx).insertGraph({
-      article: '',
-      css: '',
-      groupId: group.id,
-      isCms: true,
-    })
+    await ArticleTemplate.insert(
+      {
+        article: '',
+        css: '',
+        groupId: group.id,
+        isCms: true,
+      },
+      { trx },
+    )
   }
 
   // Seed email templates and link it to the created group
@@ -260,8 +280,10 @@ const createGroupAndRelatedData = async (
     }))
 
     // Insert default email templates into the database for group
-    const insertedEmailTemplates =
-      await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
+    const insertedEmailTemplates = await EmailTemplate.insert(
+      emailTemplatesData,
+      { trx },
+    )
 
     logger.info(
       `    Added ${insertedEmailTemplates.length} number of default email templates for "${group.name}".`,
@@ -306,14 +328,13 @@ const createGroupAndRelatedData = async (
 
   // TODO: below @mention notification addition can be moved to default templates and should be done via migration for clean code
   // Check if an email template for @mention notification already exists
-  const existingEmailTemplateForMentionNotification = await EmailTemplate.query(
-    trx,
-  )
-    .where({
-      group_id: group.id,
-      email_template_type: 'systemEmail',
-    })
-    .andWhereRaw("email_content->>'description' = '@mention notification'")
+  const existingEmailTemplateForMentionNotification =
+    await EmailTemplate.findByDescription(
+      group.id,
+      'systemEmail',
+      '@mention notification',
+      { trx },
+    )
 
   if (existingEmailTemplateForMentionNotification.length === 0) {
     const emailTemplatesData = {
@@ -332,7 +353,7 @@ const createGroupAndRelatedData = async (
       groupId: group.id,
     }
 
-    await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
+    await EmailTemplate.insert(emailTemplatesData, { trx })
 
     logger.info(
       `    Added @mention notification email template for "${group.name}".`,
@@ -345,10 +366,12 @@ const createGroupAndRelatedData = async (
 
   // update the 'emailTemplateType' value to 'taskNotification' for the task notification email template.
   try {
-    await EmailTemplate.query(trx)
-      .patch({ emailTemplateType: 'taskNotification' })
-      .where({ group_id: group.id })
-      .andWhereRaw("email_content->>'subject' = 'Kotahi | Task notification'")
+    await EmailTemplate.patchBySubject(
+      group.id,
+      'Kotahi | Task notification',
+      { emailTemplateType: 'taskNotification' },
+      { trx },
+    )
 
     logger.info(
       `Updated email_template_type for the task notification email template.`,

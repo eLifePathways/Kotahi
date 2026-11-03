@@ -16,9 +16,9 @@ const createMessage = async (content, channelId, userId) => {
     channelId,
   })
 
-  const message = await Message.query()
-    .findById(savedMessage.id)
-    .withGraphJoined('[user, channel]')
+  const message = await Message.findById(savedMessage.id, {
+    related: '[user, channel]',
+  })
 
   // using Set() to avoid having duplicate user ids
   const taggedUserIds = new Set()
@@ -32,11 +32,10 @@ const createMessage = async (content, channelId, userId) => {
     taggedUserIds.add(taggedUserId)
   }
 
-  const channelMembers = await ChannelMember.query()
-    .where({
-      channelId: message.channelId,
-    })
-    .whereNot({ userId: message.userId })
+  const channelMembers = await ChannelMember.findInChannelExcludingUser(
+    message.channelId,
+    message.userId,
+  )
 
   await addUsersToChatChannel(channelId, [...taggedUserIds, userId])
 
@@ -73,50 +72,41 @@ const deleteMessage = async messageId => {
 
 const getMessageById = async (messageId, withUser) => {
   if (withUser) {
-    return Message.query()
-      .findById(messageId)
-      .withGraphJoined('user.[defaultIdentity]')
+    return Message.findById(messageId, {
+      related: 'user.[defaultIdentity]',
+      throwIfNotFound: false,
+    })
   }
 
   return Message.findById(messageId)
 }
 
 const getMessages = async (channelId, first, before, userId) => {
-  let messagesQuery = Message.query()
-    .where({ channelId })
-    .withGraphJoined('user')
-    .limit(first)
-    .orderBy('messages.created', 'desc')
+  const firstMessage = before ? await Message.findById(before) : null
 
-  if (before) {
-    const firstMessage = await Message.findById(before)
-    messagesQuery = messagesQuery.where(
-      'messages.created',
-      '<',
-      firstMessage.created,
-    )
-  }
+  const { messages: newestFirst, totalCount: total } =
+    await Message.findPageInChannel(channelId, {
+      first,
+      createdBefore: firstMessage?.created,
+    })
 
-  const messages = (await messagesQuery).reverse()
-  const total = await messagesQuery.resultSize()
+  const messages = newestFirst.reverse()
 
   const channelMember = await getChannelMemberByChannel(channelId, userId)
 
-  let unreadMessagesCount = [{ count: 0 }]
+  let unreadCount = 0
   let firstUnreadMessage = null
 
   if (channelMember) {
-    unreadMessagesCount = await Message.query()
-      .where({ channelId })
-      .where('created', '>', channelMember.lastViewed)
-      .count()
+    unreadCount = await Message.countCreatedAfter(
+      channelId,
+      channelMember.lastViewed,
+    )
 
-    firstUnreadMessage = await Message.query()
-      .select('id')
-      .where({ channelId })
-      .where('created', '>', channelMember.lastViewed)
-      .orderBy('created', 'asc')
-      .first()
+    firstUnreadMessage = await Message.findFirstCreatedAfter(
+      channelId,
+      channelMember.lastViewed,
+    )
   }
 
   return {
@@ -125,13 +115,13 @@ const getMessages = async (channelId, first, before, userId) => {
       startCursor: messages[0] && messages[0].id,
       hasPreviousPage: total > first,
     },
-    unreadMessagesCount: unreadMessagesCount[0].count,
+    unreadMessagesCount: unreadCount,
     firstUnreadMessageId: firstUnreadMessage?.id,
   }
 }
 
 const updateMessage = async (messageId, content) => {
-  return Message.query().patchAndFetchById(messageId, { content })
+  return Message.patchAndFetchById(messageId, { content })
 }
 
 // Calculates the total number of unread  messages count from more then one channels for the current user.
@@ -140,12 +130,7 @@ const unreadMessagesCount = async (channelIds, userId) => {
     const channelMember = await getChannelMemberByChannel(channelId, userId)
 
     if (channelMember) {
-      const count = await Message.query()
-        .where({ channelId })
-        .where('created', '>', channelMember.lastViewed)
-        .count()
-
-      return parseInt(count[0].count, 10)
+      return Message.countCreatedAfter(channelId, channelMember.lastViewed)
     }
 
     return 0

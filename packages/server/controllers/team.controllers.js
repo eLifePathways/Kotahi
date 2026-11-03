@@ -68,20 +68,16 @@ const updateTeam = async (id, input, groupId) => {
 
         await updateAlertsUponTeamUpdate(objectId, added, removed, { trx })
 
-        const channels = await Manuscript.relatedQuery('channels', trx).for(
-          objectId,
-        )
+        const channels = await Manuscript.getChannels(objectId, { trx })
 
         await Promise.all(
           removed.map(async userId => {
             // Check if the user has any messages in the channels before removing them from the channelMember
-            const hasPostedToChannel = await Message.query(trx)
-              .where({ userId })
-              .whereIn(
-                'channelId',
-                channels.map(channel => channel.id),
-              )
-              .first()
+            const hasPostedToChannel = await Message.hasUserPostedInChannels(
+              userId,
+              channels.map(channel => channel.id),
+              { trx },
+            )
 
             if (!hasPostedToChannel) {
               await removeUserFromManuscriptChatChannel(
@@ -93,10 +89,11 @@ const updateTeam = async (id, input, groupId) => {
                 { trx },
               )
               const pathStrings = channels.map(channel => `chat/${channel.id}`)
-              await NotificationDigest.query(trx)
-                .delete()
-                .where({ user_id: userId })
-                .whereIn('path_string', pathStrings)
+              await NotificationDigest.deleteForUserAndPaths(
+                userId,
+                pathStrings,
+                { trx },
+              )
             }
           }),
         )
@@ -195,7 +192,7 @@ const updateTeam = async (id, input, groupId) => {
 
 const updateTeamMember = async (id, input) => {
   // somehow updateandfetchbyid was not working here when changing the isShared field, not sure why
-  await TeamMember.query().where({ id }).patch(JSON.parse(input))
+  await TeamMember.patchById(id, JSON.parse(input), { throwIfNotFound: false })
   return TeamMember.findById(id, { throwIfNotFound: false })
 }
 
@@ -205,9 +202,10 @@ const updateCollaborativeTeamMembers = async (manuscriptId, input) => {
     role: 'collaborativeReviewer',
   })
 
-  await TeamMember.query()
-    .where({ teamId: collaborativeReviewerTeam.id })
-    .update(JSON.parse(input))
+  await TeamMember.patchByTeamId(
+    collaborativeReviewerTeam.id,
+    JSON.parse(input),
+  )
 
   return (
     await TeamMember.find({
@@ -217,7 +215,7 @@ const updateCollaborativeTeamMembers = async (manuscriptId, input) => {
 }
 
 const userTeams = async userId => {
-  return User.relatedQuery('teams').for(userId)
+  return User.getTeams(userId)
 }
 
 module.exports = {

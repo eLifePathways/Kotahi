@@ -66,6 +66,19 @@ class Review extends BaseModel {
     }
   }
 
+  static async upsertAndFetch(data, options = {}) {
+    return Review.query(options.trx).upsertGraphAndFetch(data, {
+      insertMissing: true,
+    })
+  }
+
+  static async findLatestNonDecisionReview(manuscriptId, options = {}) {
+    return Review.query(options.trx)
+      .findOne({ manuscriptId, is_decision: false })
+      .orderBy('updated', 'desc')
+      .first()
+  }
+
   /** Users of each review, in the same order as the reviews: the manuscript's
    * collaborative reviewer team for a collaborative review, otherwise the
    * review's own user. Missing users or teams give an empty array. */

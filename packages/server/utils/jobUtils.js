@@ -122,25 +122,8 @@ const getJobs = async (activeConfig, groupId) => {
 
 const sendAutomatedNotifications = async groupId => {
   try {
-    const upcomingNotificationDigest = await NotificationDigest.query()
-      .select('maxNotificationTime')
-      .from(
-        NotificationDigest.query()
-          .distinctOn(['userId', 'pathString'])
-          .where({ groupId })
-          .orderBy([
-            'userId',
-            'pathString',
-            { column: 'maxNotificationTime', order: 'asc' },
-          ])
-          .as('subquery'),
-      )
-      .where({ actioned: false })
-      .orderBy('maxNotificationTime', 'asc')
-      .first()
-
     const upcomingNotificationTime =
-      upcomingNotificationDigest?.maxNotificationTime
+      await NotificationDigest.getUpcomingNotificationTime(groupId)
 
     if (!upcomingNotificationTime) {
       // console.info('No upcoming notifications found.')

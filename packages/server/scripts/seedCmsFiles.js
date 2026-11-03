@@ -32,14 +32,15 @@ const readDirectoryRecursively = async (directoryPath, parentId, callBack) => {
 
 const seed = async (group, { trx }) => {
   const insertResource = async (name, parentId, rootFolder, isDirectory) => {
-    const insertedResource = await CMSFileTemplate.query(trx)
-      .insertGraph({
+    const insertedResource = await CMSFileTemplate.insert(
+      {
         name: path.basename(name),
         parentId,
         groupId: group.id,
         rootFolder, // set default true for the root of the group folder
-      })
-      .returning('id')
+      },
+      { trx },
+    )
 
     if (!isDirectory) {
       const insertedFile = await createFile(
@@ -52,9 +53,11 @@ const seed = async (group, { trx }) => {
         },
       )
 
-      await CMSFileTemplate.query(trx)
-        .update({ fileId: insertedFile.id })
-        .where({ id: insertedResource.id })
+      await CMSFileTemplate.patchById(
+        insertedResource.id,
+        { fileId: insertedFile.id },
+        { trx },
+      )
     }
 
     return insertedResource.id

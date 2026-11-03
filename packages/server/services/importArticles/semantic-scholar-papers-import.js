@@ -252,11 +252,9 @@ const getData = async (groupId, ctx) => {
       )
 
       if (lastImportDate > 0) {
-        await ArticleImportHistory.query()
-          .update({
-            date: new Date().toISOString(),
-          })
-          .where({ sourceId, groupId })
+        await ArticleImportHistory.patchBySourceAndGroup(sourceId, groupId, {
+          date: new Date().toISOString(),
+        })
       } else {
         await ArticleImportHistory.insert({
           date: new Date().toISOString(),

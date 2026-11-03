@@ -435,7 +435,8 @@ const seedConfig = async (group, instanceName, index, options) => {
   let createdConfig = null
 
   if (!configExists) {
-    createdConfig = await Config.query(trx).insertAndFetch(config)
+    const insertedConfig = await Config.insert(config, { trx })
+    createdConfig = await Config.findById(insertedConfig.id, { trx })
     console.log(
       `    Added "${createdConfig.formData.instanceName}" instance type config to database for "${group.name}" group.`,
     )

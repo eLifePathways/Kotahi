@@ -4,7 +4,8 @@ const { mergeWith } = require('lodash')
 const { Form } = require('../models')
 
 const createForm = async form => {
-  return Form.query().insertAndFetch(form)
+  const insertedForm = await Form.insert(form)
+  return Form.findById(insertedForm.id)
 }
 
 const deleteForm = async formId => {
@@ -51,10 +52,7 @@ const formForPurposeAndCategory = async (purpose, category, groupId) => {
 }
 
 const getActiveForms = async groupId => {
-  const forms = await Form.query()
-    .where({ category: 'submission', purpose: 'submit', groupId })
-    .orWhere({ category: 'review', purpose: 'review', groupId })
-    .orWhere({ category: 'decision', purpose: 'decision', groupId })
+  const forms = await Form.findActiveInGroup(groupId)
 
   return {
     submissionForm: forms.find(f => f.purpose === 'submit'),
@@ -116,11 +114,11 @@ const updateForm = async form => {
 
   if (thisFormIsActive) {
     // Ensure all other forms in this category are inactive
-    await Form.query()
-      .patch({ purpose: 'other' })
-      .whereNot({ purpose: 'other' })
-      .where({ category: result.category, groupId: result.groupId })
-      .whereNot({ id: result.id })
+    await Form.deactivateOthersInCategory(
+      result.category,
+      result.groupId,
+      result.id,
+    )
   }
 
   return result

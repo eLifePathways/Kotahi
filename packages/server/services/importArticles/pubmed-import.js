@@ -78,12 +78,10 @@ const getData = async (groupId, ctx) => {
     })
   ).result
 
-  const lastImportDate = await ArticleImportHistory.query()
-    .select('date')
-    .where({
-      sourceId: pubmedImportSourceId.id,
-      groupId,
-    })
+  const { result: lastImportDate } = await ArticleImportHistory.find({
+    sourceId: pubmedImportSourceId.id,
+    groupId,
+  })
 
   const minDate = lastImportDate.length
     ? new Date(lastImportDate[0].date)
@@ -410,14 +408,11 @@ const getData = async (groupId, ctx) => {
   )
 
   if (lastImportDate.length) {
-    await ArticleImportHistory.query()
-      .update({
-        date: new Date().toISOString(),
-      })
-      .where({
-        date: lastImportDate[0].date,
-        groupId,
-      })
+    await ArticleImportHistory.patchByDateAndGroup(
+      lastImportDate[0].date,
+      groupId,
+      { date: new Date().toISOString() },
+    )
   } else {
     await ArticleImportHistory.insert({
       date: new Date().toISOString(),

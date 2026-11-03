@@ -1,6 +1,6 @@
 const isEmpty = require('lodash/isEmpty')
 
-const { File } = require('@coko/server')
+const { File, NotFoundError } = require('@coko/server')
 
 const {
   Form,
@@ -92,7 +92,7 @@ const getDecisionForm = async (groupId, options = {}) =>
 const getForm = async (categoryAndPurpose, options = {}) => {
   const { trx } = options
 
-  const form = await Form.query(trx).where(categoryAndPurpose)
+  const { result: form } = await Form.find(categoryAndPurpose, { trx })
 
   if (!form || !form.length)
     throw new Error(`No form found for "${categoryAndPurpose.purpose}"`)
@@ -113,34 +113,23 @@ const isReviewSharedWithCurrentUser = async (review, userId) => {
   )
     return !!review.isSharedWithCurrentUser
 
-  const sharedMembers = await Team.relatedQuery('members')
-    .for(
-      Team.query().where({
-        role: 'reviewer',
-        objectId: review.manuscriptId,
-      }),
-    )
-    .where({ isShared: true })
-    .where(builder =>
-      builder.where({ status: 'completed' }).orWhere({ userId }),
-    )
+  const sharedMembers = await Team.findSharedReviewerMembers(
+    review.manuscriptId,
+    userId,
+  )
 
   if (sharedMembers.some(m => m.userId === userId)) return true
   return false
 }
 
 const lockUnlockCollaborativeReview = async id => {
-  const review = await Review.query()
-    .findOne({
-      id,
-      isCollaborative: true,
-    })
-    .throwIfNotFound()
+  const review = await Review.findOne({ id, isCollaborative: true })
 
-  const updatedReview = await Review.query()
-    .patch({ isLock: !review.isLock })
-    .findOne({ id })
-    .returning('*')
+  if (!review) throw new NotFoundError(`Collaborative review ${id} not found`)
+
+  const updatedReview = await Review.patchAndFetchById(id, {
+    isLock: !review.isLock,
+  })
 
   const team = await Team.findOne({
     role: 'collaborativeReviewer',
@@ -149,12 +138,7 @@ const lockUnlockCollaborativeReview = async id => {
   })
 
   const status = updatedReview.isLock ? 'closed' : 'inProgress'
-  await TeamMember.query()
-    .patch({ status })
-    .where({ teamId: team.id })
-    .andWhere(builder => {
-      builder.whereIn('status', ['closed', 'inProgress'])
-    })
+  await TeamMember.patchStatusByTeam(team.id, ['closed', 'inProgress'], status)
 
   const manuscript = await Manuscript.findById(updatedReview.manuscriptId)
 
@@ -193,13 +177,13 @@ const updateReview = async (id, input, userId) => {
   const existingReview =
     (await Review.findById(id, { throwIfNotFound: false })) || {}
 
-  const manuscript = await Manuscript.query()
-    .findById(existingReview.manuscriptId || input.manuscriptId)
-    .select('groupId')
+  const groupId = await Manuscript.getGroupId(
+    existingReview.manuscriptId || input.manuscriptId,
+  )
 
   const form = existingReview.isDecision
-    ? await getDecisionForm(manuscript.groupId)
-    : await getReviewForm(manuscript.groupId)
+    ? await getDecisionForm(groupId)
+    : await getReviewForm(groupId)
 
   const roles = await getUserRolesInManuscript(
     existingReview.userId || userId,
@@ -232,14 +216,11 @@ const updateReview = async (id, input, userId) => {
   mergedReview.isHiddenFromAuthor = !!mergedReview.isHiddenFromAuthor
   mergedReview.isHiddenReviewerName = !!mergedReview.isHiddenReviewerName
 
-  const review = await Review.query().upsertGraphAndFetch(
-    {
-      id,
-      ...mergedReview,
-      jsonData: JSON.stringify(mergedReview.jsonData),
-    },
-    { insertMissing: true },
-  )
+  const review = await Review.upsertAndFetch({
+    id,
+    ...mergedReview,
+    jsonData: JSON.stringify(mergedReview.jsonData),
+  })
 
   // We want to modify file URIs before return, so we'll use the parsed jsonData
   review.jsonData = mergedReview.jsonData
@@ -277,17 +258,10 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
     related: '[submitter.defaultIdentity, channels.members]',
   })
 
-  const teams = await manuscript
-    .$relatedQuery('teams')
-    .whereIn('role', ['reviewer', 'collaborativeReviewer'])
-
-  const member = await TeamMember.query()
-    .whereIn(
-      'teamId',
-      teams.map(t => t.id),
-    )
-    .andWhere({ userId })
-    .first()
+  const member = await TeamMember.findReviewerMemberOnManuscript(
+    userId,
+    manuscript.id,
+  )
 
   if (status === 'completed') {
     seekEvent(`review-completed`, {

@@ -9,6 +9,12 @@ declare class Config extends BaseModel {
     groupId: string,
     options?: { trx?: unknown },
   ): Promise<Config | undefined>
+
+  static patchByGroupId(
+    groupId: string,
+    data: Partial<Config>,
+    options?: { trx?: unknown },
+  ): Promise<number>
 }
 
 export = Config

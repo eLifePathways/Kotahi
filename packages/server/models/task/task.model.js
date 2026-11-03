@@ -65,6 +65,36 @@ class Task extends BaseModel {
     }
   }
 
+  static async unassignUser(userId, groupId, options = {}) {
+    return Task.query(options.trx)
+      .patch({ assigneeUserId: null, assigneeType: null })
+      .where({ assigneeUserId: userId, groupId })
+  }
+
+  static async findInProgressDueBetween(groupId, from, to, options = {}) {
+    return Task.query(options.trx)
+      .whereNotNull('dueDate')
+      .where('dueDate', '<', to)
+      .where('dueDate', '>=', from)
+      .where({ status: 'In progress', groupId })
+  }
+
+  static async countByManuscript(manuscriptId, groupId, options = {}) {
+    return Task.query(options.trx).where({ manuscriptId, groupId }).resultSize()
+  }
+
+  static async upsert(data, options = {}) {
+    const { trx, related } = options
+
+    const query = Task.query(trx)
+      .insert(data)
+      .onConflict('id')
+      .merge()
+      .returning('*')
+
+    return related ? query.withGraphFetched(related) : query
+  }
+
   static async findTemplates(groupId, options = {}) {
     return Task.query(options.trx)
       .whereNull('manuscriptId')

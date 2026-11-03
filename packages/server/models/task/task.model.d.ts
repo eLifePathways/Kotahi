@@ -21,6 +21,26 @@ declare class Task extends BaseModel {
     status?: string | null,
     options?: { trx?: Transaction },
   ): Promise<TaskEmailNotification[]>
+  static unassignUser(
+    userId: string,
+    groupId: string,
+    options?: { trx?: Transaction },
+  ): Promise<number>
+  static findInProgressDueBetween(
+    groupId: string,
+    from: Date,
+    to: Date,
+    options?: { trx?: Transaction },
+  ): Promise<Task[]>
+  static countByManuscript(
+    manuscriptId: string,
+    groupId: string,
+    options?: { trx?: Transaction },
+  ): Promise<number>
+  static upsert(
+    data: Partial<Task>,
+    options?: { trx?: Transaction; related?: string },
+  ): Promise<Task>
   static findTemplates(
     groupId: string,
     options?: { trx?: Transaction },

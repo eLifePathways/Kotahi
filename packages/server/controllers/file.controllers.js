@@ -25,9 +25,9 @@ const createFileFn = async (file, meta) => {
 
     const element = formsElements.find(el => el.id === meta.formElementId)
 
-    const manuscript = await Manuscript.query()
-      .findById(meta.manuscriptId)
-      .select('parentId', 'shortId')
+    const manuscript = await Manuscript.findById(meta.manuscriptId, {
+      throwIfNotFound: false,
+    })
 
     if (element.isS3Component) {
       if (element.uploadAttachmentSource === 'external') {
@@ -114,9 +114,9 @@ const getEntityFiles = async input => {
       return { column: key, order }
     })
 
-    files = await File.query()
-      .where({ objectId: entityId })
-      .orderBy(orderByParams)
+    files = (
+      await File.find({ objectId: entityId }, { orderBy: orderByParams })
+    ).result
   } else {
     files = (await File.find({ objectId: entityId })).result
   }
@@ -124,9 +124,9 @@ const getEntityFiles = async input => {
   const imageFiles = files.filter(file => file.tags.includes('manuscriptImage'))
 
   if (includeInUse) {
-    const manuscript = await Manuscript.query()
-      .findById(entityId)
-      .select('id', 'meta')
+    const manuscript = await Manuscript.findById(entityId, {
+      throwIfNotFound: false,
+    })
 
     if (manuscript) {
       imageFiles.forEach(file => {
@@ -149,7 +149,7 @@ const getEntityFiles = async input => {
 }
 
 const getSpecificFiles = async ids => {
-  const files = await File.query().whereIn('id', ids)
+  const files = await File.findByIds(ids, { throwIfNotFound: false })
 
   const data = await getFilesWithUrl(files)
   return data
@@ -161,9 +161,8 @@ const getFilesByTagOrId = async input => {
   let files = []
 
   if (tag) {
-    files = await File.query()
-      .where({ objectId })
-      .andWhere('tags', '@>', JSON.stringify([tag]))
+    const { result: objectFiles } = await File.find({ objectId })
+    files = objectFiles.filter(file => file.tags.includes(tag))
   }
 
   if (id) {
@@ -177,12 +176,7 @@ const getFilesByTagOrId = async input => {
 const updateFile = async input => {
   const { id, name, alt } = input
 
-  const updatedFile = await File.query().patchAndFetchById(id, {
-    name,
-    alt,
-  })
-
-  return updatedFile
+  return File.patchAndFetchById(id, { name, alt })
 }
 
 const updateTagsFile = async input => {
