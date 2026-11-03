@@ -230,7 +230,7 @@ describe('COAR Notify inbox API', () => {
   }
 
   const manuscriptsWithDoi = async (): Promise<Manuscript[]> =>
-    Manuscript.query().where({ doi: DOI, groupId: group.id })
+    (await Manuscript.find({ doi: DOI, groupId: group.id })).result
 
   beforeAll(async () => {
     await config.init()
@@ -351,7 +351,7 @@ describe('COAR Notify inbox API', () => {
 
       await post(offer, { authorization: 'Bearer wrong-token' })
 
-      const stored = await CoarNotification.query().where({
+      const { result: stored } = await CoarNotification.find({
         groupId: group.id,
       })
 
@@ -394,9 +394,11 @@ describe('COAR Notify inbox API', () => {
         ['Turing', ['Institute Without ROR']],
       ])
 
-      const notification = await CoarNotification.query()
-        .whereRaw(`payload->>'id' = ?`, [offer.id])
-        .first()
+      const { result: notifications } = await CoarNotification.find({
+        groupId: group.id,
+      })
+
+      const notification = notifications.find(n => n.payload.id === offer.id)
 
       expect(notification?.manuscriptId).toBe(manuscript.id)
       expect(sentToOrigin).toHaveLength(0)
@@ -424,7 +426,7 @@ describe('COAR Notify inbox API', () => {
     })
 
     it('rejects an offer for a manuscript that already exists without one', async () => {
-      await Manuscript.query().insert({
+      await Manuscript.insert({
         doi: DOI,
         groupId: group.id,
         status: 'new',

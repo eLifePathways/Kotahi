@@ -105,11 +105,11 @@ const kotahiPlugin = {
         'CallExpression[callee.property.name=/^(query|relatedQuery|knex|bindKnex)$|^\\$/]',
         'CallExpression[callee.property.name=/^(where|andWhere|orWhere|whereIn|whereNotIn|whereNot|whereNull|whereNotNull|whereRaw|whereExists|whereJsonSupersetOf|orderBy|groupBy|having|first|resultSize|forUpdate|forShare|returning|patchAndFetch|joinRelated|leftJoinRelated|innerJoin|leftJoin|withGraphFetched|withGraphJoined|modify|upsertGraph|upsertGraphAndFetch|insertGraph|insertGraphAndFetch|raw)$/]',
         'CallExpression[callee.name=/^(db|knex|trx)$/]',
-        "CallExpression[callee.object.name=/^(knex|trx)$/], CallExpression[callee.object.name='db']:not([callee.property.name='init'])",
+        "CallExpression[callee.object.name=/^(knex|trx)$/], CallExpression[callee.object.name='db']:not([callee.property.name=/^(init|destroy)$/])",
         {
           selector:
-            "CallExpression[callee.object.name='db'][callee.property.name='init']",
-          allowedBy: 'allowDbInit',
+            "CallExpression[callee.object.name='db'][callee.property.name=/^(init|destroy)$/]",
+          allowedBy: 'allowDbLifecycle',
         },
       ],
     }),
@@ -133,7 +133,7 @@ config.push(
     ignores: ['packages/server/models/**'],
     rules: {
       'kotahi/no-objection-imports': ['warn', { allowDb: true }],
-      'kotahi/no-query-builder-calls': ['warn', { allowDbInit: true }],
+      'kotahi/no-query-builder-calls': ['warn', { allowDbLifecycle: true }],
     },
   },
 )
