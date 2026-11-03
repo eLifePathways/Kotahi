@@ -79,7 +79,15 @@ const updateTeam = async (id, input, groupId) => {
               { trx },
             )
 
-            if (!hasPostedToChannel) {
+            // Editors share the manuscript chat, so only remove the user once they're in no editor team
+            const isStillEditor = await Team.isUserInRolesForObject(
+              userId,
+              objectId,
+              EDITOR_ROLES,
+              { trx, excludeTeamId: id },
+            )
+
+            if (!hasPostedToChannel && !isStillEditor) {
               await removeUserFromManuscriptChatChannel(
                 { manuscriptId: objectId, userId, type: 'all' },
                 { trx },
@@ -153,9 +161,7 @@ const updateTeam = async (id, input, groupId) => {
     }
 
     if (membersAdded.length) {
-      if (role === 'handlingEditor') {
-        await sendTentativeAcceptCoarNotification(manuscript, membersAdded)
-      }
+      await sendTentativeAcceptCoarNotification(manuscript, membersAdded)
 
       seekEvent('team-editor-assigned', eventData)
 

@@ -12,22 +12,31 @@ const addUserToManuscriptChatChannel = async (
         trx,
       })
 
-      const channel = await Channel.findOne({
-        manuscriptId: firstVersionId,
-        type,
-      })
+      const channel = await Channel.findOne(
+        {
+          manuscriptId: firstVersionId,
+          type,
+        },
+        { trx },
+      )
 
-      const channelMember = await ChannelMember.findOne({
-        channelId: channel.id,
-        userId,
-      })
-
-      if (!channelMember) {
-        await ChannelMember.insert({
+      const channelMember = await ChannelMember.findOne(
+        {
           channelId: channel.id,
           userId,
-          lastViewed: new Date(),
-        })
+        },
+        { trx },
+      )
+
+      if (!channelMember) {
+        await ChannelMember.insert(
+          {
+            channelId: channel.id,
+            userId,
+            lastViewed: new Date(),
+          },
+          { trx },
+        )
       }
     },
     { trx: options.trx },

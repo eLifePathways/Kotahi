@@ -254,8 +254,9 @@ const getUsers = async groupId => {
   return User.findUsersInGroup(groupId)
 }
 
+// Users may have been deleted since, so callers handle missing ones
 const getUsersById = async (userIds, options = {}) =>
-  User.findByIds(userIds, { throwIfNotFound: false, ...options })
+  User.findByIds(userIds, { ...options, throwIfNotFound: false })
 
 const isUserOnline = async user => {
   const currentDateTime = new Date()

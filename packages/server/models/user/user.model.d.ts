@@ -36,6 +36,7 @@ declare class User extends BaseModel {
   static findOneWithIdentity(
     userId: string,
     identityType: string,
+    options?: Options,
   ): Promise<User | undefined>
   static getTeams(userId: string, options?: Options): Promise<Team[]>
   static getObjectIdsWithRoles(
