@@ -8,9 +8,7 @@ const eventsToTemplatesInConfig = async (config, groupId, trx) => {
   const { eventNotification } = config.formData
 
   const findTemplateByType = async type =>
-    EmailTemplate.query(trx)
-      .where({ emailTemplateType: type, groupId })
-      .first() ?? {}
+    EmailTemplate.findOne({ emailTemplateType: type, groupId }, { trx }) ?? {}
 
   const {
     mentionNotificationTemplate,
@@ -46,9 +44,10 @@ const eventsToTemplatesInConfig = async (config, groupId, trx) => {
       if (!emailTemplateId) {
         delete eventsToTemplates[event]
       } else {
-        const template = await EmailTemplate.query(trx)
-          .where({ id: emailTemplateId, groupId })
-          .first()
+        const template = await EmailTemplate.findOne(
+          { id: emailTemplateId, groupId },
+          { trx },
+        )
 
         if (!template) {
           delete eventsToTemplates[event]

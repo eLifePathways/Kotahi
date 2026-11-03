@@ -17,6 +17,12 @@ declare class Config extends BaseModel {
     options?: { trx?: unknown },
   ): Promise<Config | undefined>
 
+  static patchByGroupId(
+    groupId: string,
+    data: Partial<Config>,
+    options?: Options,
+  ): Promise<number>
+
   static getCached(
     groupId: string,
     options?: Options,

@@ -9,7 +9,7 @@ const notificationOption = async (userId, groupId, path) => {
 
   const objectId = tryGetObjectIdFromPath(path)
 
-  return NotificationUserOption.query().findOne({
+  return NotificationUserOption.findOne({
     userId,
     path: `{${path.join(',')}}`,
     groupId,
@@ -21,11 +21,7 @@ const reportUserIsActive = async (path, userId) => {
   if (path) {
     const pathString = path.join('/')
 
-    await NotificationDigest.query().delete().where({
-      userId,
-      pathString,
-      actioned: false,
-    })
+    await NotificationDigest.deleteUnactionedForPath(userId, pathString)
   }
 }
 
@@ -57,20 +53,21 @@ const updateNotificationOption = async (userId, groupId, path, option) => {
   const objectId = tryGetObjectIdFromPath(path)
 
   // Find the existing record based on userId, path, and groupId
-  const existingOption = await NotificationUserOption.query()
-    .where({ userId, groupId })
-    .whereRaw('path = ?', `{${path.join(',')}}`)
-    .first()
+  const existingOption = await NotificationUserOption.findOne({
+    userId,
+    groupId,
+    path: `{${path.join(',')}}`,
+  })
 
   if (existingOption) {
-    return NotificationUserOption.query().patchAndFetchById(existingOption.id, {
+    return NotificationUserOption.patchAndFetchById(existingOption.id, {
       option,
     })
   }
 
   // If no existing record, create a new one
 
-  return await NotificationUserOption.query().insert({
+  return await NotificationUserOption.insert({
     userId,
     path,
     groupId,

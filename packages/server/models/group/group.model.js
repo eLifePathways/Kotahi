@@ -67,6 +67,14 @@ class Group extends BaseModel {
       },
     }
   }
+
+  static async findByNamePrefix(prefix, options = {}) {
+    return Group.query(options.trx).where('name', 'like', `${prefix}%`)
+  }
+
+  static async archiveByIds(ids, options = {}) {
+    return Group.query(options.trx).findByIds(ids).patch({ isArchived: true })
+  }
 }
 
 Group.type = 'Group'

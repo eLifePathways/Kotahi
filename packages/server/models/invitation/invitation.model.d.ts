@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 type SuggestedReviewer = {
   firstName: string | null
@@ -22,6 +22,24 @@ declare class Invitation extends BaseModel {
   suggestedReviewers: SuggestedReviewer[]
   userId: string | null
   isShared: boolean
+
+  static deleteByUserId(
+    userId: string,
+    options?: { trx?: Transaction },
+  ): Promise<number>
+  static findNotAcceptedForManuscript(
+    manuscriptId: string,
+    options?: { trx?: Transaction },
+  ): Promise<Invitation[]>
+  static patchIfUnanswered(
+    id: string,
+    data: Partial<Invitation>,
+    options?: { trx?: Transaction },
+  ): Promise<Invitation | undefined>
+  static clearSender(
+    senderId: string,
+    options?: { trx?: Transaction },
+  ): Promise<number>
 }
 
 export = Invitation

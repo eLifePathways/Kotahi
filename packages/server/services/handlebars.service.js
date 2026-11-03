@@ -1,6 +1,6 @@
 const Handlebars = require('handlebars')
-const { clientUrl, Team, logger } = require('@coko/server')
-const { Group } = require('../models')
+const { clientUrl, logger } = require('@coko/server')
+const { Group, Team } = require('../models')
 const { transformEntries } = require('../utils/objectUtils')
 
 const HANDLEBARS_NON_FORM_VARIABLES = [
@@ -52,10 +52,12 @@ const getEditorsData = async manuscriptId => {
   if (manuscriptId) {
     const editorRoles = ['editor', 'handlingEditor', 'seniorEditor']
 
-    const editorTeams = await Team.query()
-      .where({ objectId: manuscriptId })
-      .whereIn('role', editorRoles)
-      .withGraphFetched('members.user')
+    const { result: teams } = await Team.find(
+      { objectId: manuscriptId },
+      { related: 'members.user' },
+    )
+
+    const editorTeams = teams.filter(t => editorRoles.includes(t.role))
 
     editorRoles.forEach(role => {
       const team = editorTeams.find(t => t.role === role)
@@ -150,7 +152,7 @@ const processData = async (data, groupId) => {
   } = data
 
   const { submission } = manuscript || {}
-  const group = await Group.query().findById(groupId)
+  const group = await Group.findById(groupId)
   const appUrl = `${clientUrl}/${group.name}`
 
   const manuscriptLink = await getManuscriptLink(

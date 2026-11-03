@@ -47,6 +47,25 @@ class TaskEmailNotification extends BaseModel {
     }
   }
 
+  static async deleteByRecipientAndTask(recipientUserId, taskId, options = {}) {
+    return TaskEmailNotification.query(options.trx)
+      .delete()
+      .where({ recipientUserId, taskId })
+  }
+
+  static async deleteByEmailTemplateId(emailTemplateId, options = {}) {
+    return TaskEmailNotification.query(options.trx)
+      .delete()
+      .where('email_template_id', emailTemplateId)
+  }
+
+  static async upsertAndFetch(data, options = {}) {
+    return TaskEmailNotification.query(options.trx).upsertGraphAndFetch(data, {
+      relate: true,
+      insertMissing: true,
+    })
+  }
+
   static async findByTaskId(taskId, options = {}) {
     return TaskEmailNotification.query(options.trx)
       .where({ taskId })

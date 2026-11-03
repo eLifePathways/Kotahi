@@ -5,6 +5,15 @@ class Message extends BaseModel {
     return 'messages'
   }
 
+  static async hasUserPostedInChannels(userId, channelIds, options = {}) {
+    const message = await Message.query(options.trx)
+      .where({ userId })
+      .whereIn('channelId', channelIds)
+      .first()
+
+    return !!message
+  }
+
   static async createMessage({ content, channelId, userId }) {
     const savedMessage = await Message.query().insert({
       content,
@@ -17,6 +26,43 @@ class Message extends BaseModel {
       .withGraphJoined('user')
 
     return message
+  }
+
+  /** A page of the channel's messages, newest first, optionally only those created before a given date.
+   * totalCount ignores the page size. */
+  static async findPageInChannel(channelId, params = {}, options = {}) {
+    const { first, createdBefore } = params
+
+    const query = Message.query(options.trx)
+      .where({ channelId })
+      .withGraphJoined('user')
+      .limit(first)
+      .orderBy('messages.created', 'desc')
+
+    if (createdBefore) query.where('messages.created', '<', createdBefore)
+
+    const messages = await query
+    const totalCount = await query.resultSize()
+
+    return { messages, totalCount }
+  }
+
+  static async countCreatedAfter(channelId, date, options = {}) {
+    const [{ count }] = await Message.query(options.trx)
+      .where({ channelId })
+      .where('created', '>', date)
+      .count()
+
+    return parseInt(count, 10)
+  }
+
+  static async findFirstCreatedAfter(channelId, date, options = {}) {
+    return Message.query(options.trx)
+      .select('id')
+      .where({ channelId })
+      .where('created', '>', date)
+      .orderBy('created', 'asc')
+      .first()
   }
 
   static get schema() {

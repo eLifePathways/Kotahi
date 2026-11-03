@@ -29,6 +29,46 @@ class TeamMember extends TeamMemberBase {
     }
   }
 
+  static async findReviewerMemberOnManuscript(
+    userId,
+    manuscriptId,
+    options = {},
+  ) {
+    return TeamMember.query(options.trx)
+      .join('teams', 'team_members.teamId', 'teams.id')
+      .where({
+        'teams.objectId': manuscriptId,
+        'teams.objectType': 'manuscript',
+        'team_members.userId': userId,
+      })
+      .whereIn('teams.role', REVIEWER_ROLES)
+      .select('team_members.*')
+      .first()
+  }
+
+  static async patchByTeamId(teamId, data, options = {}) {
+    return TeamMember.query(options.trx).patch(data).where({ teamId })
+  }
+
+  static async patchStatusByTeam(teamId, fromStatuses, status, options = {}) {
+    return TeamMember.query(options.trx)
+      .patch({ status })
+      .where({ teamId })
+      .whereIn('status', fromStatuses)
+  }
+
+  static async hasCompletedReview(userId, manuscriptId, options = {}) {
+    const member = await TeamMember.query(options.trx)
+      .joinRelated('team')
+      .where('team.objectId', manuscriptId)
+      .whereIn('team.role', REVIEWER_ROLES)
+      .where('team_members.userId', userId)
+      .where('team_members.status', 'completed')
+      .first()
+
+    return !!member
+  }
+
   /**
    * Returns a list of objects showing what role this reviewer has on each
    * manuscript.

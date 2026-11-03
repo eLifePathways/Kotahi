@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 type FormFieldOption = {
   label: string
@@ -61,6 +61,17 @@ declare class Form extends BaseModel {
   groupId: string | null
 
   getFields(): FormField[]
+
+  static findActiveInGroup(
+    groupId: string,
+    options?: { trx?: Transaction },
+  ): Promise<Form[]>
+  static deactivateOthersInCategory(
+    category: string,
+    groupId: string | null,
+    exceptId: string,
+    options?: { trx?: Transaction },
+  ): Promise<number>
 }
 
 export = Form

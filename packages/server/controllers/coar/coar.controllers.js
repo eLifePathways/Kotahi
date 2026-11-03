@@ -308,13 +308,14 @@ const updateNotification = async (
   manuscriptId = null,
   options = {},
 ) => {
-  const { trx } = options
-
-  return reprocessNotification.$query(trx).patchAndFetch({
-    groupId,
-    payload,
-    ...(manuscriptId ? { manuscriptId } : {}),
-  })
+  return reprocessNotification.patch(
+    {
+      groupId,
+      payload,
+      ...(manuscriptId ? { manuscriptId } : {}),
+    },
+    { trx: options.trx },
+  )
 }
 
 const getManuscriptByDoi = async (doi, groupId, options = {}) => {
@@ -435,11 +436,11 @@ const linkManuscriptToNotification = async (
   manuscript,
   options = {},
 ) => {
-  const manuscriptId = manuscript.id
-  const { trx } = options
-  await CoarNotification.query(trx)
-    .findById(notification.id)
-    .patch({ manuscriptId })
+  await CoarNotification.patchById(
+    notification.id,
+    { manuscriptId: manuscript.id },
+    { trx: options.trx },
+  )
 }
 
 const extractDoi = payload => {

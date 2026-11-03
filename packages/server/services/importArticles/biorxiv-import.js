@@ -37,26 +37,28 @@ const getData = async (groupId, ctx) => {
     Pharmaceutical_interventions: pharmaceuticalInterventions,
   }
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'biorxiv',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'biorxiv',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'biorxiv',
     })
   }
 
-  const [biorxivImportSourceId] = await ArticleImportSources.query().where({
-    server: 'biorxiv',
-  })
-
-  const lastImportDate = await ArticleImportHistory.query()
-    .select('date')
-    .where({
-      sourceId: biorxivImportSourceId.id,
-      groupId,
+  const [biorxivImportSourceId] = (
+    await ArticleImportSources.find({
+      server: 'biorxiv',
     })
+  ).result
+
+  const { result: lastImportDate } = await ArticleImportHistory.find({
+    sourceId: biorxivImportSourceId.id,
+    groupId,
+  })
 
   /* eslint-disable-next-line default-param-last */
   const requests = async (cursor = 0, minDate, results = []) => {
@@ -86,7 +88,7 @@ const getData = async (groupId, ctx) => {
 
   const importedManuscripts = await requests(0, date, [])
 
-  const manuscripts = await Manuscript.query()
+  const { result: manuscripts } = await Manuscript.find({})
   const currentUris = manuscripts.map(m => m.submission.$sourceUri)
 
   const withoutDuplicates = importedManuscripts.filter(
@@ -186,26 +188,14 @@ const getData = async (groupId, ctx) => {
       ),
     )
 
-    // const teamsToInsert = insertedManuscripts.map(manuscript => {
-    //   return {
-    //     manuscriptId: manuscript.id,
-    //     ...manuscript.teams[0],
-    //   }
-    // })
-
-    // const insertedTeams = await Team.query(trx).insert(teamsToInsert)
-
     if (lastImportDate.length) {
-      await ArticleImportHistory.query()
-        .update({
-          date: new Date().toISOString(),
-        })
-        .where({
-          date: lastImportDate[0].date,
-          groupId,
-        })
+      await ArticleImportHistory.patchByDateAndGroup(
+        lastImportDate[0].date,
+        groupId,
+        { date: new Date().toISOString() },
+      )
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId: biorxivImportSourceId.id,
         groupId,

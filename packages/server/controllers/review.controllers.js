@@ -1,6 +1,6 @@
 const isEmpty = require('lodash/isEmpty')
 
-const { File } = require('@coko/server')
+const { File, NotFoundError } = require('@coko/server')
 
 const {
   Form,
@@ -92,7 +92,7 @@ const getDecisionForm = async (groupId, options = {}) =>
 const getForm = async (categoryAndPurpose, options = {}) => {
   const { trx } = options
 
-  const form = await Form.query(trx).where(categoryAndPurpose)
+  const { result: form } = await Form.find(categoryAndPurpose, { trx })
 
   if (!form || !form.length)
     throw new Error(`No form found for "${categoryAndPurpose.purpose}"`)
@@ -113,52 +113,34 @@ const isReviewSharedWithCurrentUser = async (review, userId) => {
   )
     return !!review.isSharedWithCurrentUser
 
-  const sharedMembers = await Team.relatedQuery('members')
-    .for(
-      Team.query().where({
-        role: 'reviewer',
-        objectId: review.manuscriptId,
-      }),
-    )
-    .where({ isShared: true })
-    .where(builder =>
-      builder.where({ status: 'completed' }).orWhere({ userId }),
-    )
+  const sharedMembers = await Team.findSharedReviewerMembers(
+    review.manuscriptId,
+    userId,
+  )
 
   if (sharedMembers.some(m => m.userId === userId)) return true
   return false
 }
 
 const lockUnlockCollaborativeReview = async id => {
-  const review = await Review.query()
-    .findOne({
-      id,
-      isCollaborative: true,
-    })
-    .throwIfNotFound()
+  const review = await Review.findOne({ id, isCollaborative: true })
 
-  const updatedReview = await Review.query()
-    .patch({ isLock: !review.isLock })
-    .findOne({ id })
-    .returning('*')
+  if (!review) throw new NotFoundError(`Collaborative review ${id} not found`)
 
-  const team = await Team.query().findOne({
+  const updatedReview = await Review.patchAndFetchById(id, {
+    isLock: !review.isLock,
+  })
+
+  const team = await Team.findOne({
     role: 'collaborativeReviewer',
     objectId: updatedReview.manuscriptId,
     objectType: 'manuscript',
   })
 
   const status = updatedReview.isLock ? 'closed' : 'inProgress'
-  await TeamMember.query()
-    .patch({ status })
-    .where({ teamId: team.id })
-    .andWhere(builder => {
-      builder.whereIn('status', ['closed', 'inProgress'])
-    })
+  await TeamMember.patchStatusByTeam(team.id, ['closed', 'inProgress'], status)
 
-  const manuscript = await Manuscript.query().findById(
-    updatedReview.manuscriptId,
-  )
+  const manuscript = await Manuscript.findById(updatedReview.manuscriptId)
 
   const eventParam = updatedReview.isLock ? 'lock' : 'unlock'
 
@@ -172,7 +154,7 @@ const lockUnlockCollaborativeReview = async id => {
   await convertFilesToFullObjects(
     updatedReview,
     form,
-    async ids => File.query().findByIds(ids),
+    async ids => File.findByIds(ids, { throwIfNotFound: false }),
     getFilesWithUrl,
   )
 
@@ -185,20 +167,23 @@ const lockUnlockCollaborativeReview = async id => {
 const reviewUser = async review => {
   if (review.user) return review.user
   // TODO redact user if it's an anonymous review and ctx.userId is not editor or admin
-  return review.userId ? User.query().findById(review.userId) : null
+  return review.userId
+    ? User.findById(review.userId, { throwIfNotFound: false })
+    : null
 }
 
 const updateReview = async (id, input, userId) => {
   const reviewDelta = { jsonData: {}, ...input }
-  const existingReview = (await Review.query().findById(id)) || {}
+  const existingReview =
+    (await Review.findById(id, { throwIfNotFound: false })) || {}
 
-  const manuscript = await Manuscript.query()
-    .findById(existingReview.manuscriptId || input.manuscriptId)
-    .select('groupId')
+  const groupId = await Manuscript.getGroupId(
+    existingReview.manuscriptId || input.manuscriptId,
+  )
 
   const form = existingReview.isDecision
-    ? await getDecisionForm(manuscript.groupId)
-    : await getReviewForm(manuscript.groupId)
+    ? await getDecisionForm(groupId)
+    : await getReviewForm(groupId)
 
   const roles = await getUserRolesInManuscript(
     existingReview.userId || userId,
@@ -231,26 +216,23 @@ const updateReview = async (id, input, userId) => {
   mergedReview.isHiddenFromAuthor = !!mergedReview.isHiddenFromAuthor
   mergedReview.isHiddenReviewerName = !!mergedReview.isHiddenReviewerName
 
-  const review = await Review.query().upsertGraphAndFetch(
-    {
-      id,
-      ...mergedReview,
-      jsonData: JSON.stringify(mergedReview.jsonData),
-    },
-    { insertMissing: true },
-  )
+  const review = await Review.upsertAndFetch({
+    id,
+    ...mergedReview,
+    jsonData: JSON.stringify(mergedReview.jsonData),
+  })
 
   // We want to modify file URIs before return, so we'll use the parsed jsonData
   review.jsonData = mergedReview.jsonData
 
   const userOfReview = review.userId
-    ? await User.query().findById(review.userId)
+    ? await User.findById(review.userId, { throwIfNotFound: false })
     : null
 
   await convertFilesToFullObjects(
     review,
     form,
-    async ids => File.query().findByIds(ids),
+    async ids => File.findByIds(ids, { throwIfNotFound: false }),
     getFilesWithUrl,
   )
 
@@ -272,21 +254,14 @@ const updateReview = async (id, input, userId) => {
 }
 
 const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .withGraphFetched('[submitter.defaultIdentity, channels.members]')
+  const manuscript = await Manuscript.findById(manuscriptId, {
+    related: '[submitter.defaultIdentity, channels.members]',
+  })
 
-  const teams = await manuscript
-    .$relatedQuery('teams')
-    .whereIn('role', ['reviewer', 'collaborativeReviewer'])
-
-  const member = await TeamMember.query()
-    .whereIn(
-      'teamId',
-      teams.map(t => t.id),
-    )
-    .andWhere({ userId })
-    .first()
+  const member = await TeamMember.findReviewerMemberOnManuscript(
+    userId,
+    manuscript.id,
+  )
 
   if (status === 'completed') {
     seekEvent(`review-completed`, {
@@ -309,7 +284,7 @@ const updateReviewerTeamMemberStatus = async (manuscriptId, status, userId) => {
     )
   }
 
-  return member.$query().patchAndFetch({
+  return member.patch({
     status,
     updated: new Date().toISOString(),
   })

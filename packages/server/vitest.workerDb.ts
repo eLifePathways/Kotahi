@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable kotahi/no-query-builder-calls */
 
 /**
  * Runs before each test file's own code (per vitest worker). Points this

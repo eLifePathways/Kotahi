@@ -5,6 +5,18 @@ class ArticleImportHistory extends BaseModel {
     return 'article_import_history'
   }
 
+  static async patchBySourceAndGroup(sourceId, groupId, data, options = {}) {
+    return ArticleImportHistory.query(options.trx)
+      .patch(data)
+      .where({ sourceId, groupId })
+  }
+
+  static async patchByDateAndGroup(date, groupId, data, options = {}) {
+    return ArticleImportHistory.query(options.trx)
+      .patch(data)
+      .where({ date, groupId })
+  }
+
   static get schema() {
     return {
       properties: {

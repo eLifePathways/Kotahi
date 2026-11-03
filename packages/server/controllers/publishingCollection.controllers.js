@@ -7,7 +7,7 @@ const collectionFormDataFile = async collectionFormData => {
   let file = null
 
   if (collectionFormData.image !== '') {
-    file = await File.query().findOne({ id: collectionFormData.image })
+    file = await File.findOne({ id: collectionFormData.image })
   }
 
   return file
@@ -15,7 +15,7 @@ const collectionFormDataFile = async collectionFormData => {
 
 const collectionFormDataImage = async collectionFormData => {
   // Return the image field from the formData object within the parent (metadata) object
-  const file = await File.query().findOne({ id: collectionFormData.image })
+  const file = await File.findOne({ id: collectionFormData.image })
 
   if (file) {
     const data = await getFileWithUrl(file)
@@ -27,10 +27,9 @@ const collectionFormDataImage = async collectionFormData => {
 
 const collectionManuscripts = async collection => {
   if (collection.manuscripts?.length) {
-    const manuscripts = await Manuscript.query().whereIn(
-      'id',
-      collection.manuscripts,
-    )
+    const manuscripts = await Manuscript.findByIds(collection.manuscripts, {
+      throwIfNotFound: false,
+    })
 
     return collection.manuscripts.map(id => manuscripts.find(m => m.id === id))
   }
@@ -39,17 +38,19 @@ const collectionManuscripts = async collection => {
 }
 
 const createCollection = async (input, groupId) => {
-  let publishingCollection = await PublishingCollection.query()
-    .insert({
-      active: input.active,
-      formData: {
-        ...input.formData,
-        image: null,
-      },
-      groupId,
-      manuscripts: input.manuscripts,
-    })
-    .returning('*')
+  const insertedCollection = await PublishingCollection.insert({
+    active: input.active,
+    formData: {
+      ...input.formData,
+      image: null,
+    },
+    groupId,
+    manuscripts: input.manuscripts,
+  })
+
+  let publishingCollection = await PublishingCollection.findById(
+    insertedCollection.id,
+  )
 
   if (input.formData.image) {
     const { filename, createReadStream: stream } = await input.formData.image
@@ -59,15 +60,15 @@ const createCollection = async (input, groupId) => {
       objectId: publishingCollection.id,
     })
 
-    publishingCollection = await PublishingCollection.query()
-      .patch({
+    publishingCollection = await PublishingCollection.patchAndFetchById(
+      publishingCollection.id,
+      {
         formData: {
           ...publishingCollection.formData,
           image: file.id,
         },
-      })
-      .findOne({ id: publishingCollection.id })
-      .returning('*')
+      },
+    )
   }
 
   publishingCollection.formData.active = publishingCollection.active
@@ -77,10 +78,8 @@ const createCollection = async (input, groupId) => {
 
 const deleteCollection = async id => {
   try {
-    const collection = await PublishingCollection.query()
-      .delete()
-      .findOne({ id })
-      .returning('*')
+    const collection = await PublishingCollection.findById(id)
+    await PublishingCollection.deleteById(id)
 
     await deleteFiles([collection.formData.image])
     return { success: true }
@@ -91,7 +90,7 @@ const deleteCollection = async id => {
 }
 
 const getPublishingCollections = async groupId => {
-  const publishingCollection = await PublishingCollection.query().where({
+  const { result: publishingCollection } = await PublishingCollection.find({
     groupId,
   })
 
@@ -101,7 +100,7 @@ const getPublishingCollections = async groupId => {
 }
 
 const updateCollection = async (id, input) => {
-  const collection = await PublishingCollection.query().findOne({
+  const collection = await PublishingCollection.findOne({
     id,
   })
 
@@ -122,14 +121,16 @@ const updateCollection = async (id, input) => {
     await deleteFiles([collection.formData.image])
   }
 
-  const publishingCollection =
-    await PublishingCollection.query().updateAndFetchById(id, {
+  const publishingCollection = await PublishingCollection.updateAndFetchById(
+    id,
+    {
       ...input,
       formData: {
         ...input.formData,
         image: file ? file.id : collection.formData.image,
       },
-    })
+    },
+  )
 
   publishingCollection.formData.active = publishingCollection.active
 

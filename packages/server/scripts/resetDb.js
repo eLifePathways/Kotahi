@@ -1,3 +1,5 @@
+/* eslint-disable kotahi/no-objection-imports, kotahi/no-query-builder-calls */
+
 /** Wait until the users table exists. I'm not sure this is needed, if we use await correctly
  * when running migrations or restoring from dump.
  */
@@ -7,7 +9,7 @@
 
 //   while (!ready) {
 //     try {
-//       const users = await User.query()
+//       const users = await User.find({})
 //       ready = !!users
 //     } catch (e) {
 //       console.error(e)

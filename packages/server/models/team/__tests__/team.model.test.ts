@@ -4,6 +4,7 @@ import { db, config, DbTestUtils, migrationManager } from '@coko/server'
 import Team from '../team.model'
 import Manuscript from '../../manuscript/manuscript.model'
 import User from '../../user/user.model'
+import TeamMember from '../../teamMember/teamMember.model'
 
 const displayNames: Record<string, string> = {
   seniorEditor: 'Senior Editor',
@@ -147,6 +148,162 @@ describe('Team model', () => {
       expect(
         await Team.findCollaborativeReviewerTeams([manuscript.id]),
       ).toEqual([])
+    })
+  })
+
+  describe('findActiveTeamsOfUserOnObject', () => {
+    it('returns the roles the user holds on the object, ignoring invited and rejected memberships', async () => {
+      const manuscript = await Manuscript.insert({})
+      const otherManuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      await Manuscript.createTeams(otherManuscript.id)
+      const user = await User.insert({})
+
+      await Manuscript.assignRole(user.id, manuscript.id, 'author')
+
+      await Manuscript.assignRole(user.id, manuscript.id, 'editor', {
+        status: 'accepted',
+      })
+
+      await Manuscript.assignRole(user.id, manuscript.id, 'reviewer', {
+        status: 'invited',
+      })
+
+      await Manuscript.assignRole(
+        user.id,
+        manuscript.id,
+        'collaborativeReviewer',
+        { status: 'rejected' },
+      )
+
+      await Manuscript.assignRole(user.id, otherManuscript.id, 'handlingEditor')
+
+      const teams = await Team.findActiveTeamsOfUserOnObject(
+        user.id,
+        manuscript.id,
+      )
+
+      expect(teams.map(t => t.role).sort()).toEqual(['author', 'editor'])
+    })
+  })
+
+  describe('findNonInvitedMembersWithUser', () => {
+    it("returns the members of the manuscript's teams with the roles, with their user, leaving out invited and rejected", async () => {
+      const manuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      const author = await User.insert({ username: 'author' })
+      const reviewer = await User.insert({ username: 'reviewer' })
+      const invited = await User.insert({ username: 'invited' })
+      const rejected = await User.insert({ username: 'rejected' })
+      const editor = await User.insert({ username: 'editor' })
+
+      await Manuscript.assignRole(author.id, manuscript.id, 'author')
+
+      await Manuscript.assignRole(reviewer.id, manuscript.id, 'reviewer', {
+        status: 'completed',
+      })
+
+      await Manuscript.assignRole(invited.id, manuscript.id, 'reviewer', {
+        status: 'invited',
+      })
+
+      await Manuscript.assignRole(rejected.id, manuscript.id, 'reviewer', {
+        status: 'rejected',
+      })
+
+      await Manuscript.assignRole(editor.id, manuscript.id, 'editor')
+
+      const members = await Team.findNonInvitedMembersWithUser(manuscript.id, [
+        'author',
+        'reviewer',
+      ])
+
+      expect(members.map(m => m.user.username).sort()).toEqual([
+        'author',
+        'reviewer',
+      ])
+    })
+  })
+
+  describe('findSharedReviewerMembers', () => {
+    it('returns shared reviewers who completed their review, and the current user if shared', async () => {
+      const manuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      const current = await User.insert({})
+      const completed = await User.insert({})
+      const inProgress = await User.insert({})
+      const notShared = await User.insert({})
+
+      await Manuscript.assignRole(current.id, manuscript.id, 'reviewer', {
+        status: 'inProgress',
+        isShared: true,
+      })
+
+      await Manuscript.assignRole(completed.id, manuscript.id, 'reviewer', {
+        status: 'completed',
+        isShared: true,
+      })
+
+      await Manuscript.assignRole(inProgress.id, manuscript.id, 'reviewer', {
+        status: 'inProgress',
+        isShared: true,
+      })
+
+      await Manuscript.assignRole(notShared.id, manuscript.id, 'reviewer', {
+        status: 'completed',
+        isShared: false,
+      })
+
+      const members = await Team.findSharedReviewerMembers(
+        manuscript.id,
+        current.id,
+      )
+
+      expect(members.map(m => m.userId).sort()).toEqual(
+        [current.id, completed.id].sort(),
+      )
+    })
+  })
+
+  describe('patchInvitedMemberStatus', () => {
+    it("updates the user's membership only while it is invited", async () => {
+      const manuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      const invited = await User.insert({})
+      const accepted = await User.insert({})
+
+      const team = await Manuscript.assignRole(
+        invited.id,
+        manuscript.id,
+        'reviewer',
+        { status: 'invited' },
+      )
+
+      await Manuscript.assignRole(accepted.id, manuscript.id, 'reviewer', {
+        status: 'accepted',
+      })
+
+      expect(
+        await Team.patchInvitedMemberStatus(
+          manuscript.id,
+          'reviewer',
+          invited.id,
+          'accepted',
+        ),
+      ).toBe(1)
+
+      expect(
+        await Team.patchInvitedMemberStatus(
+          manuscript.id,
+          'reviewer',
+          accepted.id,
+          'rejected',
+        ),
+      ).toBe(0)
+
+      const { result: members } = await TeamMember.find({ teamId: team.id })
+
+      expect(members.map(m => m.status)).toEqual(['accepted', 'accepted'])
     })
   })
 })

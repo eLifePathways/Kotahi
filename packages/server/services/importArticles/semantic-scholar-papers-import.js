@@ -23,20 +23,23 @@ const TIMEOUT_MS = 30000
 const getData = async (groupId, ctx) => {
   const activeConfig = await Config.getCached(groupId)
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'semantic-scholar',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'semantic-scholar',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'semantic-scholar',
     })
   }
 
-  const [semanticScholarImportSourceId] =
-    await ArticleImportSources.query().where({
+  const [semanticScholarImportSourceId] = (
+    await ArticleImportSources.find({
       server: 'semantic-scholar',
     })
+  ).result
 
   const sourceId = semanticScholarImportSourceId.id
 
@@ -44,9 +47,10 @@ const getData = async (groupId, ctx) => {
 
   const lastImportDate = await getLastImportDate(sourceId, groupId)
 
-  const manuscripts = await Manuscript.query()
-    .where({ groupId })
-    .orderBy('created', 'desc')
+  const { result: manuscripts } = await Manuscript.find(
+    { groupId },
+    { orderBy: [{ column: 'created', order: 'desc' }] },
+  )
 
   const selectedManuscripts = manuscripts.filter(
     manuscript =>
@@ -248,13 +252,11 @@ const getData = async (groupId, ctx) => {
       )
 
       if (lastImportDate > 0) {
-        await ArticleImportHistory.query()
-          .update({
-            date: new Date().toISOString(),
-          })
-          .where({ sourceId, groupId })
+        await ArticleImportHistory.patchBySourceAndGroup(sourceId, groupId, {
+          date: new Date().toISOString(),
+        })
       } else {
-        await ArticleImportHistory.query().insert({
+        await ArticleImportHistory.insert({
           date: new Date().toISOString(),
           sourceId,
           groupId,

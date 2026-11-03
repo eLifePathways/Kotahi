@@ -133,7 +133,7 @@ describe('Manuscript API', () => {
     const group = await Group.insert({})
     const user = await User.insert({})
 
-    await Config.query().insert({
+    await Config.insert({
       active: true,
       groupId: group.id,
       formData: {},

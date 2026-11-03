@@ -47,6 +47,10 @@ class Config extends BaseModel {
     return this.query(trx).findOne({ groupId, active: true })
   }
 
+  static async patchByGroupId(groupId, data, options = {}) {
+    return this.query(options.trx).findOne({ groupId }).patch(data)
+  }
+
   static async beforeUpdate() {
     this.cachedConfigsByGroupId = {}
   }

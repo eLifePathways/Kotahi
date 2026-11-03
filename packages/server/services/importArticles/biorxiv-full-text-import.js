@@ -191,7 +191,7 @@ const getData = async (groupId, ctx) => {
   const subjects = ['biophysics', 'biochemistry']
   const emptySubmission = getEmptySubmission(groupId)
 
-  const manuscripts = await Manuscript.query().where({ groupId })
+  const { result: manuscripts } = await Manuscript.find({ groupId })
 
   const knownDois = new Set(
     manuscripts.map(m => m.submission.$doi).filter(Boolean),
@@ -253,13 +253,11 @@ const getData = async (groupId, ctx) => {
   // failure doesn't cause this date range to be skipped on the next run.
   if (!hadSaveError) {
     if (lastImportDate) {
-      await ArticleImportHistory.query()
-        .update({
-          date: new Date().toISOString(),
-        })
-        .where({ sourceId, groupId })
+      await ArticleImportHistory.patchBySourceAndGroup(sourceId, groupId, {
+        date: new Date().toISOString(),
+      })
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId,
         groupId,

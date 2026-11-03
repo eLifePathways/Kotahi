@@ -4,11 +4,12 @@ const { mergeWith } = require('lodash')
 const { Form } = require('../models')
 
 const createForm = async form => {
-  return Form.query().insertAndFetch(form)
+  const insertedForm = await Form.insert(form)
+  return Form.findById(insertedForm.id)
 }
 
 const deleteForm = async formId => {
-  await Form.query().deleteById(formId)
+  await Form.deleteById(formId)
   return { query: {} }
 }
 
@@ -20,7 +21,7 @@ const deleteFormElement = async (formId, elementId) => {
     child => child.id !== elementId,
   )
 
-  const formRes = await Form.query().patchAndFetchById(formId, {
+  const formRes = await Form.patchAndFetchById(formId, {
     structure: form.structure,
   })
 
@@ -28,7 +29,7 @@ const deleteFormElement = async (formId, elementId) => {
 }
 
 const formForPurposeAndCategory = async (purpose, category, groupId) => {
-  const form = await Form.query().findOne({
+  const form = await Form.findOne({
     purpose,
     category,
     groupId,
@@ -51,10 +52,7 @@ const formForPurposeAndCategory = async (purpose, category, groupId) => {
 }
 
 const getActiveForms = async groupId => {
-  const forms = await Form.query()
-    .where({ category: 'submission', purpose: 'submit', groupId })
-    .orWhere({ category: 'review', purpose: 'review', groupId })
-    .orWhere({ category: 'decision', purpose: 'decision', groupId })
+  const forms = await Form.findActiveInGroup(groupId)
 
   return {
     submissionForm: forms.find(f => f.purpose === 'submit'),
@@ -68,14 +66,16 @@ const getFormById = async formId => {
 }
 
 const getForms = async () => {
-  return Form.query()
+  return (await Form.find({})).result
 }
 
 const getFormsByCategory = async (category, groupId) => {
-  return Form.query().where({
-    category,
-    groupId,
-  })
+  return (
+    await Form.find({
+      category,
+      groupId,
+    })
+  ).result
 }
 
 const notFoundError = (property, value, className) =>
@@ -105,7 +105,7 @@ const updateForm = async form => {
     return c
   })
 
-  const result = await Form.query().patchAndFetchById(form.id, form)
+  const result = await Form.patchAndFetchById(form.id, form)
 
   const purposeIndicatingActiveForm =
     result.category === 'submission' ? 'submit' : result.category
@@ -114,11 +114,11 @@ const updateForm = async form => {
 
   if (thisFormIsActive) {
     // Ensure all other forms in this category are inactive
-    await Form.query()
-      .patch({ purpose: 'other' })
-      .whereNot({ purpose: 'other' })
-      .where({ category: result.category, groupId: result.groupId })
-      .whereNot({ id: result.id })
+    await Form.deactivateOthersInCategory(
+      result.category,
+      result.groupId,
+      result.id,
+    )
   }
 
   return result
@@ -177,7 +177,7 @@ const updateFormElement = async (element, formId) => {
         : element
   }
 
-  return Form.query().patchAndFetchById(formId, {
+  return Form.patchAndFetchById(formId, {
     structure: form.structure,
   })
 }

@@ -95,18 +95,21 @@ const runImports = async (
     let importSource, lastImportDate
 
     try {
-      let [sourceRecord] = await ArticleImportSources.query().where({
-        server: worker.name,
-      })
+      let [sourceRecord] = (
+        await ArticleImportSources.find({
+          server: worker.name,
+        })
+      ).result
       if (!sourceRecord)
-        sourceRecord = await ArticleImportSources.query().insertAndFetch({
+        sourceRecord = await ArticleImportSources.insert({
           server: worker.name,
         })
       importSource = sourceRecord.id
 
-      const lastImportRecord = await ArticleImportHistory.query()
-        .select('date')
-        .findOne({ sourceId: importSource, groupId })
+      const lastImportRecord = await ArticleImportHistory.findOne({
+        sourceId: importSource,
+        groupId,
+      })
 
       lastImportDate = lastImportRecord ? lastImportRecord.date : null
     } catch (error) {
@@ -179,11 +182,11 @@ const runImports = async (
     saveImportedManuscripts(allNewManuscripts, groupId, submitterId, {})
 
     if (lastImportDate) {
-      await ArticleImportHistory.query()
-        .patch({ date: new Date().toISOString() })
-        .where({ sourceId: importSource, groupId })
+      await ArticleImportHistory.patchBySourceAndGroup(importSource, groupId, {
+        date: new Date().toISOString(),
+      })
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId: importSource,
         groupId,

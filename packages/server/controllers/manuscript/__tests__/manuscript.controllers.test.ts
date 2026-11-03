@@ -98,7 +98,7 @@ describe('manuscript.controllers events', () => {
         submission: {},
       })
 
-      await Channel.query().insert({
+      await Channel.insert({
         manuscriptId: manuscript.id,
         groupId: group.id,
         topic: 'Editorial discussion',
@@ -210,7 +210,7 @@ describe('manuscript.controllers events', () => {
 
       await Team.addMember(editorTeam.id, editorUser.id)
 
-      await Channel.query().insert({
+      await Channel.insert({
         manuscriptId: manuscript.id,
         groupId: group.id,
         topic: 'Editorial discussion',
@@ -250,7 +250,7 @@ describe('manuscript.controllers events', () => {
         meta: {},
       })
 
-      await Channel.query().insert({
+      await Channel.insert({
         manuscriptId: parentManuscript.id,
         groupId: group.id,
         topic: 'Editorial discussion',

@@ -11,14 +11,14 @@ exports.up = async () => {
 
     return Promise.all(
       docs.map(async doc => {
-        const review = await Review.query(trx)
-          .findById(doc.objectId)
-          .throwIfNotFound()
+        const review = await Review.findById(doc.objectId, { trx })
 
         if (review) {
-          await CollaborativeDoc.query(trx)
-            .patch({ objectType: 'Review' })
-            .findById(doc.id)
+          await CollaborativeDoc.patchById(
+            doc.id,
+            { objectType: 'Review' },
+            { trx },
+          )
         }
       }),
     )

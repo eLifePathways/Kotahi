@@ -8,6 +8,7 @@ const {
   Identity,
   Review,
   CoarNotification,
+  User,
 } = require('../../models')
 
 const { postToInbox } = require('./utils')
@@ -56,7 +57,7 @@ const getRequestData = async (
 ) => {
   const { payload, groupId } = notification
   const { endorsement, linkedResource } = options
-  const group = await Group.query().findById(groupId).first()
+  const group = await Group.findById(groupId)
   const reviewer = await getReviewer(manuscript)
 
   const { flaxReviewUrl, flaxUrl } = await getFlaxUrl(
@@ -162,16 +163,15 @@ const getRequestData = async (
 const getReviewer = async manuscript => {
   const manuscriptId = manuscript.id
 
-  const latestReview = await Review.query()
-    .findOne({ manuscriptId, is_decision: false })
-    .orderBy('updated', 'desc')
-    .first()
+  const latestReview = await Review.findLatestNonDecisionReview(manuscriptId)
 
   if (!latestReview || latestReview.isHiddenReviewerName) {
     return null
   }
 
-  const reviewer = await latestReview.$relatedQuery('user')
+  const reviewer = await User.findById(latestReview.userId, {
+    throwIfNotFound: false,
+  })
 
   const identity = await Identity.findOne({
     userId: reviewer.id,
@@ -207,7 +207,7 @@ const makeAnnouncementOnCOAR = async (
 
     const { groupId, id: manuscriptId } = manuscript
 
-    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+    await CoarNotification.insert({ groupId, manuscriptId, payload })
 
     return response?.data || false
   } catch (err) {
