@@ -211,6 +211,7 @@ describe('Manuscript model', () => {
     it('is true for a reviewer of the manuscript', async () => {
       const manuscript = await Manuscript.insert({})
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(manuscript.id)
       await Manuscript.addReviewer(manuscript.id, reviewer.id, null, false)
 
       expect(
@@ -221,6 +222,7 @@ describe('Manuscript model', () => {
     it('is true for a collaborative reviewer of the manuscript', async () => {
       const manuscript = await Manuscript.insert({})
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(manuscript.id)
       await Manuscript.addReviewer(manuscript.id, reviewer.id, null, true)
 
       expect(
@@ -233,6 +235,7 @@ describe('Manuscript model', () => {
       const manuscriptA = await Manuscript.insert({})
       const manuscriptB = await Manuscript.insert({})
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(manuscriptA.id)
       await Manuscript.addReviewer(manuscriptA.id, reviewer.id, null, false)
 
       expect(
@@ -251,6 +254,7 @@ describe('Manuscript model', () => {
       })
 
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(secondVersion.id)
       await Manuscript.addReviewer(secondVersion.id, reviewer.id, null, false)
 
       expect(
@@ -269,6 +273,7 @@ describe('Manuscript model', () => {
       })
 
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(firstVersion.id)
       await Manuscript.addReviewer(firstVersion.id, reviewer.id, null, false)
 
       expect(
@@ -291,6 +296,7 @@ describe('Manuscript model', () => {
       })
 
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(secondVersion.id)
       await Manuscript.addReviewer(secondVersion.id, reviewer.id, null, false)
 
       expect(
@@ -310,6 +316,7 @@ describe('Manuscript model', () => {
       })
 
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(manuscriptA.id)
       await Manuscript.addReviewer(manuscriptA.id, reviewer.id, null, false)
 
       expect(
@@ -341,6 +348,7 @@ describe('Manuscript model', () => {
     it('is false when the manuscript does not exist', async () => {
       const manuscript = await Manuscript.insert({})
       const reviewer = await User.insert({})
+      await Manuscript.createTeams(manuscript.id)
       await Manuscript.addReviewer(manuscript.id, reviewer.id, null, false)
 
       expect(

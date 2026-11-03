@@ -79,7 +79,7 @@ describe('Manuscript files API', () => {
       },
     })
 
-    const relatedQuery = vi.spyOn(Manuscript, 'relatedQuery')
+    const fileFind = vi.spyOn(File, 'find')
 
     const QUERY = gql`
       query {
@@ -122,8 +122,8 @@ describe('Manuscript files API', () => {
       meta: { source: string }
     }[]
 
-    const filesFetches = relatedQuery.mock.calls.filter(
-      ([relation]) => relation === 'files',
+    const filesFetches = fileFind.mock.calls.filter(
+      ([where]) => where.objectId === manuscript.id,
     )
 
     expect(filesFetches).toHaveLength(1)
@@ -183,7 +183,7 @@ describe('Manuscript files API', () => {
       meta: { source: `<p><img data-fileid="${usedImage.id}"></p>` },
     })
 
-    const relatedQuery = vi.spyOn(Manuscript, 'relatedQuery')
+    const fileFind = vi.spyOn(File, 'find')
 
     const getURL = vi.spyOn(
       FileStorageConstructor.prototype as unknown as {
@@ -240,7 +240,7 @@ describe('Manuscript files API', () => {
     expect(published.meta.source).toContain('src="')
 
     expect(
-      relatedQuery.mock.calls.filter(([relation]) => relation === 'files'),
+      fileFind.mock.calls.filter(([where]) => where.objectId === manuscript.id),
     ).toHaveLength(1)
 
     // used image (original + medium) and the pdf; none of the orphans
