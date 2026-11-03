@@ -123,7 +123,7 @@ describe('Manuscript files API', () => {
     }[]
 
     const filesFetches = fileFind.mock.calls.filter(
-      ([where]) => where.objectId === manuscript.id,
+      ([where]) => (where as { objectId?: string }).objectId === manuscript.id,
     )
 
     expect(filesFetches).toHaveLength(1)
@@ -240,7 +240,10 @@ describe('Manuscript files API', () => {
     expect(published.meta.source).toContain('src="')
 
     expect(
-      fileFind.mock.calls.filter(([where]) => where.objectId === manuscript.id),
+      fileFind.mock.calls.filter(
+        ([where]) =>
+          (where as { objectId?: string }).objectId === manuscript.id,
+      ),
     ).toHaveLength(1)
 
     // used image (original + medium) and the pdf; none of the orphans
