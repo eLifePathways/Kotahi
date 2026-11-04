@@ -460,7 +460,14 @@ const userCanPublishManuscript = rule({ cache: 'strict' })(async (
 const permissions = {
   Query: {
     authorsActivity: or(userIsGroupAdmin, userIsAdmin),
+    buildCitationsCSL: isAuthenticated,
     builtCss: isAuthenticated,
+    checkApiPayload: or(
+      userIsEditorOfAnyManuscript,
+      userIsGm,
+      userIsGroupAdmin,
+      userIsAdmin,
+    ),
     cmsLayout: allow, // read by the public Flax site
     cmsPage: or(userIsGroupAdmin, userIsAdmin),
     cmsPages: allow, // read by the public Flax site
@@ -480,10 +487,18 @@ const permissions = {
     currentUser: isAuthenticated,
     dashboardData: isAuthenticated,
     docmap: allow,
+    doisToRegister: or(
+      userIsEditorOfAnyManuscript,
+      userIsGm,
+      userIsGroupAdmin,
+      userIsAdmin,
+    ),
     editorsActivity: or(userIsGroupAdmin, userIsAdmin),
     file: deny, // Never used
     files: deny, // Never used
     form: isAuthenticated,
+    formatCitation: isAuthenticated,
+    formatMultipleCitations: isAuthenticated,
     formForPurposeAndCategory: allow,
     forms: allow,
     formsByCategory: or(userIsGroupAdmin, userIsAdmin),
@@ -496,17 +511,12 @@ const permissions = {
     ),
     getCmsFileContent: or(userIsGroupAdmin, userIsAdmin),
     getCmsFilesTree: or(userIsGroupAdmin, userIsAdmin),
+    getDataciteCslFromDOI: isAuthenticated,
     getEntityFiles: isAuthenticated,
-    getInvitationsForManuscript: or(
-      userIsEditorOfAnyManuscript,
-      userIsGm,
-      userIsGroupAdmin,
-      userIsAdmin,
-    ),
     getFilesByTagOrId: allow,
     getFoldersList: or(userIsGroupAdmin, userIsAdmin),
+    getFormattedReferences: isAuthenticated,
     getSpecificFiles: isAuthenticated,
-    globalTeams: deny, // Never used
     group: allow,
     groups: allow,
     hasToken: or(userIsGroupAdmin, userIsAdmin),
@@ -533,7 +543,6 @@ const permissions = {
     paginatedUsers: or(userIsGroupAdmin, userIsAdmin),
     publishedArtifacts: allow,
     publishedManuscript: allow,
-    publishedManuscripts: allow,
     publishingCollection: allow,
     reviewersActivity: or(userIsGroupAdmin, userIsAdmin),
     searchRor: allow,
@@ -541,8 +550,8 @@ const permissions = {
     summaryActivity: or(userIsGroupAdmin, userIsAdmin),
     systemWideDiscussionChannel: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     tasks: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    team: deny, // Never used
-    teams: isAuthenticated,
+    team: deny, // Inherited from @coko/server, never used
+    teams: deny, // Inherited from @coko/server, never used
     threadedDiscussions: isAuthenticated,
     unreviewedPreprints: allow, // This has its own token-based authentication.
     user: isAuthenticated,
@@ -562,9 +571,8 @@ const permissions = {
   Mutation: {
     addEmailToBlacklist: allow, // TODO scrap this mutation and trigger its action inside updateInvitationResponse
     addReviewer: isAuthenticated,
-    archiveManuscript: or(userIsGm, userIsGroupAdmin, userIsAdmin),
+    addTeamMember: deny, // Inherited from @coko/server, never used
     archiveManuscripts: or(userIsGm, userIsGroupAdmin, userIsAdmin),
-    assignTeamEditor: deny, // Never used
     assignUserAsAuthor: isAuthenticated, // TODO require the invitation ID to be sent in this mutation
     completeComment: isAuthenticated,
     completeComments: isAuthenticated,
@@ -574,7 +582,6 @@ const permissions = {
     createCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     createSubmission: userCanCreateSubmission,
     createMessage: userIsAllowedToChat,
-    createNewTaskAlerts: or(userIsGm, userIsGroupAdmin, userIsAdmin), // Only used when test code is enabled
     createNewVersion: or(
       userIsAuthorOfManuscript,
       userIsEditor,
@@ -587,8 +594,6 @@ const permissions = {
     deleteFiles: isAuthenticated,
     deleteForm: or(userIsGroupAdmin, userIsAdmin),
     deleteFormElement: or(userIsGroupAdmin, userIsAdmin),
-    deleteManuscript: deny, // Never used
-    deleteManuscripts: deny, // Never used
     deletePendingComment: isAuthenticated,
     deleteUser: or(userIsGroupAdmin, userIsAdmin),
     deleteMessage: or(
@@ -617,7 +622,7 @@ const permissions = {
       userIsGroupAdmin,
       userIsAdmin,
     ),
-    removeTaskAlertsForCurrentUser: isAuthenticated,
+    removeTeamMember: deny, // Inherited from @coko/server, never used
     reviewerResponse: or(userIsInvitedReviewer, userHasAcceptedInvitation),
     sendEmail: or(
       userIsEditorOfAnyManuscript,
@@ -646,6 +651,7 @@ const permissions = {
     updateCollection: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     updateEmail: or(userIsCurrentUser, userIsGm, userIsGroupAdmin, userIsAdmin),
     updateConfig: or(userIsGroupAdmin, userIsAdmin),
+    updateTeamMembership: deny, // Inherited from @coko/server, never used
     updateUsername: or(
       userIsCurrentUser,
       userIsGm,
@@ -714,7 +720,6 @@ const permissions = {
       userIsReviewAuthorAndReviewIsNotCompleted,
       userIsEditorOfTheManuscriptOfTheReview,
     ),
-    updateUser: or(userIsGm, userIsGroupAdmin, userIsAdmin),
     uploadFiles: isAuthenticated,
     updateTaskStatus: isAuthenticated,
     updateCMSPage: or(userIsGroupAdmin, userIsAdmin),
@@ -751,14 +756,14 @@ const permissions = {
     // messageCreated: userIsAllowedToChat,
     messageCreated: isAuthenticated,
   },
-  CurrentRole: isAuthenticated,
-  Team: isAuthenticated,
-  TeamMember: isAuthenticated,
+  Team: isAuthenticated, // Inherited from @coko/server, extended in Kotahi
+  TeamMember: isAuthenticated, // Inherited from @coko/server, extended in Kotahi
   User: isAuthenticated,
   Group: allow,
   Config: allow,
   PaginatedManuscripts: allow,
   Manuscript: allow,
+  // Inherited from @coko/server, extended in Kotahi
   File: lazyOr(
     isForManuscriptsPublishedSinceDateQuery,
     isExportTemplatingFile,

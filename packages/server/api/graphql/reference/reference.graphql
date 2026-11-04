@@ -9,31 +9,14 @@ input CitationData {
 }
 
 extend type Query {
-  getMatchingReferences(input: CitationSearchInput): CitationSearchResult
   getDataciteCslFromDOI(
-    input: CitationSearchInput
-  ): FormattedCitationSearchResult
-  getDataciteCslFromTitle(
     input: CitationSearchInput
   ): FormattedCitationSearchResult
   getFormattedReferences(
     input: CitationSearchInput
   ): FormattedCitationSearchResult
-  getReferenceFromDoi(doi: String!): CitationSearchSingleResult
   formatCitation(citation: String!): CitationFormatResult
   formatMultipleCitations(input: CitationData): ReorderedCitationFormatResult
-}
-
-type CitationSearchSingleResult {
-  success: Boolean
-  message: String
-  reference: Reference
-}
-
-type CitationSearchResult {
-  success: Boolean
-  message: String
-  matches: [Reference]
 }
 
 type FormattedCitationSearchResult {
@@ -50,17 +33,6 @@ type ReferenceAuthor {
 
 type IssuedDate {
   raw: String
-}
-
-type Reference {
-  doi: String
-  author: [ReferenceAuthor]
-  issue: String
-  issued: IssuedDate
-  page: String
-  title: String
-  volume: String
-  journalTitle: String
 }
 
 type FormattedReference {

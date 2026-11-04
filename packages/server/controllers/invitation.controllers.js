@@ -59,25 +59,8 @@ const getBlacklistInformation = async (email, groupId) => {
   return blacklistData
 }
 
-const getEmailInvitedReviewers = async manuscriptId => {
-  if (!manuscriptId) return []
-
-  return Invitation.findNotAcceptedForManuscript(manuscriptId)
-}
-
 const getInvitationById = async id => {
   return Invitation.findById(id)
-}
-
-const getInvitationsForManuscript = async id => {
-  if (!id) return []
-
-  const { result: invitations } = await Invitation.find(
-    { manuscriptId: id },
-    { related: 'user' },
-  )
-
-  return invitations
 }
 
 const invitationStatus = async id => {
@@ -216,9 +199,7 @@ module.exports = {
   addEmailToBlacklist,
   assignUserAsAuthor,
   getBlacklistInformation,
-  getEmailInvitedReviewers,
   getInvitationById,
-  getInvitationsForManuscript,
   invitationStatus,
   invitationUser,
   removeInvitation,

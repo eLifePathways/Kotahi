@@ -83,41 +83,10 @@ const transformEntries = (obj, mapFn) => {
   )
 }
 
-/**
- * Conditionally returns an array with the item(s) added, or the fallback array.
- * Useful for spreading conditionally items to an array.
- *
- * @param {boolean} condition - The condition to evaluate.
- * @param {*} item - The item to add to the array if the condition is true. If the item is an array, its values will be spread into the array.
- * @param {Array} [fallback=[]] - (Optional) the array to return if the condition is false. Defaults to an empty array.
- * @returns {Array} The array with the item(s) conditionally added, or the fallback array.
- *
- * @example
- * const finalNumbers = [
- *   ...arrIf(true, 1),
- *   ...arrIf(true, 2),
- *   ...arrIf(false, 3),
- *   ...arrIf(true, 4)
- * ]
- * console.log(finalNumbers) // Output: [1, 2, 4]
- * @example
- * const arr = [5, 6, 7]
- * const result = arrIf(true, 8, arr)
- * console.log(result) // Output: [5, 6, 7, 8]
- */
-const arrIf = (condition, item, fallback = []) => {
-  if (condition) {
-    return Array.isArray(item) ? item : [item]
-  }
-
-  return fallback
-}
-
 module.exports = {
   deepMergeObjectsReplacingArrays,
   ensureJsonIsParsed,
   objIf,
   safeParse,
   transformEntries,
-  arrIf,
 }

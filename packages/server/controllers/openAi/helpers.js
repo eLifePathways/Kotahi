@@ -1,6 +1,3 @@
-/* eslint-disable camelcase */
-const { encoding_for_model } = require('@dqbd/tiktoken')
-
 /**
  * @typedef {Object} SystemMessage
  * @property {string} role - Role of the assistant.
@@ -40,21 +37,6 @@ ${shape}
   text: shape,
 })
 
-const getTokens = ({
-  input, // array of texts
-  model = 'text-embedding-ada-002',
-}) => {
-  const encoder = encoding_for_model(model)
-
-  const tokens = input
-    .map(text => encoder.encode(text).length)
-    .reduce((acc, curr) => acc + curr, 0)
-
-  encoder.free()
-  return tokens
-}
-
 module.exports = {
-  getTokens,
   systemPrompt,
 }

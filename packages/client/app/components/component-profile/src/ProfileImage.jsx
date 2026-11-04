@@ -7,10 +7,3 @@ export const BigProfileImage = styled.img`
   object-fit: cover;
   width: ${grid(12)};
 `
-
-export const SmallProfileImage = styled.img`
-  border-radius: 50%;
-  height: ${grid(8)};
-  object-fit: cover;
-  width: ${grid(8)};
-`

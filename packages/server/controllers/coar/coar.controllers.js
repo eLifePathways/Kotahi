@@ -783,15 +783,11 @@ const handleIncomingInboxMessage = async (payload, groupName, authHeader) => {
 }
 
 module.exports = {
-  createNotification,
   getPaginatedNotificationsForGroup,
   getNotificationsForManuscript,
   handleIncomingInboxMessage,
   sendAnnouncementNotification,
   sendTentativeAcceptCoarNotification,
   sendRejectCoarNotification,
-  sendUnprocessableCoarNotification,
-  processNotification,
   reprocessCoarNotifyPayload,
-  validateAuthToken,
 }

@@ -36,12 +36,6 @@ class Invitation extends BaseModel {
     return Invitation.query(options.trx).where({ userId }).delete()
   }
 
-  static async findNotAcceptedForManuscript(manuscriptId, options = {}) {
-    return Invitation.query(options.trx)
-      .where({ manuscriptId })
-      .whereNot('status', 'ACCEPTED')
-  }
-
   /** Patches the invitation only if it is still unanswered. Returns the patched
    * invitation, or undefined if it was not found or already answered. */
   static async patchIfUnanswered(id, data, options = {}) {

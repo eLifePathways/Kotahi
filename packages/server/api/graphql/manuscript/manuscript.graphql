@@ -1,5 +1,4 @@
 extend type Query {
-  globalTeams: [Team]
   manuscript(id: ID!): Manuscript!
   manuscripts: [Manuscript]!
   newSubmissionSettings: NewSubmissionSettings!
@@ -22,12 +21,6 @@ extend type Query {
     timezoneOffsetMinutes: Int
     groupId: ID!
     searchInAllVersions: Boolean!
-  ): PaginatedManuscripts
-  publishedManuscripts(
-    sort: String
-    offset: Int
-    limit: Int
-    groupId: ID!
   ): PaginatedManuscripts
   validateDOI(doiOrUrl: String): validateDOIResponse
   validateSuffix(suffix: String, groupId: ID!): validateDOIResponse
@@ -93,10 +86,7 @@ extend type Mutation {
   submitManuscript(id: ID!, input: String): Manuscript!
   submitAuthorProofingFeedback(id: ID!, input: String): Manuscript!
   makeDecision(id: ID!, decision: String): Manuscript!
-  deleteManuscript(id: ID!): ID!
-  deleteManuscripts(ids: [ID]!): [ID]!
   reviewerResponse(currentUserId: ID, action: String, teamId: ID!): Team
-  assignTeamEditor(id: ID!, input: String): [Team]
   addReviewer(
     manuscriptId: ID!
     userId: ID!
@@ -114,7 +104,6 @@ extend type Mutation {
     fieldName: String!
     shouldPublish: Boolean!
   ): Manuscript!
-  archiveManuscript(id: ID!): ID!
   archiveManuscripts(ids: [ID]!): [ID!]!
   unarchiveManuscripts(ids: [ID]!): [ID!]!
   assignAuthorForProofingManuscript(id: ID!): Manuscript!

@@ -30,12 +30,6 @@ class Token extends BaseModel {
     }
   }
 
-  static async deleteTokenById(tokenId, options = {}) {
-    const { trx } = options
-
-    return this.query(trx).deleteById(tokenId)
-  }
-
   static async deleteByNameAndGroupId(name, groupId, options = {}) {
     const { trx } = options
 

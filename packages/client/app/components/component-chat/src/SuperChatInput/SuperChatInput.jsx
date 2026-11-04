@@ -22,16 +22,6 @@ import EditorMention from './EditorMention'
 
 const QuotedMessage = styled.div``
 
-export const cleanSuggestionUserObject = user => {
-  if (!user) return null
-  return {
-    ...user,
-    id: user.username,
-    display: user.username,
-    filterName: user.name.toLowerCase(),
-  }
-}
-
 const SuperChatInput = ({
   sendChannelMessages,
   searchUsers,

@@ -1,5 +1,3 @@
-const { default: axios } = require('axios')
-
 const { logger } = require('@coko/server')
 
 const { Config } = require('../../models')
@@ -14,20 +12,9 @@ const {
 } = require('../../utils/dataciteCommusUtils')
 
 const {
-  createReference,
   formatCitation,
   formatMultipleCitations,
 } = require('../../utils/reference')
-
-axios.interceptors.request.use(req => {
-  // logger.debug('Starting Request:', JSON.stringify(req, null, 2))
-  return req
-})
-
-axios.interceptors.response.use(resp => {
-  // logger.debug('Response:', JSON.stringify(resp.data, null, 2))
-  return resp
-})
 
 // You know, it's probably bad to have two formatCitation functions!
 const formatCitationFn = async (citation, groupId) => {
@@ -113,38 +100,6 @@ const getDataciteCslFromDOI = async (input, groupId) => {
   }
 }
 
-const getDataciteCslFromTitle = async (input, groupId) => {
-  const activeConfig = await Config.findOne({
-    groupId,
-    active: true,
-  })
-
-  const crossrefRetrievalEmail =
-    activeConfig.formData.production?.crossrefRetrievalEmail
-
-  try {
-    const matches = await getFormattedReferencesFromDatacite(
-      input.text,
-      groupId,
-      true,
-    )
-
-    if (matches.length === 0) {
-      logger.error('Datacite had an error or timed out.')
-      logger.error('Trying CrossRef instead.', input.text)
-      // TODO: at this point, query CrossRef with the DOI
-      tryCrossref(input.text, crossrefRetrievalEmail)
-
-      return { matches: [], success: false, message: 'error' }
-    }
-
-    return { matches, success: true, message: '' }
-  } catch (error) {
-    logger.error('Datacite response error:', error.message)
-    return { matches: [], success: false, message: 'error' }
-  }
-}
-
 // This returns a reference as CSL with a formatetedCitation property that includes the HTML version of the citation.
 const getFormattedReferences = async (input, groupId) => {
   const activeConfig = await Config.findOne({
@@ -178,104 +133,6 @@ const getFormattedReferences = async (input, groupId) => {
   }
 }
 
-// This function just returns a reference as CSL.
-const getMatchingReferences = async (input, groupId) => {
-  const activeConfig = await Config.findOne({
-    groupId,
-    active: true,
-  })
-
-  const crossrefRetrievalEmail =
-    activeConfig.formData.production?.crossrefRetrievalEmail
-
-  const crossrefSearchResultCount =
-    activeConfig.formData.production?.crossrefSearchResultCount
-
-  try {
-    const matches = await getMatchingReferencesFromCrossRef(
-      input.text,
-      input.count || crossrefSearchResultCount || 3,
-      crossrefRetrievalEmail,
-    )
-
-    if (matches.length === 0) {
-      logger.error('Crossref timed out.')
-      return { matches: [], success: false, message: 'error' }
-    }
-
-    return { matches, success: true, message: '' }
-  } catch (error) {
-    logger.error('Citeproc response error:', error.message)
-    return { matches: [], success: false, message: 'error' }
-  }
-}
-
-const getMatchingReferencesFromCrossRef = async (
-  reference,
-  count,
-  crossrefRetrievalEmail,
-) => {
-  return axios
-    .get('https://api.crossref.org/v1/works', {
-      params: {
-        'query.bibliographic': reference,
-        rows: count,
-        select: 'DOI,author,issue,page,title,volume,container-title',
-        mailto: crossrefRetrievalEmail,
-      },
-      timeout: 15000,
-      headers: {
-        'User-Agent': `Kotahi (Axios 0.21; mailto:${crossrefRetrievalEmail})`,
-      },
-    })
-    .then(response => {
-      return response.data.message.items.reduce((accumulator, current) => {
-        accumulator.push(createReference(current))
-        return accumulator
-      }, [])
-    })
-    .catch(e => {
-      logger.error('Crossref failure!', e.message)
-      return []
-    })
-}
-
-// This looks up a citation based on the DOI. Not exposed in the frontend yet.
-const getReferenceFromDoi = async (doi, groupId) => {
-  const activeConfig = await Config.findOne({
-    groupId,
-    active: true,
-  })
-
-  const crossrefRetrievalEmail =
-    activeConfig.formData.production?.crossrefRetrievalEmail
-
-  try {
-    const reference = await getReferenceWithDoi(doi, crossrefRetrievalEmail)
-
-    return { reference, success: true, message: '' }
-  } catch (error) {
-    logger.error('Crossref response error for DOI lookup:', error.message)
-    return { reference: {}, success: false, message: 'error' }
-  }
-}
-
-const getReferenceWithDoi = async (doi, crossrefRetrievalEmail) => {
-  return axios
-    .get(`https://api.crossref.org/v1/works/${doi}`, {
-      params: {
-        mailto: crossrefRetrievalEmail,
-      },
-      timeout: 15000,
-      headers: {
-        'User-Agent': `Kotahi (Axios 0.21; mailto:${crossrefRetrievalEmail})`,
-      },
-    })
-    .then(response => {
-      return createReference(response.data.message)
-    })
-}
-
 const tryCrossref = async (doi, crossrefRetrievalEmail, groupId) => {
   try {
     const matches = await await getFormattedReferencesFromCrossRefDOI(
@@ -300,10 +157,5 @@ module.exports = {
   formatCitationFn,
   formatMultipleCitationsFn,
   getDataciteCslFromDOI,
-  getDataciteCslFromTitle,
   getFormattedReferences,
-  getMatchingReferences,
-  getMatchingReferencesFromCrossRef,
-  getReferenceFromDoi,
-  getReferenceWithDoi,
 }

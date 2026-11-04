@@ -14,7 +14,6 @@ declare class TaskAlert extends BaseModel {
     manuscriptId: string,
     options?: Options,
   ): Promise<number>
-  static deleteByUserId(userId: string, options?: Options): Promise<number>
   static deleteByTaskId(taskId: string, options?: Options): Promise<number>
   static deleteByTaskIdAndUserIds(
     taskId: string,

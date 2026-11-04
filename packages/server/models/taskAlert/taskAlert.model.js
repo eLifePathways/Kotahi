@@ -31,10 +31,6 @@ class TaskAlert extends BaseModel {
       .whereIn('taskId', Task.query(trx).select('id').where({ manuscriptId }))
   }
 
-  static async deleteByUserId(userId, options = {}) {
-    return TaskAlert.query(options.trx).delete().where({ userId })
-  }
-
   static async deleteByTaskId(taskId, options = {}) {
     return TaskAlert.query(options.trx).delete().where({ taskId })
   }

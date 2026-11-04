@@ -5,11 +5,6 @@ import Team from '../team/team.model'
 
 type Options = { trx?: Transaction }
 
-type ObjectRoles = {
-  id: string
-  roles: string[]
-}
-
 declare class User extends BaseModel {
   admin: boolean | null
   email: string | null
@@ -26,13 +21,6 @@ declare class User extends BaseModel {
   teams?: Team[]
   reviews?: Review[]
 
-  currentRoles(object?: {
-    objectId: string
-    objectType: string
-  }): Promise<ObjectRoles[]>
-  validPassword(password: string): Promise<boolean>
-
-  static hashPassword(password: string): Promise<string>
   static findOneWithIdentity(
     userId: string,
     identityType: string,
@@ -59,9 +47,6 @@ declare class User extends BaseModel {
     prefix: string,
     options?: Options,
   ): Promise<User[]>
-  static ownersWithUsername(object: {
-    owners: string[]
-  }): Promise<Pick<User, 'id' | 'username'>[]>
   static hasGlobalRole(
     userId: string,
     role: string,

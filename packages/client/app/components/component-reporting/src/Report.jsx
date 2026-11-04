@@ -26,7 +26,7 @@ const MinorNote = styled.span`
   font-size: 80%;
 `
 
-export const Content = styled.div`
+const Content = styled.div`
   background-color: ${th('color.backgroundC')};
   border-radius: ${th('borderRadius')};
   box-shadow: ${th('boxShadow200')};

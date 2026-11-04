@@ -18,7 +18,7 @@ const QRCode = require('qrcode-svg')
 let userArticleMetadata = {}
 
 try {
-  userArticleMetadata = require('../../../config/journal/export/articleMetadata.json')
+  userArticleMetadata = require('../../config/journal/export/articleMetadata.json')
 } catch {
   // console.log("userArticleMetadata doesn't exist.")
 }

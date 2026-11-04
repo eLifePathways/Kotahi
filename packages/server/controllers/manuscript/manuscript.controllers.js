@@ -85,10 +85,7 @@ const {
   getThreadedDiscussionsForManuscript,
 } = require('../threadedDiscussion.controllers')
 
-const {
-  publishToHypothesis,
-  deletePublication,
-} = require('../../services/publishing/hypothesis')
+const { publishToHypothesis } = require('../../services/publishing/hypothesis')
 
 const {
   publishToCrossref,
@@ -276,63 +273,6 @@ const createNewVersion = async id => {
   })
 
   return manuscript.createNewVersion()
-}
-
-const deleteManuscript = async id => {
-  const toDeleteList = []
-  const manuscript = await Manuscript.findById(id)
-
-  const activeConfig = await Config.getCached(manuscript.groupId)
-
-  toDeleteList.push(manuscript.id)
-
-  if (manuscript.parentId) {
-    const { result: parentManuscripts } = await Manuscript.find({
-      parent_id: manuscript.parentId,
-    })
-
-    parentManuscripts.forEach(ms => {
-      toDeleteList.push(ms.id)
-    })
-  }
-
-  // Delete all versions of manuscript
-  await Promise.all(
-    toDeleteList.map(async toDeleteItem => {
-      if (activeConfig.formData.publishing.hypothesis.apiKey) {
-        const { result: hypothesisArtifacts } = await PublishedArtifact.find({
-          manuscriptId: toDeleteItem,
-          platform: 'Hypothesis',
-        })
-
-        const headers = {
-          headers: {
-            Authorization: `Bearer ${activeConfig.formData.publishing.hypothesis.apiKey}`,
-          },
-        }
-
-        await Promise.all(
-          hypothesisArtifacts.map(async artifact =>
-            deletePublication(artifact.externalId, headers),
-          ),
-        )
-      }
-
-      await Manuscript.deleteById(toDeleteItem)
-    }),
-  )
-
-  return id
-}
-
-const deleteManuscripts = async ids => {
-  if (ids.length > 0) {
-    await Promise.all(
-      ids.map(toDeleteItem => Manuscript.deleteById(toDeleteItem)),
-    )
-  }
-
-  return ids
 }
 
 const doisToRegister = async id => {
@@ -1143,10 +1083,6 @@ const publishedManuscriptEditors = async manuscript => {
   return teams.flatMap(team =>
     team.users.map(user => ({ name: user.username, role: team.role })),
   )
-}
-
-const publishedManuscripts = async (sort, offset, limit, groupId) => {
-  return Manuscript.findPublishedInGroup(groupId, { sort, limit, offset })
 }
 
 const publishedManuscriptReviews = async (manuscript, userId, options = {}) => {
@@ -2250,8 +2186,6 @@ module.exports = {
   assignAuthorForProofingManuscript,
   authorFeedback,
   createNewVersion,
-  deleteManuscript,
-  deleteManuscripts,
   doisToRegister,
   firstVersionCreated,
   getCss,
@@ -2279,7 +2213,6 @@ module.exports = {
   publishedManuscriptDecisions,
   publishedManuscriptEditors,
   publishedManuscriptReviews,
-  publishedManuscripts,
   publishManuscript,
   refreshAdaStatus,
   removeAuthor,

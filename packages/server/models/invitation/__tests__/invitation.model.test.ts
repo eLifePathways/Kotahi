@@ -69,25 +69,6 @@ describe('Invitation model', () => {
     })
   })
 
-  describe('findNotAcceptedForManuscript', () => {
-    it("returns the manuscript's invitations that are not accepted", async () => {
-      const group = await Group.insert({})
-
-      const otherManuscript = await Manuscript.insert({ groupId: group.id })
-
-      const unanswered = await createInvitation()
-      const rejected = await createInvitation({ status: 'REJECTED' })
-      await createInvitation({ status: 'ACCEPTED' })
-      await createInvitation({ manuscriptId: otherManuscript.id })
-
-      const found = await Invitation.findNotAcceptedForManuscript(manuscriptId)
-
-      expect(found.map(i => i.id).sort()).toEqual(
-        [unanswered.id, rejected.id].sort(),
-      )
-    })
-  })
-
   describe('patchIfUnanswered', () => {
     it('patches an unanswered invitation and returns it', async () => {
       const invitation = await createInvitation()
