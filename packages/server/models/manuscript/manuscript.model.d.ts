@@ -216,11 +216,6 @@ declare class Manuscript extends BaseModel {
     params?: { startDate?: string; limit?: number; offset?: number },
     options?: Options,
   ): Promise<(Manuscript & { totalCount: string })[]>
-  static findPublishedInGroup(
-    groupId: string,
-    params?: { sort?: string; limit?: number; offset?: number },
-    options?: Options,
-  ): Promise<{ totalCount: number; manuscripts: Manuscript[] }>
   static findByIdWithTeamUsersAndChannels(
     id: string,
     options?: Options,

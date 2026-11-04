@@ -729,20 +729,6 @@ const updateLanguage = async (id, preferredLanguage) => {
   return User.patchAndFetchById(id, { preferredLanguage })
 }
 
-const updateUser = async (id, input) => {
-  if (input.password) {
-    input.passwordHash = await User.hashPassword(input.password)
-
-    delete input.password
-  }
-
-  const updatedUser = JSON.parse(input)
-
-  delete updatedUser.globalRoles
-  delete updatedUser.groupRoles
-  return User.patchAndFetchById(id, updatedUser)
-}
-
 const updateUsername = async (id, username) => {
   return User.patchAndFetchById(id, { username })
 }
@@ -775,7 +761,6 @@ module.exports = {
   setGroupRole,
   updateEmail,
   updateLanguage,
-  updateUser,
   updateUsername,
   userIdentities,
 }

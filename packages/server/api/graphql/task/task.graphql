@@ -101,8 +101,6 @@ type TaskEmailNotification {
 extend type Mutation {
   updateTasks(manuscriptId: ID, groupId: ID!, tasks: [TaskInput!]!): [Task!]!
   updateTask(task: TaskInput!): Task!
-  createNewTaskAlerts(groupId: ID!): Boolean
-  removeTaskAlertsForCurrentUser: Boolean
   updateTaskStatus(task: UpdateTaskStatusInput!): Task!
   updateTaskNotification(taskNotification: TaskEmailNotificationInput!): Task!
   deleteTaskNotification(id: ID!): Task!

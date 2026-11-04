@@ -7,33 +7,6 @@ export const CommentsContainer = styled.div`
   width: 35%;
 `
 
-export const FullCommentsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-width: 250px;
-  ${props => props.readOnlyComments && 'pointer-events: none;'}
-  ${props => props.readOnlyComments && 'user-select: none;'}
-  
-  & > div {
-    left: 0; /* 30px; */
-    ${props => props.readOnlyComments && 'pointer-events: none;'}
-    ${props => props.readOnlyComments && 'user-select: none;'}
-    position: relative;
-    right: initial;
-
-    &:first-child {
-      left: 0;
-      right: 0;
-    }
-  }
-
-  & ~ div div svg {
-    /* THIS IS TO KILL INSERT COMMENT THING */
-    ${props => props.authorComments && 'display: none;'}
-  }
-`
-
 export const CommentsContainerNotes = styled.div`
   display: flex;
   flex-direction: column;

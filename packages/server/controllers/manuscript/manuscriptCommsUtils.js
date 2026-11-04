@@ -1,28 +1,6 @@
 const Manuscript = require('../../models/manuscript/manuscript.model')
 const Config = require('../../models/config/config.model')
 
-const { getUserRolesInManuscript } = require('../user.controllers')
-
-const getManuscriptLink = async (appUrl, userId, manuscriptId) => {
-  const roles = manuscriptId
-    ? await getUserRolesInManuscript(userId, manuscriptId)
-    : {}
-
-  let manuscriptPageUrl = `${appUrl}/versions/${manuscriptId}`
-
-  if (roles?.groupManager || roles?.anyEditor) {
-    manuscriptPageUrl += '/decision?tab=decision'
-  } else if (roles?.reviewer || roles?.collaborativeReviewer) {
-    manuscriptPageUrl += '/review'
-  } else if (roles?.author) {
-    manuscriptPageUrl += '/submit'
-  } else {
-    manuscriptPageUrl = `${appUrl}/dashboard`
-  }
-
-  return manuscriptPageUrl
-}
-
 const isLatestVersionOfManuscript = async (versionId, options = {}) => {
   const { trx } = options
 
@@ -89,5 +67,4 @@ module.exports = {
   archiveOldManuscripts,
   manuscriptHasOverdueTasksForUser,
   isLatestVersionOfManuscript,
-  getManuscriptLink,
 }

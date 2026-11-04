@@ -10,7 +10,6 @@ const seedForms = require('../../../scripts/cypress/seedForms')
 
 const {
   createGroup,
-  deleteGroup,
   deleteGroupsByPrefix,
   createManuscripts,
   assignRole,
@@ -90,18 +89,6 @@ module.exports = app => {
     try {
       const result = await createGroup(groupName)
       res.status(200).json(result)
-    } catch (err) {
-      logger.error(err)
-      res.status(500).json({ error: err.message })
-    }
-  })
-
-  app.post('/api/e2e/deleteTestGroup/:groupName', async (req, res) => {
-    const { groupName } = req.params
-
-    try {
-      await deleteGroup(groupName)
-      res.sendStatus(200)
     } catch (err) {
       logger.error(err)
       res.status(500).json({ error: err.message })

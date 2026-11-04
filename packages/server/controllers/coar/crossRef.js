@@ -119,5 +119,4 @@ const getCrossrefDataViaDoi = async doi => {
 
 module.exports = {
   getCrossrefDataViaDoi,
-  getDataByDoi,
 }

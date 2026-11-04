@@ -1,11 +1,5 @@
 extend type Query {
-  buildCitations(textReferences: String!): BuildCitationsType
   buildCitationsCSL(textReferences: String!): BuildCitationsCSLType
-}
-
-type BuildCitationsType {
-  htmlReferences: String!
-  error: String
 }
 
 type BuildCitationsCSLType {

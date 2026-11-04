@@ -74,21 +74,6 @@ describe('TaskAlert model', () => {
     })
   })
 
-  describe('deleteByUserId', () => {
-    it("deletes the user's alerts only", async () => {
-      const task = await createTask()
-      const user = await User.insert({})
-      const otherUser = await User.insert({})
-      await TaskAlert.insert({ taskId: task.id, userId: user.id })
-      await TaskAlert.insert({ taskId: task.id, userId: otherUser.id })
-
-      expect(await TaskAlert.deleteByUserId(user.id)).toBe(1)
-      expect((await alertsOf(task.id)).map(a => a.userId)).toEqual([
-        otherUser.id,
-      ])
-    })
-  })
-
   describe('deleteByTaskId', () => {
     it("deletes the task's alerts only", async () => {
       const task = await createTask()

@@ -220,5 +220,4 @@ const publishSpecificAnnotationToHypothesis = async (
 module.exports = {
   publishToHypothesis,
   publishSpecificAnnotationToHypothesis,
-  deletePublication,
 }

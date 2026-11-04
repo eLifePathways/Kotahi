@@ -102,9 +102,6 @@ const getData = async (groupId, ctx) => {
 
     console.log(`  ${importsOnlyWithDOI.length} of these have DOIs...`)
 
-    /* The following code is commented, since semantic scholar now provides journal and publication date as well. In case there is any inconsistency in that data, we can reuse the following */
-    // await fetchPublicationDatesFromEuropePmc(importsOnlyWithDOI)
-
     const recencyPeriodDays = Number(
       activeConfig.formData.integrations.semanticScholar
         .semanticScholarImportsRecencyPeriodDays ?? 0,
@@ -271,46 +268,5 @@ const getData = async (groupId, ctx) => {
 
   return []
 }
-
-/* The following code is commented, since semantic scholar now provides journal and publication date as well. In case there is any inconsistency in that data, we can reuse the following */
-
-// async function fetchPublicationDatesFromEuropePmc(importsOnlyWithDOI) {
-//   await Promise.all(
-//     map(importsOnlyWithDOI, async preprint => {
-//       const queryDoi = `DOI:${preprint.externalIds.DOI}`
-
-//       const params = {
-//         query: queryDoi,
-//         format: 'json',
-//       }
-
-//       let firstPublicationDate, preprintServer
-
-//       try {
-//         const response = await axios.get(
-//           `https://www.ebi.ac.uk/europepmc/webservices/rest/search`,
-//           {
-//             params,
-//           },
-//         )
-
-//         if (
-//           response.data.resultList &&
-//           response.data.resultList.result[0] &&
-//           response.data.resultList.result[0].bookOrReportDetails
-//         ) {
-//           firstPublicationDate =
-//             response.data.resultList.result[0].firstPublicationDate
-//           preprintServer =
-//             response.data.resultList.result[0].bookOrReportDetails.publisher
-//         }
-
-//         return Object.assign(preprint, { firstPublicationDate, preprintServer })
-//       } catch (e) {
-//         console.error(e.message)
-//       }
-//     }),
-//   )
-// }
 
 module.exports = getData

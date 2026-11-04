@@ -27,10 +27,6 @@ declare class Invitation extends BaseModel {
     userId: string,
     options?: { trx?: Transaction },
   ): Promise<number>
-  static findNotAcceptedForManuscript(
-    manuscriptId: string,
-    options?: { trx?: Transaction },
-  ): Promise<Invitation[]>
   static patchIfUnanswered(
     id: string,
     data: Partial<Invitation>,

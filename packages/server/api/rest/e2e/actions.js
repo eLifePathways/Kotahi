@@ -213,12 +213,6 @@ const deleteGroupData = async (group, trx) => {
   await Group.deleteById(group.id, { trx })
 }
 
-const deleteGroup = async groupName =>
-  useTransaction(async trx => {
-    const group = await Group.findOne({ name: groupName }, { trx })
-    if (group) await deleteGroupData(group, trx)
-  })
-
 const deleteGroupsByPrefix = async prefix =>
   useTransaction(async trx => {
     const groups = await Group.findByNamePrefix(prefix, { trx })
@@ -983,7 +977,7 @@ const createThreadedDiscussion = async ({
 }
 
 // Deletes the shared pw-* users (and, via cascade, their team memberships).
-// Not part of deleteGroup(sByPrefix) - these users aren't owned by any one
+// Not part of deleteGroupsByPrefix - these users aren't owned by any one
 // group, so cleaning them up is a separate step, meant to run once at the
 // very end of a whole test run (see globalTeardown.ts), not per-group.
 const deleteSharedUsers = async () => {
@@ -1013,7 +1007,6 @@ const deleteSharedUsers = async () => {
 
 module.exports = {
   createGroup,
-  deleteGroup,
   deleteGroupsByPrefix,
   createManuscripts,
   assignRole,

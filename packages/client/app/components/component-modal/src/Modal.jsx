@@ -28,12 +28,12 @@ const StackedHeaderContainer = styled.div`
   font-weight: 600;
 `
 
-export const Title = styled.div`
+const Title = styled.div`
   font-size: ${th('fontSizeHeading5')};
   font-weight: 500;
 `
 
-export const Subtitle = styled.div`
+const Subtitle = styled.div`
   color: ${th('color.gray50')};
   font-size: ${th('fontSizeHeading6')};
   font-weight: normal;
@@ -77,27 +77,12 @@ const ButtonContainer = styled.div`
   gap: ${grid(4)};
 `
 
-const PrimaryActionButton = styled(ActionButton)`
-  background-color: ${th('color.brand1.base')};
-  border-radius: 6px;
-  color: ${th('color.textReverse')};
-  cursor: pointer;
-  margin: 0 5px;
-`
-
 const SecondaryActionButton = styled(ActionButton)`
   background-color: ${th('color.backgroundA')};
   border: 1px solid ${th('color.black')};
   border-radius: 6px;
   color: ${th('color.gray50')};
   cursor: pointer;
-`
-
-const CheckBoxContainer = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  margin: 10px 5px;
 `
 
 const ModalContainer = styled.div`
@@ -108,22 +93,9 @@ const ModalContainer = styled.div`
   width: 100%;
 `
 
-export const PrimaryButton = ({ onClick, children }) => {
-  return <PrimaryActionButton onClick={onClick}>{children}</PrimaryActionButton>
-}
-
 export const SecondaryButton = ({ onClick, children }) => {
   return (
     <SecondaryActionButton onClick={onClick}>{children}</SecondaryActionButton>
-  )
-}
-
-export const CheckBoxButton = ({ onClick, isClicked, children }) => {
-  return (
-    <CheckBoxContainer onClick={onClick}>
-      {(isClicked && <Icon>check-square</Icon>) || <Icon>square</Icon>}
-      {children}
-    </CheckBoxContainer>
   )
 }
 

@@ -56,32 +56,4 @@ const rebuildCMSSite = async (groupId, params) => {
   })
 }
 
-const healthCheck = async () => {
-  const { clientId, clientSecret, port, protocol, host } =
-    config.get('flax-site')
-  const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
-  const url = `${serverUrl}/healthcheck`
-
-  const buff = Buffer.from(`${clientId}:${clientSecret}`, 'utf8')
-  const base64data = buff.toString('base64')
-
-  try {
-    const serviceHealthCheck = await axios({
-      method: 'get',
-      url,
-      headers: {
-        authorization: `Basic ${base64data}`,
-      },
-    })
-
-    return {
-      data: serviceHealthCheck.data,
-    }
-  } catch (err) {
-    return {
-      err,
-    }
-  }
-}
-
-module.exports = { healthCheck, rebuildCMSSite }
+module.exports = { rebuildCMSSite }
