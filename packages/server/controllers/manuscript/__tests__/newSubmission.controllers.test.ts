@@ -13,13 +13,13 @@ import moment from 'moment-timezone'
 import {
   db,
   config,
-  DbTestUtils,
   migrationManager,
   fileStorage,
   FileStorageConstructor,
   File as FileModel,
 } from '@coko/server'
 
+import DbTestUtils from '../../../models/DbTestUtils'
 import Group from '../../../models/group/group.model'
 import User from '../../../models/user/user.model'
 import Config from '../../../models/config/config.model'

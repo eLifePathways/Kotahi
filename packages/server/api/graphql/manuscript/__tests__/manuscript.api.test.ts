@@ -5,9 +5,9 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, User, Manuscript, Team, Config } from '../../../../models'
 
 const comments = [

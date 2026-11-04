@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager, uuid } from '@coko/server'
+import { db, config, migrationManager, uuid } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import TaskEmailNotification from '../taskEmailNotification.model'
 import Task from '../../task/task.model'
 import Group from '../../group/group.model'
