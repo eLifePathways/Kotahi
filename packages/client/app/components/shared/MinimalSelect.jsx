@@ -84,7 +84,7 @@ const styles = theme => ({
   },
 })
 
-export const MinimalSelect = ({
+const MinimalSelect = ({
   value,
   isMulti,
   onChange,

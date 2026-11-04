@@ -1,16 +1,10 @@
-/* eslint-disable no-await-in-loop */
 const axios = require('axios')
-const { logger } = require('@coko/server')
 
 const { callOn } = require('./utils')
-const { getTokens, systemPrompt } = require('./helpers')
+const { systemPrompt } = require('./helpers')
 const Config = require('../../models/config/config.model')
 
 const COMPLETIONS_ENDPOINT = 'https://api.openai.com/v1/chat/completions'
-const EMBEDDINGS_ENDPOINT = 'https://api.openai.com/v1/embeddings'
-const IMAGES_ENDPOINT = 'https://api.openai.com/v1/images/generations'
-const DALL_E_MODEL = 'dall-e-3'
-const EMBEDDINGS_MODEL = 'text-embedding-3-small'
 const GPT_MODEL = 'gpt-4o-mini'
 
 const getHeaders = async CHAT_GPT_KEY => {
@@ -58,20 +52,6 @@ const openAi = async ({
     const system = systemMessage(systemPrompt(passedSystem))
     const messages = [system, ...history, userMessages(input)]
 
-    // const ctxWindow = getTokens({
-    //   input: [
-    //     input.text.join('\n'),
-    //     input?.image_src?.join('\n') || '',
-    //     ...history.map(rec => rec.content),
-    //     system.content,
-    //   ],
-    //   model: 'gpt-4',
-    // })
-
-    // logger.info(JSON.stringify(userMessages(input)))
-
-    // logger.info(`TOKENS: ${ctxWindow}`)
-
     const payload = {
       model: GPT_MODEL,
       messages,
@@ -90,78 +70,4 @@ const openAi = async ({
   }
 }
 
-const generateImages = async ({ input, format = 'b64_json' }) => {
-  const { headers, hasKey } = await getHeaders()
-
-  try {
-    if (!hasKey) {
-      throw new Error('Missing access key')
-    }
-
-    const payload = {
-      model: DALL_E_MODEL,
-      prompt: input,
-      response_format: { type: format },
-      n: 1,
-    }
-
-    const response = await axios.post(IMAGES_ENDPOINT, payload, { headers })
-
-    logger.info(JSON.stringify(response.data))
-
-    return JSON.stringify(response.data)
-  } catch (e) {
-    logger.error('openAi:', e)
-    throw new Error(e)
-  }
-}
-
-const embeddings = async (input, retries = 3, delay = 5000) => {
-  const { headers, hasKey } = await getHeaders()
-
-  try {
-    if (!hasKey) {
-      throw new Error('Missing access key')
-    }
-
-    let response
-
-    const payload = {
-      model: EMBEDDINGS_MODEL,
-      input,
-    }
-
-    const ctxWindow = getTokens({
-      input: [input],
-    })
-
-    logger.info(ctxWindow)
-
-    // eslint-disable-next-line no-plusplus
-    for (let attempt = 0; attempt <= retries; attempt++) {
-      try {
-        response = await axios.post(EMBEDDINGS_ENDPOINT, payload, { headers })
-        break
-      } catch (error) {
-        if (error.response && error.response.status === 429) {
-          await new Promise(resolve => {
-            setTimeout(resolve, delay)
-          })
-        } else if (attempt < retries) {
-          await new Promise(resolve => {
-            setTimeout(resolve, delay)
-          })
-        } else {
-          throw error
-        }
-      }
-    }
-
-    return JSON.stringify(response.data)
-  } catch (e) {
-    logger.error('openAi:', e)
-    throw new Error(e)
-  }
-}
-
-module.exports = { openAi, embeddings, generateImages }
+module.exports = { openAi }

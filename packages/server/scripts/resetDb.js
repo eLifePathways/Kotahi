@@ -87,4 +87,4 @@ const resetDbAndApplyDump = async (dumpSql, dumpName) => {
   return reset && dump
 }
 
-module.exports = { clearDb, resetDb, applyDump, resetDbAndApplyDump }
+module.exports = { applyDump, resetDbAndApplyDump }

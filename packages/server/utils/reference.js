@@ -53,28 +53,6 @@ const createFormattedReference = async (data, groupId, isDatacite = false) => {
   return outputData
 }
 
-const createReference = data => {
-  const {
-    DOI: doi,
-    author,
-    page,
-    title,
-    issue,
-    volume,
-    'container-title': journalTitle,
-  } = data
-
-  return {
-    doi,
-    author: pluckAuthors(author),
-    page,
-    issue,
-    volume,
-    title: pluckTitle(title),
-    journalTitle: pluckJournalTitle(journalTitle),
-  }
-}
-
 const getFirstPageFromPageRange = range => {
   const match = range.match(/(?<=^\s*)\d+/)
   return match?.[0] || null
@@ -376,7 +354,6 @@ const pluckTitle = title => title && title[0]
 
 module.exports = {
   createFormattedReference,
-  createReference,
   formatCitation,
   formatMultipleCitations,
 }

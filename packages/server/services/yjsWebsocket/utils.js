@@ -169,8 +169,6 @@ module.exports = {
   encoding,
   persistence,
   messageSync,
-  wsReadyStateConnecting,
-  wsReadyStateOpen,
   docs,
   updateHandler,
   decoding,

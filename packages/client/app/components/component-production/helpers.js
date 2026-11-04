@@ -33,14 +33,3 @@ export const waxAiToolSystem = {
     'Omitted properties must not be present on the response',
   ],
 }
-
-// context will be passed on server with the resulted embeddings text (this will be updated shortly to handle the embeddings result text on the client)
-export const waxAiToolRagSystem = {
-  role: 'You are a add-on for a co-writing ai assistant tool and part of a RAG system, a tool for a book writing app called "Ketty"',
-  task: `${waxAiToolSystem.task}\n 'users' can upload documents to a 'knowledge base' and ask you about them. user queries will first search for a embeddings vector db and then your context will be augmented, and then you must answer to that query using the following document fragments as context(see below). 'user' may also want to use the content of the documents in order to enhance it's writing experience.`,
-  response: {
-    type: 'json',
-    shape: JSON.stringify(waxAiToolResponseShape),
-  },
-  notes: waxAiToolSystem.notes,
-}

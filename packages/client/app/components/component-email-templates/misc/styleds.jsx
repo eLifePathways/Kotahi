@@ -61,26 +61,6 @@ export const Footer = styled(FlexRow)`
   padding: ${grid(6)};
 `
 
-// #endregion EmailTemplatesEditForm --------------------------------------------------------------------
-
-// #region EmailTemplatesHeader -----------------------------------------------------------------------
-export const Action = styled(CleanButton)`
-  align-items: center;
-  color: ${p =>
-    p.disabled ? p.theme.color.gray80 : p.theme.color.brand1.base};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  gap: ${grid(2)};
-  min-width: 0;
-  width: fit-content;
-
-  span {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-`
-
 export const HeaderRoot = styled.header`
   align-items: center;
   background: #fff;

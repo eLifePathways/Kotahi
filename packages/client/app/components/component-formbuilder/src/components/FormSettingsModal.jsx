@@ -20,13 +20,13 @@ const InvalidWarning = styled.div`
   color: ${th('colorError')};
 `
 
-export const Legend = styled.div`
+const Legend = styled.div`
   font-size: ${th('fontSizeBase')};
   font-weight: 600;
   margin-bottom: ${props => props.space && grid(2)(props)};
 `
 
-export const Section = styled.div`
+const Section = styled.div`
   margin: ${grid(8)} 0;
 
   &:first-child {

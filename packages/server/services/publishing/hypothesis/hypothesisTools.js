@@ -4,14 +4,6 @@ const {
   getPublishableTextFromValue,
 } = require('../../../utils/fieldFormatUtils')
 
-const MAX_REVIEW_COUNT = 10
-
-const hasText = v =>
-  v &&
-  v !== '<p></p>' &&
-  v !== '<p class="paragraph"></p>' &&
-  typeof v === 'string'
-
 const getPublishableTextFromComment = commentObject => {
   if (!commentObject.commentVersions || !commentObject.commentVersions.length)
     return null
@@ -194,8 +186,6 @@ const normalizeUri = uri =>
   )
 
 module.exports = {
-  hasText,
   getPublishableFields,
   normalizeUri,
-  MAX_REVIEW_COUNT,
 }

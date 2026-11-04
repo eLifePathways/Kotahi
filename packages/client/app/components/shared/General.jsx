@@ -79,22 +79,6 @@ export const SectionRow = styled.div`
   padding: ${grid(4)} ${grid(6)};
 `
 
-export const ClickableSectionRow = styled(SectionRow)`
-  color: ${th('colorText')};
-
-  :last-of-type {
-    border-radius: 0 0 ${th('borderRadius')} ${th('borderRadius')};
-  }
-
-  &:hover {
-    background-color: ${th('color.backgroundC')};
-    cursor: pointer;
-
-    svg {
-      stroke: ${th('color.brand1.base')};
-    }
-  }
-`
 export const SectionRowGrid = styled(SectionRow)`
   display: grid;
   gap: ${grid(4)};
@@ -166,13 +150,6 @@ export const Manuscript = styled.div`
   height: 100vh;
   overflow: auto;
   padding: ${grid(4)};
-`
-
-export const Chat = styled.div`
-  border-left: 1px solid ${th('color.gray90')};
-  display: flex;
-  grid-area: chat;
-  height: 100vh;
 `
 
 export const VersionLabelWrapper = styled.div`

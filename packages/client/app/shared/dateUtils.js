@@ -23,40 +23,10 @@ export const transposeFromLocalToTimezone = (date, timezone) => {
 }
 
 /** Format date as yyyy-MM-dd (using timezone if supplied, otherwise UTC) */
-export const dateToIso8601 = (date, timezoneOffsetMinutes) => {
-  return (
-    timezoneOffsetMinutes
-      ? transposeUtcToTimezone(date, timezoneOffsetMinutes)
-      : new Date(date)
-  )
-    .toISOString()
-    .slice(0, 10)
-}
 
 /** Format date as yyyyMMdd (using timezone if supplied, otherwise UTC) */
-export const dateToCompactString = (date, timezoneOffsetMinutes) =>
-  dateToIso8601(date, timezoneOffsetMinutes).replaceAll('-', '')
-
-/** Format date as yyyyMMdd using local timezone */
-export const dateToCompactStringLocal = date =>
-  dateToCompactString(date, tzOffset)
 
 /** Convert yyyyMMdd string into a date (midnight at start of day), using timezone if supplied, otherwise UTC */
-export const compactStringToDate = (compactString, timezoneOffsetMinutes) => {
-  const isoString = `${compactString.substring(0, 4)}-${compactString.substring(
-    4,
-    6,
-  )}-${compactString.substring(6, 8)}T00:00:00.000Z`
-
-  const date = new Date(isoString)
-  if (timezoneOffsetMinutes)
-    return transposeTimezoneToUtc(date, timezoneOffsetMinutes)
-  return date
-}
-
-/** Convert yyyyMMdd string into a date (midnight at start of day), using the local timezone */
-export const compactStringToDateLocal = compactString =>
-  compactStringToDate(compactString, tzOffset)
 
 /** Add the local timezone offset to mimic a UTC datetime.
  *  E.g. if local time is NZST,
@@ -65,7 +35,7 @@ export const compactStringToDateLocal = compactString =>
 export const transposeUtcToLocal = date =>
   transposeUtcToTimezone(date, tzOffset)
 
-export const transposeUtcToTimezone = (date, timezoneOffsetMinutes) => {
+const transposeUtcToTimezone = (date, timezoneOffsetMinutes) => {
   const utc = new Date(date)
   const local = utc.getTime() - timezoneOffsetMinutes * 60000
   return new Date(local)
@@ -78,7 +48,7 @@ export const transposeUtcToTimezone = (date, timezoneOffsetMinutes) => {
 export const transposeLocalToUtc = date =>
   transposeTimezoneToUtc(date, tzOffset)
 
-export const transposeTimezoneToUtc = (date, timezoneOffsetMinutes) => {
+const transposeTimezoneToUtc = (date, timezoneOffsetMinutes) => {
   const local = new Date(date)
   const utc = local.getTime() + timezoneOffsetMinutes * 60000
   return new Date(utc)
@@ -118,18 +88,7 @@ export const getEndOfDay = (date, timezoneOffsetMinutes) => {
     : dayEndUtc
 }
 
-/** Return [year, month, date] parsed from either yyyy-mm-dd or mm/dd/yyyy format, e.g. return [2021, 7, 23] for '2021-07-23' or '07/23/2021'.
- * To avoid ambiguity, UK format (dd/mm/yyyy) is not supported.
- * This does not ensure that dates are valid; e.g. '04/31/2021' is invalid (only 30 days in April), but is still parsed.
- */
-export const parseDate = dateString => {
-  const date = new Date(dateString)
-  if (date.toString() === 'Invalid Date')
-    throw new Error(`Invalid date string "${dateString}"`)
-  return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
-}
-
-export const pad = num => (num < 10 ? `0${num}` : num.toString())
+const pad = num => (num < 10 ? `0${num}` : num.toString())
 
 export const monthAbbrevs = [
   'Jan',

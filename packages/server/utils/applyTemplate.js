@@ -31,7 +31,7 @@ const njkFilters = require('./pdfTemplates/njkFilters')
 
 const defaultTemplatePath = path.resolve(__dirname, 'pdfTemplates')
 
-const userTemplatePath = path.resolve(__dirname, '../../config/journal/export')
+const userTemplatePath = path.resolve(__dirname, '../config/journal/export')
 
 const generateCss = async noPagedJs => {
   // if noPagedJs is true, we don't add the pagedJS styles (this is for the text editor)

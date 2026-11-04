@@ -45,7 +45,7 @@ const FloatingChatPanelExpandButton = styled(ChatPanelExpandButton)`
   right: 18px;
 `
 
-export const createBlankSubmissionBasedOnForm = form => {
+const createBlankSubmissionBasedOnForm = form => {
   const allBlankedFields = {}
   const fieldNames = form.children.map(field => field.name)
   fieldNames.forEach(fieldName => set(allBlankedFields, fieldName, ''))

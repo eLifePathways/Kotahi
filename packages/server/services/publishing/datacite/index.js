@@ -234,6 +234,5 @@ module.exports = {
   getDoi,
   doiIsAvailable,
   verifySubmission,
-  getPathAndPayload,
   checkPayload,
 }
