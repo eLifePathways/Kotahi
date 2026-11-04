@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager } from '@coko/server'
+import { db, config, migrationManager } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Group from '../../group/group.model'
 import User from '../../user/user.model'
 import Manuscript from '../../manuscript/manuscript.model'
@@ -76,11 +77,13 @@ describe('UserNotification model', () => {
     const group = await Group.insert({})
     const user = await User.insert({})
 
-    const first = await UserNotification.insert({
+    const first = await UserNotification.insertBackdated({
       userId: user.id,
       groupId: group.id,
+      manuscriptId: null,
       eventType: 'addedAsEditor',
       data: { shortId: '1' },
+      created: new Date(Date.now() - 60 * 1000),
     })
 
     const second = await UserNotification.insert({

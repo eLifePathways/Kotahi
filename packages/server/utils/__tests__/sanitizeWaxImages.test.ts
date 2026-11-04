@@ -7,10 +7,10 @@ import {
   config,
   migrationManager,
   fileStorage,
-  DbTestUtils,
   File,
 } from '@coko/server'
 
+import DbTestUtils from '../../models/DbTestUtils'
 import sanitizeWaxImages from '../sanitizeWaxImages'
 import Manuscript from '../../models/manuscript/manuscript.model'
 

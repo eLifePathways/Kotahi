@@ -2,13 +2,13 @@ import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
 import {
   db,
   config,
-  DbTestUtils,
   migrationManager,
   File,
   useTransaction,
   uuid,
 } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Manuscript from '../manuscript.model'
 import Channel from '../../channel/channel.model'
 import ChannelMember from '../../channelMember/channelMember.model'

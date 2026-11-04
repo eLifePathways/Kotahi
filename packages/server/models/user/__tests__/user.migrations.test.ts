@@ -7,9 +7,9 @@ import {
   createFile,
   fileStorage,
   config,
-  DbTestUtils,
 } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import User from '../user.model'
 
 const defaultProfilePic = '/profiles/default_avatar.svg'

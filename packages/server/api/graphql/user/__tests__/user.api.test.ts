@@ -13,11 +13,11 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   File,
   fileStorage,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, Identity, Team, User } from '../../../../models'
 import { getRequestLoaders } from '../../requestLoaders'
 

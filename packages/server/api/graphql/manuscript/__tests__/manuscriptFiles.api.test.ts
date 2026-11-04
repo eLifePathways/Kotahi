@@ -13,11 +13,11 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   File,
   FileStorageConstructor,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, Manuscript } from '../../../../models'
 
 const storedObject = (

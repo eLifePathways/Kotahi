@@ -5,7 +5,6 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   File,
 } from '@coko/server'
 
@@ -19,6 +18,7 @@ import {
   Review,
 } from '../../../../models'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import seedForms from '../../../../scripts/seedForms'
 
 // Covers the File and Review type rules in permissions.js: who can read a
