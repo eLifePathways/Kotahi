@@ -5,10 +5,10 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   uuid,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import {
   Group,
   User,

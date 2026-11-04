@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager } from '@coko/server'
+import { db, config, migrationManager } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Group from '../../group/group.model'
 import User from '../../user/user.model'
 import Manuscript from '../../manuscript/manuscript.model'

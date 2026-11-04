@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager } from '@coko/server'
+import { db, config, migrationManager } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Team from '../team.model'
 import Manuscript from '../../manuscript/manuscript.model'
 import User from '../../user/user.model'
@@ -124,6 +125,11 @@ describe('Team model', () => {
 
       await addTeam(manuscriptOne.id, 'seniorEditor', [editor.id])
       await addTeam(unrequested.id, 'collaborativeReviewer', [reviewerTwo.id])
+
+      await Team.patchById(teamOne.id, {
+        role: 'collaborativeReviewer',
+        created: new Date(Date.now() - 60 * 1000).toISOString(),
+      })
 
       const teams = await Team.findCollaborativeReviewerTeams([
         manuscriptTwo.id,
