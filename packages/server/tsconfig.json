@@ -1,5 +1,8 @@
 {
   "extends": "@coko/server/dist/cli/tsConfig.json",
+  "compilerOptions": {
+    "lib": ["esnext"]
+  },
   "include": ["**/*"],
   "exclude": ["vitest.workerDb.ts"]
 }

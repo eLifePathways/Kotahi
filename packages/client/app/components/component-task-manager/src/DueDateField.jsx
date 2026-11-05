@@ -4,11 +4,16 @@
 
 import { useContext } from 'react'
 import styled from 'styled-components'
-import moment from 'moment-timezone'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezonePlugin from 'dayjs/plugin/timezone'
 import { th } from '@coko/client'
 import { CompactDetailLabel, MinimalDatePicker } from '../../shared'
 import { ConfigContext } from '../../config/src'
 import { transposeFromLocalToTimezone } from '../../../shared/dateUtils'
+
+dayjs.extend(utc)
+dayjs.extend(timezonePlugin)
 
 const BaseDueDateCell = styled.div`
   align-items: center;
@@ -84,14 +89,13 @@ const DueDateField = ({
           onChange={val =>
             updateTask(task.id, {
               ...task,
-              dueDate: moment
-                .tz(
-                  transposeFromLocalToTimezone(
-                    val,
-                    config?.taskManager?.teamTimezone,
-                  ),
+              dueDate: dayjs(
+                transposeFromLocalToTimezone(
+                  val,
                   config?.taskManager?.teamTimezone,
-                )
+                ),
+              )
+                .tz(config?.taskManager?.teamTimezone)
                 .endOf('day')
                 .toDate(),
             })

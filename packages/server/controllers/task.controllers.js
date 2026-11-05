@@ -2,8 +2,6 @@
 
 // #region import
 
-const moment = require('moment-timezone')
-
 const { config, logger, useTransaction } = require('@coko/server')
 
 const {
@@ -27,17 +25,17 @@ const { sendEmailWithPreparedData } = require('./user.controllers')
 const createNewTaskAlerts = async groupId => {
   const activeConfig = await Config.getCached(groupId)
 
-  const startOfToday = moment()
-    .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-    .startOf('day')
+  const startOfToday = Temporal.Now.zonedDateTimeISO(
+    activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC',
+  ).startOfDay()
 
-  const startOfYesterday = moment(startOfToday).subtract(1, 'days')
+  const startOfYesterday = startOfToday.subtract({ days: 1 })
 
   // Don't look earlier than yesterday, so we don't recreate alerts that are already dismissed.
   const overdueTasks = await Task.findInProgressDueBetween(
     groupId,
-    startOfYesterday.toDate(),
-    startOfToday.toDate(),
+    new Date(startOfYesterday.epochMilliseconds),
+    new Date(startOfToday.epochMilliseconds),
   )
 
   const manuscriptIds = [...new Set(overdueTasks.map(t => t.manuscriptId))]
@@ -164,9 +162,12 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
     { orderBy: ['sequenceIndex'] },
   )
 
-  const endOfToday = moment()
-    .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-    .endOf('day')
+  const timezone = activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC'
+
+  const endOfToday = Temporal.Now.plainDateISO(timezone)
+    .add({ days: 1 })
+    .toZonedDateTime(timezone)
+    .subtract({ milliseconds: 1 })
 
   return Task.transaction(async trx => {
     const promises = []
@@ -175,9 +176,10 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
       const task = {
         ...newTasks[i],
         manuscriptId,
-        dueDate: moment(endOfToday)
-          .add(newTasks[i].defaultDurationDays, 'days')
-          .toDate(),
+        dueDate: new Date(
+          endOfToday.add({ days: newTasks[i].defaultDurationDays })
+            .epochMilliseconds,
+        ),
         sequenceIndex: i + existingTasks.length,
       }
 
@@ -236,11 +238,9 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
 const sendAutomatedTaskEmailNotifications = async groupId => {
   const activeConfig = await Config.getCached(groupId)
 
-  const startOfToday = moment()
-    .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-    .startOf('day')
-
-  const startOfTomorrow = moment(startOfToday).add(1, 'days')
+  const timezone = activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC'
+  const startOfToday = Temporal.Now.zonedDateTimeISO(timezone).startOfDay()
+  const startOfTomorrow = startOfToday.add({ days: 1 })
 
   const taskConfigs = config.get('journal').tasks
 
@@ -254,13 +254,18 @@ const sendAutomatedTaskEmailNotifications = async groupId => {
       .filter(n => {
         if (n.sentAt || !n.task.dueDate) return false
 
-        const dateOfNotification = moment(n.task.dueDate)
-          .add(1, 'milliseconds') // Due date is usually 1 ms before midnight, so this pushes it to the following day.
-          .add(n.notificationElapsedDays, 'days')
+        const dateOfNotification = Temporal.Instant.fromEpochMilliseconds(
+          new Date(n.task.dueDate).getTime(),
+        )
+          .toZonedDateTimeISO(timezone)
+          .add({ milliseconds: 1 }) // Due date is usually 1 ms before midnight, so this pushes it to the following day.
+          .add({ days: n.notificationElapsedDays })
 
         return (
-          dateOfNotification.isSameOrAfter(startOfToday) &&
-          dateOfNotification.isBefore(startOfTomorrow)
+          Temporal.ZonedDateTime.compare(dateOfNotification, startOfToday) >=
+            0 &&
+          Temporal.ZonedDateTime.compare(dateOfNotification, startOfTomorrow) <
+            0
         )
       })
       .map(n => sendNotification(n)),
@@ -588,13 +593,16 @@ const updateTaskStatus = async task => {
     const taskDurationDays = dbTask.defaultDurationDays
 
     const activeConfig = await Config.getCached(dbTask.groupId)
+    const timezone = activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC'
 
     data.dueDate =
       taskDurationDays !== null
-        ? moment()
-            .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-            .endOf('day')
-            .add(taskDurationDays, 'days')
+        ? new Date(
+            Temporal.Now.plainDateISO(timezone)
+              .add({ days: taskDurationDays + 1 })
+              .toZonedDateTime(timezone)
+              .subtract({ milliseconds: 1 }).epochMilliseconds,
+          )
         : null
   }
 

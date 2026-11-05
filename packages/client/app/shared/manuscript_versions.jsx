@@ -1,5 +1,5 @@
 import i18next from 'i18next'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {
   PlainOrRichText,
   VersionLabelWrapper,
@@ -38,7 +38,7 @@ const manuscriptVersions = manuscript => {
               ? `${i18next.t('manuscriptSubmit.Current version')} (${
                   versions.length
                 })`
-              : `${moment(manuscript.created).format('YYYY-MM-DD')} (${
+              : `${dayjs(manuscript.created).format('YYYY-MM-DD')} (${
                   versions.length - index
                 })`}
           </VersionIndicator>

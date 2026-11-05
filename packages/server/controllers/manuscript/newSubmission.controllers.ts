@@ -2,7 +2,6 @@ import { type ReadStream } from 'fs'
 import path from 'path'
 import { Readable } from 'stream'
 import { load } from 'cheerio'
-import moment from 'moment-timezone'
 import {
   config,
   createFile,
@@ -72,7 +71,10 @@ const copyTemplatedTasks = async (
 
       const config = await Config.getActive(groupId, { trx })
       const timezone = config?.formData?.taskManager?.teamTimezone || 'Etc/UTC'
-      const endOfToday = moment().tz(timezone).endOf('day')
+      const endOfToday = Temporal.Now.plainDateISO(timezone)
+        .add({ days: 1 })
+        .toZonedDateTime(timezone)
+        .subtract({ milliseconds: 1 })
 
       await Promise.all(
         templates.map(async (template, index) => {
@@ -88,9 +90,10 @@ const copyTemplatedTasks = async (
               ...taskData,
               manuscriptId,
               sequenceIndex: index,
-              dueDate: moment(endOfToday)
-                .add(template.defaultDurationDays, 'days')
-                .toISOString(),
+              dueDate: endOfToday
+                .add({ days: template.defaultDurationDays })
+                .toInstant()
+                .toString(),
             },
             { trx },
           )
