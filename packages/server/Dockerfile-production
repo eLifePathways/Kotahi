@@ -1,6 +1,6 @@
-FROM cokoapps/base:24
+FROM node:26-trixie-slim
+RUN npm install -g corepack && corepack enable
 
-RUN corepack enable
 WORKDIR /home/node/app
 
 COPY .yarnrc.yml .
@@ -15,5 +15,7 @@ RUN yarn workspaces focus --production && yarn cache clean && rm -rf ~/.npm
 COPY --chown=node:node . .
 
 RUN yarn coko-server build
+
+ENV NODE_OPTIONS=--no-experimental-webstorage
 
 CMD ["yarn", "coko-server", "start"]

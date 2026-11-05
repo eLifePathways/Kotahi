@@ -9,7 +9,6 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { uuid } from '@coko/client'
-// import moment from 'moment-timezone'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import Task from './Task'

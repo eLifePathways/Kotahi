@@ -1,6 +1,6 @@
-FROM cokoapps/base-dev:24
+FROM node:26-trixie-slim
+RUN npm install -g corepack && corepack enable
 
-RUN corepack enable
 WORKDIR /home/node/app
 
 COPY .yarnrc.yml .

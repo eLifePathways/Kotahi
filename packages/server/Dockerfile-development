@@ -1,6 +1,6 @@
-FROM cokoapps/base-dev:24
+FROM node:26-trixie-slim
+RUN npm install -g corepack && corepack enable
 
-RUN corepack enable
 WORKDIR /home/node/app
 RUN chown -R node:node .
 USER node
@@ -10,3 +10,5 @@ COPY --chown=node:node package.json .
 COPY --chown=node:node yarn.lock .
 
 RUN yarn install --immutable && yarn cache clean && rm -rf ~/.npm
+
+ENV NODE_OPTIONS=--no-experimental-webstorage
