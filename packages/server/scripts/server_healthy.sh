@@ -8,7 +8,7 @@ if [ -f "$FLAG_FILE" ]; then
     exit 0
 fi
 
-if curl -f "http://localhost:${PORT}/healthcheck"; then
+if node -e "fetch('http://localhost:${PORT}/healthcheck').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"; then
     touch "$FLAG_FILE"  # Create the flag file on first success
     exit 0
 else

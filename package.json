@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=26.0.0"
   },
   "scripts": {
     "commit": "yarn coko-lint commit"
@@ -28,5 +28,10 @@
     "color": "^4.2.3",
     "cypress": "^15.15.0"
   },
-  "packageManager": "yarn@4.9.2"
+  "dependenciesMeta": {
+    "cypress": {
+      "built": true
+    }
+  },
+  "packageManager": "yarn@4.18.1"
 }

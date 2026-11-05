@@ -1,14 +1,41 @@
 import i18next from 'i18next'
-import moment from 'moment-timezone'
 import { getLanguages } from '../i18n'
 
 const tzOffset = new Date().getTimezoneOffset()
+
+const getTimezoneOffsetMinutes = (timestamp, timezone) => {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    })
+      .formatToParts(timestamp)
+      .map(p => [p.type, p.value]),
+  )
+
+  const asUtc = Date.UTC(
+    parts.year,
+    parts.month - 1,
+    parts.day,
+    parts.hour,
+    parts.minute,
+    parts.second,
+  )
+
+  return (Math.floor(timestamp / 1000) * 1000 - asUtc) / 60000
+}
 
 /** Turn e.g. midday in the supplied timezone into midday in local timezone */
 export const transposeFromTimezoneToLocal = (date, timezone) => {
   const timestamp = new Date(date).getTime()
   const localOffsetMinutes = new Date().getTimezoneOffset()
-  const tzOffsetMinutes = moment.tz.zone(timezone).utcOffset(timestamp)
+  const tzOffsetMinutes = getTimezoneOffsetMinutes(timestamp, timezone)
   const totalOffsetMilliseconds = (localOffsetMinutes - tzOffsetMinutes) * 60000
   return new Date(timestamp + totalOffsetMilliseconds)
 }
@@ -17,7 +44,7 @@ export const transposeFromTimezoneToLocal = (date, timezone) => {
 export const transposeFromLocalToTimezone = (date, timezone) => {
   const timestamp = new Date(date).getTime()
   const localOffsetMinutes = new Date().getTimezoneOffset()
-  const tzOffsetMinutes = moment.tz.zone(timezone).utcOffset(timestamp)
+  const tzOffsetMinutes = getTimezoneOffsetMinutes(timestamp, timezone)
   const totalOffsetMilliseconds = (localOffsetMinutes - tzOffsetMinutes) * 60000
   return new Date(timestamp - totalOffsetMilliseconds)
 }

@@ -9,7 +9,6 @@ import {
   vi,
 } from 'vitest'
 import { load } from 'cheerio'
-import moment from 'moment-timezone'
 import {
   db,
   config,
@@ -301,10 +300,13 @@ describe('createManuscriptFromFile', () => {
         ['Make decision', 1],
       ])
 
-      const endOfToday = moment().tz(TIMEZONE).endOf('day')
+      const endOfToday = Temporal.Now.plainDateISO(TIMEZONE)
+        .add({ days: 1 })
+        .toZonedDateTime(TIMEZONE)
+        .subtract({ milliseconds: 1 })
 
       expect(new Date(tasks[0].dueDate as string).toISOString()).toBe(
-        moment(endOfToday).add(3, 'days').toISOString(),
+        new Date(endOfToday.add({ days: 3 }).epochMilliseconds).toISOString(),
       )
 
       const { result: firstNotifications } = await TaskEmailNotification.find({
