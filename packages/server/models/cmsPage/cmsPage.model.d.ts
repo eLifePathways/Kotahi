@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 type FlaxConfig = {
   shownInMenu: boolean | null
@@ -17,6 +17,12 @@ declare class CMSPage extends BaseModel {
   flaxHeaderConfig: FlaxConfig
   flaxFooterConfig: FlaxConfig
   groupId: string
+
+  static findInGroupWithFlaxConfig(
+    groupId: string,
+    configKey: 'flaxHeaderConfig' | 'flaxFooterConfig',
+    options?: { trx?: Transaction },
+  ): Promise<CMSPage[]>
 }
 
 export = CMSPage

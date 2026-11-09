@@ -1,4 +1,4 @@
-import { BaseModel, type RelationMappings } from '@coko/server'
+import { BaseModel, uuid, type RelationMappings } from '@coko/server'
 
 import { eventTypes, type Event } from '../../services/eventManager/eventTypes'
 
@@ -50,6 +50,35 @@ class UserNotification extends BaseModel {
     groupId: string,
   ): Promise<number> {
     return this.query().delete().where({ userId, groupId })
+  }
+
+  /** Inserts directly into the table, so that created can be backdated
+   * (the model hooks would otherwise overwrite it). Only for tests.
+   * Returns the inserted row as a plain object, not a model instance. */
+  static async insertBackdated(notification: {
+    userId: string
+    groupId: string
+    manuscriptId: string | null
+    eventType: Event
+    data: Record<string, unknown>
+    created?: string | Date
+  }): Promise<Record<string, unknown>> {
+    const { userId, groupId, manuscriptId, eventType, data, created } =
+      notification
+
+    const [row] = await this.knex()('user_notifications')
+      .insert({
+        id: uuid(),
+        user_id: userId,
+        group_id: groupId,
+        manuscript_id: manuscriptId,
+        event_type: eventType,
+        data,
+        ...(created && { created }),
+      })
+      .returning('*')
+
+    return row
   }
 
   static async deleteOlderThan(date: Date): Promise<number> {

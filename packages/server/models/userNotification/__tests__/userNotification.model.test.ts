@@ -277,4 +277,50 @@ describe('UserNotification model', () => {
 
     expect(await UserNotification.query().findById(recent.id)).toBeDefined()
   })
+
+  describe('insertBackdated', () => {
+    it('inserts a notification with the given created date', async () => {
+      const group = await Group.insert({})
+      const user = await User.insert({})
+      const manuscript = await Manuscript.insert({ groupId: group.id })
+      const created = new Date('2020-01-01T00:00:00.000Z')
+
+      const row = await UserNotification.insertBackdated({
+        userId: user.id,
+        groupId: group.id,
+        manuscriptId: manuscript.id,
+        eventType: 'decisionMade',
+        data: { shortId: 1 },
+        created,
+      })
+
+      expect(row.userId).toBe(user.id)
+
+      const stored = await UserNotification.findById(row.id as string)
+
+      expect(new Date(stored.created).getTime()).toBe(created.getTime())
+      expect(stored.eventType).toBe('decisionMade')
+      expect(stored.data).toEqual({ shortId: 1 })
+    })
+
+    it('uses the current time when no created date is given', async () => {
+      const group = await Group.insert({})
+      const user = await User.insert({})
+      const before = Date.now()
+
+      const row = await UserNotification.insertBackdated({
+        userId: user.id,
+        groupId: group.id,
+        manuscriptId: null,
+        eventType: 'decisionMade',
+        data: {},
+      })
+
+      const stored = await UserNotification.findById(row.id as string)
+
+      expect(new Date(stored.created).getTime()).toBeGreaterThanOrEqual(
+        before - 1000,
+      )
+    })
+  })
 })

@@ -18,13 +18,11 @@ const seekEvent = require('../services/notification.service')
 const deleteActionedEntries = async (groupId, options = {}) => {
   const { trx } = options
 
-  await NotificationDigest.query(trx)
-    .delete()
-    .where({ actioned: true, groupId })
+  await NotificationDigest.deleteActionedInGroup(groupId, { trx })
 }
 
 const getGroupEvents = async groupId => {
-  const config = await Config.query().findOne({ groupId })
+  const config = await Config.findOne({ groupId })
   const { eventsConfig } = config.formData.notification
 
   const events = Object.keys(eventsConfig)
@@ -54,12 +52,11 @@ const getNotificationOptionForUser = async ({ userId, path, groupId }) => {
   // Get all records for this user in this group, that might relate to the current path,
   // skipping those set to 'inherit'.
   // A small number of non-relevant records may be included.
-  const records = await NotificationUserOption.query()
-    .where({ userId, groupId })
-    .where(builder =>
-      builder.where({ objectId: lastPathSegment }).orWhere({ objectId: null }),
-    )
-    .whereNot({ option: 'inherit' })
+  const records = await NotificationUserOption.findExplicitForObject(
+    userId,
+    groupId,
+    lastPathSegment,
+  )
 
   // We're only interested in records whose paths are subpaths of the specified path
   const relevantRecords = records.filter(record => {
@@ -107,7 +104,7 @@ const notify = async (
       const maxNotificationTime = new Date(time)
       maxNotificationTime.setMinutes(maxNotificationTime.getMinutes() + 30)
 
-      return NotificationDigest.query().insert({
+      return NotificationDigest.insert({
         time,
         maxNotificationTime,
         pathString: path.join('/'),
@@ -129,14 +126,14 @@ const sendChatNotification = async ({
   currentUserId = null,
   isMentioned = false,
 }) => {
-  const recipient = await User.query().findById(recipientId)
-  const message = await Message.query().findById(messageId)
-  const channel = await Channel.query().findById(message.channelId)
+  const recipient = await User.findById(recipientId)
+  const message = await Message.findById(messageId)
+  const channel = await Channel.findById(message.channelId)
   if (channel.groupId !== groupId)
     throw new Error(
       `Attempt by group ${groupId} to send chat notification for group ${channel.groupId}`,
     )
-  const group = await Group.query().findById(groupId)
+  const group = await Group.findById(groupId)
 
   // send email notification
   const appUrl = `${clientUrl}/${group.name}`
@@ -170,7 +167,7 @@ const sendChatNotification = async ({
       discussionUrl = `${appUrl}/dashboard`
     }
 
-    manuscript = await Manuscript.query().findById(channel.manuscriptId)
+    manuscript = await Manuscript.findById(channel.manuscriptId)
     const author = await manuscript.getManuscriptAuthor()
     authorName = author ? author.username : ''
   }
@@ -178,7 +175,7 @@ const sendChatNotification = async ({
   let currentUser
 
   if (currentUserId) {
-    currentUser = await User.query().findById(currentUserId)
+    currentUser = await User.findById(currentUserId, { throwIfNotFound: false })
   }
 
   const { id: channelId } = channel
@@ -199,13 +196,8 @@ const sendChatNotification = async ({
 }
 
 const sendNotifications = async groupId => {
-  // The following query results first row for every user and path string combination
-  // in the notification digest, where max notification time is in the past.
-  const notificationDigestRows = await NotificationDigest.query()
-    .distinctOn(['user_id', 'path_string'])
-    .where('max_notification_time', '<', new Date())
-    .where({ groupId })
-    .orderBy(['user_id', 'path_string', 'max_notification_time'])
+  const notificationDigestRows =
+    await NotificationDigest.findFirstDueForEachUserAndPath(groupId)
 
   let notificationCount = 0
 
@@ -221,16 +213,11 @@ const sendNotifications = async groupId => {
 
       notificationCount += 1
 
-      // query to update all notificationdigest entries where user=user and path=path
-      await NotificationDigest.query()
-        .update({
-          actioned: true,
-        })
-        .where({
-          userId: notificationDigest.userId,
-          pathString: notificationDigest.pathString,
-          groupId,
-        })
+      await NotificationDigest.markActionedForPath(
+        notificationDigest.userId,
+        notificationDigest.pathString,
+        groupId,
+      )
     }),
   )
 
@@ -254,7 +241,7 @@ const setNotificationActive = async notificationId => {
 }
 
 const setEventActive = async (name, groupId) => {
-  const config = await Config.query().findOne({ groupId })
+  const config = await Config.findOne({ groupId })
   const formData = config.formData || {}
   const notification = { ...formData.notification }
 
@@ -262,11 +249,9 @@ const setEventActive = async (name, groupId) => {
     !notification.eventsConfig[name].active
   formData.notification = notification
 
-  await Config.query()
-    .findOne({ groupId })
-    .patch({
-      formData: JSON.stringify(formData),
-    })
+  await Config.patchByGroupId(groupId, {
+    formData: JSON.stringify(formData),
+  })
 
   return notification.eventsConfig[name].active
 }

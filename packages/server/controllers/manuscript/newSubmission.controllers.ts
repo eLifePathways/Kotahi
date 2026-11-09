@@ -53,6 +53,7 @@ export class NewSubmissionError extends Error {
 }
 
 const getTitleFromHtml = (html: string): string =>
+  /* eslint-disable-next-line kotahi/no-query-builder-calls */
   load(html, null, false)('h1').first().text().trim()
 
 const getTitleFromFileName = (fileName: string): string =>

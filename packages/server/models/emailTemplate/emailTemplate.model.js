@@ -5,6 +5,19 @@ class EmailTemplate extends BaseModel {
     return 'email_templates'
   }
 
+  static async findByDescription(groupId, type, description, options = {}) {
+    return EmailTemplate.query(options.trx)
+      .where({ group_id: groupId, email_template_type: type })
+      .andWhereRaw("email_content->>'description' = ?", [description])
+  }
+
+  static async patchBySubject(groupId, subject, data, options = {}) {
+    return EmailTemplate.query(options.trx)
+      .patch(data)
+      .where({ group_id: groupId })
+      .andWhereRaw("email_content->>'subject' = ?", [subject])
+  }
+
   static get relationMappings() {
     const TaskEmailNotification = require('../taskEmailNotification/taskEmailNotification.model')
 

@@ -14,26 +14,28 @@ const getData = async (groupId, ctx) => {
   const dateTwoWeeksAgo =
     +new Date(new Date(Date.now()).toISOString().split('T')[0]) - 12096e5
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'europepmc',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'europepmc',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'europepmc',
     })
   }
 
-  const [europepmcImportSourceId] = await ArticleImportSources.query().where({
-    server: 'europepmc',
-  })
-
-  const lastImportDate = await ArticleImportHistory.query()
-    .select('date')
-    .where({
-      sourceId: europepmcImportSourceId.id,
-      groupId,
+  const [europepmcImportSourceId] = (
+    await ArticleImportSources.find({
+      server: 'europepmc',
     })
+  ).result
+
+  const { result: lastImportDate } = await ArticleImportHistory.find({
+    sourceId: europepmcImportSourceId.id,
+    groupId,
+  })
 
   const query =
     '(PUBLISHER:"bioRxiv" OR PUBLISHER:"medRxiv") AND ("membrane protein" OR "ion channel" OR "transporter" OR "pump" OR "gpcr" OR "G protein-coupled receptor" OR "exchanger" OR "uniporter" OR "symporter" OR "antiporter" OR "solute carrier" OR "atpase" OR "rhodopsin" OR "patch-clamp" OR "voltage-clamp" OR "single-channel")'
@@ -124,7 +126,7 @@ const getData = async (groupId, ctx) => {
 
   const articlesDetailedInfo = await Promise.all(articlesDetailedInfoPromises)
 
-  const manuscripts = await Manuscript.query()
+  const { result: manuscripts } = await Manuscript.find({})
 
   const currentDOIs = manuscripts.map(({ submission }) => {
     return submission.doi
@@ -179,16 +181,13 @@ const getData = async (groupId, ctx) => {
     )
 
     if (lastImportDate.length) {
-      await ArticleImportHistory.query()
-        .update({
-          date: new Date().toISOString(),
-        })
-        .where({
-          date: lastImportDate[0].date,
-          groupId,
-        })
+      await ArticleImportHistory.patchByDateAndGroup(
+        lastImportDate[0].date,
+        groupId,
+        { date: new Date().toISOString() },
+      )
     } else {
-      await ArticleImportHistory.query().insert({
+      await ArticleImportHistory.insert({
         date: new Date().toISOString(),
         sourceId: europepmcImportSourceId.id,
         groupId,

@@ -9,13 +9,8 @@ const cache = new LRUCache({
 
 const queryFunctions = {
   userIsGM: async (userId, groupId) => {
-    const Team = require('../models/team/team.model')
-
-    const groupManagerRecord = await Team.query()
-      .withGraphJoined('members')
-      .findOne({ role: 'groupManager', objectId: groupId, userId })
-
-    return !!groupManagerRecord
+    const User = require('../models/user/user.model')
+    return User.hasRoleOnObject(userId, 'groupManager', groupId)
   },
   /** Gets the manuscript that owns a particular file, either directly or via one of its review objects.
    * Note that this will throw an exception for files  not owned by a manuscript,
@@ -26,7 +21,7 @@ const queryFunctions = {
     const Review = require('../models/review/review.model')
     const Manuscript = require('../models/manuscript/manuscript.model')
 
-    const file = await File.query().findById(fileId)
+    const file = await File.findById(fileId, { throwIfNotFound: false })
 
     if (!file?.objectId) {
       logger.error('File without objectId encountered:', file)
@@ -34,123 +29,71 @@ const queryFunctions = {
     }
 
     // The file may belong to a review or directly to a manuscript
-    const review = await Review.query().findById(file.objectId)
+    const review = await Review.findById(file.objectId, {
+      throwIfNotFound: false,
+    })
 
-    const manuscript = await Manuscript.query().findById(
+    const manuscript = await Manuscript.findById(
       review ? review.manuscriptId : file.objectId,
+      { throwIfNotFound: false },
     )
 
     return manuscript
   },
   userIsAdmin: async userId => {
-    const Team = require('../models/team/team.model')
-
-    const adminRecord = await Team.query()
-      .withGraphJoined('members')
-      .findOne({ role: 'admin', global: true, userId })
-
-    const isAdmin = !!adminRecord
-    return isAdmin
+    const User = require('../models/user/user.model')
+    return User.hasGlobalRole(userId, 'admin')
   },
   userIsGroupAdmin: async (userId, groupId) => {
-    const Team = require('../models/team/team.model')
-
-    const groupAdminRecord = await Team.query()
-      .withGraphJoined('members')
-      .findOne({
-        role: 'groupAdmin',
-        objectId: groupId,
-        objectType: 'group',
-        userId,
-      })
-
-    const isGroupAdmin = !!groupAdminRecord
-    return isGroupAdmin
+    const User = require('../models/user/user.model')
+    return User.hasRoleOnObject(userId, 'groupAdmin', groupId)
   },
   userIsEditor: async (userId, manuscriptId) => {
     const User = require('../models/user/user.model')
-
-    const teamRecord = await User.relatedQuery('teams')
-      .for(userId)
-      .findOne(builder =>
-        builder
-          .where({ role: 'seniorEditor' })
-          .orWhere({ role: 'handlingEditor' })
-          .orWhere({ role: 'editor' }),
-      )
-      .where({ objectId: manuscriptId })
-      .select('teams.id')
-
-    const isEditor = !!teamRecord
-    return isEditor
+    return User.isEditorOfManuscript(userId, manuscriptId)
   },
   userIsEditorOfAnyManuscript: async userId => {
     const User = require('../models/user/user.model')
-
-    const record = await User.relatedQuery('teams')
-      .for(userId)
-      .findOne(builder =>
-        builder
-          .where({ role: 'seniorEditor' })
-          .orWhere({ role: 'handlingEditor' })
-          .orWhere({ role: 'editor' }),
-      )
-      .select('teams.id')
-
-    const isEditor = !!record
-    return isEditor
+    return User.isEditorOfAnyManuscript(userId)
   },
   userHasRoleInMsFamily: async (userId, manuscriptId) => {
     const Manuscript = require('../models/manuscript/manuscript.model')
     return Manuscript.userHasRoleInAnyVersion(userId, manuscriptId)
   },
   defaultIdentityOfUser: async userId => {
-    const User = require('../models/user/user.model')
-    return User.relatedQuery('defaultIdentity').for(userId).first()
+    const Identity = require('../models/identity/identity.model')
+    return Identity.findOne({ userId, isDefault: true })
   },
   // TODO: rename this otherVersionsOfMs
   subVersionsOfMs: async manuscriptId => {
     const Manuscript = require('../models/manuscript/manuscript.model')
-
-    const thisMs = await Manuscript.query()
-      .findById(manuscriptId)
-      .select('parentId')
-
-    if (!thisMs.parentId)
-      return Manuscript.relatedQuery('manuscriptVersions')
-        .for(manuscriptId)
-        .modify('orderByCreatedDesc')
-
-    // The manuscript this request was made for is NOT a first version manuscript.
-    // Find all OTHER versions than this one.
-
-    const parent = await Manuscript.query().findById(thisMs.parentId)
-
-    const children = await Manuscript.relatedQuery('manuscriptVersions')
-      .for(parent.id)
-      .modify('orderByCreatedDesc')
-
-    return [...children.filter(v => v.id !== manuscriptId), parent]
+    return Manuscript.getOtherVersions(manuscriptId)
   },
   teamsForObject: async objectId => {
     const Team = require('../models/team/team.model')
-    return Team.query().where({ objectId })
+    return (await Team.find({ objectId })).result
   },
   membersOfTeam: async teamId => {
-    const Team = require('../models/team/team.model')
-    return Team.relatedQuery('members').for(teamId)
+    const TeamMember = require('../models/teamMember/teamMember.model')
+    return (await TeamMember.find({ teamId })).result
   },
   userForTeamMember: async teamMemberId => {
     const TeamMember = require('../models/teamMember/teamMember.model')
-    return TeamMember.relatedQuery('user').for(teamMemberId).first()
+
+    const teamMember = await TeamMember.findById(teamMemberId, {
+      related: 'user',
+      throwIfNotFound: false,
+    })
+
+    return teamMember?.user ?? undefined
   },
   submitterOfMs: async manuscriptId => {
     const Manuscript = require('../models/manuscript/manuscript.model')
-    return Manuscript.relatedQuery('submitter').for(manuscriptId).first()
+    return Manuscript.getSubmitter(manuscriptId)
   },
   form: async (category, purpose, groupId) => {
     const Form = require('../models/form/form.model')
-    const form = await Form.query().where({ category, purpose, groupId })
+    const { result: form } = await Form.find({ category, purpose, groupId })
     if (!form || !form.length) throw new Error(`No form found for "${purpose}"`)
     return form[0]
   },

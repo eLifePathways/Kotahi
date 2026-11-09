@@ -12,7 +12,7 @@ const brandConfig = {
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const configs = await Config.query(trx)
+      const { result: configs } = await Config.find({}, { trx })
 
       // logger.info(`Existing Configs: ${configs.length}`)
 

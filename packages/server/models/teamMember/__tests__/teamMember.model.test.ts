@@ -153,4 +153,177 @@ describe('TeamMember model', () => {
       { manuscriptId: invitedManuscript.id, status: 'invited' },
     ])
   })
+
+  describe('findReviewerMemberOnManuscript', () => {
+    it("returns the user's reviewer or collaborative reviewer membership on the manuscript", async () => {
+      const manuscript = await Manuscript.insert({})
+      const otherManuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      await Manuscript.createTeams(otherManuscript.id)
+      const reviewer = await User.insert({})
+      const collaborative = await User.insert({})
+      const author = await User.insert({})
+
+      await Manuscript.assignRole(reviewer.id, manuscript.id, 'reviewer')
+
+      await Manuscript.assignRole(
+        collaborative.id,
+        manuscript.id,
+        'collaborativeReviewer',
+      )
+
+      await Manuscript.assignRole(author.id, manuscript.id, 'author')
+      await Manuscript.assignRole(author.id, otherManuscript.id, 'reviewer')
+
+      expect(
+        (
+          await TeamMember.findReviewerMemberOnManuscript(
+            reviewer.id,
+            manuscript.id,
+          )
+        )?.userId,
+      ).toBe(reviewer.id)
+
+      expect(
+        (
+          await TeamMember.findReviewerMemberOnManuscript(
+            collaborative.id,
+            manuscript.id,
+          )
+        )?.userId,
+      ).toBe(collaborative.id)
+
+      expect(
+        await TeamMember.findReviewerMemberOnManuscript(
+          author.id,
+          manuscript.id,
+        ),
+      ).toBeUndefined()
+    })
+  })
+
+  describe('hasCompletedReview', () => {
+    it('is true only for a reviewer of the manuscript with completed status', async () => {
+      const manuscript = await Manuscript.insert({})
+      const otherManuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      await Manuscript.createTeams(otherManuscript.id)
+      const completed = await User.insert({})
+      const inProgress = await User.insert({})
+      const elsewhere = await User.insert({})
+
+      await Manuscript.assignRole(completed.id, manuscript.id, 'reviewer', {
+        status: 'completed',
+      })
+
+      await Manuscript.assignRole(inProgress.id, manuscript.id, 'reviewer', {
+        status: 'inProgress',
+      })
+
+      await Manuscript.assignRole(
+        elsewhere.id,
+        otherManuscript.id,
+        'collaborativeReviewer',
+        { status: 'completed' },
+      )
+
+      expect(
+        await TeamMember.hasCompletedReview(completed.id, manuscript.id),
+      ).toBe(true)
+      expect(
+        await TeamMember.hasCompletedReview(inProgress.id, manuscript.id),
+      ).toBe(false)
+      expect(
+        await TeamMember.hasCompletedReview(elsewhere.id, manuscript.id),
+      ).toBe(false)
+    })
+  })
+
+  describe('patchByTeamId', () => {
+    it('patches every member of the team only', async () => {
+      const manuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      const one = await User.insert({})
+      const two = await User.insert({})
+
+      const team = await Manuscript.assignRole(
+        one.id,
+        manuscript.id,
+        'collaborativeReviewer',
+      )
+
+      await Manuscript.assignRole(
+        two.id,
+        manuscript.id,
+        'collaborativeReviewer',
+      )
+
+      const otherTeam = await Manuscript.assignRole(
+        one.id,
+        manuscript.id,
+        'reviewer',
+      )
+
+      expect(await TeamMember.patchByTeamId(team.id, { isShared: true })).toBe(
+        2,
+      )
+
+      const { result: members } = await TeamMember.find({ teamId: team.id })
+
+      const { result: otherMembers } = await TeamMember.find({
+        teamId: otherTeam.id,
+      })
+
+      expect(members.map(m => m.isShared)).toEqual([true, true])
+      expect(otherMembers[0].isShared).toBeFalsy()
+    })
+  })
+
+  describe('patchStatusByTeam', () => {
+    it('only patches team members whose status is one of the given ones', async () => {
+      const manuscript = await Manuscript.insert({})
+      await Manuscript.createTeams(manuscript.id)
+      const closed = await User.insert({})
+      const inProgress = await User.insert({})
+      const completed = await User.insert({})
+
+      const team = await Manuscript.assignRole(
+        closed.id,
+        manuscript.id,
+        'collaborativeReviewer',
+        { status: 'closed' },
+      )
+
+      await Manuscript.assignRole(
+        inProgress.id,
+        manuscript.id,
+        'collaborativeReviewer',
+        { status: 'inProgress' },
+      )
+
+      await Manuscript.assignRole(
+        completed.id,
+        manuscript.id,
+        'collaborativeReviewer',
+        { status: 'completed' },
+      )
+
+      expect(
+        await TeamMember.patchStatusByTeam(
+          team.id,
+          ['closed', 'inProgress'],
+          'inProgress',
+        ),
+      ).toBe(2)
+
+      const { result: members } = await TeamMember.find({ teamId: team.id })
+
+      const statusOf = (userId: string): string | null | undefined =>
+        members.find(m => m.userId === userId)?.status
+
+      expect(statusOf(closed.id)).toBe('inProgress')
+      expect(statusOf(inProgress.id)).toBe('inProgress')
+      expect(statusOf(completed.id)).toBe('completed')
+    })
+  })
 })

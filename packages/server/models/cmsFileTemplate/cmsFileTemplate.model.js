@@ -1,4 +1,4 @@
-const { BaseModel } = require('@coko/server')
+const { BaseModel, useTransaction } = require('@coko/server')
 
 class CMSFileTemplate extends BaseModel {
   static get tableName() {
@@ -50,6 +50,23 @@ class CMSFileTemplate extends BaseModel {
         rootFolder: { type: 'boolean' },
       },
     }
+  }
+
+  /** Makes the given folder the group's only root folder */
+  static async setRootFolder(id, groupId, options = {}) {
+    return useTransaction(
+      async trx => {
+        await CMSFileTemplate.query(trx)
+          .patch({ rootFolder: false })
+          .where({ groupId })
+
+        return CMSFileTemplate.query(trx)
+          .patch({ rootFolder: true })
+          .findOne({ id, groupId })
+          .returning('*')
+      },
+      { trx: options.trx },
+    )
   }
 }
 

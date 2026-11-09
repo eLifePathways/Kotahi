@@ -6,8 +6,6 @@ const encoding = require('lib0/encoding')
 const decoding = require('lib0/decoding')
 const Y = require('yjs')
 
-const { db } = require('@coko/server')
-
 const { CollaborativeDoc, Form, ...otherModels } = require('../../models')
 
 let persistence = null
@@ -91,7 +89,7 @@ const closeConn = (doc, conn) => {
 
 persistence = {
   bindState: async (id, doc) => {
-    const collaborativeForm = await CollaborativeDoc.query().findOne({
+    const collaborativeForm = await CollaborativeDoc.findOne({
       objectId: id,
     })
 
@@ -104,13 +102,11 @@ persistence = {
     const objectId = ydoc.name
     const state = Y.encodeStateAsUpdate(ydoc)
 
-    const timestamp = db.fn.now()
-
-    const docYjs = await CollaborativeDoc.query().findOne({ objectId })
+    const docYjs = await CollaborativeDoc.findOne({ objectId })
 
     if (!docYjs) {
       try {
-        await CollaborativeDoc.query().insert({
+        await CollaborativeDoc.insert({
           yDocState: state,
           ...pick(ydoc.extraData, ['objectId', 'objectType', 'groupId']),
         })
@@ -119,17 +115,19 @@ persistence = {
           const Model = otherModels[ydoc.extraData.objectType]
 
           if (Model) {
-            const object = await Model.query().findOne({
+            const object = await Model.findOne({
               id: objectId,
               isCollaborative: true,
             })
 
             if (object) {
-              const [form] = await Form.query().where({
-                category: ydoc.extraData.category,
-                purpose: ydoc.extraData.purpose,
-                groupId: ydoc.extraData.groupId,
-              })
+              const [form] = (
+                await Form.find({
+                  category: ydoc.extraData.category,
+                  purpose: ydoc.extraData.purpose,
+                  groupId: ydoc.extraData.groupId,
+                })
+              ).result
 
               const collaborativeFields = await CollaborativeDoc.getFormData(
                 objectId,
@@ -141,14 +139,12 @@ persistence = {
               }
 
               const { jsonData } = object
-              await Model.query()
-                .patch({
-                  jsonData: JSON.stringify({
-                    ...jsonData,
-                    ...collaborativeFields,
-                  }),
-                })
-                .findOne({ id: objectId })
+              await object.patch({
+                jsonData: JSON.stringify({
+                  ...jsonData,
+                  ...collaborativeFields,
+                }),
+              })
             }
           }
         }
@@ -158,12 +154,7 @@ persistence = {
       }
     } else {
       try {
-        await CollaborativeDoc.query()
-          .patch({
-            yDocState: state,
-            updated: timestamp,
-          })
-          .findOne({ objectId })
+        await CollaborativeDoc.patchById(docYjs.id, { yDocState: state })
       } catch (e) {
         console.log(`Patch Query`)
         console.log(e)

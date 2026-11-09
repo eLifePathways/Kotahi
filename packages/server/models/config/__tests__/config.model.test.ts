@@ -81,4 +81,40 @@ describe('Config model', () => {
 
     expect(result).toBeUndefined()
   })
+
+  describe('patchByGroupId', () => {
+    it("patches every config of the group, and no other group's", async () => {
+      const group = await Group.insert({})
+      const otherGroup = await Group.insert({})
+
+      const active = await Config.insert({
+        groupId: group.id,
+        active: true,
+        formData: { old: true },
+      })
+
+      const inactive = await Config.insert({
+        groupId: group.id,
+        active: false,
+        formData: { old: true },
+      })
+
+      const other = await Config.insert({
+        groupId: otherGroup.id,
+        active: true,
+        formData: { old: true },
+      })
+
+      const count = await Config.patchByGroupId(group.id, {
+        formData: { new: true },
+      })
+
+      expect(count).toBe(2)
+      expect((await Config.findById(active.id)).formData).toEqual({ new: true })
+      expect((await Config.findById(inactive.id)).formData).toEqual({
+        new: true,
+      })
+      expect((await Config.findById(other.id)).formData).toEqual({ old: true })
+    })
+  })
 })

@@ -12,7 +12,7 @@ exports.up = async () => {
         objectType: null,
       })
 
-      const groups = await Group.query(trx)
+      const { result: groups } = await Group.find({}, { trx })
 
       // Existing instances migrating to multi-tenancy groups
       if (groups.length >= 1 && groupManagerTeam) {

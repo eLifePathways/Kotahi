@@ -14,6 +14,37 @@ class TaskAlert extends BaseModel {
       },
     }
   }
+
+  static async insertIgnoringDuplicates(alerts, options = {}) {
+    return TaskAlert.query(options.trx)
+      .insert(alerts)
+      .onConflict(['taskId', 'userId'])
+      .merge(['taskId'])
+  }
+
+  static async deleteByManuscriptId(manuscriptId, options = {}) {
+    const Task = require('../task/task.model')
+    const { trx } = options
+
+    return TaskAlert.query(trx)
+      .delete()
+      .whereIn('taskId', Task.query(trx).select('id').where({ manuscriptId }))
+  }
+
+  static async deleteByUserId(userId, options = {}) {
+    return TaskAlert.query(options.trx).delete().where({ userId })
+  }
+
+  static async deleteByTaskId(taskId, options = {}) {
+    return TaskAlert.query(options.trx).delete().where({ taskId })
+  }
+
+  static async deleteByTaskIdAndUserIds(taskId, userIds, options = {}) {
+    return TaskAlert.query(options.trx)
+      .delete()
+      .where({ taskId })
+      .whereIn('userId', userIds)
+  }
 }
 
 TaskAlert.type = 'TaskAlert'

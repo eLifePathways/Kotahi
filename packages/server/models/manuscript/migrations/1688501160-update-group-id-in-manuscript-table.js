@@ -6,8 +6,8 @@ const Group = require('../../group/group.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const manuscripts = await Manuscript.query(trx)
-      const groups = await Group.query(trx)
+      const { result: manuscripts } = await Manuscript.find({}, { trx })
+      const { result: groups } = await Group.find({}, { trx })
 
       // logger.info(`Existing Manuscripts count: ${manuscripts.length}`)
       // logger.info(`Existing Groups count: ${groups.length}`)

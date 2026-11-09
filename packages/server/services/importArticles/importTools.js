@@ -4,23 +4,28 @@ const ArticleImportHistory = require('../../models/articleImportHistory/articleI
 const { getSubmissionForm } = require('../../controllers/review.controllers')
 
 const getServerId = async serverLabel => {
-  let [server] = await ArticleImportSources.query().where({
-    server: serverLabel,
-  })
+  let [server] = (
+    await ArticleImportSources.find({
+      server: serverLabel,
+    })
+  ).result
 
   if (server) return server.id
-  await ArticleImportSources.query().insert({ server: serverLabel })
-  ;[server] = await ArticleImportSources.query().where({
-    server: serverLabel,
-  })
+  await ArticleImportSources.insert({ server: serverLabel })
+  ;[server] = (
+    await ArticleImportSources.find({
+      server: serverLabel,
+    })
+  ).result
   return server.id
 }
 
 /** Return the last import date for this server, or if no imports have been done, return start of epoch */
 const getLastImportDate = async (serverId, groupId) => {
-  const results = await ArticleImportHistory.query()
-    .select('date')
-    .where({ sourceId: serverId, groupId })
+  const { result: results } = await ArticleImportHistory.find({
+    sourceId: serverId,
+    groupId,
+  })
 
   if (results.length) return results[0].date
   return 0
