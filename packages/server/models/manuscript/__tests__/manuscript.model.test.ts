@@ -1798,41 +1798,6 @@ describe('Manuscript model', () => {
         ).toBeUndefined()
       })
 
-      it('findPublishedInGroup sorts and pages, with a total count of all published', async () => {
-        const otherGroupId = (await Group.insert({})).id
-        const a = await createManuscript({
-          published: daysAgo(3).toISOString(),
-        })
-        const b = await createManuscript({
-          published: daysAgo(2).toISOString(),
-        })
-        const c = await createManuscript({
-          published: daysAgo(1).toISOString(),
-        })
-        await createManuscript()
-
-        await createManuscript({
-          groupId: otherGroupId,
-          published: daysAgo(1).toISOString(),
-        })
-
-        const all = await Manuscript.findPublishedInGroup(groupId, {
-          sort: 'published_desc',
-        })
-
-        expect(all.totalCount).toBe(3)
-        expect(all.manuscripts.map(m => m.id)).toEqual([c.id, b.id, a.id])
-
-        const page = await Manuscript.findPublishedInGroup(groupId, {
-          sort: 'published_asc',
-          limit: 1,
-          offset: 1,
-        })
-
-        expect(page.totalCount).toBe(3)
-        expect(page.manuscripts.map(m => m.id)).toEqual([b.id])
-      })
-
       it('findPublishedLatestVersions returns the latest version of each published manuscript', async () => {
         const first = await createManuscript({
           published: daysAgo(3).toISOString(),

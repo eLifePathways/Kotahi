@@ -192,7 +192,6 @@ const initiateJobSchedules = async () => {
 }
 
 module.exports = {
-  getJobs,
   initiateJobSchedules,
   sendAutomatedNotifications,
 }

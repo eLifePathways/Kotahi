@@ -34,20 +34,6 @@ const safeCall = (cb, fb) =>
 const callOn = (key, options, params = []) =>
   safeCall(options[key], options.default || (() => null))(...params)
 
-const safeKey = async (key, existingKeys) => {
-  if (!existingKeys.find(id => id.includes(key))) return key
-  let prefix = 1
-  const newKey = () => `${key}(${prefix})`
-
-  while (existingKeys.find(id => id.includes(newKey()))) {
-    prefix = Number(prefix + 1)
-  }
-
-  return `${key}(${prefix})`
-}
-
 module.exports = {
   callOn,
-  safeCall,
-  safeKey,
 }

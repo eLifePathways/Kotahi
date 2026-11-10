@@ -36,7 +36,7 @@ const CmsHeadStyled = styled.div`
   justify-content: space-between;
 `
 
-export const CollectionsHeading = styled.div`
+const CollectionsHeading = styled.div`
   align-items: center;
   background-color: ${th('color.backgroundA')};
   border-top: 1px solid ${th('color.gray90')};

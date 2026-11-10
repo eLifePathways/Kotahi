@@ -65,47 +65,6 @@ const getUrlByDoiFromDataCite = async doi => {
   }
 }
 
-const getCrossRefCitationFromDoi = async (doi, contactEmail) => {
-  const mailTo = contactEmail ?? defaultMailTo
-
-  try {
-    const response = await http.get(`${apiUrl}${doi}`, {
-      params: {
-        mailto: mailTo,
-      },
-      headers: {
-        'User-Agent': `Kotahi (Axios 0.21; mailto:${mailTo})`,
-      },
-    })
-
-    updateRateLimit(response)
-
-    if (response.status === 200) {
-      // console.log(
-      //   '\n\n\n\nComing back from CrossRef: ',
-      //   response?.data?.message?.items?.[0],
-      // )
-      return response.data.message?.resource?.primary?.URL
-    }
-
-    logger.error(
-      `Could not retrieve citation from CrossRef for DOI ${doi}: ${response.statusText}`,
-    )
-    return null
-  } catch (error) {
-    // if (error.response?.status === 404) {
-    // }
-
-    // if (error.response?.status === 429) {
-    // }
-
-    logger.error(
-      `Failed to retrieve URL from CrossRef for DOI ${doi}: ${error}`,
-    )
-    return null
-  }
-}
-
 /** Get the target URL that a DOI resolves to. This attempts to obtain it from CrossRef first (observing rate limiting),
  * and failing that, from DataCite.
  * @param contactEmail An email address to supply in the header to CrossRef in case they need to contact about rate limiting etc.
@@ -276,6 +235,5 @@ const getFormattedReferencesFromCrossRefDOI = async (
 module.exports = {
   getUrlByDoi,
   getFormattedReferencesFromCrossRef,
-  getCrossRefCitationFromDoi,
   getFormattedReferencesFromCrossRefDOI,
 }

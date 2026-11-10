@@ -14,7 +14,7 @@ const YjsContext = React.createContext({
   createYjsProvider: () => {},
 })
 
-const { Provider, Consumer } = YjsContext
+const { Provider } = YjsContext
 
 const arrayColor = [
   '#4363d8',
@@ -102,6 +102,6 @@ const YjsProvider = ({ children }) => {
   )
 }
 
-export { Consumer as YjsConsumer, YjsProvider }
+export { YjsProvider }
 
 export default YjsContext

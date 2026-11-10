@@ -233,10 +233,6 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
   })
 }
 
-const removeTaskAlertsForCurrentUser = async userId => {
-  return TaskAlert.deleteByUserId(userId)
-}
-
 const sendAutomatedTaskEmailNotifications = async groupId => {
   const activeConfig = await Config.getCached(groupId)
 
@@ -673,13 +669,11 @@ module.exports = {
   deleteTaskNotification,
   getTasks,
   populateTemplatedTasksForManuscript,
-  removeTaskAlertsForCurrentUser,
   sendAutomatedTaskEmailNotifications,
   taskAssignee,
   taskEmailNotification,
   taskEmailNotificationRecipientUser,
   taskNotificationLogs,
-  updateAlertsForTask,
   updateAlertsUponTeamUpdate,
   updateTask,
   updateTaskNotification,

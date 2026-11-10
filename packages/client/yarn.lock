@@ -351,15 +351,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.4.5":
-  version: 7.4.5
-  resolution: "@babel/runtime@npm:7.4.5"
-  dependencies:
-    regenerator-runtime: "npm:^0.13.2"
-  checksum: 10c0/17d80f109e70e125c9cf7f484ebf02e2d9f1ca2b62297a682ad5fa3935290d48584e100d6b6ad1f6be356764e31405560e677893e0f1802183582166011731fd
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.11.1, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.0, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.0, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.20.0, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.22.5, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.24.4, @babel/runtime@npm:^7.24.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.7":
   version: 7.25.0
   resolution: "@babel/runtime@npm:7.25.0"
@@ -4841,7 +4832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1":
+"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -5023,15 +5014,6 @@ __metadata:
   version: 2.0.3
   resolution: "internmap@npm:2.0.3"
   checksum: 10c0/8cedd57f07bbc22501516fbfc70447f0c6812871d471096fad9ea603516eacc2137b633633daf432c029712df0baefd793686388ddf5737e3ea15074b877f7ed
-  languageName: node
-  linkType: hard
-
-"invariant@npm:^2.2.0, invariant@npm:^2.2.4":
-  version: 2.2.4
-  resolution: "invariant@npm:2.2.4"
-  dependencies:
-    loose-envify: "npm:^1.0.0"
-  checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
   languageName: node
   linkType: hard
 
@@ -5398,7 +5380,6 @@ __metadata:
     react-folder-tree: "npm:^5.1.1"
     react-i18next: "npm:^13.0.3"
     react-image: "npm:4.0.3"
-    react-mentions: "npm:3.3.2"
     react-modal: "npm:^3.14.3"
     react-paginate: "npm:^7.1.3"
     react-router: "npm:^7.14.2"
@@ -5418,7 +5399,6 @@ __metadata:
     y-prosemirror: "npm:1.2.0"
     y-protocols: "npm:1.0.5"
     y-textarea: "npm:^1.0.0"
-    y-webrtc: "npm:10.2.0"
     y-websocket: "npm:1.4.5"
     yjs: "npm:13.5.38"
   languageName: unknown
@@ -7102,21 +7082,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-mentions@npm:3.3.2":
-  version: 3.3.2
-  resolution: "react-mentions@npm:3.3.2"
-  dependencies:
-    "@babel/runtime": "npm:7.4.5"
-    invariant: "npm:^2.2.4"
-    prop-types: "npm:^15.5.8"
-    substyle: "npm:^6.3.1"
-  peerDependencies:
-    react: 16.x
-    react-dom: 16.x
-  checksum: 10c0/8999c1d6b0fea9fc41fb5204641c34879b92d6d32ec1d1c0a648ea007758549ee543a0ba89081ee246aea655ec58b2ba9d312c9d896079f6eee58081cd83bc3a
-  languageName: node
-  linkType: hard
-
 "react-modal@npm:^3.14.3":
   version: 3.16.1
   resolution: "react-modal@npm:3.16.1"
@@ -7339,13 +7304,6 @@ __metadata:
   version: 0.1.14
   resolution: "reflect-metadata@npm:0.1.14"
   checksum: 10c0/3a6190c7f6cb224f26a012d11f9e329360c01c1945e2cbefea23976a8bacf9db6b794aeb5bf18adcb673c448a234fbc06fc41853c00a6c206b30f0777ecf019e
-  languageName: node
-  linkType: hard
-
-"regenerator-runtime@npm:^0.13.2":
-  version: 0.13.11
-  resolution: "regenerator-runtime@npm:0.13.11"
-  checksum: 10c0/12b069dc774001fbb0014f6a28f11c09ebfe3c0d984d88c9bced77fdb6fedbacbca434d24da9ae9371bfbf23f754869307fb51a4c98a8b8b18e5ef748677ca24
   languageName: node
   linkType: hard
 
@@ -7970,20 +7928,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"substyle@npm:^6.3.1":
-  version: 6.3.1
-  resolution: "substyle@npm:6.3.1"
-  dependencies:
-    hoist-non-react-statics: "npm:^3.1.0"
-    invariant: "npm:^2.2.0"
-    prop-types: "npm:^15.5.8"
-    warning: "npm:^2.1.0"
-  peerDependencies:
-    react: ">=15.3.2"
-  checksum: 10c0/d150793af23fa55cc3c1aac4b1907b961c5baa02ab3e8a2c9ff4f19f1b14f15cba208987c84558cc222f70ae730757dcb442c758987714b8b4edde9324824723
-  languageName: node
-  linkType: hard
-
 "supports-color@npm:^5.3.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -8508,15 +8452,6 @@ __metadata:
   dependencies:
     xml-name-validator: "npm:^4.0.0"
   checksum: 10c0/8c455303ee2aec813f8688f4a1618b78d2fd90156a233c8ef60b853418a6b23f00fe86b680f7584f48d1c2348ee0677ad43be6fb6fcc032130cfda4de8c7188e
-  languageName: node
-  linkType: hard
-
-"warning@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "warning@npm:2.1.0"
-  dependencies:
-    loose-envify: "npm:^1.0.0"
-  checksum: 10c0/0bcf7fed640ad8232ec03b1b074bf780922aadf16005dd120e59af7312bae2049bce6e2cc95890c9efc24955edf63d73b87abbb1e136d76709a47d4a585f95eb
   languageName: node
   linkType: hard
 

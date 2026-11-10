@@ -1,9 +1,7 @@
 const {
-  createNewTaskAlerts,
   createTaskEmailNotificationLog,
   deleteTaskNotification,
   getTasks,
-  removeTaskAlertsForCurrentUser,
   taskAssignee,
   taskEmailNotification,
   taskEmailNotificationRecipientUser,
@@ -27,21 +25,12 @@ module.exports = {
   },
 
   Mutation: {
-    // For testing purposes. Normally initiated by a scheduler on the server.
-    createNewTaskAlerts: async (_, { groupId }) => {
-      return createNewTaskAlerts(groupId)
-    },
-
     createTaskEmailNotificationLog: async (_, { taskEmailNotificationLog }) => {
       return createTaskEmailNotificationLog(taskEmailNotificationLog)
     },
 
     deleteTaskNotification: async (_, { id }) => {
       return deleteTaskNotification(id)
-    },
-
-    removeTaskAlertsForCurrentUser: async (_, __, ctx) => {
-      return removeTaskAlertsForCurrentUser(ctx.userId)
     },
 
     updateTask: async (_, { task }) => {

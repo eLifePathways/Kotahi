@@ -4,11 +4,8 @@ const { config, subscriptionManager, withFilter } = require('@coko/server')
 const {
   importManuscripts,
   archiveManuscripts,
-  archiveManuscript,
   unarchiveManuscripts,
   assignAuthorForProofingManuscript,
-  deleteManuscripts,
-  deleteManuscript,
   reviewerResponse,
   updateManuscript,
   submitAuthorProofingFeedback,
@@ -23,7 +20,6 @@ const {
   getManuscript,
   manuscriptsUserHasCurrentRoleIn,
   manuscripts,
-  publishedManuscripts,
   paginatedManuscripts,
   manuscriptsPublishedSinceDate,
   publishedManuscript,
@@ -155,20 +151,8 @@ const resolvers = {
       return unarchiveManuscripts(ids)
     },
 
-    async archiveManuscript(_, { id }) {
-      return archiveManuscript(id)
-    },
-
     async assignAuthorForProofingManuscript(_, { id }, ctx) {
       return assignAuthorForProofingManuscript(id, ctx.userId)
-    },
-
-    async deleteManuscripts(_, { ids }) {
-      return deleteManuscripts(ids)
-    },
-
-    async deleteManuscript(_, { id }) {
-      return deleteManuscript(id)
     },
 
     // TODO Rename to something like 'setReviewerResponse'
@@ -291,10 +275,6 @@ const resolvers = {
 
     async manuscripts() {
       return manuscripts()
-    },
-
-    async publishedManuscripts(_, { sort, offset, limit, groupId }) {
-      return publishedManuscripts(sort, offset, limit, groupId)
     },
 
     async paginatedManuscripts(

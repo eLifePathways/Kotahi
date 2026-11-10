@@ -1,7 +1,7 @@
 const omit = require('lodash/omit')
 const omitBy = require('lodash/omitBy')
 const pick = require('lodash/pick')
-const { raw, ref } = require('objection')
+const { raw } = require('objection')
 const sortBy = require('lodash/sortBy')
 
 const { BaseModel, config, useTransaction, uuid } = require('@coko/server')
@@ -429,27 +429,6 @@ class Manuscript extends BaseModel {
     if (offset) query.offset(offset)
 
     return query
-  }
-
-  static async findPublishedInGroup(groupId, params = {}, options = {}) {
-    const { sort, limit, offset } = params
-
-    const query = Manuscript.query(options.trx)
-      .where({ groupId })
-      .whereNotNull('published')
-
-    const totalCount = await query.resultSize()
-
-    if (sort) {
-      const [sortName, sortDirection] = sort.split('_')
-      query.orderBy(ref(sortName), sortDirection)
-    }
-
-    if (limit) query.limit(limit)
-    if (offset) query.offset(offset)
-    const manuscripts = await query
-
-    return { totalCount, manuscripts }
   }
 
   static async findByIdWithTeamUsersAndChannels(id, options = {}) {

@@ -22,7 +22,7 @@ import {
   Select,
 } from './CustomInputs'
 
-export const SelectInput = styled(Select)`
+const SelectInput = styled(Select)`
   width: 100%;
 
   /* stylelint-disable-next-line selector-class-pattern */
@@ -31,7 +31,7 @@ export const SelectInput = styled(Select)`
     border: 1px solid ${p => p.$color || '#ddd'};
   }
 `
-export const CreatableInput = styled(CreatableSelect)`
+const CreatableInput = styled(CreatableSelect)`
   width: 100%;
 
   /* stylelint-disable-next-line selector-class-pattern */

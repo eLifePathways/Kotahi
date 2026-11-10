@@ -2,9 +2,7 @@ const {
   addEmailToBlacklist,
   assignUserAsAuthor,
   getBlacklistInformation,
-  getEmailInvitedReviewers,
   getInvitationById,
-  getInvitationsForManuscript,
   invitationStatus,
   invitationUser,
   removeInvitation,
@@ -17,14 +15,6 @@ module.exports = {
   Query: {
     async getBlacklistInformation(_, { email, groupId }) {
       return getBlacklistInformation(email, groupId)
-    },
-
-    async getEmailInvitedReviewers(_, { manuscriptId }) {
-      return getEmailInvitedReviewers(manuscriptId)
-    },
-
-    async getInvitationsForManuscript(_, { id }) {
-      return getInvitationsForManuscript(id)
     },
 
     async invitationManuscriptId(_, { id }) {
