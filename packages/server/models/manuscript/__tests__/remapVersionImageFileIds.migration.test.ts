@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, migrationManager, DbTestUtils, File } from '@coko/server'
+import { db, config, migrationManager, File } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Manuscript from '../manuscript.model'
 
 const MIGRATION_BEFORE_REMAP = '1791912695-remove-repoipaddress.ts'

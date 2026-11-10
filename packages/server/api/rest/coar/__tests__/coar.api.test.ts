@@ -14,7 +14,7 @@ import {
 // express comes with @coko/server, which serves the real routes
 // eslint-disable-next-line import/no-extraneous-dependencies
 import express from 'express'
-import { migrationManager, db, config, DbTestUtils } from '@coko/server'
+import { migrationManager, db, config } from '@coko/server'
 
 import {
   CoarNotification,
@@ -24,6 +24,7 @@ import {
   Token,
 } from '../../../../models'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { postToInbox } from '../../../../controllers/coar/utils'
 
 // Outbound HTTP (DOI registration agency, Crossref, the sender's inbox) goes

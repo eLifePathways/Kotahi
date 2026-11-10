@@ -1,5 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, migrationManager, DbTestUtils } from '@coko/server'
+import { db, config, migrationManager } from '@coko/server'
+
+import DbTestUtils from '../../DbTestUtils'
 
 const MIGRATION_BEFORE_PRIMARY_KEY =
   '1793088854-create-missing-manuscript-teams.ts'

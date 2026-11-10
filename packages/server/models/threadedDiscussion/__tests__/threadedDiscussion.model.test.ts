@@ -2,12 +2,12 @@ import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
 import {
   db,
   config,
-  DbTestUtils,
   migrationManager,
   useTransaction,
   uuid,
 } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import ThreadedDiscussion from '../threadedDiscussion.model'
 import Group from '../../group/group.model'
 import Manuscript from '../../manuscript/manuscript.model'
