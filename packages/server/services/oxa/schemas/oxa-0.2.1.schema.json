@@ -1,0 +1,606 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oxa.dev/v0.2.1/schema.json",
+  "title": "OXA Schema",
+  "description": "JSON Schema for OXA document types",
+  "version": "0.2.1",
+  "definitions": {
+    "Block": {
+      "title": "Block",
+      "description": "Union of all block content types.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Code"
+        },
+        {
+          "$ref": "#/definitions/Heading"
+        },
+        {
+          "$ref": "#/definitions/Paragraph"
+        },
+        {
+          "$ref": "#/definitions/Reference"
+        },
+        {
+          "$ref": "#/definitions/ThematicBreak"
+        }
+      ]
+    },
+    "Cite": {
+      "title": "Cite",
+      "description": "An inline citation to a bibliographic reference.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Cite nodes.",
+          "enum": ["Cite"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "xref": {
+          "description": "Reference to the id of a Reference node in the containing document.",
+          "type": "string"
+        },
+        "children": {
+          "description": "Optional inline content that overrides generated citation display text.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        },
+        "prefix": {
+          "description": "Inline content preceding the citation within its group.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        },
+        "suffix": {
+          "description": "Inline content following the citation within its group.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        },
+        "display": {
+          "description": "Controls which part of the referenced bibliographic record is rendered.",
+          "enum": ["author", "date", "full"]
+        },
+        "locator": {
+          "description": "A human-readable locator within the referenced work.",
+          "type": "string"
+        },
+        "url": {
+          "description": "A deep link to a specific location in the referenced work.",
+          "type": "string",
+          "format": "uri"
+        },
+        "intent": {
+          "description": "The citation intent, typically using a CiTO vocabulary value.",
+          "type": "string"
+        }
+      },
+      "required": ["type", "xref"]
+    },
+    "CiteGroup": {
+      "title": "CiteGroup",
+      "description": "An inline container that groups citations with shared display semantics.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for CiteGroup nodes.",
+          "enum": ["CiteGroup"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "kind": {
+          "description": "The citation display style shared by the group.",
+          "enum": ["narrative", "parenthetical"]
+        },
+        "children": {
+          "description": "The citations in the group.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Cite"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["type", "kind", "children"]
+    },
+    "Code": {
+      "title": "Code",
+      "description": "A block of preformatted text, typically source code.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Code nodes.",
+          "enum": ["Code"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "language": {
+          "description": "The programming language of the code content.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The code content.",
+          "type": "string"
+        }
+      },
+      "required": ["type", "value"]
+    },
+    "Document": {
+      "title": "Document",
+      "description": "A document with metadata, title, and block content.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Document nodes.",
+          "enum": ["Document"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "metadata": {
+          "description": "Arbitrary document metadata.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": {
+          "description": "The document title as inline content.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        },
+        "children": {
+          "description": "The block content of the document.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Block"
+          }
+        }
+      },
+      "required": ["type", "children"]
+    },
+    "Emphasis": {
+      "title": "Emphasis",
+      "description": "Emphasized content (typically italicized).",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Emphasis nodes.",
+          "enum": ["Emphasis"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "children": {
+          "description": "The inline content to emphasize.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        }
+      },
+      "required": ["type", "children"]
+    },
+    "Heading": {
+      "title": "Heading",
+      "description": "A heading with a level and inline content.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Heading nodes.",
+          "enum": ["Heading"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "level": {
+          "description": "The heading level (1-6).",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "children": {
+          "description": "The inline content of the heading.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        }
+      },
+      "required": ["type", "level", "children"]
+    },
+    "Inline": {
+      "title": "Inline",
+      "description": "Union of all inline content types.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Cite"
+        },
+        {
+          "$ref": "#/definitions/CiteGroup"
+        },
+        {
+          "$ref": "#/definitions/Text"
+        },
+        {
+          "$ref": "#/definitions/Emphasis"
+        },
+        {
+          "$ref": "#/definitions/InlineCode"
+        },
+        {
+          "$ref": "#/definitions/Strong"
+        },
+        {
+          "$ref": "#/definitions/Subscript"
+        },
+        {
+          "$ref": "#/definitions/Superscript"
+        }
+      ]
+    },
+    "InlineCode": {
+      "title": "InlineCode",
+      "description": "Short fragments of code appearing within prose.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for InlineCode nodes.",
+          "enum": ["InlineCode"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "language": {
+          "description": "The programming language of the code content.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The code content.",
+          "type": "string"
+        }
+      },
+      "required": ["type", "value"]
+    },
+    "Paragraph": {
+      "title": "Paragraph",
+      "description": "A paragraph of inline content.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Paragraph nodes.",
+          "enum": ["Paragraph"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "children": {
+          "description": "The inline content of the paragraph.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        }
+      },
+      "required": ["type", "children"]
+    },
+    "Reference": {
+      "title": "Reference",
+      "description": "A block-level bibliographic record.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Reference nodes.",
+          "enum": ["Reference"]
+        },
+        "id": {
+          "description": "A unique identifier for the node, used by Cite xref values.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "children": {
+          "description": "Optional inline content for the rendered display of this reference.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        },
+        "csl": {
+          "description": "A CSL-JSON item object for the bibliographic record.",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["type", "id", "csl"]
+    },
+    "Strong": {
+      "title": "Strong",
+      "description": "Strongly emphasized content (typically bold).",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Strong nodes.",
+          "enum": ["Strong"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "children": {
+          "description": "The inline content to emphasize.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        }
+      },
+      "required": ["type", "children"]
+    },
+    "Subscript": {
+      "title": "Subscript",
+      "description": "Content rendered below the baseline (e.g. chemical formulae, variable indices).",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Subscript nodes.",
+          "enum": ["Subscript"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "children": {
+          "description": "The inline content to render as subscript.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        }
+      },
+      "required": ["type", "children"]
+    },
+    "Superscript": {
+      "title": "Superscript",
+      "description": "Content rendered above the baseline (e.g. exponents, ordinal suffixes).",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Superscript nodes.",
+          "enum": ["Superscript"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "children": {
+          "description": "The inline content to render as superscript.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inline"
+          }
+        }
+      },
+      "required": ["type", "children"]
+    },
+    "Text": {
+      "title": "Text",
+      "description": "A text node containing a string value.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for Text nodes.",
+          "enum": ["Text"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "value": {
+          "description": "The text content.",
+          "type": "string"
+        }
+      },
+      "required": ["type", "value"]
+    },
+    "ThematicBreak": {
+      "title": "ThematicBreak",
+      "description": "A thematic or structural division between sections of content.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type discriminator for ThematicBreak nodes.",
+          "enum": ["ThematicBreak"]
+        },
+        "id": {
+          "description": "A unique identifier for the node.",
+          "type": "string"
+        },
+        "classes": {
+          "description": "A list of class names for styling or semantics.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "Arbitrary key-value data attached to the node.",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["type"]
+    }
+  },
+  "$ref": "#/definitions/Document"
+}
