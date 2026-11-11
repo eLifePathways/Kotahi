@@ -1,9 +1,8 @@
 ##############################################################
 # IMAGE FOR BUILDING
 
-FROM cokoapps/base:24
-
-RUN corepack enable
+FROM node:26-trixie-slim
+RUN npm install -g corepack && corepack enable
 
 ENV NODE_ENV='production'
 ENV CLIENT_STATIC_FOLDER_PATH=../public
@@ -24,11 +23,11 @@ RUN yarn coko-client-build
 ##############################################################
 # IMAGE FOR RUNNING
 
-FROM cokoapps/base:24
+FROM node:26-trixie-slim
 
 WORKDIR /home/node/app
 
-RUN yarn global add serve
+RUN npm install -g serve
 
 COPY --from=0 /home/node/app/_build ./_build
 COPY --from=0 /home/node/app/node_modules/@coko/client/scripts/env.sh ./env.sh
