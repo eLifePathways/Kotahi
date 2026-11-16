@@ -1,7 +1,7 @@
 const checkIfInvitationWasAccepted = async ctx => {
   const { Invitation } = require('../../models')
   const { invitation: ctxInvitation } = ctx ?? {}
-  const invitation = await Invitation.query().findById(ctxInvitation?.id)
+  const invitation = await Invitation.findById(ctxInvitation?.id)
 
   const isInvitationAccepted = invitation.status === 'ACCEPTED'
   const cancelReason = isInvitationAccepted && 'Invitation was accepted'
@@ -12,13 +12,11 @@ const checkIfReviewWasCompleted = async ctx => {
   const { TeamMember } = require('../../models')
   const { manuscriptId, userId } = ctx ?? {}
 
-  const member = await TeamMember.query()
-    .joinRelated('team')
-    .where('team.objectId', manuscriptId)
-    .andWhere('team_members.userId', userId)
-    .first()
+  const reviewIsCompleted = await TeamMember.hasCompletedReview(
+    userId,
+    manuscriptId,
+  )
 
-  const reviewIsCompleted = member?.status === 'completed'
   const cancelReason = reviewIsCompleted && 'Review was completed'
   return cancelReason
 }

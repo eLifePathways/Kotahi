@@ -6,7 +6,6 @@ import ListSubmissionFields from './ListSubmissionFields'
 
 import { Select } from '../../../pubsweet'
 import { ColorPicker } from '../../../shared'
-import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
 import CoarAuthToken from './CoarAuthToken'
 
 export const configTabLabels = {
@@ -37,7 +36,7 @@ export const tabKeyBasedSchema = {
   emailNotifications: ['emailNotification'],
 }
 
-export const allSections = Object.values(tabKeyBasedSchema).flat()
+const allSections = Object.values(tabKeyBasedSchema).flat()
 
 export const generateSchemas = ({
   emailNotificationOptions,

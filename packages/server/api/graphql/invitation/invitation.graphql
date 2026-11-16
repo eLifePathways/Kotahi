@@ -43,9 +43,7 @@ type BlacklistEmail {
 extend type Query {
   invitationManuscriptId(id: ID): Invitation
   invitationStatus(id: ID): Invitation
-  getInvitationsForManuscript(id: ID): [Invitation!]
   getBlacklistInformation(email: String!, groupId: ID!): [BlacklistEmail]
-  getEmailInvitedReviewers(manuscriptId: ID!): [Invitation!]!
 }
 
 extend type Mutation {

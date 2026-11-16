@@ -1,29 +1,9 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Action } from '../../../pubsweet'
 
 export const AdminSection = styled.div`
   margin-bottom: ${grid(6)};
-`
-
-export const Roles = styled.div`
-  display: flex;
-  flex-direction: row;
-  font-size: 0.8em;
-  justify-content: space-around;
-  margin-bottom: 0.6em;
-  margin-left: 0.5em;
-  margin-top: 0;
-  padding-left: 1.5em;
-  text-transform: uppercase;
-`
-
-export const Role = styled.div`
-  display: flex;
-
-  &:not(:last-of-type) {
-    margin-right: 3em;
-  }
 `
 
 export const Info = styled.span`
@@ -34,49 +14,6 @@ export const Info = styled.span`
   list-style: none;
   margin: 0;
   padding: 0;
-`
-
-export const EditorWrapper = styled.div`
-  .wax-container {
-    position: relative;
-  }
-`
-
-export const FormStatus = styled.div`
-  color: ${th('color.brand2.base')};
-  line-height: ${grid(10)};
-  text-align: center;
-`
-
-export const ErrorWrap = styled.div`
-  /* stylelint-disable selector-class-pattern */
-
-  .ProseMirror {
-    margin-bottom: ${grid(8)};
-  }
-
-  ${({ error }) =>
-    error &&
-    css`
-      .ProseMirror {
-        border-color: red;
-      }
-      ${ErrorText} {
-        margin-top: ${grid(-8)};
-        margin-bottom: ${grid(2)};
-      }
-    `}
-
-  [class*="MenuBar"] {
-    margin-top: 0;
-  }
-`
-export const ErrorText = styled.div`
-  color: ${th('color.error.base')};
-`
-
-export const RecommendationInputContainer = styled.div`
-  line-height: ${grid(10)};
 `
 
 export const Heading = styled.span`

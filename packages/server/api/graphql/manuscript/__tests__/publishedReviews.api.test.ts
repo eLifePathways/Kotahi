@@ -13,10 +13,10 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   File,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import {
   Form,
   Group,

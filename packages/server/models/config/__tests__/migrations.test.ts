@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, migrationManager, DbTestUtils } from '@coko/server'
+import { db, config, migrationManager } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Group from '../../group/group.model'
 import Config from '../config.model'
 import eventsSource from '../../../services/notification/eventsSource'
@@ -231,8 +232,8 @@ describe('Config Migrations', () => {
 
     await migrationManager.migrate({ step: 1 })
 
-    config1 = (await Config.query().findById(config1.id)) as Config
-    config2 = (await Config.query().findById(config2.id)) as Config
+    config1 = (await Config.findById(config1.id)) as Config
+    config2 = (await Config.findById(config2.id)) as Config
 
     // 1) 'author-accepted' was inactive and had NO notifications -> should now be active
     expect(

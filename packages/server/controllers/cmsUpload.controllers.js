@@ -10,13 +10,14 @@ const uploadCms = async (templateId, files) => {
 
     return Promise.all(
       files.map(async file => {
-        const insertedResource = await CmsFileTemplate.query(trx)
-          .insertGraph({
+        const insertedResource = await CmsFileTemplate.insert(
+          {
             name: file.originalname,
             parentId: folder.id,
             groupId: folder.groupId,
-          })
-          .returning('id')
+          },
+          { trx },
+        )
 
         const insertedFile = await createFile(
           fs.createReadStream(`${file.path}`),
@@ -28,10 +29,13 @@ const uploadCms = async (templateId, files) => {
           },
         )
 
-        return CmsFileTemplate.query(trx)
-          .update({ fileId: insertedFile.id })
-          .where({ id: insertedResource.id })
-          .returning('*')
+        return [
+          await CmsFileTemplate.patchAndFetchById(
+            insertedResource.id,
+            { fileId: insertedFile.id },
+            { trx },
+          ),
+        ]
       }),
     )
   })

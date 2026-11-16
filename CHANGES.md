@@ -6,6 +6,19 @@
 
 #### Bug fixes
 
+### Version 2026.11.16-0
+
+#### Features
+* Centralised model queries to allow controllers to be ORM-agnostic.
+* Removed unused code from the server and client.
+* CI test performance has been improved.
+* Switched Node to version 26.
+* Dropped `moment` for more up-to-date libraries.
+
+#### Bug fixes
+* Patched permission rule that allowed reviewers to access different versions, and added more permission checks.
+* Fixed bugs related to user searching and deletion.
+
 ### Version 2026.11.03-0
 
 #### Features

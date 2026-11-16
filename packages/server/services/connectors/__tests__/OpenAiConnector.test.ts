@@ -8,8 +8,9 @@ import {
   afterEach,
   afterAll,
 } from 'vitest'
-import { db, config, DbTestUtils, migrationManager, z } from '@coko/server'
+import { db, config, migrationManager, z } from '@coko/server'
 
+import DbTestUtils from '../../../models/DbTestUtils'
 import Group from '../../../models/group/group.model'
 import Config from '../../../models/config/config.model'
 import OpenAiConnector from '../OpenAiConnector'

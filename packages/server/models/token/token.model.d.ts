@@ -10,8 +10,6 @@ declare class Token extends BaseModel {
   groupId: string
   group?: Group
 
-  static deleteTokenById(tokenId: string, options?: Options): Promise<number>
-
   static deleteByNameAndGroupId(
     name: string,
     groupId: string,

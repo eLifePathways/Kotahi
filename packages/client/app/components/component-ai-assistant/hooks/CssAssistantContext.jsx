@@ -296,20 +296,3 @@ export const CssAssistantProvider = ({ children }) => {
     </CssAssistantContext.Provider>
   )
 }
-
-export const ModalContext = createContext()
-
-export const ModalProvider = ({ children }) => {
-  const [openModal, setOpenModal] = useState(false)
-  const modalContent = useRef(null)
-
-  const values = {
-    openModal,
-    modalContent,
-    setOpenModal,
-  }
-
-  return (
-    <ModalContext.Provider value={values}>{children}</ModalContext.Provider>
-  )
-}

@@ -61,24 +61,23 @@ const updateTeam = async (id, input, groupId) => {
       let editedManuscript = null
 
       if (EDITOR_ROLES.includes(role)) {
-        editedManuscript = await Manuscript.query(trx).findById(objectId)
+        editedManuscript = await Manuscript.findById(objectId, {
+          trx,
+          throwIfNotFound: false,
+        })
 
         await updateAlertsUponTeamUpdate(objectId, added, removed, { trx })
 
-        const channels = await Manuscript.relatedQuery('channels', trx).for(
-          objectId,
-        )
+        const channels = await Manuscript.getChannels(objectId, { trx })
 
         await Promise.all(
           removed.map(async userId => {
             // Check if the user has any messages in the channels before removing them from the channelMember
-            const hasPostedToChannel = await Message.query(trx)
-              .where({ userId })
-              .whereIn(
-                'channelId',
-                channels.map(channel => channel.id),
-              )
-              .first()
+            const hasPostedToChannel = await Message.hasUserPostedInChannels(
+              userId,
+              channels.map(channel => channel.id),
+              { trx },
+            )
 
             // Editors share the manuscript chat, so only remove the user once they're in no editor team
             const isStillEditor = await Team.isUserInRolesForObject(
@@ -98,10 +97,11 @@ const updateTeam = async (id, input, groupId) => {
                 { trx },
               )
               const pathStrings = channels.map(channel => `chat/${channel.id}`)
-              await NotificationDigest.query(trx)
-                .delete()
-                .where({ user_id: userId })
-                .whereIn('path_string', pathStrings)
+              await NotificationDigest.deleteForUserAndPaths(
+                userId,
+                pathStrings,
+                { trx },
+              )
             }
           }),
         )
@@ -198,27 +198,30 @@ const updateTeam = async (id, input, groupId) => {
 
 const updateTeamMember = async (id, input) => {
   // somehow updateandfetchbyid was not working here when changing the isShared field, not sure why
-  await TeamMember.query().where({ id }).patch(JSON.parse(input))
-  return TeamMember.query().findById(id)
+  await TeamMember.patchById(id, JSON.parse(input), { throwIfNotFound: false })
+  return TeamMember.findById(id, { throwIfNotFound: false })
 }
 
 const updateCollaborativeTeamMembers = async (manuscriptId, input) => {
-  const collaborativeReviewerTeam = await Team.query().findOne({
+  const collaborativeReviewerTeam = await Team.findOne({
     objectId: manuscriptId,
     role: 'collaborativeReviewer',
   })
 
-  await TeamMember.query()
-    .where({ teamId: collaborativeReviewerTeam.id })
-    .update(JSON.parse(input))
+  await TeamMember.patchByTeamId(
+    collaborativeReviewerTeam.id,
+    JSON.parse(input),
+  )
 
-  return TeamMember.query().where({
-    teamId: collaborativeReviewerTeam.id,
-  })
+  return (
+    await TeamMember.find({
+      teamId: collaborativeReviewerTeam.id,
+    })
+  ).result
 }
 
 const userTeams = async userId => {
-  return User.relatedQuery('teams').for(userId)
+  return User.getTeams(userId)
 }
 
 module.exports = {

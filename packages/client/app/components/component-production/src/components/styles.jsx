@@ -136,11 +136,3 @@ export const StyledFileRow = styled.div`
     padding: ${grid(3)} ${grid(4)};
   }
 `
-
-export const Heading = styled.span`
-  font-weight: inherit;
-  overflow: hidden;
-  padding: 0 1em 0 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`

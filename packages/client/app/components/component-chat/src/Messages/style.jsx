@@ -161,24 +161,6 @@ export const Bubble = styled.div`
   }
 `
 
-export const EmbedContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 32px;
-  position: relative;
-  width: 100%;
-`
-
-export const AspectRatio = styled(EmbedContainer)`
-  padding-bottom: ${props => (props.ratio ? props.ratio : '0')};
-`
-
-export const EmbedComponent = styled.iframe`
-  height: 100%;
-  position: absolute;
-  width: 100%;
-`
-
 export const Placeholder = styled.div`
   color: ${th('colorTextPlaceholder')};
   display: grid;

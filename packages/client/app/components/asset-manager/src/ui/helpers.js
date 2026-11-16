@@ -1,6 +1,9 @@
 /* eslint-disable new-cap */
 
-import moment from 'moment-timezone'
+import dayjs from 'dayjs'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+
+dayjs.extend(localizedFormat)
 
 const suffixes = ['B', 'kB', 'MB', 'GB', 'TB']
 
@@ -9,9 +12,6 @@ const fileSizeFormatter = bytes => {
   return `${(bytes / 1024 ** i).toFixed(2)} ${suffixes[i]}`
 }
 
-const dateTimeFormatter = dateTime =>
-  moment
-    .tz(dateTime, Intl.DateTimeFormat().resolvedOptions().timeZone)
-    .format('LLL')
+const dateTimeFormatter = dateTime => dayjs(dateTime).format('LLL')
 
 export { fileSizeFormatter, dateTimeFormatter }

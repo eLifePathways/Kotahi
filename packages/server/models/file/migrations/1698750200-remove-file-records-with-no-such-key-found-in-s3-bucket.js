@@ -11,7 +11,7 @@ const {
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const files = await File.query(trx)
+    const { result: files } = await File.find({}, { trx })
 
     // logger.info(`Total file records in table: ${files.length}`)
 

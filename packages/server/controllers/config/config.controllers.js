@@ -27,7 +27,7 @@ const getFile = async (config, fieldName) => {
 }
 
 const getConfig = async id => {
-  let config = await Config.query().findById(id)
+  let config = await Config.findById(id)
   config = await hideSensitiveInformation(config)
   config.formData = JSON.stringify(config.formData)
   return config
@@ -36,7 +36,7 @@ const getConfig = async id => {
 const getOldConfig = () => getConfigJsonString()
 
 const updateConfig = async (id, formData, isActive) => {
-  const existingConfig = await Config.query().findById(id)
+  const existingConfig = await Config.findById(id, { throwIfNotFound: false })
   const inputFormData = JSON.parse(formData)
 
   const reverted = await revertHiddenSensitiveInformation(
@@ -49,7 +49,7 @@ const updateConfig = async (id, formData, isActive) => {
     active: isActive,
   }
 
-  let config = await Config.query().updateAndFetchById(id, configInput)
+  let config = await Config.updateAndFetchById(id, configInput)
   await rescheduleJobsOnChange(existingConfig, config)
   config = await hideSensitiveInformation(config)
   config.formData = JSON.stringify(config.formData)
@@ -60,7 +60,7 @@ const getIcon = async config => getFile(config, 'favicon')
 const getLogo = async config => getFile(config, 'logoId')
 
 const translationOverrides = async groupId => {
-  const { name: groupName } = await Group.query().findById(groupId)
+  const { name: groupName } = await Group.findById(groupId)
 
   let groupOverrides
   let globalOverrides

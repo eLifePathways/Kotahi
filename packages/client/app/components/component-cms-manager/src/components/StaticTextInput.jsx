@@ -21,7 +21,7 @@ const StaticText = styled.span`
   padding: 8px;
 `
 
-export const FormTextInput = styled(TextInput)`
+const FormTextInput = styled(TextInput)`
   border-bottom-left-radius: 0;
   border-left: none;
   border-top-left-radius: 0;

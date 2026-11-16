@@ -17,7 +17,6 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   fileStorage,
   subscriptionManager,
 } from '@coko/server'
@@ -25,6 +24,7 @@ import generateSchema from '@coko/server/dist/graphql/generateSchema'
 // @ts-ignore
 import Upload from 'graphql-upload/Upload.mjs'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, User, Manuscript, Team, Config } from '../../../../models'
 
 // coko builds the schema with the CommonJS build of graphql, while vitest would

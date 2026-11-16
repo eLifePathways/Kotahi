@@ -1,5 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { migrationManager, db, config, DbTestUtils } from '@coko/server'
+import { migrationManager, db, config } from '@coko/server'
+
+import DbTestUtils from '../../DbTestUtils'
 
 describe('UserNotification Migrations', () => {
   beforeAll(async () => {

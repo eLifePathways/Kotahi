@@ -4,6 +4,8 @@
 # use it, it is expected that you'd create your own and use kotahi release
 # images published on dockerhub rather than building from source.
 
+name: kotahi-production
+
 services:
   client:
     build:
@@ -99,7 +101,7 @@ services:
       - FLAX_EXPRESS_PROTOCOL=${FLAX_EXPRESS_PROTOCOL:-http}
       - FLAX_CLIENT_ID=${FLAX_CLIENT_ID}
       - FLAX_CLIENT_SECRET=${FLAX_CLIENT_SECRET}
-      - FLAX_CLIENT_API_URL=${FLAX_CLIENT_API_URL}
+      - FLAX_CLIENT_API_URL=${FLAX_CLIENT_API_URL:-http://server:3000}
       - FLAX_SITE_URL=${FLAX_SITE_URL}
       - USE_APERTURE_EMAIL=${USE_APERTURE_EMAIL}
       - INSTANCE_GROUPS=${INSTANCE_GROUPS:-kotahi:journal}
@@ -113,7 +115,7 @@ services:
       test:
         [
           'CMD-SHELL',
-          'node -e "require(''http'').get(''http://localhost:3000/healthcheck'', res => { if (res.statusCode !== 200) process.exit(1) }).on(''error'', () => process.exit(1))"',
+          'node -e "fetch(''http://localhost:3000/healthcheck'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"',
         ]
       interval: 1s
       retries: 30
@@ -245,7 +247,7 @@ services:
       - FLAX_EXPRESS_PORT=${FLAX_EXPRESS_PORT:-3000}
       - FLAX_CLIENT_ID=${FLAX_CLIENT_ID}
       - FLAX_CLIENT_SECRET=${FLAX_CLIENT_SECRET}
-      - FLAX_CLIENT_API_URL=${FLAX_CLIENT_API_URL}
+      - FLAX_CLIENT_API_URL=${FLAX_CLIENT_API_URL:-http://server:3000}
 
   # devdocs:
   #   build:

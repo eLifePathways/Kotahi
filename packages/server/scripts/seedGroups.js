@@ -29,15 +29,19 @@ const createGroupAndRelatedData = async (
   options,
 ) => {
   const { trx } = options
-  const groupExists = await Group.query(trx).findOne({ name: groupName })
+  const groupExists = await Group.findOne({ name: groupName }, { trx })
 
   let group = null
 
   if (groupExists && groupExists.isArchived) {
     // Unarchive group that are added back to INSTANCE_GROUPS
-    group = await Group.query(trx).patchAndFetchById(groupExists.id, {
-      isArchived: false,
-    })
+    group = await Group.patchAndFetchById(
+      groupExists.id,
+      {
+        isArchived: false,
+      },
+      { trx },
+    )
 
     logger.info(
       `  Group "${groupName}" already exists in database and has been unarchived.`,
@@ -47,11 +51,13 @@ const createGroupAndRelatedData = async (
     logger.info(`  Group "${groupName}" already exists in database. Skipping.`)
   } else {
     // Seed group when a new entry is added to INSTANCE_GROUPS
-    group = await Group.query(trx).insertAndFetch({
-      name: groupName,
-      isArchived: false,
-      type: 'Group',
-    })
+    group = await Group.insert(
+      {
+        name: groupName,
+        isArchived: false,
+      },
+      { trx },
+    )
 
     logger.info(`  Added "${group.name}" group to database.`)
   }
@@ -65,18 +71,24 @@ const createGroupAndRelatedData = async (
   await seedCmsFiles(group, { trx })
 
   // Seed System-wide discussion channel and link it to the created group
-  const channelExists = await Channel.query(trx).findOne({
-    topic: 'System-wide discussion',
-    type: 'editorial',
-    groupId: group.id,
-  })
-
-  if (!channelExists) {
-    const channel = await Channel.query(trx).insertAndFetch({
+  const channelExists = await Channel.findOne(
+    {
       topic: 'System-wide discussion',
       type: 'editorial',
       groupId: group.id,
-    })
+    },
+    { trx },
+  )
+
+  if (!channelExists) {
+    const channel = await Channel.insert(
+      {
+        topic: 'System-wide discussion',
+        type: 'editorial',
+        groupId: group.id,
+      },
+      { trx },
+    )
 
     logger.info(`    Added ${channel.topic} for "${group.name}".`)
   } else {
@@ -86,21 +98,27 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed user role and link it to the created group
-  const userTeamExists = await Team.query(trx).findOne({
-    role: 'user',
-    global: false,
-    objectId: group.id,
-    objectType: 'group',
-  })
-
-  if (!userTeamExists) {
-    const userTeam = await Team.query(trx).insertAndFetch({
-      displayName: 'User',
+  const userTeamExists = await Team.findOne(
+    {
       role: 'user',
       global: false,
       objectId: group.id,
       objectType: 'group',
-    })
+    },
+    { trx },
+  )
+
+  if (!userTeamExists) {
+    const userTeam = await Team.insert(
+      {
+        displayName: 'User',
+        role: 'user',
+        global: false,
+        objectId: group.id,
+        objectType: 'group',
+      },
+      { trx },
+    )
 
     logger.info(`    Added ${userTeam.displayName} team for "${group.name}".`)
   } else {
@@ -110,21 +128,27 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed groupAdmin role and link it to the created group
-  const groupAdminTeamExists = await Team.query(trx).findOne({
-    role: 'groupAdmin',
-    global: false,
-    objectId: group.id,
-    objectType: 'group',
-  })
-
-  if (!groupAdminTeamExists) {
-    const groupAdminTeam = await Team.query(trx).insertAndFetch({
-      displayName: 'Group Admin',
+  const groupAdminTeamExists = await Team.findOne(
+    {
       role: 'groupAdmin',
       global: false,
       objectId: group.id,
       objectType: 'group',
-    })
+    },
+    { trx },
+  )
+
+  if (!groupAdminTeamExists) {
+    const groupAdminTeam = await Team.insert(
+      {
+        displayName: 'Group Admin',
+        role: 'groupAdmin',
+        global: false,
+        objectId: group.id,
+        objectType: 'group',
+      },
+      { trx },
+    )
 
     logger.info(
       `    Added ${groupAdminTeam.displayName} team for "${group.name}".`,
@@ -136,21 +160,27 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed groupManager role and link it to the created group
-  const groupManagerTeamExists = await Team.query(trx).findOne({
-    role: 'groupManager',
-    global: false,
-    objectId: group.id,
-    objectType: 'group',
-  })
-
-  if (!groupManagerTeamExists) {
-    const groupManagerTeam = await Team.query(trx).insertAndFetch({
-      displayName: 'Group Manager',
+  const groupManagerTeamExists = await Team.findOne(
+    {
       role: 'groupManager',
       global: false,
       objectId: group.id,
       objectType: 'group',
-    })
+    },
+    { trx },
+  )
+
+  if (!groupManagerTeamExists) {
+    const groupManagerTeam = await Team.insert(
+      {
+        displayName: 'Group Manager',
+        role: 'groupManager',
+        global: false,
+        objectId: group.id,
+        objectType: 'group',
+      },
+      { trx },
+    )
 
     logger.info(
       `    Added ${groupManagerTeam.displayName} team for "${group.name}".`,
@@ -162,10 +192,13 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed Group Templates and link it to the created group
-  const existingArticleTemplate = await ArticleTemplate.query(trx).where({
-    groupId: group.id,
-    isCms: false,
-  })
+  const { result: existingArticleTemplate } = await ArticleTemplate.find(
+    {
+      groupId: group.id,
+      isCms: false,
+    },
+    { trx },
+  )
 
   if (existingArticleTemplate.length === 0) {
     const cssTemplate = await generateCss()
@@ -187,12 +220,15 @@ const createGroupAndRelatedData = async (
       articleTemplate += defaultTemplateBuffer
     }
 
-    await ArticleTemplate.query(trx).insertGraph({
-      article: articleTemplate,
-      css: cssTemplate,
-      groupId: group.id,
-      isCms: false,
-    })
+    await ArticleTemplate.insert(
+      {
+        article: articleTemplate,
+        css: cssTemplate,
+        groupId: group.id,
+        isCms: false,
+      },
+      { trx },
+    )
 
     logger.info(`Added default group template for "${group.name}".`)
   } else {
@@ -202,24 +238,33 @@ const createGroupAndRelatedData = async (
   }
 
   // Seed Group Templates and link it to the created group for cms
-  const existingCmsArticleTemplate = await ArticleTemplate.query(trx).where({
-    groupId: group.id,
-    isCms: true,
-  })
-
-  if (existingCmsArticleTemplate.length === 0) {
-    await ArticleTemplate.query(trx).insertGraph({
-      article: '',
-      css: '',
+  const { result: existingCmsArticleTemplate } = await ArticleTemplate.find(
+    {
       groupId: group.id,
       isCms: true,
-    })
+    },
+    { trx },
+  )
+
+  if (existingCmsArticleTemplate.length === 0) {
+    await ArticleTemplate.insert(
+      {
+        article: '',
+        css: '',
+        groupId: group.id,
+        isCms: true,
+      },
+      { trx },
+    )
   }
 
   // Seed email templates and link it to the created group
-  const existingEmailTemplates = await EmailTemplate.query(trx).where({
-    groupId: group.id,
-  })
+  const { result: existingEmailTemplates } = await EmailTemplate.find(
+    {
+      groupId: group.id,
+    },
+    { trx },
+  )
 
   if (existingEmailTemplates.length === 0) {
     const emailTemplatesData = defaultEmailTemplates.map(template => ({
@@ -235,8 +280,10 @@ const createGroupAndRelatedData = async (
     }))
 
     // Insert default email templates into the database for group
-    const insertedEmailTemplates =
-      await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
+    const insertedEmailTemplates = await EmailTemplate.insert(
+      emailTemplatesData,
+      { trx },
+    )
 
     logger.info(
       `    Added ${insertedEmailTemplates.length} number of default email templates for "${group.name}".`,
@@ -268,7 +315,7 @@ const createGroupAndRelatedData = async (
     newConfig.formData.eventNotification.authorProofingSubmittedEmailTemplate =
       authorProofingSubmittedTemplate.id
 
-    await Config.query(trx).updateAndFetchById(config.id, newConfig)
+    await Config.updateAndFetchById(config.id, newConfig, { trx })
 
     logger.info(
       `    Mapped default email templates in config formdata event notifications.`,
@@ -281,14 +328,13 @@ const createGroupAndRelatedData = async (
 
   // TODO: below @mention notification addition can be moved to default templates and should be done via migration for clean code
   // Check if an email template for @mention notification already exists
-  const existingEmailTemplateForMentionNotification = await EmailTemplate.query(
-    trx,
-  )
-    .where({
-      group_id: group.id,
-      email_template_type: 'systemEmail',
-    })
-    .andWhereRaw("email_content->>'description' = '@mention notification'")
+  const existingEmailTemplateForMentionNotification =
+    await EmailTemplate.findByDescription(
+      group.id,
+      'systemEmail',
+      '@mention notification',
+      { trx },
+    )
 
   if (existingEmailTemplateForMentionNotification.length === 0) {
     const emailTemplatesData = {
@@ -307,7 +353,7 @@ const createGroupAndRelatedData = async (
       groupId: group.id,
     }
 
-    await EmailTemplate.query(trx).insertGraph(emailTemplatesData)
+    await EmailTemplate.insert(emailTemplatesData, { trx })
 
     logger.info(
       `    Added @mention notification email template for "${group.name}".`,
@@ -320,10 +366,12 @@ const createGroupAndRelatedData = async (
 
   // update the 'emailTemplateType' value to 'taskNotification' for the task notification email template.
   try {
-    await EmailTemplate.query(trx)
-      .patch({ emailTemplateType: 'taskNotification' })
-      .where({ group_id: group.id })
-      .andWhereRaw("email_content->>'subject' = 'Kotahi | Task notification'")
+    await EmailTemplate.patchBySubject(
+      group.id,
+      'Kotahi | Task notification',
+      { emailTemplateType: 'taskNotification' },
+      { trx },
+    )
 
     logger.info(
       `Updated email_template_type for the task notification email template.`,
@@ -361,7 +409,7 @@ const group = async () => {
         instanceGroupNames.push(groupName)
       }),
     ).then(async () => {
-      let groups = await Group.query(trx)
+      let { result: groups } = await Group.find({}, { trx })
       const groupNames = groups.map(g => g.name)
 
       if (instanceGroups.length === groups.length) {
@@ -374,11 +422,9 @@ const group = async () => {
           .filter(g => archiveGroupNames.includes(g.name))
           .map(g => g.id)
 
-        await Group.query(trx).findByIds(archiveGroupIds).patch({
-          isArchived: true,
-        })
+        await Group.archiveByIds(archiveGroupIds, { trx })
 
-        groups = await Group.query(trx)
+        groups = (await Group.find({}, { trx })).result
         logger.info(
           `  Archived groups: "${
             archiveGroupNames.length > 1

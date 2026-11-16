@@ -5,19 +5,19 @@ import styled from 'styled-components'
 import { th } from '@coko/client'
 import { convertTimestampToDateTimeString } from '../../../../shared/dateUtils'
 
-export const VerticalBar = styled.div`
+const VerticalBar = styled.div`
   border-right: 1px solid #111;
   height: 16px;
   margin: 0 10px;
 `
 
-export const FlexCenter = styled.div`
+const FlexCenter = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
 `
 
-export const StatusInfoText = styled.div`
+const StatusInfoText = styled.div`
   display: flex;
   font-size: ${th('fontSizeBaseSmall')};
   font-weight: 400;

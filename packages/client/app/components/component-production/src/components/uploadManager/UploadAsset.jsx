@@ -31,16 +31,16 @@ const UploadAssetContainer = styled.div`
   width: 100%;
 `
 
-export const FileTableStyled = styled.div`
+const FileTableStyled = styled.div`
   font-size: ${th('fontSizeBaseSmall')};
   width: 100%;
 `
 
-export const StyledSectionRow = styled(SectionRow)`
+const StyledSectionRow = styled(SectionRow)`
   display: flex;
 `
 
-export const FilesHeading = styled.div`
+const FilesHeading = styled.div`
   align-items: center;
   background-color: ${th('color.backgroundA')};
   border-top: 1px solid ${th('color.gray90')};

@@ -1,4 +1,4 @@
-export const isValidDOI = doi => {
+const isValidDOI = doi => {
   // Define the regular expression for a DOI
   const doiRegex =
     // eslint-disable-next-line no-useless-escape

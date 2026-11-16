@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 
-export const LooseRowAlignTop = styled.div`
+const LooseRowAlignTop = styled.div`
   display: flex;
   gap: ${grid(6)};
   width: 100%;
@@ -9,10 +9,6 @@ export const LooseRowAlignTop = styled.div`
 
 export const LooseRow = styled(LooseRowAlignTop)`
   align-items: center;
-`
-
-export const LooseRowRight = styled(LooseRow)`
-  justify-content: flex-end;
 `
 
 export const LooseRowSpaced = styled(LooseRow)`

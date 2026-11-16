@@ -82,15 +82,6 @@ const cacheConfig = {
         },
       },
     },
-    CurrentRole: {
-      fields: {
-        roles: {
-          merge(existing, incoming) {
-            return incoming
-          },
-        },
-      },
-    },
     File: {
       fields: {
         roles: {

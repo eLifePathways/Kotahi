@@ -1,20 +1,27 @@
 const { Readable } = require('stream')
 
-const { File, fileStorage } = require('@coko/server')
+const { File, fileStorage, NotFoundError } = require('@coko/server')
 
 const { ArticleTemplate, CmsFileTemplate } = require('../models')
 
 const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 
 const getArticleTemplate = async (groupId, isCms) => {
-  return ArticleTemplate.query().findOne({ groupId, isCms }).throwIfNotFound()
+  const articleTemplate = await ArticleTemplate.findOne({ groupId, isCms })
+
+  if (!articleTemplate)
+    throw new NotFoundError(
+      `Article template not found for group ${groupId} (isCms: ${isCms})`,
+    )
+
+  return articleTemplate
 }
 
 const getTemplateArticle = async articleTemplate => {
   if (articleTemplate.isCms === true) {
     const articleFile = await searchArticleTemplate(articleTemplate.groupId)
     if (!articleFile) return ''
-    const file = await File.query().findById(articleFile.fileId)
+    const file = await File.findById(articleFile.fileId)
 
     const originalObject = file.storedObjects.find(f => f.type === 'original')
 
@@ -26,12 +33,12 @@ const getTemplateArticle = async articleTemplate => {
 
 const getTemplateFiles = async articleTemplate => {
   return getFilesWithUrl(
-    await File.query().where({ objectId: articleTemplate.groupId }),
+    (await File.find({ objectId: articleTemplate.groupId })).result,
   )
 }
 
 const searchArticleTemplate = async groupId => {
-  const groupFiles = await CmsFileTemplate.query().where({
+  const { result: groupFiles } = await CmsFileTemplate.find({
     groupId,
   })
 
@@ -50,7 +57,7 @@ const searchArticleTemplate = async groupId => {
 }
 
 const updateTemplate = async (id, input) => {
-  const result = await ArticleTemplate.query().findOne({ id })
+  const result = await ArticleTemplate.findOne({ id })
 
   // Needs to be revisited. This is a temp Solution
   // In case we want to update the article template of the CMS we need to do that on the S3
@@ -59,7 +66,7 @@ const updateTemplate = async (id, input) => {
     const articleFile = await searchArticleTemplate(result.groupId)
 
     if (articleFile) {
-      const file = await File.query().findById(articleFile.fileId)
+      const file = await File.findById(articleFile.fileId)
 
       const { key } = file.storedObjects.find(obj => obj.type === 'original')
 
@@ -71,7 +78,7 @@ const updateTemplate = async (id, input) => {
     input.article = ''
   }
 
-  return ArticleTemplate.query().patchAndFetchById(id, input).throwIfNotFound()
+  return ArticleTemplate.patchAndFetchById(id, input)
 }
 
 module.exports = {

@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 declare class PublishedArtifact extends BaseModel {
   manuscriptId: string
@@ -9,6 +9,12 @@ declare class PublishedArtifact extends BaseModel {
   hostedInKotahi: boolean | null
   relatedDocumentUri: string | null
   relatedDocumentType: string | null
+
+  static deleteByExternalId(
+    manuscriptId: string,
+    externalId: string,
+    options?: { trx?: Transaction },
+  ): Promise<number>
 }
 
 export = PublishedArtifact

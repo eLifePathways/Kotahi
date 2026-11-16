@@ -8,7 +8,7 @@ import { colorBackground, colorText, colorTextReverse } from '../theme'
  * WCAG level of `color` against `against`: 'AAA', 'AA', '' (fails), or null
  * when either colour can't be parsed (e.g. an empty string).
  */
-export const getWcagLevel = (color, against = colorBackground) => {
+const getWcagLevel = (color, against = colorBackground) => {
   try {
     return Color(color).level(Color(against))
   } catch {

@@ -50,7 +50,7 @@ const buildOption = category => {
 }
 
 const getVariables = async groupId => {
-  const forms = await Form.query().where({ groupId })
+  const { result: forms } = await Form.find({ groupId })
 
   const formVars = forms.map(({ structure, category }) => {
     const { children } = structure

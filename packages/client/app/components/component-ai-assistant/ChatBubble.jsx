@@ -93,7 +93,7 @@ const UnStyledButton = styled.button`
   }
 `
 
-export const ChatBox = ({
+const ChatBox = ({
   children,
   content,
   header,

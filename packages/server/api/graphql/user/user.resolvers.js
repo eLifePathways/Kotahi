@@ -13,7 +13,6 @@ const {
   setGroupRole,
   updateEmail,
   updateLanguage,
-  updateUser,
   updateUsername,
   userIdentities,
 } = require('../../../controllers/user.controllers')
@@ -86,10 +85,6 @@ module.exports = {
 
     async updateLanguage(_, { id, preferredLanguage }) {
       return updateLanguage(id, preferredLanguage)
-    },
-
-    async updateUser(_, { id, input }) {
-      return updateUser(id, input)
     },
 
     async updateUsername(_, { id, username }) {

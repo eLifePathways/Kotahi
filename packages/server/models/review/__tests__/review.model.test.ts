@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager } from '@coko/server'
+import { db, config, migrationManager, uuid } from '@coko/server'
 
+import DbTestUtils from '../../DbTestUtils'
 import Review from '../review.model'
 import Manuscript from '../../manuscript/manuscript.model'
 import Team from '../../team/team.model'
@@ -91,5 +92,81 @@ describe('Review model', () => {
 
     expect(ordered.map(r => r.id)).toEqual([amyReview.id, zedReview.id])
     expect(ordered.map(r => r.username)).toEqual(['Amy', 'zed'])
+  })
+
+  describe('findLatestNonDecisionReview', () => {
+    it('returns the most recently updated review that is not a decision', async () => {
+      const manuscript = await Manuscript.insert({})
+      const otherManuscript = await Manuscript.insert({})
+
+      const older = await Review.insert({
+        manuscriptId: manuscript.id,
+        isDecision: false,
+      })
+
+      const newer = await Review.insert({
+        manuscriptId: manuscript.id,
+        isDecision: false,
+      })
+
+      await Review.insert({ manuscriptId: manuscript.id, isDecision: true })
+      await Review.insert({
+        manuscriptId: otherManuscript.id,
+        isDecision: false,
+      })
+
+      await Review.patchById(older.id, { isHiddenFromAuthor: false })
+
+      expect(
+        (await Review.findLatestNonDecisionReview(manuscript.id))?.id,
+      ).toBe(older.id)
+
+      await Review.patchById(newer.id, { isHiddenFromAuthor: false })
+
+      expect(
+        (await Review.findLatestNonDecisionReview(manuscript.id))?.id,
+      ).toBe(newer.id)
+    })
+
+    it('returns undefined when there are only decisions', async () => {
+      const manuscript = await Manuscript.insert({})
+      await Review.insert({ manuscriptId: manuscript.id, isDecision: true })
+
+      expect(
+        await Review.findLatestNonDecisionReview(manuscript.id),
+      ).toBeUndefined()
+    })
+  })
+
+  describe('upsertAndFetch', () => {
+    it('inserts a missing review and updates an existing one', async () => {
+      const manuscript = await Manuscript.insert({})
+      const id = uuid()
+
+      const inserted = await Review.upsertAndFetch({
+        id,
+        manuscriptId: manuscript.id,
+        isDecision: false,
+        jsonData: JSON.stringify({ comment: 'first' }),
+      })
+
+      expect(inserted.id).toBe(id)
+
+      const updated = await Review.upsertAndFetch({
+        id,
+        manuscriptId: manuscript.id,
+        isDecision: false,
+        jsonData: JSON.stringify({ comment: 'second' }),
+      })
+
+      expect(updated.id).toBe(id)
+
+      const { result: reviews } = await Review.find({
+        manuscriptId: manuscript.id,
+      })
+
+      expect(reviews).toHaveLength(1)
+      expect(JSON.stringify(reviews[0].jsonData)).toContain('second')
+    })
   })
 })

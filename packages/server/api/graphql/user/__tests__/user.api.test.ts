@@ -13,11 +13,11 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
   File,
   fileStorage,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, Identity, Team, User } from '../../../../models'
 import { getRequestLoaders } from '../../requestLoaders'
 
@@ -107,7 +107,7 @@ describe('User API', () => {
       const before = await getRequestLoaders(ctx).defaultIdentities.load(
         user.id,
       )
-      await Identity.query().patch({ aff: 'After' }).findById(identity.id)
+      await Identity.patchById(identity.id, { aff: 'After' })
       const after = await getRequestLoaders(ctx).defaultIdentities.load(user.id)
 
       expect(before.aff).toBe('Before')
@@ -153,7 +153,7 @@ describe('User API', () => {
     }
 
     expect(await fetchAff()).toBe('Before')
-    await Identity.query().patch({ aff: 'After' }).findById(identity.id)
+    await Identity.patchById(identity.id, { aff: 'After' })
     expect(await fetchAff()).toBe('After')
   })
 

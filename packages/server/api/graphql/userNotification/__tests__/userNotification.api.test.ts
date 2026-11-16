@@ -5,9 +5,9 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, User, UserNotification } from '../../../../models'
 
 const USER_NOTIFICATIONS_QUERY = gql`
@@ -151,7 +151,9 @@ describe('UserNotification API', () => {
       expect(result.body.singleResult.data?.dismissUserNotification).toBe(true)
 
       expect(
-        await UserNotification.query().findById(notification.id),
+        await UserNotification.findById(notification.id, {
+          throwIfNotFound: false,
+        }),
       ).toBeUndefined()
     })
 
@@ -184,7 +186,9 @@ describe('UserNotification API', () => {
       expect(result.body.singleResult.errors).toBeTruthy()
 
       expect(
-        await UserNotification.query().findById(notification.id),
+        await UserNotification.findById(notification.id, {
+          throwIfNotFound: false,
+        }),
       ).toBeDefined()
     })
   })
@@ -219,7 +223,9 @@ describe('UserNotification API', () => {
       )
 
       expect(
-        await UserNotification.query().findById(notification.id),
+        await UserNotification.findById(notification.id, {
+          throwIfNotFound: false,
+        }),
       ).toBeUndefined()
     })
 

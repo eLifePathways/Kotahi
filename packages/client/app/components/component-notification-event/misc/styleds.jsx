@@ -37,13 +37,6 @@ export const Col = styled(FlexRow)`
   width: 100%;
 `
 
-export const EventTitle = styled.h4`
-  color: #fff;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-`
-
 export const EditSection = styled(Col)`
   display: flex;
   flex: 1 1 auto;
@@ -88,18 +81,6 @@ export const TextInput = styled(StyledInput)`
   /* stylelint-disable-next-line declaration-no-important */
   border-color: ${p => p.$color} !important;
   padding: ${grid(2.5)};
-`
-
-export const Header = styled(Row)`
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  color: ${th('color.brand1.base')};
-  height: var(--header-height, 0);
-  padding: 0 ${grid(8)};
-
-  h3 {
-    margin: 0;
-  }
 `
 
 export const Content = styled(FlexRow)`

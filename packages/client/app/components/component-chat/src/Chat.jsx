@@ -20,7 +20,7 @@ const ChatInputContainer = styled.div`
   }
 `
 
-export const FloatingUnreadLabelContainer = styled.div`
+const FloatingUnreadLabelContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
@@ -29,7 +29,7 @@ export const FloatingUnreadLabelContainer = styled.div`
   width: 100%;
 `
 
-export const FloatingUnreadLabel = styled.div`
+const FloatingUnreadLabel = styled.div`
   background-color: ${th('color.brand1.base')};
   border-radius: 4px;
   color: #fff;
@@ -41,7 +41,7 @@ export const FloatingUnreadLabel = styled.div`
   position: relative;
 `
 
-export const FloatingUnreadLabelClose = styled.span`
+const FloatingUnreadLabelClose = styled.span`
   border-radius: 4px;
   cursor: pointer;
   font-size: 18px;

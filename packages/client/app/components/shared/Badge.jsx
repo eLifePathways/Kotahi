@@ -18,7 +18,7 @@ const BadgesWrapper = styled(FlexRow)`
   overflow: hidden;
 `
 
-export const Status = styled.span.attrs({
+const Status = styled.span.attrs({
   'data-testid': 'badge-status',
 })`
   background-color: ${p => p.$bg};
@@ -36,7 +36,7 @@ export const Status = styled.span.attrs({
   text-transform: uppercase;
 `
 
-export const safeLabel = status => {
+const safeLabel = status => {
   const unknownFallback = `${i18next.t('msStatus.unknown')} (${status})`
   return i18next.t(`msStatus.${status}`, unknownFallback)
 }
@@ -66,7 +66,7 @@ const statusesToOverride = ['evaluated']
  *
  * <StatusBadge status="accepted" published="2023-10-01" colorMap={colorMap} />
  */
-export const StatusBadge = ({
+const StatusBadge = ({
   status,
   published: publishedDate = '',
   colorMap,

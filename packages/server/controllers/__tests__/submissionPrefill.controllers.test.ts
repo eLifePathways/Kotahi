@@ -8,8 +8,9 @@ import {
   expect,
   vi,
 } from 'vitest'
-import { db, config, DbTestUtils, migrationManager, uuid } from '@coko/server'
+import { db, config, migrationManager, uuid } from '@coko/server'
 
+import DbTestUtils from '../../models/DbTestUtils'
 import Group from '../../models/group/group.model'
 import Config from '../../models/config/config.model'
 import Form from '../../models/form/form.model'

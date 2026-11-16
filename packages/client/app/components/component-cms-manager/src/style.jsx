@@ -62,11 +62,6 @@ export const FormTextInput = styled(TextInput)`
   padding: 10px;
 `
 
-export const ColorInput = styled(TextInput)`
-  background: white;
-  padding: 0;
-`
-
 export const EditPageContainer = styled.div`
   display: flex;
   overflow: auto;
@@ -114,17 +109,6 @@ export const FormActionDelete = styled(SecondaryButton)`
   min-width: 0;
 `
 
-export const FullWidthAndHeightContainer = styled.div`
-  height: 100%;
-  width: 100%;
-
-  @media screen and (width >= 1440px) {
-    .full-wax-editor-grid {
-      min-height: 250px; /* Double the height when screen width is above 1440 pixels */
-    }
-  }
-`
-
 export const LayoutPageFooterContainer = styled.div`
   height: 100%;
   width: 100%;
@@ -163,13 +147,6 @@ export const SimpleWaxEditorContainer = styled.div`
       min-height: 250px; /* Double the height when screen width is above 1440 pixels */
     }
   }
-`
-
-export const ControlsContainer = styled.div`
-  display: flex;
-  flex: 1 1;
-  gap: ${grid(4)};
-  justify-content: flex-end;
 `
 
 export const FlexRow = styled.div`

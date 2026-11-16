@@ -261,7 +261,7 @@ const emailRegex =
 const publishArticleToCrossref = async manuscript => {
   let publishedDomain = config.get('flax-site').clientFlaxSiteUrl
   const activeConfig = await Config.getCached(manuscript.groupId)
-  const group = await Group.query().findById(manuscript.groupId).first()
+  const group = await Group.findById(manuscript.groupId)
 
   const {
     formData: {
@@ -468,7 +468,7 @@ const publishArticleToCrossref = async manuscript => {
 }
 
 const populateUserInfo = async userIds => {
-  const systemUsers = await User.query().findByIds(userIds)
+  const systemUsers = await User.findByIds(userIds, { throwIfNotFound: false })
   return Promise.all(systemUsers?.map(async user => fetchUserDetails(user)))
 }
 
@@ -494,7 +494,7 @@ const publishReviewsToCrossref = async manuscript => {
   const decisionForm = await getDecisionForm(manuscript.groupId)
   const reviewForm = await getReviewForm(manuscript.groupId)
 
-  const group = await Group.query().findById(manuscript.groupId).first()
+  const group = await Group.findById(manuscript.groupId)
 
   let publishedDomain = config.get('flax-site').clientFlaxSiteUrl
 

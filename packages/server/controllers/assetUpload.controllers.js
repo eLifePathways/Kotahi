@@ -2,7 +2,6 @@ const fs = require('fs')
 
 const { createFile, fileStorage, File } = require('@coko/server')
 
-const ArticleTemplate = require('../models/articleTemplate/articleTemplate.model')
 const { getFilesWithUrl } = require('../utils/fileStorageUtils')
 
 const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
@@ -23,7 +22,7 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
       )
 
       if (fileType === 'javascript' || fileType === 'css') {
-        const file = await File.query().findOne({ id: insertedFile.id })
+        const file = await File.findOne({ id: insertedFile.id })
 
         if (file.storedObjects) {
           const storedObjects = file.storedObjects.map(storedObject => {
@@ -31,7 +30,7 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
             return storedObject
           })
 
-          await File.query().patchAndFetchById(insertedFile.id, {
+          await File.patchAndFetchById(insertedFile.id, {
             storedObjects,
           })
         }
@@ -39,8 +38,9 @@ const uploadAsset = async (files, fileType, groupTemplateId, options = {}) => {
     }),
   )
 
-  const templateFiles =
-    await ArticleTemplate.relatedQuery('files').for(groupTemplateId)
+  const { result: templateFiles } = await File.find({
+    objectId: groupTemplateId,
+  })
 
   const filesWithUrl = await getFilesWithUrl(templateFiles)
   return filesWithUrl
@@ -53,12 +53,12 @@ const deleteAsset = async id => {
   try {
     if (keys.length > 0) {
       await fileStorage.delete(keys)
-      await File.query().deleteById(id)
+      await File.deleteById(id)
     }
 
-    const templateFiles = await ArticleTemplate.relatedQuery('files').for(
-      file.objectId,
-    )
+    const { result: templateFiles } = await File.find({
+      objectId: file.objectId,
+    })
 
     const filesWithUrl = await getFilesWithUrl(templateFiles)
     return filesWithUrl

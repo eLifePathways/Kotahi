@@ -17,14 +17,17 @@ const seekEvent = require('../services/notification.service')
 const { emitEvent } = require('../services/eventManager/eventManager')
 
 const addEmailToBlacklist = async (email, groupId) => {
-  const result = await BlacklistEmail.query().insert({ email, groupId })
+  const result = await BlacklistEmail.insert({ email, groupId })
 
   return result
 }
 
 const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
   return useTransaction(async trx => {
-    const existingInvite = await Invitation.query(trx).findById(invitationId)
+    const existingInvite = await Invitation.findById(invitationId, {
+      trx,
+      throwIfNotFound: false,
+    })
 
     if (!existingInvite || existingInvite.responseDate) {
       throw new Error('Invalid Invitation ID')
@@ -48,7 +51,7 @@ const assignUserAsAuthor = async (manuscriptId, userId, invitationId) => {
 }
 
 const getBlacklistInformation = async (email, groupId) => {
-  const blacklistData = await BlacklistEmail.query().where({
+  const { result: blacklistData } = await BlacklistEmail.find({
     email,
     groupId,
   })
@@ -56,32 +59,8 @@ const getBlacklistInformation = async (email, groupId) => {
   return blacklistData
 }
 
-const getEmailInvitedReviewers = async manuscriptId => {
-  if (!manuscriptId) return []
-
-  const invitedReviewer = await Invitation.query()
-    .where({
-      manuscriptId,
-    })
-    .whereNot('status', 'ACCEPTED')
-
-  return invitedReviewer
-}
-
 const getInvitationById = async id => {
   return Invitation.findById(id)
-}
-
-const getInvitationsForManuscript = async id => {
-  if (!id) return []
-
-  const invitations = await Invitation.query()
-    .where({
-      manuscriptId: id,
-    })
-    .withGraphJoined('user')
-
-  return invitations
 }
 
 const invitationStatus = async id => {
@@ -99,14 +78,17 @@ const invitationStatus = async id => {
 }
 
 const invitationUser = async invitation => {
-  return invitation.user || User.query().findById(invitation.userId)
+  return (
+    invitation.user ||
+    User.findById(invitation.userId, { throwIfNotFound: false })
+  )
 }
 
 const removeInvitation = async id => {
   const invitation = await Invitation.findById(id, { throwIfNotFound: false })
   if (!invitation) return null
 
-  await Invitation.query().findById(id).delete()
+  await Invitation.deleteById(id)
   return invitation
 }
 
@@ -116,13 +98,11 @@ const updateInvitationResponse = async (
   declinedReason,
   suggestedReviewers,
 ) => {
-  const result = await Invitation.query().updateAndFetchById(id, {
+  return Invitation.patchAndFetchById(id, {
     responseComment,
     declinedReason,
     suggestedReviewers: suggestedReviewers || [],
   })
-
-  return result
 }
 
 const updateInvitationStatus = async (
@@ -132,16 +112,13 @@ const updateInvitationStatus = async (
   responseDate,
   groupId,
 ) => {
-  const [result] = await Invitation.query()
-    .patch({
-      status,
-      userId,
-      responseDate,
-    })
-    .where({ id, status: 'UNANSWERED' })
-    .returning('*')
+  const result = await Invitation.patchIfUnanswered(id, {
+    status,
+    userId,
+    responseDate,
+  })
 
-  const relatedUser = await User.query().findOne({
+  const relatedUser = await User.findOne({
     email: result.toEmail,
   })
 
@@ -149,20 +126,19 @@ const updateInvitationStatus = async (
   const type = invitedPersonType.toLowerCase()
 
   if (relatedUser) {
-    await Team.relatedQuery('members')
-      .for(
-        Team.query().findOne({
-          objectId: result.manuscriptId,
-          // TODO this is a temporary solution until we have a proper
-          // solution for status with CAPITAL and UNDERSCORES.
-          role: type.replace('collaborative_reviewer', 'collaborativeReviewer'),
-        }),
-      )
-      .patch({ status: status.toLowerCase() })
-      .where({ userId: relatedUser.id, status: 'invited' })
+    await Team.patchInvitedMemberStatus(
+      result.manuscriptId,
+      // TODO this is a temporary solution until we have a proper
+      // solution for status with CAPITAL and UNDERSCORES.
+      type.replace('collaborative_reviewer', 'collaborativeReviewer'),
+      relatedUser.id,
+      status.toLowerCase(),
+    )
   }
 
-  const manuscript = await Manuscript.query().findById(result.manuscriptId)
+  const manuscript = await Manuscript.findById(result.manuscriptId, {
+    throwIfNotFound: false,
+  })
 
   const eventName = {
     author: 'author',
@@ -216,20 +192,14 @@ const updateInvitationStatus = async (
 }
 
 const updateSharedStatusForInvitedReviewer = async (invitationId, isShared) => {
-  const result = await Invitation.query().updateAndFetchById(invitationId, {
-    isShared,
-  })
-
-  return result
+  return Invitation.patchAndFetchById(invitationId, { isShared })
 }
 
 module.exports = {
   addEmailToBlacklist,
   assignUserAsAuthor,
   getBlacklistInformation,
-  getEmailInvitedReviewers,
   getInvitationById,
-  getInvitationsForManuscript,
   invitationStatus,
   invitationUser,
   removeInvitation,

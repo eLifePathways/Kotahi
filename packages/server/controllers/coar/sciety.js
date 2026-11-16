@@ -12,7 +12,7 @@ const { postToInbox } = require('./utils')
 const { CoarNotification, Config, Group } = require('../../models')
 
 const getScietyInboxUrl = async groupId => {
-  const activeConfig = await Config.query().findOne({
+  const activeConfig = await Config.findOne({
     groupId,
     active: true,
   })
@@ -29,7 +29,7 @@ const getScietyInboxUrl = async groupId => {
 }
 
 const getRequestData = async manuscript => {
-  const group = await Group.query().findById(manuscript.groupId).first()
+  const group = await Group.findById(manuscript.groupId)
   const reviewer = await getReviewer(manuscript)
 
   const { payload } =
@@ -100,8 +100,7 @@ const sendAnnouncementNotificationToSciety = async manuscript => {
 
   try {
     await postToInbox(inboxUrl, requestData)
-
-    await CoarNotification.query().insert({ groupId, manuscriptId, payload })
+    await CoarNotification.insert({ groupId, manuscriptId, payload })
 
     return true
   } catch (err) {

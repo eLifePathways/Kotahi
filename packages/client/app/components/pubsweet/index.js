@@ -1,6 +1,5 @@
 import Action from './Action'
 import Attachment from './Attachment'
-import Avatar from './Avatar'
 import Button from './Button'
 import Checkbox from './Checkbox'
 import CheckboxGroup from './CheckboxGroup'
@@ -17,7 +16,6 @@ import ValidatedFieldFormik from './ValidatedFieldFormik'
 export {
   Action,
   Attachment,
-  Avatar,
   Button,
   Checkbox,
   CheckboxGroup,

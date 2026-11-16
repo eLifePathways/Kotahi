@@ -27,9 +27,10 @@ exports.up = async () => {
             }
 
             const submitter = manuscript.authorFeedback.submitterId
-              ? await User.query(trx).findById(
-                  manuscript.authorFeedback.submitterId,
-                )
+              ? await User.findById(manuscript.authorFeedback.submitterId, {
+                  trx,
+                  throwIfNotFound: false,
+                })
               : null
 
             if (manuscript.authorFeedback.submitted) {

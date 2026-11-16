@@ -6,9 +6,7 @@ module.exports = app => {
     async (req, res) => {
       const { groupId, prefix, doi } = req.params
 
-      const docmap = await Docmap.query()
-        .findOne({ groupId })
-        .where('externalId', 'ilike', `%/${prefix}/${doi}`)
+      const docmap = await Docmap.findByDoi(groupId, prefix, doi)
 
       if (!docmap) {
         return res.status(404).send({ error: 'Docmap not found' })

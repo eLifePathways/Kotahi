@@ -20,6 +20,12 @@ class PublishedArtifact extends BaseModel {
     }
   }
 
+  static async deleteByExternalId(manuscriptId, externalId, options = {}) {
+    return PublishedArtifact.query(options.trx)
+      .delete()
+      .where({ manuscriptId, externalId })
+  }
+
   static get relationMappings() {
     const Manuscript = require('../manuscript/manuscript.model')
 

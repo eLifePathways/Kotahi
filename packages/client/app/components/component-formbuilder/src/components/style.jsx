@@ -29,19 +29,6 @@ const Page = styled.div`
   z-index: 0;
 `
 
-const Heading = styled.div`
-  color: ${th('color.brand1.base')};
-  font-family: ${th('fontReading')};
-  font-size: ${th('fontSizeHeading3')};
-  margin: ${grid(2)} 0;
-  text-transform: uppercase;
-`
-
-const UploadContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`
-
 const DetailText = styled.div`
   color: ${th('color.gray40')};
   font-family: ${th('fontReading')};
@@ -63,17 +50,6 @@ const UserMetaWrapper = styled.div`
   align-items: center;
   display: flex;
   gap: ${grid(2)};
-`
-
-const UserName = styled.span`
-  margin-bottom: 0;
-`
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  width: 280px;
 `
 
 const ModalContainer = styled.div`
@@ -190,13 +166,9 @@ const CommentContainer = styled.div`
 
 export {
   Page,
-  Heading,
-  UploadContainer,
   DetailText,
   CommentMetaWrapper,
   UserMetaWrapper,
-  UserName,
-  ButtonWrapper,
   ModalContainer,
   SimpleWaxEditorWrapper,
   CollapseOverlay,

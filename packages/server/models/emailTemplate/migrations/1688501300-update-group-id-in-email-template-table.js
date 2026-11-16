@@ -6,8 +6,8 @@ const Group = require('../../group/group.model')
 exports.up = async () => {
   try {
     return useTransaction(async trx => {
-      const emailTemplates = await EmailTemplate.query(trx)
-      const groups = await Group.query(trx)
+      const { result: emailTemplates } = await EmailTemplate.find({}, { trx })
+      const { result: groups } = await Group.find({}, { trx })
 
       // Existing instances migrating to multi-tenancy groups
       if (

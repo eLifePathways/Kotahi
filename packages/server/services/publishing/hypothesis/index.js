@@ -171,7 +171,7 @@ const publishSpecificAnnotationToHypothesis = async (
 
   const turndownService = prepareTurndownService()
 
-  const existingArtifact = await PublishedArtifact.query().findOne({
+  const existingArtifact = await PublishedArtifact.findOne({
     manuscriptId,
     content: contentTemplate,
   })
@@ -220,5 +220,4 @@ const publishSpecificAnnotationToHypothesis = async (
 module.exports = {
   publishToHypothesis,
   publishSpecificAnnotationToHypothesis,
-  deletePublication,
 }

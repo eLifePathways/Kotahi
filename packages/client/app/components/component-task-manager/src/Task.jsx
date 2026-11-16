@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment-timezone'
+import dayjs from 'dayjs'
 import styled, { css, useTheme } from 'styled-components'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -220,7 +220,7 @@ const getLocalTimeString = val => {
           tzOffsetMinutes ? `:${tzOffsetMinutes}` : ''
         }`
 
-  return `${moment(date).format('YYYY-MM-DD HH:mm')} local time (${tzString})`
+  return `${dayjs(date).format('YYYY-MM-DD HH:mm')} local time (${tzString})`
 }
 
 const Task = ({
@@ -288,9 +288,9 @@ const Task = ({
     ),
   )
 
-  const dueDateLocalString = getLocalTimeString(moment(task.dueDate))
+  const dueDateLocalString = getLocalTimeString(dayjs(task.dueDate))
 
-  const transposedEndOfToday = moment(
+  const transposedEndOfToday = dayjs(
     transposeFromTimezoneToLocal(new Date(), config?.taskManager?.teamTimezone),
   )
     .endOf('day')

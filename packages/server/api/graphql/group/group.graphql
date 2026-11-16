@@ -1,7 +1,6 @@
 extend type Query {
   group(id: ID!): Group!
   groups: [Group]!
-  groupByName(name: String!): Group!
 }
 
 type Group {

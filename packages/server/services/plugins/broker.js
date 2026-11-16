@@ -67,31 +67,9 @@ const getBroker = (groupId, workerName) => {
       })
     },
     findManuscriptWithDoi: async doi =>
-      doi
-        ? Manuscript.query()
-            .where({ groupId })
-
-            .where(function () {
-              this.whereRaw("submission->>'$doi' = ?", [doi]).orWhereRaw(
-                "submission->>'doi' = ?",
-                [doi],
-              )
-            })
-            .first()
-        : null,
+      doi ? Manuscript.findByDoi(groupId, doi) : null,
     findManuscriptWithUri: async uri =>
-      uri
-        ? Manuscript.query()
-            .where({ groupId })
-
-            .where(function () {
-              this.whereRaw("submission->>'$sourceUri' = ?", [uri]).orWhereRaw(
-                "submission->>'link' = ?",
-                [uri],
-              )
-            })
-            .first()
-        : null,
+      uri ? Manuscript.findBySourceUri(groupId, uri) : null,
     getStubManuscriptObject: async (options = {}) => ({
       status: 'new',
       isImported: false,

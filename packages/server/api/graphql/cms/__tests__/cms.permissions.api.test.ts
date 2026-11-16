@@ -4,11 +4,11 @@ import {
   config,
   createGraphqlTestServer,
   db,
-  DbTestUtils,
   migrationManager,
   uuid,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, User, Team, TeamMember } from '../../../../models'
 
 // Covers the CMS rules in permissions.js. The CMS pages in the client are

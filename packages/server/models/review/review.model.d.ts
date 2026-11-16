@@ -15,6 +15,16 @@ declare class Review extends BaseModel {
   canBePublishedPublicly: boolean
   jsonData: any
 
+  static upsertAndFetch(
+    data: Partial<Review>,
+    options?: { trx?: Transaction },
+  ): Promise<Review>
+
+  static findLatestNonDecisionReview(
+    manuscriptId: string,
+    options?: { trx?: Transaction },
+  ): Promise<Review | undefined>
+
   static getUsersOfReviews(
     reviews: Pick<Review, 'isCollaborative' | 'manuscriptId' | 'userId'>[],
     options?: { trx?: Transaction },

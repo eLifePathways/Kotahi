@@ -14,12 +14,6 @@ export const UNARCHIVE_MANUSCRIPTS = gql`
   }
 `
 
-export const DELETE_MANUSCRIPT = gql`
-  mutation DeleteManuscript($id: ID!) {
-    deleteManuscript(id: $id)
-  }
-`
-
 const MANUSCRIPT_FIELDS = gql`
   fragment ManuscriptFields on Manuscript {
     id

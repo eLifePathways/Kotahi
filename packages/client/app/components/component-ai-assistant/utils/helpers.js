@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
-import { mapEntries, onEntries } from '../../../shared/generalUtils'
+import { onEntries } from '../../../shared/generalUtils'
 
 export const srcdoc = (scope, css, template, scrollPos) => /* html */ `
     <!DOCTYPE html>
@@ -97,35 +97,6 @@ export const setImagesDefaultStyles = node => {
     })
 }
 
-export const snippetsToCssText = snippets =>
-  mapEntries(
-    snippets,
-    (k, { description, ...v }) =>
-      `${
-        description ? `/* ${description} */\n` : ''
-      }.aid-snip-${k} {\n${mapEntries(
-        v,
-        (rule, val) => `\t${toSnake(rule)}: ${val};`,
-      ).join('\n')}\n}`,
-  ).join('\n')
-
-export const addSnippet = (snippet, name, snippetsKeys) => {
-  const selector = safeId(name, snippetsKeys)
-  return { [selector]: snippet }
-}
-
-export const updateSnippet = (name, newProps, allSnippets) => {
-  const updatedSnippets = allSnippets
-  if (!updatedSnippets[name]) return allSnippets
-  newProps
-    ? onEntries(newProps, (k, v) => {
-        updatedSnippets[name][k] = v
-      })
-    : delete updatedSnippets[name]
-
-  return updatedSnippets
-}
-
 export const addElement = (parentElement, options) => {
   const { position = 'afterend', html } = options
   parentElement.insertAdjacentHTML(position, html)
@@ -140,12 +111,6 @@ export const safeId = (prefix, existingIds) => {
 
   return `${prefix}-${proposedId}`
 }
-
-export const toSnake = key =>
-  key
-    .split(/(?=[A-Z])/)
-    .map(word => word.toLowerCase())
-    .join('-')
 
 export const getScrollPercent = node =>
   (node.scrollTop / (node.scrollHeight - node.offsetHeight)) * 100

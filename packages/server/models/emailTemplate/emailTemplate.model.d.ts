@@ -1,4 +1,4 @@
-import { BaseModel } from '@coko/server'
+import { BaseModel, Transaction } from '@coko/server'
 
 type EmailContent = {
   cc: string | null
@@ -13,6 +13,20 @@ declare class EmailTemplate extends BaseModel {
   emailTemplateType: string | null
   emailTemplateKey: string
   groupId: string | null
+
+  static findByDescription(
+    groupId: string,
+    type: string,
+    description: string,
+    options?: { trx?: Transaction },
+  ): Promise<EmailTemplate[]>
+
+  static patchBySubject(
+    groupId: string,
+    subject: string,
+    data: Partial<Pick<EmailTemplate, 'emailTemplateType' | 'emailContent'>>,
+    options?: { trx?: Transaction },
+  ): Promise<number>
 }
 
 export = EmailTemplate

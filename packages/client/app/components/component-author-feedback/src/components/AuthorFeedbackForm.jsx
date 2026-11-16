@@ -22,14 +22,14 @@ import { Legend } from '../../../component-submit/src/style'
 
 // Kept the file changes minimal with this single file can be split into separate files in further iterations for code optimization
 
-export const ActionButtonContainer = styled.div`
+const ActionButtonContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
   padding: calc(8px * 2) calc(8px * 3);
 `
 
-export const FormActionButton = styled(ActionButton)`
+const FormActionButton = styled(ActionButton)`
   cursor: pointer;
   margin-right: 32px;
   min-width: 104px;

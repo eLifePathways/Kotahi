@@ -6,7 +6,7 @@ import { NodeRange, Fragment, Slice } from 'prosemirror-model'
 // Checks if the type a given `node` equals to a given `nodeType`.
 /* below are from prosemirror-schema-list: */
 
-export const equalNodeType = (nodeType, node) => {
+const equalNodeType = (nodeType, node) => {
   return (
     (Array.isArray(nodeType) && nodeType.indexOf(node.type) > -1) ||
     node.type === nodeType
@@ -20,7 +20,7 @@ export const equalNodeType = (nodeType, node) => {
 // const parent = findParentNodeClosestToPos(state.doc.resolve(5), predicate);
 // ```
 // eslint-disable-next-line consistent-return
-export const findParentNodeClosestToPos = ($pos, predicate) => {
+const findParentNodeClosestToPos = ($pos, predicate) => {
   // eslint-disable-next-line no-plusplus
   for (let i = $pos.depth; i > 0; i--) {
     const node = $pos.node(i)
@@ -43,30 +43,6 @@ export const findParentNodeClosestToPos = ($pos, predicate) => {
 // ```
 export const findParentNodeOfTypeClosestToPos = ($pos, nodeType) => {
   return findParentNodeClosestToPos($pos, node => equalNodeType(nodeType, node))
-}
-
-/**
-Create a command to lift the list item around the selection up into
-a wrapping list.
-*/
-function liftListItem(itemType) {
-  return (state, dispatch) => {
-    const { $from, $to } = state.selection
-
-    const range = $from.blockRange(
-      $to,
-      // eslint-disable-next-line eqeqeq
-      node => node.childCount > 0 && node.firstChild.type == itemType,
-    )
-
-    if (!range) return false
-    if (!dispatch) return true
-    // eslint-disable-next-line eqeqeq
-    if ($from.node(range.depth - 1).type == itemType)
-      // Inside a parent list
-      return liftToOuterList(state, dispatch, itemType, range)
-    return liftOutOfList(state, dispatch, range)
-  }
 }
 
 function liftListItemToType(itemType, newType, newClass) {
@@ -248,4 +224,4 @@ function liftOutOfList(state, dispatch, range, newType, newClass) {
   return true
 }
 
-export { liftListItem, liftListItemToType }
+export { liftListItemToType }

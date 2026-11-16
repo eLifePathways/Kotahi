@@ -16,7 +16,7 @@ import {
 import { UserAvatar } from '../../../../component-avatar/src'
 import { convertTimestampToDateString } from '../../../../../shared/dateUtils'
 
-export const InvitacionHeadingRoot = styled.div`
+const InvitacionHeadingRoot = styled.div`
   align-items: center;
   display: flex;
 `
@@ -49,7 +49,7 @@ const Bullet = styled.span`
   width: 10px;
 `
 
-export const Ordinal = styled.span`
+const Ordinal = styled.span`
   ${props =>
     props.status === 'REJECTED'
       ? css`

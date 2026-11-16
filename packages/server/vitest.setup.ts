@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable kotahi/no-query-builder-calls */
 
 /**
  * Runs once in the main process.

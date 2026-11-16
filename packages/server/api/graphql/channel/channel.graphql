@@ -20,7 +20,6 @@ type ChannelMember {
 
 extend type Query {
   systemWideDiscussionChannel(groupId: ID!): Channel!
-  updateChannelLastViewed: Channel!
 }
 
 extend type Mutation {

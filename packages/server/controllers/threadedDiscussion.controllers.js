@@ -2,10 +2,6 @@ const { uuid, useTransaction } = require('@coko/server')
 
 const { Config, Manuscript, ThreadedDiscussion } = require('../models')
 
-const {
-  getIdOfLatestVersionOfManuscript,
-} = require('./manuscript/manuscriptCommsUtils')
-
 const { getUsersById, getUserRolesInManuscript } = require('./user.controllers')
 const seekEvent = require('../services/notification.service')
 
@@ -86,7 +82,7 @@ const completeComment = async (
 ) => {
   const { discussion, hasUpdated } = await useTransaction(async trx => {
     const permissions = await getUserCommentPermissions(
-      await getManuscriptIdOfDiscussion(threadedDiscussionId, { trx }),
+      await ThreadedDiscussion.getManuscriptId(threadedDiscussionId, { trx }),
       userId,
       { trx },
     )
@@ -129,7 +125,7 @@ const completeComments = async (threadedDiscussionId, userId) => {
     const now = new Date().toISOString()
 
     const permissions = await getUserCommentPermissions(
-      await getManuscriptIdOfDiscussion(threadedDiscussionId, { trx }),
+      await ThreadedDiscussion.getManuscriptId(threadedDiscussionId, { trx }),
       userId,
       { trx },
     )
@@ -224,9 +220,11 @@ const deletePendingComment = async (
  * stripHiddenAndAddUserInfo, so the lock isn't held through its lookups. */
 const lockDiscussion = async (threadedDiscussionId, options = {}) => {
   const { trx } = options
-  const discussion = await ThreadedDiscussion.query(trx)
-    .forUpdate()
-    .findById(threadedDiscussionId)
+
+  const discussion = await ThreadedDiscussion.findByIdForUpdate(
+    threadedDiscussionId,
+    { trx },
+  )
 
   if (!discussion)
     throw new Error(
@@ -237,28 +235,14 @@ const lockDiscussion = async (threadedDiscussionId, options = {}) => {
 }
 
 const saveThreads = (discussion, options = {}) =>
-  ThreadedDiscussion.query(options.trx)
-    .update({
+  ThreadedDiscussion.patchById(
+    discussion.id,
+    {
       updated: discussion.updated,
       threads: JSON.stringify(discussion.threads),
-    })
-    .where({ id: discussion.id })
-
-const getManuscriptIdOfDiscussion = async (
-  threadedDiscussionId,
-  options = {},
-) => {
-  const discussion = await ThreadedDiscussion.query(options.trx)
-    .select('manuscriptId')
-    .findById(threadedDiscussionId)
-
-  if (!discussion)
-    throw new Error(
-      `threadedDiscussion with ID ${threadedDiscussionId} not found`,
-    )
-
-  return discussion.manuscriptId
-}
+    },
+    { trx: options.trx, throwIfNotFound: false },
+  )
 
 const filterDistinct = (id, index, arr) => arr.indexOf(id) === index
 
@@ -288,25 +272,16 @@ const getAllUserIdsInDiscussion = discussion =>
     .flat(2)
     .filter(filterDistinct)
 
-const getOriginalVersionManuscriptId = async (manuscriptId, options = {}) => {
-  const ms = await Manuscript.query(options.trx)
-    .select('parentId')
-    .findById(manuscriptId)
-
-  const parentId = ms ? ms.parentId : null
-  return parentId || manuscriptId
-}
-
 const getThreadedDiscussionsForManuscript = async (
   manuscript,
   getUsersByIdFunc,
 ) =>
   Promise.all(
     (
-      await ThreadedDiscussion.query().where({
+      await ThreadedDiscussion.find({
         manuscriptId: manuscript.parentId || manuscript.id,
       })
-    ).map(discussion =>
+    ).result.map(discussion =>
       addUserObjectsToDiscussion(discussion, getUsersByIdFunc),
     ),
   )
@@ -360,7 +335,7 @@ const getUserCommentPermissions = async (
 
   const userRoles = await getUserRolesInManuscript(
     userId,
-    await getIdOfLatestVersionOfManuscript(manuscriptId, options),
+    await Manuscript.getLatestVersionId(manuscriptId, options),
     options,
   )
 
@@ -415,14 +390,15 @@ const stripPendingVersionsExceptByUser = (discussion, userId) => ({
 
 const threadedDiscussions = async (manuscriptVersionId, userId) => {
   return useTransaction(async trx => {
-    const manuscriptId = await getOriginalVersionManuscriptId(
+    const manuscriptId = await Manuscript.getFirstVersionId(
       manuscriptVersionId,
       { trx },
     )
 
-    const result = await ThreadedDiscussion.query(trx)
-      .where({ manuscriptId })
-      .orderBy('created', 'desc')
+    const { result: result } = await ThreadedDiscussion.find(
+      { manuscriptId },
+      { orderBy: [{ column: 'created', order: 'desc' }], trx },
+    )
 
     return Promise.all(
       result.map(async discussion => {
@@ -446,7 +422,7 @@ const updatePendingComment = async (
   const discussion = await useTransaction(async trx => {
     const now = new Date().toISOString()
 
-    const manuscriptId = await getOriginalVersionManuscriptId(msVersionId, {
+    const manuscriptId = await Manuscript.getFirstVersionId(msVersionId, {
       trx,
     })
 
@@ -455,9 +431,10 @@ const updatePendingComment = async (
     })
 
     // Not lockDiscussion: the discussion may not exist yet
-    let lockedDiscussion = await ThreadedDiscussion.query(trx)
-      .forUpdate()
-      .findById(threadedDiscussionId)
+    let lockedDiscussion = await ThreadedDiscussion.findByIdForUpdate(
+      threadedDiscussionId,
+      { trx },
+    )
 
     const existingComment = lockedDiscussion?.threads
       .find(t => t.id === threadId)
@@ -507,12 +484,12 @@ const updatePendingComment = async (
     pendingVersion.updated = now
     pendingVersion.comment = comment
 
-    await ThreadedDiscussion.query(trx).upsertGraphAndFetch(
+    await ThreadedDiscussion.upsertAndFetch(
       {
         ...lockedDiscussion,
         threads: JSON.stringify(lockedDiscussion.threads),
       },
-      { insertMissing: true },
+      { trx },
     )
 
     return lockedDiscussion

@@ -6,7 +6,7 @@ import { grid, th } from '@coko/client'
 import { MEDIA_BREAK } from '../../../layout'
 import { zIndex } from '../../../../globals'
 
-export const theme = {
+const theme = {
   text: {
     alt: '#000',
     placeholder: '#000',
@@ -27,7 +27,7 @@ export const theme = {
   },
 }
 
-export const hexa = (hex, alpha) => {
+const hexa = (hex, alpha) => {
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
@@ -39,7 +39,7 @@ export const hexa = (hex, alpha) => {
   return `rgb(${r} ${g} ${b})`
 }
 
-export const SvgWrapper = styled.div`
+const SvgWrapper = styled.div`
   /* stylelint-disable media-query-no-invalid */
 
   color: inherit;
@@ -80,7 +80,7 @@ export const SvgWrapper = styled.div`
     `};
 `
 
-export const QuoteWrapper = styled.div`
+const QuoteWrapper = styled.div`
   border-left: 4px solid ${theme.bg.border};
   color: ${theme.text.alt};
   cursor: pointer;
@@ -98,11 +98,7 @@ export const QuoteWrapper = styled.div`
   }
 `
 
-export const monoStack = css`
-  font-family: 'Input Mono', Menlo, Inconsolata, 'Roboto Mono', monospace;
-`
-
-export const FlexRow = styled.div`
+const FlexRow = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -184,36 +180,6 @@ export const InputWrapper = styled.div`
 
   @media (max-width: ${MEDIA_BREAK}px) {
     padding-left: 16px;
-  }
-`
-
-export const MediaInput = styled.input`
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  width: 0.1px;
-`
-
-export const MediaLabel = styled.label`
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: ${theme.text.alt};
-  display: inline-block;
-  padding: 4px;
-  position: relative;
-  top: 2px;
-  transition: color 0.3s ease-out;
-
-  &:hover {
-    color: ${theme.brand.default};
-    cursor: pointer;
-  }
-
-  &:focus-within {
-    outline: 2px solid ${theme.brand.default};
-    outline-offset: 2px;
   }
 `
 

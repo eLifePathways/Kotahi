@@ -66,6 +66,47 @@ class ChannelMember extends BaseModel {
       },
     }
   }
+
+  /** Inserts the members; for those already in the channel, updates lastViewed instead */
+  static async insertOrUpdateLastViewed(members, options = {}) {
+    return ChannelMember.query(options.trx)
+      .insert(members)
+      .onConflict(['channelId', 'userId'])
+      .merge({ lastViewed: new Date() })
+      .returning('*')
+  }
+
+  static async deleteForUserInManuscriptChannels(
+    userId,
+    manuscriptId,
+    type,
+    options = {},
+  ) {
+    return ChannelMember.query(options.trx)
+      .delete()
+      .where({ userId })
+      .whereExists(
+        ChannelMember.relatedQuery('channel').where({ manuscriptId, type }),
+      )
+  }
+
+  static async deleteByChannelIds(channelIds, options = {}) {
+    return ChannelMember.query(options.trx)
+      .delete()
+      .whereIn('channelId', channelIds)
+  }
+
+  static async markViewed(channelId, userId, options = {}) {
+    return ChannelMember.query(options.trx)
+      .patch({ lastViewed: new Date(), lastAlertTriggeredTime: null })
+      .where({ channelId, userId })
+  }
+
+  static async findInChannelExcludingUser(channelId, userId, options = {}) {
+    return ChannelMember.query(options.trx)
+      .where({ channelId })
+      .whereNot({ userId })
+  }
 }
 
 module.exports = ChannelMember

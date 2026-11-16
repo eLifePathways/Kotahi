@@ -6,8 +6,8 @@ const Group = require('../../group/group.model')
 
 exports.up = async () => {
   return useTransaction(async trx => {
-    const docmaps = await Docmap.query(trx)
-    const groups = await Group.query(trx)
+    const { result: docmaps } = await Docmap.find({}, { trx })
+    const { result: groups } = await Group.find({}, { trx })
 
     // Existing instances migrating to multi-tenancy groups
     if (groups.length >= 1 && docmaps.length >= 1 && !docmaps[0].group_id) {

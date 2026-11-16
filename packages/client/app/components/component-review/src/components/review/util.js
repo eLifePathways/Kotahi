@@ -1,19 +1,5 @@
 import { uuid } from '@coko/client'
 
-export const stripHtml = htmlString => {
-  const temp = document.createElement('span')
-  temp.innerHTML = htmlString
-  return temp.textContent
-}
-
-export const canUserAccessCollaborativeReview = (manuscript, currentUser) =>
-  !!(
-    manuscript?.teams?.find(team => team.role === 'collaborativeReviewer')
-      ?.members || []
-  ).find(
-    member => member.user.id === currentUser?.id && member.status !== 'invited',
-  )
-
 export const isCurrentUserCollaborative = (manuscript, currentUser) =>
   !!(
     manuscript?.teams?.find(team => team.role === 'collaborativeReviewer')
@@ -43,6 +29,3 @@ export const getCurrentUserReview = (manuscript, currentUser) => {
     }
   )
 }
-
-// export const updateReviewFormTitle = (reviewForm, isCollaborative) => {}
-export const updateReviewFormTitle = () => {}

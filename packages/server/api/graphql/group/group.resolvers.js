@@ -1,7 +1,6 @@
 const Group = require('../../../models/group/group.model')
 
 const {
-  groupByName,
   groupConfigs,
   oldConfig,
 } = require('../../../controllers/group.controllers')
@@ -17,7 +16,6 @@ const resolvers = {
   Query: {
     group,
     groups,
-    groupByName,
   },
   Group: {
     configs: groupConfigs,

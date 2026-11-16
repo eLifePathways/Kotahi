@@ -16,6 +16,16 @@ class Docmap extends BaseModel {
     }
   }
 
+  static async findByDoi(groupId, prefix, doi, options = {}) {
+    return Docmap.query(options.trx)
+      .findOne({ groupId })
+      .where('externalId', 'ilike', `%/${prefix}/${doi}`)
+  }
+
+  static async patchByExternalId(externalId, groupId, data, options = {}) {
+    return Docmap.query(options.trx).patch(data).where({ externalId, groupId })
+  }
+
   static get relationMappings() {
     const Group = require('../group/group.model')
     const Manuscript = require('../manuscript/manuscript.model')

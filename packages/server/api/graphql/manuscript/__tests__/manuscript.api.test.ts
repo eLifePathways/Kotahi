@@ -5,9 +5,9 @@ import {
   migrationManager,
   db,
   config,
-  DbTestUtils,
 } from '@coko/server'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { Group, User, Manuscript, Team, Config } from '../../../../models'
 
 const comments = [
@@ -133,7 +133,7 @@ describe('Manuscript API', () => {
     const group = await Group.insert({})
     const user = await User.insert({})
 
-    await Config.query().insert({
+    await Config.insert({
       active: true,
       groupId: group.id,
       formData: {},

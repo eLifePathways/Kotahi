@@ -1,9 +1,6 @@
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import {
-  Button as OriginalButton,
-  Checkbox as OriginalCheckbox,
-} from '../../../../../pubsweet'
+import { Button as OriginalButton } from '../../../../../pubsweet'
 
 export const Wrapper = styled.span`
   background-color: ${th('color.gray95')};
@@ -77,10 +74,6 @@ export const Button = styled(OriginalButton)`
   &:disabled:hover {
     border-color: ${th('color.brand1.base')};
   }
-`
-
-export const Checkbox = styled(OriginalCheckbox)`
-  accent-color: ${th('color.brand1.base')};
 `
 
 export const CalloutOptionWrapper = styled.label`

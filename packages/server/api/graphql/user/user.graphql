@@ -23,7 +23,6 @@ type SendEmailPayload {
 
 extend type Mutation {
   deleteUser(id: ID): User
-  updateUser(id: ID, input: String): User
   updateUsername(id: ID!, username: String!): User
   updateLanguage(id: ID!, preferredLanguage: String!): User
   sendEmail(input: String!): SendEmailPayload!
@@ -65,11 +64,6 @@ type User {
   online: Boolean
   lastOnline: DateTime
   isOnline: Boolean
-}
-
-type CurrentRole {
-  id: ID
-  roles: [String]
 }
 
 type Identity {

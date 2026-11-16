@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable kotahi/no-query-builder-calls */
 
 /**
  * Runs before each test file's own code (per vitest worker). Points this
@@ -42,6 +43,19 @@ const { rows } = await client.query(
 if (rows.length === 0) {
   await client.query(`CREATE DATABASE "${workerDatabase}"`)
 }
+
+/**
+ * With synchronous_commit = off, if postgres itself crashes (not just the
+ * test process), it can lose the last fraction of a second of committed
+ * transactions. The database stays consistent; it just ends up as it was
+ * slightly earlier.
+ *
+ * This improves test speed. The trade-off doesn't matter here as these are
+ * all throwaway test databases.
+ */
+await client.query(
+  `ALTER DATABASE "${workerDatabase}" SET synchronous_commit = off`,
+)
 
 await client.end()
 

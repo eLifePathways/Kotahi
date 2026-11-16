@@ -1,6 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, it, expect } from 'vitest'
-import { db, config, DbTestUtils, migrationManager } from '@coko/server'
+import { db, config, migrationManager } from '@coko/server'
 
+import DbTestUtils from '../../../models/DbTestUtils'
 import Group from '../../../models/group/group.model'
 import Config from '../../../models/config/config.model'
 import { archiveOldManuscripts } from '../manuscriptCommsUtils'

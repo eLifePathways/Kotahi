@@ -62,28 +62,9 @@ const callbackRequest = (url, timeout, data) => {
   req.end()
 }
 
-const getContent = (objName, objType, doc) => {
-  switch (objType) {
-    case 'Array':
-      return doc.getArray(objName)
-    case 'Map':
-      return doc.getMap(objName)
-    case 'Text':
-      return doc.getText(objName)
-    case 'XMLFragment':
-      return doc.getXmlFragment(objName)
-    case 'XmlElement':
-      return doc.getXmlElement(objName)
-    default:
-      return {}
-  }
-}
-
 module.exports = {
   isCallbackSet,
   callbackHandler,
-  callbackRequest,
-  getContent,
   CALLBACK_DEBOUNCE_WAIT,
   CALLBACK_DEBOUNCE_MAXWAIT,
 }

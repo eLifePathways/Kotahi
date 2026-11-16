@@ -1,7 +1,7 @@
 import { get, isFunction, isPlainObject } from 'lodash'
 
 // #region OBJECT ------------------------------------------------------------------
-const { entries, keys, values, fromEntries } = Object
+const { entries } = Object
 
 /**
  * Checks if a value is a plain object and not null(i.e., {}).
@@ -29,95 +29,6 @@ export const onEntries = (obj, cb) => entries(obj).forEach(([k, v]) => cb(k, v))
  * @returns {Array} - An array of mapped entries.
  */
 export const mapEntries = (obj, cb) => entries(obj).map(([k, v]) => cb(k, v))
-
-/**
- * Filters the entries of an object using a callback function.
- *
- * @param {Object} obj - The object to filter.
- * @param {Function} cb - The callback function to apply to each entry.
- * @returns {Array} - An array of filtered entries.
- */
-export const filterEntries = (obj, cb) =>
-  entries(obj).filter(([k, v]) => cb(k, v))
-
-/**
- * Iterates over the keys of an object and applies a callback function to each key.
- *
- * @param {Object} obj - The object to iterate over.
- * @param {Function} cb - The callback function to apply to each key.
- */
-export const onKeys = (obj, cb) => keys(obj).forEach(cb)
-
-/**
- * Maps the keys of an object using a callback function.
- *
- * @param {Object} obj - The object to map.
- * @param {Function} cb - The callback function to apply to each key.
- * @returns {Array} - An array of mapped keys.
- */
-export const mapKeys = (obj, cb) => keys(obj).map(cb)
-
-/**
- * Filters the keys of an object using a callback function.
- *
- * @param {Object} obj - The object to filter.
- * @param {Function} cb - The callback function to apply to each key.
- * @returns {Array} - An array of filtered keys.
- */
-export const filterKeys = (obj, cb) => keys(obj).filter(cb)
-
-/**
- * Iterates over the values of an object and applies a callback function to each value.
- *
- * @param {Object} obj - The object to iterate over.
- * @param {Function} cb - The callback function to apply to each value.
- */
-export const onValues = (obj, cb) => values(obj).forEach(cb)
-
-/**
- * Maps the values of an object using a callback function.
- *
- * @param {Object} obj - The object to map.
- * @param {Function} cb - The callback function to apply to each value.
- * @returns {Array} - An array of mapped values.
- */
-export const mapValues = (obj, cb) => values(obj).map(cb)
-
-/**
- * Filters the values of an object using a callback function.
- *
- * @param {Object} obj - The object to filter.
- * @param {Function} cb - The callback function to apply to each value.
- * @returns {Array} - An array of filtered values.
- */
-export const filterValues = (obj, cb) => values(obj).filter(cb)
-
-/**
- * Transforms the entries of an object using a mapping function.
- * The mapping function can return an object with multiple key-value pairs.
- *
- * @param {Object} obj - The object to transform.
- * @param {Function} mapFn - The mapping function that takes a key and value, and returns an object with new key-value pairs.
- * @returns {Object} - The transformed object.
- *
- * @example
- * const obj = { name: 'John', age: 30 };
- * const result = transformEntries(obj, (key, value) => {
- *   const newKey = `new_${key}`;
- *   const newValue = typeof value === 'number' ? value * 2 : value;
- *   return { [newKey]: newValue, [`original_${key}`]: value };
- * });
- * console.log(result);
- * // Output: { new_name: 'John', original_name: 'John', new_age: 60, original_age: 30 }
- */
-export const transformEntries = (obj, mapFn) => {
-  return fromEntries(
-    mapEntries(obj, entry => {
-      const mappedEntries = mapFn(entry)
-      return entries(mappedEntries)
-    }).flat(),
-  )
-}
 
 /**
  * Conditionally returns an object based on a given condition.
@@ -236,12 +147,6 @@ export const getBy = (criteria, arr) => {
 // #endregion ARRAY ----------------------------------------------------------------
 
 // #region STRING ------------------------------------------------------------------
-
-/**
- * Capitalizes the first character of each word in a string.
- */
-export const capitalizeWords = str =>
-  str.replace(/\b\w/g, char => char.toUpperCase())
 
 /**
  * Converts a camelCase string to a capitalized string.

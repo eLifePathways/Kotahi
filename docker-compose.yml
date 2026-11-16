@@ -22,7 +22,11 @@ services:
       - ./packages/client/config:/home/node/app/config
       - ./packages/client/public:/home/node/app/public
     healthcheck:
-      test: ['CMD-SHELL', 'curl --fail http://localhost:4000 || exit 1']
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://localhost:4000'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"',
+        ]
       interval: 1s
       retries: 30
     tty: true
@@ -270,7 +274,7 @@ services:
       - POSTGRES_PASSWORD=anystyle_user_password
 
   kotahi-flax-site:
-    image: cokoapps/kotahi-flax:0.5.12
+    image: ghcr.io/elifepathways/kotahi/flax:0.5.13
     depends_on:
       server:
         condition: service_healthy

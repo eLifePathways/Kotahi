@@ -2,8 +2,6 @@
 
 // #region import
 
-const moment = require('moment-timezone')
-
 const { config, logger, useTransaction } = require('@coko/server')
 
 const {
@@ -20,11 +18,6 @@ const {
 
 const { sendEmailWithPreparedData } = require('./user.controllers')
 
-const {
-  manuscriptIsActive,
-  getIdOfLatestVersionOfManuscript,
-} = require('./manuscript/manuscriptCommsUtils')
-
 // #endregion import
 
 /** For all tasks that have gone overdue during the previous calendar day, create alerts as appropriate.
@@ -32,23 +25,24 @@ const {
 const createNewTaskAlerts = async groupId => {
   const activeConfig = await Config.getCached(groupId)
 
-  const startOfToday = moment()
-    .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-    .startOf('day')
+  const startOfToday = Temporal.Now.zonedDateTimeISO(
+    activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC',
+  ).startOfDay()
 
-  const startOfYesterday = moment(startOfToday).subtract(1, 'days')
+  const startOfYesterday = startOfToday.subtract({ days: 1 })
 
-  const overdueTasks = await Task.query()
-    .whereNotNull('dueDate')
-    .where('dueDate', '<', startOfToday.toDate())
-    .where('dueDate', '>=', startOfYesterday.toDate()) // Don't look earlier than yesterday, so we don't recreate alerts that are already dismissed.
-    .where({ status: 'In progress', groupId })
+  // Don't look earlier than yesterday, so we don't recreate alerts that are already dismissed.
+  const overdueTasks = await Task.findInProgressDueBetween(
+    groupId,
+    new Date(startOfYesterday.epochMilliseconds),
+    new Date(startOfToday.epochMilliseconds),
+  )
 
   const manuscriptIds = [...new Set(overdueTasks.map(t => t.manuscriptId))]
   const manuscriptMap = {}
   await Promise.all(
     manuscriptIds.map(async manuscriptId => {
-      const isActive = await manuscriptIsActive(manuscriptId)
+      const isActive = await Manuscript.isActive(manuscriptId)
 
       const editorIds = isActive
         ? await Manuscript.getEditorIds(manuscriptId)
@@ -73,20 +67,17 @@ const createNewTaskAlerts = async groupId => {
   })
 
   if (alertsToInsert.length > 0)
-    await TaskAlert.query()
-      .insert(alertsToInsert)
-      .onConflict(['taskId', 'userId'])
-      .ignore()
+    await TaskAlert.insertIgnoringDuplicates(alertsToInsert)
 }
 
 const createTaskEmailNotificationLog = async taskEmailNotificationLog => {
-  await TaskEmailNotificationLog.query().insert(taskEmailNotificationLog)
+  await TaskEmailNotificationLog.insert(taskEmailNotificationLog)
 
-  const associatedTask = await Task.query()
-    .findById(taskEmailNotificationLog.taskId)
-    .withGraphFetched(
+  const associatedTask = await Task.findById(taskEmailNotificationLog.taskId, {
+    related:
       '[assignee, emailNotifications.recipientUser, notificationLogs(orderByCreatedDesc)]',
-    )
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
@@ -94,74 +85,45 @@ const createTaskEmailNotificationLog = async taskEmailNotificationLog => {
 const deleteAlertsForManuscript = async (manuscriptId, options = {}) => {
   const { trx } = options
 
-  await TaskAlert.query(trx)
-    .delete()
-    .whereIn('taskId', Task.query().select('id').where({ manuscriptId }))
+  await TaskAlert.deleteByManuscriptId(manuscriptId, { trx })
 }
 
 const deleteTaskNotification = async id => {
-  const taskEmailNotification = await TaskEmailNotification.query().findById(id)
+  const taskEmailNotification = await TaskEmailNotification.findById(id)
 
   const { taskId } = taskEmailNotification
 
-  await TaskEmailNotification.query().deleteById(id)
+  await TaskEmailNotification.deleteById(id)
 
-  const associatedTask = await Task.query()
-    .findById(taskId)
-    .withGraphFetched(
+  const associatedTask = await Task.findById(taskId, {
+    related:
       '[assignee, emailNotifications(orderByCreated).recipientUser, notificationLogs(orderByCreatedDesc)]',
-    )
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
 
-const getTaskEmailNotifications = async (
-  { status = null, groupId },
-  options = {},
-) => {
-  const { trx } = options
-  let taskQuery = Task.query(trx) // no await here because it's a sub-query
-
-  if (status) {
-    taskQuery = taskQuery.where({ status, groupId })
-  }
-
-  return Task.relatedQuery('emailNotifications')
-    .for(taskQuery)
-    .withGraphFetched('task')
-    .withGraphFetched('recipientUser')
-    .withGraphFetched('task.assignee')
-    .withGraphFetched('task.manuscript')
-}
-
 const getTasks = async (manuscriptId, groupId) => {
-  return Task.query().where({ manuscriptId, groupId }).orderBy('sequenceIndex')
+  return (
+    await Task.find({ manuscriptId, groupId }, { orderBy: ['sequenceIndex'] })
+  ).result
 }
 
 const getTeamRecipients = async (emailNotification, roles, options = {}) => {
   const { trx } = options
 
   // task notifications through scheduler are supposed to be sent only to team members from latest version of manuscript
-  const latestManuscriptVersionId = await getIdOfLatestVersionOfManuscript(
+  const latestManuscriptVersionId = await Manuscript.getLatestVersionId(
     emailNotification.task.manuscriptId,
     { trx },
   )
 
-  const teamQuery = Team.query(trx)
-    .where({
-      objectType: 'manuscript',
-      objectId: latestManuscriptVersionId,
-    })
-    .whereIn('role', roles) // no await here because it's a sub-query
-
-  const teamMembers = await Team.relatedQuery('members')
-    .where(builder => {
-      builder
-        .whereNull('status')
-        .orWhereNotIn('status', ['invited', 'rejected'])
-    })
-    .for(teamQuery)
-    .withGraphFetched('user')
+  const teamMembers = await Team.findNonInvitedMembersWithUser(
+    latestManuscriptVersionId,
+    roles,
+    { trx },
+  )
 
   return teamMembers.map(member => ({
     email: member.user.email,
@@ -171,35 +133,41 @@ const getTeamRecipients = async (emailNotification, roles, options = {}) => {
 
 const logTaskEmailNotificationData = async (logData, options = {}) => {
   const { trx } = options
-  await TaskEmailNotificationLog.query(trx).insert(logData)
+  await TaskEmailNotificationLog.insert(logData, { trx })
 
-  const associatedTask = await Task.query(trx)
-    .findById(logData.taskId)
-    .withGraphFetched('[emailNotifications.recipientUser, notificationLogs]')
+  const associatedTask = await Task.findById(logData.taskId, {
+    trx,
+    related: '[emailNotifications.recipientUser, notificationLogs]',
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
 
 const populateTemplatedTasksForManuscript = async manuscriptId => {
-  const manuscript = await Manuscript.query()
-    .findById(manuscriptId)
-    .select('groupId')
+  const groupId = await Manuscript.getGroupId(manuscriptId)
 
-  const activeConfig = await Config.getCached(manuscript.groupId)
+  const activeConfig = await Config.getCached(groupId)
 
-  const newTasks = await Task.query()
-    .whereNull('manuscriptId')
-    .where({ groupId: manuscript.groupId })
-    .orderBy('sequenceIndex')
-    .withGraphFetched('emailNotifications(orderByCreated)')
+  const { result: newTasks } = await Task.find(
+    { manuscriptId: null, groupId },
+    {
+      orderBy: 'sequenceIndex',
+      related: 'emailNotifications(orderByCreated)',
+    },
+  )
 
-  const existingTasks = await Task.query()
-    .where({ manuscriptId, groupId: manuscript.groupId })
-    .orderBy('sequenceIndex')
+  const { result: existingTasks } = await Task.find(
+    { manuscriptId, groupId },
+    { orderBy: ['sequenceIndex'] },
+  )
 
-  const endOfToday = moment()
-    .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-    .endOf('day')
+  const timezone = activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC'
+
+  const endOfToday = Temporal.Now.plainDateISO(timezone)
+    .add({ days: 1 })
+    .toZonedDateTime(timezone)
+    .subtract({ milliseconds: 1 })
 
   return Task.transaction(async trx => {
     const promises = []
@@ -208,54 +176,53 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
       const task = {
         ...newTasks[i],
         manuscriptId,
-        dueDate: moment(endOfToday)
-          .add(newTasks[i].defaultDurationDays, 'days')
-          .toDate(),
+        dueDate: new Date(
+          endOfToday.add({ days: newTasks[i].defaultDurationDays })
+            .epochMilliseconds,
+        ),
         sequenceIndex: i + existingTasks.length,
       }
 
       delete task.id
       promises.push(
         new Promise((resolve, reject) => {
-          Task.query(trx)
-            .insertAndFetch(task)
-            .withGraphFetched('assignee')
-            .then(taskObject => {
-              const emailNotificationPromises = []
+          Task.insert(task, { trx }).then(taskObject => {
+            const emailNotificationPromises = []
 
-              // Start delay at 100ms per notification
-              let delay = 0
+            // Start delay at 100ms per notification
+            let delay = 0
 
-              for (const emailNotification of taskObject.emailNotifications) {
-                const taskEmailNotification = {
-                  ...emailNotification,
-                  taskId: taskObject.id,
-                }
-
-                delete taskEmailNotification.id
-
-                // Increment the delay by 100ms per notification
-                delay += 100
-
-                const emailNotificationPromise = new Promise(
-                  // eslint-disable-next-line no-loop-func, no-shadow
-                  (resolve, reject) => {
-                    setTimeout(() => {
-                      TaskEmailNotification.query(trx)
-                        .insertAndFetch(taskEmailNotification)
-                        .then(result => resolve(result))
-                        .catch(error => reject(error))
-                    }, delay)
-                  },
-                )
-
-                emailNotificationPromises.push(emailNotificationPromise)
+            for (const emailNotification of taskObject.emailNotifications) {
+              const taskEmailNotification = {
+                ...emailNotification,
+                taskId: taskObject.id,
               }
 
-              Promise.all(emailNotificationPromises)
-                .then(result => resolve(result))
-                .catch(error => reject(error))
-            })
+              delete taskEmailNotification.id
+
+              // Increment the delay by 100ms per notification
+              delay += 100
+
+              const emailNotificationPromise = new Promise(
+                // eslint-disable-next-line no-loop-func, no-shadow
+                (resolve, reject) => {
+                  setTimeout(() => {
+                    TaskEmailNotification.insert(taskEmailNotification, {
+                      trx,
+                    })
+                      .then(result => resolve(result))
+                      .catch(error => reject(error))
+                  }, delay)
+                },
+              )
+
+              emailNotificationPromises.push(emailNotificationPromise)
+            }
+
+            Promise.all(emailNotificationPromises)
+              .then(result => resolve(result))
+              .catch(error => reject(error))
+          })
         }),
       )
     }
@@ -268,38 +235,37 @@ const populateTemplatedTasksForManuscript = async manuscriptId => {
   })
 }
 
-const removeTaskAlertsForCurrentUser = async userId => {
-  return TaskAlert.query().delete().where({ userId })
-}
-
 const sendAutomatedTaskEmailNotifications = async groupId => {
   const activeConfig = await Config.getCached(groupId)
 
-  const startOfToday = moment()
-    .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-    .startOf('day')
-
-  const startOfTomorrow = moment(startOfToday).add(1, 'days')
+  const timezone = activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC'
+  const startOfToday = Temporal.Now.zonedDateTimeISO(timezone).startOfDay()
+  const startOfTomorrow = startOfToday.add({ days: 1 })
 
   const taskConfigs = config.get('journal').tasks
 
-  const taskEmailNotifications = await getTaskEmailNotifications({
-    status: taskConfigs.status.IN_PROGRESS,
+  const taskEmailNotifications = await Task.getEmailNotifications(
     groupId,
-  })
+    taskConfigs.status.IN_PROGRESS,
+  )
 
   await Promise.all(
     taskEmailNotifications
       .filter(n => {
         if (n.sentAt || !n.task.dueDate) return false
 
-        const dateOfNotification = moment(n.task.dueDate)
-          .add(1, 'milliseconds') // Due date is usually 1 ms before midnight, so this pushes it to the following day.
-          .add(n.notificationElapsedDays, 'days')
+        const dateOfNotification = Temporal.Instant.fromEpochMilliseconds(
+          new Date(n.task.dueDate).getTime(),
+        )
+          .toZonedDateTimeISO(timezone)
+          .add({ milliseconds: 1 }) // Due date is usually 1 ms before midnight, so this pushes it to the following day.
+          .add({ days: n.notificationElapsedDays })
 
         return (
-          dateOfNotification.isSameOrAfter(startOfToday) &&
-          dateOfNotification.isBefore(startOfTomorrow)
+          Temporal.ZonedDateTime.compare(dateOfNotification, startOfToday) >=
+            0 &&
+          Temporal.ZonedDateTime.compare(dateOfNotification, startOfTomorrow) <
+            0
         )
       })
       .map(n => sendNotification(n)),
@@ -438,7 +404,7 @@ const sendNotification = async n => {
 
         const emailTemplate =
           /* eslint-disable-next-line no-await-in-loop */
-          await EmailTemplate.query().findById(emailTemplateOption)
+          await EmailTemplate.findById(emailTemplateOption)
 
         const messageBody = `${emailTemplate.emailContent.description} sent by Kotahi to ${recipient.name}`
 
@@ -464,29 +430,40 @@ const sendNotification = async n => {
 }
 
 const taskAssignee = async task => {
-  return task.assignee || User.query().findById(task.assigneeUserId)
+  return (
+    task.assignee ||
+    User.findById(task.assigneeUserId, { throwIfNotFound: false })
+  )
 }
 
 const taskEmailNotification = async task => {
   return (
     task.emailNotifications ||
-    Task.relatedQuery('emailNotifications').for(task.id).orderBy('created')
+    (
+      await TaskEmailNotification.find(
+        { taskId: task.id },
+        { orderBy: 'created' },
+      )
+    ).result
   )
 }
 
 const taskEmailNotificationRecipientUser = async notification => {
   return (
     notification.recipientUser ||
-    User.query().findById(notification.recipientUserId)
+    User.findById(notification.recipientUserId, { throwIfNotFound: false })
   )
 }
 
 const taskNotificationLogs = async task => {
   return (
     task.notificationLogs ||
-    Task.relatedQuery('notificationLogs')
-      .for(task.id)
-      .orderBy('created', 'desc')
+    (
+      await TaskEmailNotificationLog.find(
+        { taskId: task.id },
+        { orderBy: [{ column: 'created', order: 'desc' }] },
+      )
+    ).result
   )
 }
 
@@ -494,7 +471,7 @@ const taskNotificationLogs = async task => {
  * or remove existing alerts that have become redundant. */
 const updateAlertsForTask = async (task, trx) => {
   if (!task.manuscriptId) return
-  const isActive = await manuscriptIsActive(task.manuscriptId)
+  const isActive = await Manuscript.isActive(task.manuscriptId)
 
   const needsAlert =
     isActive &&
@@ -507,12 +484,12 @@ const updateAlertsForTask = async (task, trx) => {
   if (needsAlert) {
     const editorIds = await Manuscript.getEditorIds(task.manuscriptId)
 
-    await TaskAlert.query(trx)
-      .insert(editorIds.map(userId => ({ taskId: task.id, userId })))
-      .onConflict(['taskId', 'userId'])
-      .ignore()
+    await TaskAlert.insertIgnoringDuplicates(
+      editorIds.map(userId => ({ taskId: task.id, userId })),
+      { trx },
+    )
   } else {
-    await TaskAlert.query(trx).delete().where({ taskId: task.id })
+    await TaskAlert.deleteByTaskId(task.id, { trx })
   }
 }
 
@@ -526,9 +503,9 @@ const updateAlertsUponTeamUpdate = async (
 ) => {
   return useTransaction(
     async trx => {
-      if (!(await manuscriptIsActive(manuscriptId, { trx }))) return
+      if (!(await Manuscript.isActive(manuscriptId, { trx }))) return
       const now = new Date()
-      const tasks = (await Task.find({ manuscriptId }, { trx })).result
+      const { result: tasks } = await Task.find({ manuscriptId }, { trx })
 
       const overdueTaskIds = tasks
         .filter(
@@ -544,15 +521,11 @@ const updateAlertsUponTeamUpdate = async (
             userId,
           }))
 
-          await TaskAlert.query(trx)
-            .insert(alertsToAdd)
-            .onConflict(['taskId', 'userId'])
-            .ignore()
+          await TaskAlert.insertIgnoringDuplicates(alertsToAdd, { trx })
 
-          await TaskAlert.query(trx)
-            .delete()
-            .where({ taskId })
-            .whereIn('userId', userIdsToRemove)
+          await TaskAlert.deleteByTaskIdAndUserIds(taskId, userIdsToRemove, {
+            trx,
+          })
         }),
       )
     },
@@ -561,11 +534,12 @@ const updateAlertsUponTeamUpdate = async (
 }
 
 const updateTask = async task => {
-  const currentCount = await Task.query()
-    .where({ manuscriptId: task.manuscriptId, groupId: task.groupId })
-    .resultSize()
+  const currentCount = await Task.countByManuscript(
+    task.manuscriptId,
+    task.groupId,
+  )
 
-  const existing = await Task.query().findById(task.id)
+  const existing = await Task.findById(task.id, { throwIfNotFound: false })
 
   // Ensure that we can't switch a task from one manuscript to another
   const manuscriptId = existing ? existing.manuscriptId : task.manuscriptId
@@ -578,28 +552,25 @@ const updateTask = async task => {
     sequenceIndex,
   }
 
-  await Task.query().insert(taskRecord).onConflict('id').merge()
+  await Task.upsert(taskRecord)
 
   await updateAlertsForTask(taskRecord)
 
-  return Task.query()
-    .findById(task.id)
-    .withGraphFetched(
+  return Task.findById(task.id, {
+    related:
       '[assignee, emailNotifications(orderByCreated).recipientUser, notificationLogs(orderByCreatedDesc)]',
-    )
+    throwIfNotFound: false,
+  })
 }
 
 const updateTaskNotification = async taskNotification => {
-  await TaskEmailNotification.query().upsertGraphAndFetch(taskNotification, {
-    relate: true,
-    insertMissing: true,
-  })
+  await TaskEmailNotification.upsertAndFetch(taskNotification)
 
-  const associatedTask = await Task.query()
-    .findById(taskNotification.taskId)
-    .withGraphFetched(
+  const associatedTask = await Task.findById(taskNotification.taskId, {
+    related:
       '[emailNotifications(orderByCreated).recipientUser, notificationLogs(orderByCreatedDesc), assignee]',
-    )
+    throwIfNotFound: false,
+  })
 
   return associatedTask
 }
@@ -613,7 +584,7 @@ const updateTaskStatus = async task => {
   }
 
   // get task
-  const dbTask = await Task.query().findById(task.id)
+  const dbTask = await Task.findById(task.id)
 
   if (
     dbTask.status === status.NOT_STARTED &&
@@ -622,21 +593,23 @@ const updateTaskStatus = async task => {
     const taskDurationDays = dbTask.defaultDurationDays
 
     const activeConfig = await Config.getCached(dbTask.groupId)
+    const timezone = activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC'
 
     data.dueDate =
       taskDurationDays !== null
-        ? moment()
-            .tz(activeConfig.formData.taskManager.teamTimezone || 'Etc/UTC')
-            .endOf('day')
-            .add(taskDurationDays, 'days')
+        ? new Date(
+            Temporal.Now.plainDateISO(timezone)
+              .add({ days: taskDurationDays + 1 })
+              .toZonedDateTime(timezone)
+              .subtract({ milliseconds: 1 }).epochMilliseconds,
+          )
         : null
   }
 
-  const updatedTask = await Task.query()
-    .patchAndFetchById(task.id, data)
-    .withGraphFetched(
+  const updatedTask = await Task.patchAndFetchById(task.id, data, {
+    related:
       '[assignee, notificationLogs(orderByCreatedDesc), emailNotifications(orderByCreated).recipientUser]',
-    )
+  })
 
   await updateAlertsForTask(updatedTask)
 
@@ -653,16 +626,17 @@ const updateTasks = async (manuscriptId, groupId, tasks) => {
       groupId,
     }))
 
-  const currentTaskIdRecords = await Task.query()
-    .select('id')
-    .where({ manuscriptId, groupId })
+  const { result: currentTaskIdRecords } = await Task.find({
+    manuscriptId,
+    groupId,
+  })
 
   const idsToDelete = currentTaskIdRecords
     .filter(record => !distinctTasks.some(t => t.id === record.id))
     .map(record => record.id)
 
   return Task.transaction(async trx => {
-    await Task.query(trx).delete().whereIn('id', idsToDelete)
+    await Task.deleteByIds(idsToDelete, { trx })
 
     const promises = []
 
@@ -675,14 +649,11 @@ const updateTasks = async (manuscriptId, groupId, tasks) => {
       }
 
       promises.push(
-        Task.query(trx)
-          .insert(task)
-          .onConflict('id')
-          .merge()
-          .returning('*')
-          .withGraphFetched(
+        Task.upsert(task, {
+          trx,
+          related:
             '[assignee, notificationLogs(orderByCreatedDesc), emailNotifications(orderByCreated).recipientUser]',
-          ),
+        }),
       )
     }
 
@@ -696,7 +667,7 @@ const updateTasks = async (manuscriptId, groupId, tasks) => {
 }
 
 const userHasTaskAlerts = async userId => {
-  return (await TaskAlert.query().where({ userId }).limit(1)).length > 0
+  return !!(await TaskAlert.findOne({ userId }))
 }
 
 module.exports = {
@@ -704,16 +675,13 @@ module.exports = {
   createTaskEmailNotificationLog,
   deleteAlertsForManuscript,
   deleteTaskNotification,
-  getTaskEmailNotifications,
   getTasks,
   populateTemplatedTasksForManuscript,
-  removeTaskAlertsForCurrentUser,
   sendAutomatedTaskEmailNotifications,
   taskAssignee,
   taskEmailNotification,
   taskEmailNotificationRecipientUser,
   taskNotificationLogs,
-  updateAlertsForTask,
   updateAlertsUponTeamUpdate,
   updateTask,
   updateTaskNotification,

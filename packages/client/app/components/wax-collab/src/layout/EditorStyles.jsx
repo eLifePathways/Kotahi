@@ -62,30 +62,6 @@ export const Menu = styled.div`
 //   height: 100%;
 // `
 
-export const ReadOnlyEditorWithCommentsEditor = styled.div`
-  height: 100%;
-  min-width: 800px;
-  width: 100%;
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
-  ${EditorElements}
-
-  & .comment {
-    ${props => props.readOnlyComments && 'pointer-events: none;'}
-  }
-
-  & .deletion {
-    ${props => props.hideTrackChanges && 'display: none;'}
-  }
-
-  & .insertion {
-    ${props => props.hideTrackChanges && 'color: initial !important;'}
-    & .selected-insertion {
-      ${props =>
-        props.hideTrackChanges && 'background-color: initial !important;'}
-    }
-  }
-`
-
 export const FullWaxEditorGrid = styled.div`
   display: grid;
   grid-area: editor;
@@ -133,18 +109,6 @@ export const EditorContainer = styled.div`
     border-right: 1px solid #ecedf1;
     min-height: 100%;
     padding: 45px 25px 25px;
-  }
-`
-
-export const FullEditorContainer = styled.div`
-  height: 100%;
-  min-width: 800px;
-  width: 100%;
-
-  .ProseMirror {
-    box-shadow: 0 0 8px #ecedf1;
-    min-height: 98%;
-    padding: 10px;
   }
 `
 

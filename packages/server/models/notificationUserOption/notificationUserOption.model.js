@@ -50,6 +50,14 @@ class NotificationUserOption extends BaseModel {
 
     return json
   }
+
+  /** The user's non-'inherit' options in the group for the given object, plus those not tied to any object */
+  static async findExplicitForObject(userId, groupId, objectId, options = {}) {
+    return NotificationUserOption.query(options.trx)
+      .where({ userId, groupId })
+      .where(builder => builder.where({ objectId }).orWhere({ objectId: null }))
+      .whereNot({ option: 'inherit' })
+  }
 }
 
 module.exports = NotificationUserOption

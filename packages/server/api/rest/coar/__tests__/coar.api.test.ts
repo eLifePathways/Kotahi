@@ -14,7 +14,7 @@ import {
 // express comes with @coko/server, which serves the real routes
 // eslint-disable-next-line import/no-extraneous-dependencies
 import express from 'express'
-import { migrationManager, db, config, DbTestUtils } from '@coko/server'
+import { migrationManager, db, config } from '@coko/server'
 
 import {
   CoarNotification,
@@ -24,6 +24,7 @@ import {
   Token,
 } from '../../../../models'
 
+import DbTestUtils from '../../../../models/DbTestUtils'
 import { postToInbox } from '../../../../controllers/coar/utils'
 
 // Outbound HTTP (DOI registration agency, Crossref, the sender's inbox) goes
@@ -230,7 +231,7 @@ describe('COAR Notify inbox API', () => {
   }
 
   const manuscriptsWithDoi = async (): Promise<Manuscript[]> =>
-    Manuscript.query().where({ doi: DOI, groupId: group.id })
+    (await Manuscript.find({ doi: DOI, groupId: group.id })).result
 
   beforeAll(async () => {
     await config.init()
@@ -351,7 +352,7 @@ describe('COAR Notify inbox API', () => {
 
       await post(offer, { authorization: 'Bearer wrong-token' })
 
-      const stored = await CoarNotification.query().where({
+      const { result: stored } = await CoarNotification.find({
         groupId: group.id,
       })
 
@@ -394,9 +395,11 @@ describe('COAR Notify inbox API', () => {
         ['Turing', ['Institute Without ROR']],
       ])
 
-      const notification = await CoarNotification.query()
-        .whereRaw(`payload->>'id' = ?`, [offer.id])
-        .first()
+      const { result: notifications } = await CoarNotification.find({
+        groupId: group.id,
+      })
+
+      const notification = notifications.find(n => n.payload.id === offer.id)
 
       expect(notification?.manuscriptId).toBe(manuscript.id)
       expect(sentToOrigin).toHaveLength(0)
@@ -424,7 +427,7 @@ describe('COAR Notify inbox API', () => {
     })
 
     it('rejects an offer for a manuscript that already exists without one', async () => {
-      await Manuscript.query().insert({
+      await Manuscript.insert({
         doi: DOI,
         groupId: group.id,
         status: 'new',

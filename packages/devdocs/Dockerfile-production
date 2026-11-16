@@ -1,9 +1,9 @@
 ##############################################################
 # IMAGE FOR BUILDING
 
-FROM cokoapps/base:24
+FROM node:26-trixie-slim
+RUN npm install -g corepack && corepack enable
 
-RUN corepack enable
 WORKDIR /home/node/app
 
 COPY package.json .
@@ -19,11 +19,11 @@ RUN yarn build
 ##############################################################
 # IMAGE FOR RUNNING
 
-FROM cokoapps/base:24
+FROM node:26-trixie-slim
 
 WORKDIR /home/node/app
 
-RUN yarn global add serve
+RUN npm install -g serve
 
 COPY --from=0 /home/node/app/build ./build
 

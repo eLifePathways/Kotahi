@@ -49,41 +49,50 @@ const addUserToAdminAndGroupAdminTeams = async (
 ) => {
   const { trx } = options
 
-  const groupAdminTeam = await Team.query(trx).findOne({
-    role: 'groupAdmin',
-    objectId: groupId,
-    objectType: 'group',
-  })
+  const groupAdminTeam = await Team.findOne(
+    {
+      role: 'groupAdmin',
+      objectId: groupId,
+      objectType: 'group',
+    },
+    { trx },
+  )
 
-  const adminTeam = await Team.query(trx).findOne({
-    role: 'admin',
-    global: true,
-  })
+  const adminTeam = await Team.findOne(
+    {
+      role: 'admin',
+      global: true,
+    },
+    { trx },
+  )
 
-  await TeamMember.query(trx).insert({ userId, teamId: adminTeam.id })
-  await TeamMember.query(trx).insert({ userId, teamId: groupAdminTeam.id })
+  await TeamMember.insert({ userId, teamId: adminTeam.id }, { trx })
+  await TeamMember.insert({ userId, teamId: groupAdminTeam.id }, { trx })
 }
 
 const addUserToUserTeam = async (userId, groupId) => {
-  const userTeam = await Team.query().findOne({
+  const userTeam = await Team.findOne({
     role: 'user',
     objectId: groupId,
     objectType: 'group',
   })
 
-  await TeamMember.query().insert({ userId, teamId: userTeam.id })
+  await TeamMember.insert({ userId, teamId: userTeam.id })
 }
 
 const addUserToGroupAdminTeam = async (userId, groupId, options = {}) => {
   const { trx } = options
 
-  const groupAdminTeam = await Team.query(trx).findOne({
-    role: 'groupAdmin',
-    objectId: groupId,
-    objectType: 'group',
-  })
+  const groupAdminTeam = await Team.findOne(
+    {
+      role: 'groupAdmin',
+      objectId: groupId,
+      objectType: 'group',
+    },
+    { trx },
+  )
 
-  await TeamMember.query(trx).insert({ userId, teamId: groupAdminTeam.id })
+  await TeamMember.insert({ userId, teamId: groupAdminTeam.id }, { trx })
 }
 
 const createOrcidStrategy = () => {
@@ -110,29 +119,18 @@ const createOrcidStrategy = () => {
       const activeConfig = await Config.getCached(groupId)
 
       try {
-        user = await User.query()
-          .joinRelated('identities')
-          .where('identities.identifier', params.orcid)
-          .where('identities.type', 'orcid')
-          .throwIfNotFound()
-          .first()
+        user = await User.findByIdentity('orcid', params.orcid)
       } catch (err) {
-        // swallow not found error
-        if (err.name !== 'NotFoundError') {
-          done(err)
-          return
-        }
+        done(err)
+        return
       }
 
-      let usersCountString
+      let usersCount
       let groupUsersCount
 
       try {
-        usersCountString = (await User.query().count())[0].count
-        groupUsersCount = await User.query()
-          .joinRelated('teams')
-          .where({ 'teams.objectId': groupId })
-          .resultSize()
+        usersCount = await User.countAll()
+        groupUsersCount = await User.countInTeamsOfObject(groupId)
       } catch (err) {
         logger.error(err)
       }
@@ -141,22 +139,25 @@ const createOrcidStrategy = () => {
       try {
         await useTransaction(async trx => {
           if (!user) {
-            user = await User.query(trx).insert({
-              username: params.name,
-            })
+            user = await User.insert(
+              {
+                username: params.name,
+              },
+              { trx },
+            )
 
-            const identity = await Identity.query(trx).insert({
-              identifier: params.orcid,
-              oauth: { accessToken, refreshToken },
-              type: 'orcid',
-              isDefault: true,
-              userId: user.id,
-            })
+            const identity = await Identity.insert(
+              {
+                identifier: params.orcid,
+                oauth: { accessToken, refreshToken },
+                type: 'orcid',
+                isDefault: true,
+                userId: user.id,
+              },
+              { trx },
+            )
 
-            if (
-              usersCountString === '0' ||
-              activeConfig.formData.user.isAdmin
-            ) {
+            if (usersCount === 0 || activeConfig.formData.user.isAdmin) {
               await addUserToAdminAndGroupAdminTeams(user.id, groupId, {
                 trx,
               })
@@ -165,27 +166,28 @@ const createOrcidStrategy = () => {
             // Do another request to the ORCID API for aff/name
             const userDetails = await fetchUserDetails(user, { trx })
 
-            await identity.$query(trx).patchAndFetch({
-              name: `${userDetails.firstName || ''} ${
-                userDetails.lastName || ''
-              }`,
-              aff: userDetails.institution || '',
-            })
+            await identity.patch(
+              {
+                name: `${userDetails.firstName || ''} ${
+                  userDetails.lastName || ''
+                }`,
+                aff: userDetails.institution || '',
+              },
+              { trx },
+            )
 
-            await user.$query(trx).patchAndFetch({
-              email: userDetails.email || null,
-            })
+            await user.patch(
+              {
+                email: userDetails.email || null,
+              },
+              { trx },
+            )
 
             firstLogin = true
           } else if (groupUsersCount === 0) {
-            const isAlreadyAdmin = await Team.query(trx)
-              .withGraphJoined('members')
-              .findOne({
-                userId: user.id,
-                objectId: null,
-                global: true,
-                role: 'admin',
-              })
+            const isAlreadyAdmin = await User.hasGlobalRole(user.id, 'admin', {
+              trx,
+            })
 
             if (!isAlreadyAdmin) {
               await addUserToAdminAndGroupAdminTeams(user.id, groupId, {
@@ -234,10 +236,13 @@ const orcidRequest = (identity, endpoint) => {
 const fetchUserDetails = async (user, options = {}) => {
   const { trx } = options
 
-  const identity = await Identity.query(trx).findOne({
-    userId: user.id,
-    type: 'orcid',
-  })
+  const identity = await Identity.findOne(
+    {
+      userId: user.id,
+      type: 'orcid',
+    },
+    { trx },
+  )
 
   logger.debug('processing response from orcid api')
 
@@ -279,7 +284,7 @@ const handleOrcidOAuthResponse = async user => {
 
   const jwt = createJWT({ id, username })
 
-  const group = await Group.query().findOne({
+  const group = await Group.findOne({
     id: groupId,
     isArchived: false,
   })
@@ -288,12 +293,7 @@ const handleOrcidOAuthResponse = async user => {
     throw new Error(`Group not found or archived!`)
   }
 
-  const isAlreadyAdmin = await Team.query().withGraphJoined('members').findOne({
-    userId: user.id,
-    objectId: null,
-    global: true,
-    role: 'admin',
-  })
+  const isAlreadyAdmin = await User.hasGlobalRole(user.id, 'admin')
 
   const activeConfig = await Config.getCached(groupId)
 
@@ -301,29 +301,13 @@ const handleOrcidOAuthResponse = async user => {
   if (activeConfig.formData.user.isAdmin && !isAlreadyAdmin)
     await addUserToAdminAndGroupAdminTeams(user.id, groupId)
 
-  const groupManagerTeam = await Team.query()
-    .withGraphJoined('members')
-    .select('role')
-    .findOne({
-      userId: user.id,
-      objectId: groupId,
-      objectType: 'group',
-      role: 'groupManager',
-    })
+  const isGroupManager = await User.hasRoleOnObject(
+    user.id,
+    'groupManager',
+    groupId,
+  )
 
-  const isGroupManager = !!groupManagerTeam
-
-  const userTeam = await Team.query()
-    .withGraphJoined('members')
-    .select('role')
-    .findOne({
-      userId: user.id,
-      objectId: groupId,
-      objectType: 'group',
-      role: 'user',
-    })
-
-  const isGroupUser = !!userTeam
+  const isGroupUser = await User.hasRoleOnObject(user.id, 'user', groupId)
 
   if (!isGroupUser) await addUserToUserTeam(user.id, groupId)
 

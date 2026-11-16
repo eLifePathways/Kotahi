@@ -11,7 +11,6 @@ const { config } = require('@coko/server')
 
 const { logger } = require('@coko/server')
 
-const anystyleXmlToHtml = require('./anyStyleToHtml')
 const { formatCitation } = require('../../utils/reference')
 
 const randomBytes = promisify(crypto.randomBytes)
@@ -110,82 +109,6 @@ const convertHtmlToText = text => {
   return returnText
 }
 
-const parseCitations = async (references, startNumber = 0) => {
-  // check to see if we have an access token. If not, wait for one.
-
-  if (!anystyleAccessToken) {
-    anystyleAccessToken = await serviceHandshake()
-  }
-
-  const raw = await randomBytes(16)
-  const dirName = `tmp/${raw.toString('hex')}`
-
-  await fsPromised.mkdir(dirName, { recursive: true })
-
-  const txt = await convertHtmlToText(references)
-
-  const txtPath = `${dirName}/references.txt`
-
-  await fsPromised.appendFile(txtPath, txt)
-
-  // 1 pass references to anystyle
-  const form = new FormData()
-  // clean any HTML out of what's coming in to Anystyle so it isn't confused
-  form.append('txt', fs.createReadStream(`${txtPath}`))
-
-  // console.log('Text path: ', txtPath)
-  return new Promise((resolve, reject) => {
-    axios({
-      method: 'post',
-      url: `${serverUrl}/api/referencesToXml`,
-      headers: {
-        authorization: `Bearer ${anystyleAccessToken}`,
-        ...form.getHeaders(),
-      },
-      // responseType: 'stream',
-      data: form,
-      // timeout: 1000, // adding this because it's failing
-    })
-      .then(async res => {
-        // 2 pass citations to HTML wrapper
-        // res.data is Anystyle XML as a string
-        // TODO: take an initial index for the reference IDs so we don't make duplicate IDs
-
-        // console.log('Result from Anystyle:', res.data)
-
-        const htmledResult =
-          anystyleXmlToHtml(res.data, startNumber) || references
-
-        resolve(htmledResult)
-      })
-      .catch(async err => {
-        const { response } = err
-
-        if (!response) {
-          return reject(
-            new Error(
-              `Anystyle request failed with message: ${err.code}, ${err}`,
-            ),
-          )
-        }
-
-        const { status, data } = response
-        const { msg } = data
-
-        if (status === 401 && msg === 'expired token') {
-          await serviceHandshake()
-          return parseCitations(references, startNumber)
-        }
-
-        return reject(
-          new Error(
-            `Anystyle request failed with status ${status} and message: ${msg}`,
-          ),
-        )
-      })
-  })
-}
-
 /* eslint-disable-next-line default-param-last */
 const parseCitationsCSL = async (references, startNumber = 0, groupId) => {
   // check to see if we have an access token. If not, wait for one.
@@ -281,6 +204,5 @@ const parseCitationsCSL = async (references, startNumber = 0, groupId) => {
 }
 
 module.exports = {
-  parseCitations,
   parseCitationsCSL,
 }

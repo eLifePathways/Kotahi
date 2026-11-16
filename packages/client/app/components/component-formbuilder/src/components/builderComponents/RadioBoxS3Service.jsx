@@ -8,7 +8,7 @@ import Radio from '../../../../pubsweet/Radio'
 import { TextField } from '../../../../pubsweet'
 import { ActionButton } from '../../../../shared'
 
-export const Legend = styled.div`
+const Legend = styled.div`
   font-size: ${th('fontSizeBase')};
   font-weight: 600;
   margin-bottom: ${props => props.space && grid(2)(props)};

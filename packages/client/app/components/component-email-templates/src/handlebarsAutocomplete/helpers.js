@@ -2,9 +2,6 @@ import { DROPDOWN_ID } from './constants'
 
 export const normalize = str => str?.trim().toLowerCase()
 
-export const capitalizeFirst = value =>
-  `${value.charAt(0).toUpperCase()}${value.slice(1)}`
-
 export const splitAndCapitalize = value => {
   let result = value.split(/(?=[A-Z])/).join(' ')
   result = result.charAt(0).toUpperCase() + result.slice(1)

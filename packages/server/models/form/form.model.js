@@ -126,6 +126,28 @@ class Form extends BaseModel {
       },
     }
   }
+
+  /** The group's active submission, review and decision forms */
+  static async findActiveInGroup(groupId, options = {}) {
+    return Form.query(options.trx)
+      .where({ category: 'submission', purpose: 'submit', groupId })
+      .orWhere({ category: 'review', purpose: 'review', groupId })
+      .orWhere({ category: 'decision', purpose: 'decision', groupId })
+  }
+
+  /** Sets purpose to 'other' on all forms in the group's category except the given one */
+  static async deactivateOthersInCategory(
+    category,
+    groupId,
+    exceptId,
+    options = {},
+  ) {
+    return Form.query(options.trx)
+      .patch({ purpose: 'other' })
+      .whereNot({ purpose: 'other' })
+      .where({ category, groupId })
+      .whereNot({ id: exceptId })
+  }
 }
 
 Form.type = 'Form'

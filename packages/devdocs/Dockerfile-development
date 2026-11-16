@@ -1,6 +1,5 @@
-FROM cokoapps/base-dev:24
-
-RUN corepack enable
+FROM node:26-trixie-slim
+RUN npm install -g corepack && corepack enable
 
 WORKDIR /home/node/app
 

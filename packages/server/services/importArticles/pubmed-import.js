@@ -47,7 +47,7 @@ const pubmedQueries = {
 const joinToStringIfArray = x => (Array.isArray(x) ? x.join(' ') : x)
 
 const getData = async (groupId, ctx) => {
-  const manuscripts = await Manuscript.query().where({ groupId })
+  const { result: manuscripts } = await Manuscript.find({ groupId })
   const currentArticleURLs = manuscripts.map(m => m.submission.$sourceUri)
 
   const dateTwoWeeksAgoFormatted = new Date(Date.now() - 12096e5)
@@ -60,26 +60,28 @@ const getData = async (groupId, ctx) => {
     .split('T')[0]
     .replace(/-/g, '/')
 
-  const [checkIfSourceExists] = await ArticleImportSources.query().where({
-    server: 'pubmed',
-  })
+  const [checkIfSourceExists] = (
+    await ArticleImportSources.find({
+      server: 'pubmed',
+    })
+  ).result
 
   if (!checkIfSourceExists) {
-    await ArticleImportSources.query().insert({
+    await ArticleImportSources.insert({
       server: 'pubmed',
     })
   }
 
-  const [pubmedImportSourceId] = await ArticleImportSources.query().where({
-    server: 'pubmed',
-  })
-
-  const lastImportDate = await ArticleImportHistory.query()
-    .select('date')
-    .where({
-      sourceId: pubmedImportSourceId.id,
-      groupId,
+  const [pubmedImportSourceId] = (
+    await ArticleImportSources.find({
+      server: 'pubmed',
     })
+  ).result
+
+  const { result: lastImportDate } = await ArticleImportHistory.find({
+    sourceId: pubmedImportSourceId.id,
+    groupId,
+  })
 
   const minDate = lastImportDate.length
     ? new Date(lastImportDate[0].date)
@@ -406,16 +408,13 @@ const getData = async (groupId, ctx) => {
   )
 
   if (lastImportDate.length) {
-    await ArticleImportHistory.query()
-      .update({
-        date: new Date().toISOString(),
-      })
-      .where({
-        date: lastImportDate[0].date,
-        groupId,
-      })
+    await ArticleImportHistory.patchByDateAndGroup(
+      lastImportDate[0].date,
+      groupId,
+      { date: new Date().toISOString() },
+    )
   } else {
-    await ArticleImportHistory.query().insert({
+    await ArticleImportHistory.insert({
       date: new Date().toISOString(),
       sourceId: pubmedImportSourceId.id,
       groupId,

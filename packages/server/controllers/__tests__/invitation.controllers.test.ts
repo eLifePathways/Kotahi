@@ -7,14 +7,9 @@ import {
   expect,
   vi,
 } from 'vitest'
-import {
-  db,
-  config,
-  DbTestUtils,
-  migrationManager,
-  jobManager,
-} from '@coko/server'
+import { db, config, migrationManager, jobManager } from '@coko/server'
 
+import DbTestUtils from '../../models/DbTestUtils'
 import Group from '../../models/group/group.model'
 import User from '../../models/user/user.model'
 import Manuscript from '../../models/manuscript/manuscript.model'
@@ -67,7 +62,7 @@ describe('updateInvitationStatus', () => {
     const respondingUser = await User.insert({})
     const senderUser = await User.insert({})
 
-    const invitation = await Invitation.query().insert({
+    const invitation = await Invitation.insert({
       manuscriptId: manuscript.id,
       senderId: senderUser.id,
       purpose: 'invite-reviewer',

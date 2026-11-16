@@ -51,6 +51,78 @@ class Team extends TeamBase {
     }
   }
 
+  static async findActiveTeamsOfUserOnObject(userId, objectId, options = {}) {
+    return (
+      Team.query(options.trx)
+        .select('role')
+        .withGraphJoined('members')
+        .where({ objectId, userId })
+        // If status is null, whereNotIn('status', ['invited', 'rejected']) returns false.
+        // I'm not sure why this is, but it means we need a separate check for status===null.
+        .where(
+          builder =>
+            builder
+              .whereNull('status')
+              .orWhereNotIn('status', ['invited', 'rejected']), // Reviewers with status 'invited' or 'rejected' are not actually reviewers
+        )
+    )
+  }
+
+  static async findSharedReviewerMembers(
+    manuscriptId,
+    currentUserId,
+    options = {},
+  ) {
+    return Team.relatedQuery('members', options.trx)
+      .for(
+        Team.query(options.trx).where({
+          objectId: manuscriptId,
+          role: 'reviewer',
+        }),
+      )
+      .select('userId')
+      .where({ isShared: true })
+      .where(builder =>
+        builder
+          .where({ status: 'completed' })
+          .orWhere({ userId: currentUserId }),
+      )
+  }
+
+  static async findNonInvitedMembersWithUser(objectId, roles, options = {}) {
+    const { trx } = options
+
+    return Team.relatedQuery('members', trx)
+      .where(builder => {
+        builder
+          .whereNull('status')
+          .orWhereNotIn('status', ['invited', 'rejected'])
+      })
+      .for(
+        Team.query(trx)
+          .where({ objectType: 'manuscript', objectId })
+          .whereIn('role', roles),
+      )
+      .withGraphFetched('user')
+  }
+
+  /** Sets the status of the user's membership in the object's team with the given role,
+   * if that membership is still in 'invited' status */
+  static async patchInvitedMemberStatus(
+    objectId,
+    role,
+    userId,
+    status,
+    options = {},
+  ) {
+    const { trx } = options
+
+    return Team.relatedQuery('members', trx)
+      .for(Team.query(trx).findOne({ objectId, role }))
+      .patch({ status })
+      .where({ userId, status: 'invited' })
+  }
+
   /** Teams of an object with the given roles, with their users */
   static async findWithUsers(objectId, roles, options = {}) {
     const { trx } = options
