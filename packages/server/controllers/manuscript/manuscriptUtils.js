@@ -167,6 +167,23 @@ const addAllFieldsToTemplatingMap = (
   })
 }
 
+const publishedFormFields = (
+  manuscript,
+  formFields,
+  objectId = manuscript.id,
+) => {
+  const selected =
+    (manuscript.formFieldsToPublish ?? []).find(
+      entry => entry.objectId === objectId,
+    )?.fieldsToPublish ?? []
+
+  return formFields.filter(
+    field =>
+      field.permitPublishing === 'always' ||
+      (field.permitPublishing === 'true' && selected.includes(field.name)),
+  )
+}
+
 /** Resolve inconsistencies in URI representations */
 const getPreprintUri = manuscript => {
   let uri = manuscript.submission.$sourceUri
@@ -281,4 +298,5 @@ module.exports = {
   hasElifeStyleEvaluations,
   applyTemplatesToArtifacts,
   getFieldsMapForTemplating,
+  publishedFormFields,
 }

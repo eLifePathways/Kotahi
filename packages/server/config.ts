@@ -26,6 +26,8 @@ const components = [
   './api/rest/orcid',
   './api/rest/profileUpload',
   './api/rest/docmap',
+  './api/rest/files',
+  './api/rest/oxa',
 ]
 
 if (!isProduction && env('E2E_TESTING_API')) {

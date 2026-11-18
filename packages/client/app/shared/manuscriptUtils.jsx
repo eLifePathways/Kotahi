@@ -1,5 +1,13 @@
 import { validateFormField } from './formValidation'
 
+const EDITABLE_MANUSCRIPT_MIMETYPES = [
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/json',
+]
+
+export const isEditableManuscriptFile = file =>
+  EDITABLE_MANUSCRIPT_MIMETYPES.includes(file?.storedObjects[0]?.mimetype)
+
 /** Validate just manuscript.submission, based on the supplied array of field definitions */
 export const validateManuscriptSubmission = async (
   submission,

@@ -1,5 +1,10 @@
 const { GraphQLError } = require('graphql')
-const { config, subscriptionManager, withFilter } = require('@coko/server')
+const {
+  config,
+  logger,
+  subscriptionManager,
+  withFilter,
+} = require('@coko/server')
 
 const {
   importManuscripts,
@@ -130,6 +135,8 @@ const resolvers = {
         )
       } catch (error) {
         if (error instanceof NewSubmissionError) {
+          if (error.cause) logger.error(error.cause)
+
           throw new GraphQLError(error.message, {
             extensions: { code: error.code },
           })

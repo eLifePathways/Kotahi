@@ -14,6 +14,8 @@ import {
 
 import xsweet from '../../services/connectors/XSweetConnector'
 import cleanConvertedDocx from '../../utils/html/cleanConvertedDocx'
+import { oxaToManuscript } from '../oxa.controllers'
+import type { OxaDocument } from '../../services/oxa/oxa.types'
 import { prefillSubmission } from '../submissionPrefill.controllers'
 import Config from '../../models/config/config.model'
 import Manuscript from '../../models/manuscript/manuscript.model'
@@ -30,6 +32,7 @@ const ACCEPTED_EXTENSIONS = [
   '.pdf',
   '.epub',
   '.zip',
+  '.json',
 ]
 
 type NewSubmissionErrorCode =
@@ -54,6 +57,15 @@ export class NewSubmissionError extends Error {
 const getTitleFromHtml = (html: string): string =>
   /* eslint-disable-next-line kotahi/no-query-builder-calls */
   load(html, null, false)('h1').first().text().trim()
+
+const parseOxaDocument = (text: string): OxaDocument | null => {
+  try {
+    const value = JSON.parse(text)
+    return value?.type === 'Document' ? value : null
+  } catch {
+    return null
+  }
+}
 
 const getTitleFromFileName = (fileName: string): string =>
   fileName.replace(/[_-]+/g, ' ').replace(/\.[^.]+$/, '')
@@ -171,6 +183,32 @@ export const createManuscriptFromFile = async (
 
       onProgress('inferringMetadata')
       submission = await prefillSubmission(groupId, html)
+    }
+
+    if (extension === '.json') {
+      const document = parseOxaDocument(await file.text())
+
+      if (!document) {
+        throw new NewSubmissionError(
+          'UNSUPPORTED_FILE_TYPE',
+          `${file.name} is not an OXA document`,
+        )
+      }
+
+      try {
+        onProgress('converting')
+
+        const manuscript = await oxaToManuscript(document, groupId)
+
+        html = manuscript.meta.source
+        submission = manuscript.submission
+      } catch (error) {
+        throw new NewSubmissionError(
+          'CONVERSION_FAILED',
+          `Could not convert ${file.name}`,
+          { cause: error },
+        )
+      }
     }
   }
 

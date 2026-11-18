@@ -12,6 +12,8 @@ const CARD_WIDTH = 130
 const CARD_HEIGHT = 65
 const CARD_GAP = 5
 
+const FILE_TYPE_LABELS: Record<string, string> = { '.json': '.json (OXA)' }
+
 // #region styled
 const CardGrid = styled(Grid)<{ $columns: number }>`
   max-width: ${(props): string =>
@@ -183,7 +185,9 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
                 {!!acceptedFileTypes?.length && !!maxUploadSizeMb && (
                   <Hint>
                     {t('newSubmission.fileRequirements', {
-                      fileTypes: acceptedFileTypes.join(', '),
+                      fileTypes: acceptedFileTypes
+                        .map(type => FILE_TYPE_LABELS[type] ?? type)
+                        .join(', '),
                       maxSizeMb: maxUploadSizeMb,
                     })}
                   </Hint>

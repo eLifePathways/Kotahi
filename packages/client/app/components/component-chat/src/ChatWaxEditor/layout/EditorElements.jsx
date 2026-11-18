@@ -146,6 +146,7 @@ export default css`
   figure {
     border: 1px solid ${th('color.brand1.base')};
     margin-bottom: 1rem;
+    margin-top: 1.5rem;
     padding: 1rem;
     position: relative;
   }
