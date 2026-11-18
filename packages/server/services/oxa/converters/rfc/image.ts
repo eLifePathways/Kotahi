@@ -78,11 +78,9 @@ export class ImageConverter extends BlockConverter {
   protected readonly selectors = ['img']
 
   protected toOxa(el: Element): OxaBlock | null {
-    if (!el.attribs.src) return null
-    return {
-      type: 'Image',
-      ...imageFields(el, this.options as ExportConverterOptions),
-    }
+    const fields = imageFields(el, this.options as ExportConverterOptions)
+    if (!fields.url) return null
+    return { type: 'Image', ...fields }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -121,11 +119,9 @@ export class InlineImageConverter extends InlineConverter {
   }
 
   protected toOxa(el: Element): OxaInline | null {
-    if (!el.attribs.src) return null
-    return {
-      type: 'InlineImage',
-      ...imageFields(el, this.options as ExportConverterOptions),
-    }
+    const fields = imageFields(el, this.options as ExportConverterOptions)
+    if (!fields.url) return null
+    return { type: 'InlineImage', ...fields }
   }
 
   // eslint-disable-next-line class-methods-use-this
