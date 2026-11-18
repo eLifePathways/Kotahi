@@ -3,6 +3,7 @@
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import FullWaxEditor from '../../../wax-collab/src/FullWaxEditor'
+import { isEditableManuscriptFile } from '../../../../shared/manuscriptUtils'
 
 const Info = styled.span`
   align-items: center;
@@ -44,9 +45,7 @@ const Manuscript = ({ file, content, currentUser, manuscript }) => {
 
   return (
     <Columns>
-      {file &&
-      file.storedObjects[0].mimetype ===
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? (
+      {isEditableManuscriptFile(file) ? (
         <ManuscriptContainer>
           <FullWaxEditor
             readonly

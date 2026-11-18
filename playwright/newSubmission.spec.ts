@@ -155,7 +155,7 @@ test.describe('new submission page options', () => {
     await navigateTo('/newSubmission')
 
     await expect(uploadCard(page)).toContainText(
-      'Accepted file types: .docx, .tex, .latex, .txt, .dvi, .pdf, .epub, .zip. Maximum size: 50 MB.',
+      'Accepted file types: .docx, .tex, .latex, .txt, .dvi, .pdf, .epub, .zip, .json (OXA). Maximum size: 50 MB.',
     )
   })
 })
