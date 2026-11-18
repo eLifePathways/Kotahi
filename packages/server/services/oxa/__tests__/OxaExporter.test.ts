@@ -1,9 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
-import OxaConverter, {
-  type OxaConverterOptions,
-  type OxaSource,
-} from '../OxaConverter'
+import OxaExporter from '../OxaExporter'
+import type { OxaConverterOptions, OxaSource } from '../OxaConverter'
 import type { OxaDocument } from '../oxa.types'
 
 const fileUrl = (file: { id: string }): string => `https://files/${file.id}`
@@ -18,9 +16,13 @@ const source: OxaSource = {
   ].join(''),
 }
 
-describe('OxaConverter', () => {
+describe('OxaExporter', () => {
   it('converts to standard OXA that passes validation', () => {
-    const document = new OxaConverter({ fileUrl }).toOxa(source)
+    const document = new OxaExporter({
+      enableRFC: false,
+      enableExperimental: false,
+      fileUrl,
+    }).toOxa(source)
 
     expect(document).toEqual({
       type: 'Document',
@@ -52,7 +54,7 @@ describe('OxaConverter', () => {
   })
 
   it('emits RFC and experimental nodes when enabled', () => {
-    const document = new OxaConverter({
+    const document = new OxaExporter({
       enableRFC: true,
       enableExperimental: true,
       fileUrl,
@@ -74,8 +76,8 @@ describe('OxaConverter', () => {
   describe('document', () => {
     const convert = (
       input: OxaSource,
-      options: Omit<OxaConverterOptions, 'fileUrl'> = {},
-    ): OxaDocument => new OxaConverter({ ...options, fileUrl }).toOxa(input)
+      options: OxaConverterOptions = {},
+    ): OxaDocument => new OxaExporter({ ...options, fileUrl }).toOxa(input)
 
     it('converts an empty source to an empty document', () => {
       expect(convert({})).toEqual({ type: 'Document', children: [] })
@@ -106,13 +108,13 @@ describe('OxaConverter', () => {
           metadata: [
             { path: 'doi', value: '10.1000/xyz' },
             { path: 'topics', value: ['coral', 'reefs'] },
-            { path: 'meta.notes', value: 'Note' },
+            { path: '_reviews.0.comment', value: 'Good' },
           ],
         }).data,
       ).toEqual({
         doi: '10.1000/xyz',
         topics: ['coral', 'reefs'],
-        meta: { notes: 'Note' },
+        _reviews: [{ comment: 'Good' }],
       })
     })
 
@@ -157,7 +159,9 @@ describe('OxaConverter', () => {
         ).data,
       ).toEqual({
         fundingStatement: 'From the form',
-        _body: { fundingStatement: 'Funded by NSF.' },
+        _body: {
+          fundingStatement: [[{ type: 'Text', value: 'Funded by NSF.' }]],
+        },
       })
     })
 

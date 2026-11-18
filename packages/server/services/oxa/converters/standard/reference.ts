@@ -7,13 +7,6 @@ import type {
   OxaReference,
 } from '../../oxa.types'
 
-// RFC: Citations (RFC0005) - Reference.identifier must equal csl["citation-key"]
-const applyReferenceIdentifier = (reference: OxaReference): void => {
-  const citationKey = (reference.csl['citation-key'] as string) || reference.id
-  reference.identifier = citationKey
-  reference.csl['citation-key'] = citationKey
-}
-
 class ReferenceConverter extends BlockConverter {
   readonly tier = 'standard'
   readonly oxaTypes = ['Reference']
@@ -37,23 +30,23 @@ class ReferenceConverter extends BlockConverter {
 
     if (!csl.id) csl.id = id
     if (!csl.type) csl.type = 'document'
+    // RFC: Citations (RFC0005) - Reference.id must equal csl["citation-key"]
+    if (this.isEnabled('rfc')) csl['citation-key'] = id
 
     const node: OxaReference = { type: 'Reference', id, csl }
     if (children.length) node.children = children as OxaInline[]
-
-    if (this.isEnabled('rfc')) applyReferenceIdentifier(node)
 
     return node
   }
 
   fromOxa(node: OxaNode, children: string): string {
-    const { id, identifier, csl } = node as OxaReference
+    const { id, csl } = node as OxaReference
 
     return this.renderElement(
       'p',
       {
         class: 'ref',
-        id: id || identifier,
+        id,
         'data-structure': JSON.stringify(csl),
       },
       children,

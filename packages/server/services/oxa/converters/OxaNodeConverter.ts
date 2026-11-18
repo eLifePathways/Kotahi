@@ -12,12 +12,15 @@ export type OxaTier = 'standard' | 'rfc' | 'experimental'
 export type ConverterOptions = {
   enableRFC: boolean
   enableExperimental: boolean
+  isBlock: IsBlock
+}
+export type ExportConverterOptions = ConverterOptions & {
   fileUrl: OxaFileUrl
   files: OxaSourceFile[]
-  isBlock: IsBlock
 }
 type HtmlAttributes = Record<string, string | number | boolean | undefined>
 export type RenderChildren = (parent: OxaNode, nodes?: OxaNode[]) => string
+export type RenderInlines = (value: unknown) => string
 export type FromOxaContext = {
   parent: OxaNode | null
   childList: string[]
@@ -147,6 +150,14 @@ abstract class OxaNodeConverter<T extends OxaNode> {
   // eslint-disable-next-line class-methods-use-this
   metadata(): Record<string, unknown> {
     return {}
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  fromMetadata(
+    _metadata: Record<string, unknown>,
+    _renderInlines: RenderInlines,
+  ): string {
+    return ''
   }
 
   collectEndBlocks(): OxaBlock[] {

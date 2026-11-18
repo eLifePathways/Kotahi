@@ -84,6 +84,7 @@ const baseArgs = {
     '.pdf',
     '.epub',
     '.zip',
+    '.json',
   ],
   maxUploadSizeMb: 50,
   showUpload: true,

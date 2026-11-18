@@ -1,11 +1,14 @@
 import get from 'lodash/get'
-import { File } from '@coko/server'
+import set from 'lodash/set'
+import { File, uuidValidate } from '@coko/server'
 
 import CollaborativeDoc from '../models/collaborative-doc/collaborativeDoc.model'
 import type Form from '../models/form/form.model'
 import Manuscript from '../models/manuscript/manuscript.model'
 import type Review from '../models/review/review.model'
-import OxaConverter, {
+import OxaExporter from '../services/oxa/OxaExporter'
+import OxaImporter from '../services/oxa/OxaImporter'
+import {
   type OxaConverterOptions,
   type OxaSource,
   type OxaSourceFile,
@@ -13,7 +16,7 @@ import OxaConverter, {
 } from '../services/oxa/OxaConverter'
 import type { OxaDocument } from '../services/oxa/oxa.types'
 
-import { bodyImageIds } from '../utils/htmlUtils'
+import { bodyImageIds, htmlToText } from '../utils/htmlUtils'
 import { filesForField, isFileField, publicFileUrl } from './file.controllers'
 import { publishedFormFields } from './manuscript/manuscriptUtils'
 import {
@@ -184,12 +187,18 @@ const loadReviewMetadata = async (
 }
 
 export const manuscriptToOxa = async (
-  manuscript: Manuscript,
-  options: Omit<OxaConverterOptions, 'fileUrl'> = {},
-): Promise<OxaDocument> => {
+  manuscriptId: string,
+  options: OxaConverterOptions = {},
+): Promise<OxaDocument | null> => {
+  if (!uuidValidate(manuscriptId)) return null
+
+  const manuscript = await Manuscript.findById(manuscriptId, {
+    related: '[files]',
+    throwIfNotFound: false,
+  })
+
   // fetching file links would also get rejected if the manuscript is not published
-  if (!manuscript.published)
-    throw new Error('Only published manuscripts can be exported to OXA')
+  if (!manuscript?.published) return null
 
   const form = await getSubmissionForm(manuscript.groupId)
   const source = manuscriptToOxaSource(manuscript, form.getFields())
@@ -206,5 +215,62 @@ export const manuscriptToOxa = async (
 
   source.metadata.push(...reviewMetadata, ...decisionMetadata)
 
-  return new OxaConverter({ ...options, fileUrl: publicFileUrl }).toOxa(source)
+  return new OxaExporter({ ...options, fileUrl: publicFileUrl }).toOxa(source)
+}
+
+export const oxaSourceToManuscript = (
+  source: OxaSource,
+  formFields: Form.FormField[],
+): Pick<Manuscript, 'meta' | 'submission'> => {
+  const entries = new Map(source.metadata?.map(entry => [entry.path, entry]))
+  const paths = new Set<string>()
+  const manuscript: Pick<Manuscript, 'meta' | 'submission'> = {
+    meta: { source: source.body },
+    submission: {},
+  }
+
+  formFields
+    .filter(
+      field =>
+        !UNSUPPORTED_COMPONENTS.includes(field.component) &&
+        !isFileField(field),
+    )
+    .sort((a, b) => Number(b.name.includes('$')) - Number(a.name.includes('$')))
+    .forEach(field => {
+      const isHtml = HTML_COMPONENTS.includes(field.component)
+
+      if (field.name === TITLE_FIELD) {
+        if (source.title)
+          set(
+            manuscript,
+            field.name,
+            isHtml ? source.title : htmlToText(source.title),
+          )
+
+        return
+      }
+
+      const path = metadataPath(field.name)
+      if (paths.has(path)) return
+      paths.add(path)
+
+      const entry = entries.get(path)
+
+      if (entry && 'value' in entry && Boolean(entry.html) === isHtml)
+        set(manuscript, field.name, entry.value)
+    })
+
+  return manuscript
+}
+
+export const oxaToManuscript = async (
+  document: OxaDocument,
+  groupId: string,
+  options: OxaConverterOptions = {},
+): Promise<Pick<Manuscript, 'meta' | 'submission'>> => {
+  const form = await getSubmissionForm(groupId)
+
+  const source = new OxaImporter(options).fromOxa(document)
+
+  return oxaSourceToManuscript(source, form.getFields())
 }

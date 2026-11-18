@@ -7,9 +7,12 @@ import Group from '../../models/group/group.model'
 import Manuscript from '../../models/manuscript/manuscript.model'
 import Review from '../../models/review/review.model'
 import User from '../../models/user/user.model'
+import OxaExporter from '../../services/oxa/OxaExporter'
+import OxaImporter from '../../services/oxa/OxaImporter'
 import {
   manuscriptToOxa,
   manuscriptToOxaSource,
+  oxaSourceToManuscript,
   reviewsToMetadata,
 } from '../oxa.controllers'
 
@@ -231,23 +234,20 @@ describe('manuscriptToOxaSource', () => {
     ])
   })
 
-  it('keeps paths outside submission and puts $ fields last', () => {
+  it('puts $ fields last', () => {
     const source = manuscriptToOxaSource(
       {
         ...manuscript,
-        meta: { ...manuscript.meta, notes: 'Note' },
         submission: { $volumeNumber: '4', volumeNumber: '5' },
       } as unknown as Manuscript,
       formFields(
         always('submission.$volumeNumber'),
         always('submission.volumeNumber'),
-        always('meta.notes'),
       ),
     )
 
     expect(source.metadata).toEqual([
       { path: 'volumeNumber', value: '5' },
-      { path: 'meta.notes', value: 'Note' },
       { path: 'volumeNumber', value: '4' },
     ])
   })
@@ -333,6 +333,101 @@ describe('reviewsToMetadata', () => {
   })
 })
 
+describe('oxaSourceToManuscript', () => {
+  const fields = formFields(
+    { name: 'submission.$title', component: 'TextField' },
+    { name: 'submission.$doi', component: 'TextField' },
+    { name: 'submission.doi', component: 'TextField' },
+    { name: 'submission.summary', component: 'AbstractEditor' },
+    { name: 'submission.funder', component: 'TextField' },
+    { name: 'submission.discussion', component: 'ThreadedDiscussion' },
+    { name: 'submission.attachments', component: 'SupplementaryFiles' },
+    { name: 'submission.$volumeNumber', component: 'TextField' },
+  )
+
+  it('maps metadata back to the form fields it came from', () => {
+    expect(
+      oxaSourceToManuscript(
+        {
+          body: '<p class="paragraph">Body</p>',
+          title: '<p class="paragraph">A <em>title</em></p>',
+          metadata: [
+            { path: 'doi', value: '10.1000/xyz' },
+            {
+              path: 'summary',
+              value: '<p class="paragraph">S</p>',
+              html: true,
+            },
+            { path: 'volumeNumber', value: '4' },
+            { path: 'unknown', value: 'lost' },
+            { path: 'discussion', value: [{ id: 'd1' }] },
+            { path: 'attachments', value: [{ name: 'a.csv' }] },
+          ],
+        },
+        fields,
+      ),
+    ).toEqual({
+      meta: { source: '<p class="paragraph">Body</p>' },
+      submission: {
+        $title: 'A title',
+        $doi: '10.1000/xyz',
+        $volumeNumber: '4',
+        summary: '<p class="paragraph">S</p>',
+      },
+    })
+  })
+
+  it('keeps HTML values only for HTML fields', () => {
+    expect(
+      oxaSourceToManuscript(
+        {
+          body: '',
+          metadata: [
+            { path: 'summary', value: 'plain' },
+            {
+              path: 'funder',
+              value: '<p class="paragraph">NSF</p>',
+              html: true,
+            },
+          ],
+        },
+        fields,
+      ).submission,
+    ).toEqual({})
+  })
+
+  it('keeps the title HTML for an HTML title field', () => {
+    expect(
+      oxaSourceToManuscript(
+        { body: '', title: '<p class="paragraph">A <em>title</em></p>' },
+        formFields({ name: 'submission.$title', component: 'FullWaxField' }),
+      ).submission,
+    ).toEqual({ $title: '<p class="paragraph">A <em>title</em></p>' })
+  })
+
+  it('round-trips with manuscriptToOxaSource', () => {
+    const published = formFields(
+      always('submission.$title', { component: 'TextField' }),
+      always('submission.$doi', { component: 'TextField' }),
+      always('submission.$authors', { component: 'AuthorsInput' }),
+      always('submission.summary', { component: 'AbstractEditor' }),
+    )
+
+    const document = new OxaExporter({ fileUrl: (): string => '' }).toOxa(
+      manuscriptToOxaSource(manuscript, published),
+    )
+
+    const source = new OxaImporter({}).fromOxa(document)
+
+    expect(oxaSourceToManuscript(source, published).submission).toEqual({
+      $title: 'Title',
+      $doi: '10.1000/xyz',
+      $authors: [{ firstName: 'Jane', lastName: 'Doe' }],
+      summary: '<p class="paragraph">Summary</p>',
+    })
+  })
+})
+
 describe('manuscriptToOxa', () => {
   beforeAll(async () => {
     await config.init()
@@ -348,10 +443,17 @@ describe('manuscriptToOxa', () => {
     await DbTestUtils.clearDb()
   })
 
-  it('refuses manuscripts that are not published', async () => {
-    await expect(manuscriptToOxa(manuscript)).rejects.toThrow(
-      'Only published manuscripts can be exported to OXA',
-    )
+  it('returns nothing for unknown or unpublished manuscripts', async () => {
+    const group = await Group.insert({})
+
+    const unpublished = await Manuscript.insert({
+      groupId: group.id,
+      meta: {},
+    })
+
+    expect(await manuscriptToOxa('not-a-uuid')).toBeNull()
+    expect(await manuscriptToOxa(group.id)).toBeNull()
+    expect(await manuscriptToOxa(unpublished.id)).toBeNull()
   })
 
   const insertForm = async (
@@ -405,6 +507,27 @@ describe('manuscriptToOxa', () => {
       status: 'published',
       published: new Date().toISOString(),
       meta: {},
+      submission: { $title: 'Title', $volumeNumber: '4' },
+    })
+
+    const figure = await File.insert({
+      name: 'figure.png',
+      objectId: inserted.id,
+      tags: ['manuscriptImage'],
+      storedObjects: [storedObject('original', 'a.png', 'image/png')],
+    } as Partial<File>)
+
+    const attachment = await File.insert({
+      name: 'data.csv',
+      objectId: inserted.id,
+      tags: ['supplementary'],
+      storedObjects: [storedObject('original', 'data.csv', 'text/csv')],
+    } as Partial<File>)
+
+    await Manuscript.patchById(inserted.id, {
+      meta: {
+        source: `<p class="paragraph">Body</p><figure><img src="stale" data-fileid="${figure.id}"></figure>`,
+      },
     })
 
     await Manuscript.createTeams(inserted.id)
@@ -455,15 +578,9 @@ describe('manuscriptToOxa', () => {
       jsonData: JSON.stringify({ $verdict: 'accept' }),
     })
 
-    const document = await manuscriptToOxa(
-      {
-        ...manuscript,
-        id: inserted.id,
-        groupId: group.id,
-        published: inserted.published,
-      } as unknown as Manuscript,
-      { enableRFC: true },
-    )
+    const document = await manuscriptToOxa(inserted.id, {
+      enableExperimental: false,
+    })
 
     expect(document.title).toEqual([{ type: 'Text', value: 'Title' }])
 
@@ -472,12 +589,7 @@ describe('manuscriptToOxa', () => {
       attachments: [
         {
           name: 'data.csv',
-          url: `${serverUrl}/api/files/f2`,
-          encodingFormat: 'text/csv',
-        },
-        {
-          name: 'external.csv',
-          url: `${serverUrl}/api/files/f3`,
+          url: `${serverUrl}/api/files/${attachment.id}`,
           encodingFormat: 'text/csv',
         },
       ],
@@ -500,7 +612,7 @@ describe('manuscriptToOxa', () => {
       { type: 'Paragraph', children: [{ type: 'Text', value: 'Body' }] },
       {
         type: 'Image',
-        url: `${serverUrl}/api/files/f1`,
+        url: `${serverUrl}/api/files/${figure.id}`,
         encodingFormat: 'image/png',
       },
     ])

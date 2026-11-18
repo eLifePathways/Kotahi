@@ -1,13 +1,12 @@
 import { describe, it, expect } from 'vitest'
 
-import OxaConverter, {
-  type OxaConverterOptions,
-  type OxaSource,
-} from '../OxaConverter'
+import OxaExporter from '../OxaExporter'
+import { type OxaConverterOptions, type OxaSource } from '../OxaConverter'
 import type { OxaDocument } from '../oxa.types'
 
-type Tiers = Omit<OxaConverterOptions, 'fileUrl'>
+type Tiers = OxaConverterOptions
 
+const STANDARD: Tiers = { enableRFC: false, enableExperimental: false }
 const RFC: Tiers = { enableRFC: true }
 const EXPERIMENTAL: Tiers = { enableExperimental: true }
 const ALL: Tiers = { enableRFC: true, enableExperimental: true }
@@ -19,7 +18,10 @@ const convert = (
   options: Tiers = {},
   extra: Partial<OxaSource> = {},
 ): OxaDocument =>
-  new OxaConverter({ ...options, fileUrl }).toOxa({ body: source, ...extra })
+  new OxaExporter({ ...STANDARD, ...options, fileUrl }).toOxa({
+    body: source,
+    ...extra,
+  })
 
 const body = (source: string, options: Tiers = {}): OxaDocument['children'] =>
   convert(source, options).children
@@ -238,9 +240,9 @@ describe('standard converters', () => {
       ).toThrow(SyntaxError)
     })
 
-    it('adds the identifier and citation key when RFC is on', () => {
+    it('sets the citation key to the id when RFC is on', () => {
       expect(body('<p class="ref" id="r1">Ref</p>', RFC)).toMatchObject([
-        { identifier: 'r1', csl: { 'citation-key': 'r1' } },
+        { id: 'r1', csl: { 'citation-key': 'r1' } },
       ])
 
       expect(
@@ -248,9 +250,7 @@ describe('standard converters', () => {
           `<p class="ref" id="r1" data-structure='{"citation-key":"doe2020"}'>Ref</p>`,
           RFC,
         ),
-      ).toMatchObject([
-        { identifier: 'doe2020', csl: { 'citation-key': 'doe2020' } },
-      ])
+      ).toMatchObject([{ id: 'r1', csl: { 'citation-key': 'r1' } }])
     })
   })
 })
@@ -586,7 +586,7 @@ describe('experimental converters', () => {
     })
 
     it('restarts numbering on every conversion', () => {
-      const converter = new OxaConverter({ fileUrl })
+      const converter = new OxaExporter({ ...STANDARD, fileUrl })
 
       const source = { body: note }
 
@@ -686,10 +686,10 @@ describe('experimental converters', () => {
       expect(document.data).toEqual({
         _body: {
           funding: [
-            { source: 'NSF', awardId: '123' },
-            { source: '', awardId: '456' },
+            { source: [text('NSF')], awardId: [text('123')] },
+            { awardId: [text('456')] },
           ],
-          fundingStatement: 'Funded by NSF.',
+          fundingStatement: [[text('Funded by NSF.')]],
         },
       })
     })

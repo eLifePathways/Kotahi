@@ -85,8 +85,11 @@ const bodyImageIds = body => {
     .get()
 }
 
+const htmlToText = html => cheerio.load(html, null, false).root().text().trim()
+
 module.exports = {
   bodyImageIds,
+  htmlToText,
   getParagraphOrListItems,
   convertTagsAndRemoveTags,
   convertCharacterEntities,

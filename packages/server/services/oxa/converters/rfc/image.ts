@@ -3,7 +3,7 @@ import type { Element } from 'cheerio'
 import {
   BlockConverter,
   InlineConverter,
-  type ConverterOptions,
+  type ExportConverterOptions,
   type FromOxaContext,
 } from '../OxaNodeConverter'
 import { nodeSchema } from '../nodeSchema'
@@ -50,7 +50,7 @@ const isInlineContext = (el: Element): boolean => {
 
 const imageFields = (
   el: Element,
-  { files, fileUrl }: ConverterOptions,
+  { files, fileUrl }: ExportConverterOptions,
 ): ImageFields => {
   const fileId = el.attribs['data-fileid']
   const file = files.find(f => fileId && f.id === fileId)
@@ -79,7 +79,10 @@ export class ImageConverter extends BlockConverter {
 
   protected toOxa(el: Element): OxaBlock | null {
     if (!el.attribs.src) return null
-    return { type: 'Image', ...imageFields(el, this.options) }
+    return {
+      type: 'Image',
+      ...imageFields(el, this.options as ExportConverterOptions),
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -119,7 +122,10 @@ export class InlineImageConverter extends InlineConverter {
 
   protected toOxa(el: Element): OxaInline | null {
     if (!el.attribs.src) return null
-    return { type: 'InlineImage', ...imageFields(el, this.options) }
+    return {
+      type: 'InlineImage',
+      ...imageFields(el, this.options as ExportConverterOptions),
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this

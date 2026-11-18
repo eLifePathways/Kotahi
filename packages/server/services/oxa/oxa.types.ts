@@ -100,7 +100,6 @@ type OxaThematicBreak = NodeBase & { type: 'ThematicBreak' }
 export type OxaReference = NodeBase & {
   type: 'Reference'
   id: string
-  identifier?: string
   csl: Record<string, unknown>
   children?: OxaInline[]
 }
