@@ -1,5 +1,9 @@
 import type { Element } from 'cheerio'
-import { BlockConverter } from '../OxaNodeConverter'
+import {
+  BlockConverter,
+  childrenOf,
+  type FromOxaContext,
+} from '../OxaNodeConverter'
 import { ANY_CHILDREN, nodeSchema } from '../nodeSchema'
 import type { OxaBlock, OxaNode } from '../../oxa.types'
 
@@ -20,7 +24,7 @@ class TableConverter extends BlockConverter {
 
     const table: OxaBlock = {
       type: 'Table',
-      ...this.blockAttributes(el),
+      ...this.oxaBlockAttributes(el),
       children: rows,
     }
 
@@ -34,6 +38,39 @@ class TableConverter extends BlockConverter {
     children: OxaNode[],
   ): OxaNode | OxaNode[] | null {
     return children
+  }
+
+  fromOxa(
+    node: OxaNode,
+    _children: string,
+    { parent, childList, renderChildren }: FromOxaContext,
+  ): string {
+    const nodes = childrenOf(node)
+
+    /**
+     * Wax keeps a table's caption inside the table, as <caption>. In OXA the
+     * caption sits next to the table, in the Figure wrapping both, so collect
+     * it from there. Render only the caption's content, since the walker
+     * already rendered the Caption itself as a <figcaption>, which the Figure
+     * discards. Captions placed directly inside the table are moved into the
+     * <caption> too, so that only rows end up in <tbody>.
+     */
+    const siblings = parent?.type === 'Figure' ? childrenOf(parent) : []
+
+    const captions = [...siblings, ...nodes]
+      .filter(child => child.type === 'Caption')
+      .map(caption => renderChildren(caption))
+      .join('')
+
+    const rows = childList.filter((_, index) => nodes[index].type !== 'Caption')
+    const caption = captions ? this.renderElement('caption', {}, captions) : ''
+    const body = this.renderElement('tbody', {}, rows.join(''))
+
+    return this.renderElement(
+      'table',
+      this.htmlBlockAttributes(node),
+      `${caption}${body}`,
+    )
   }
 }
 

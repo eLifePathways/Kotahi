@@ -1,10 +1,19 @@
 import type { Element } from 'cheerio'
 
-import type Manuscript from '../../../../models/manuscript/manuscript.model'
-
-import { BlockConverter, InlineConverter } from '../OxaNodeConverter'
+import {
+  BlockConverter,
+  InlineConverter,
+  type ConverterOptions,
+  type FromOxaContext,
+} from '../OxaNodeConverter'
 import { nodeSchema } from '../nodeSchema'
-import type { OxaBlock, OxaInline } from '../../oxa.types'
+import type {
+  OxaBlock,
+  OxaInline,
+  OxaImage,
+  OxaInlineImage,
+  OxaNode,
+} from '../../oxa.types'
 
 type ImageFields = { url: string; alt?: string; encodingFormat?: string }
 
@@ -39,21 +48,17 @@ const isInlineContext = (el: Element): boolean => {
   return PHRASING_BLOCKS.includes(parent.name) || !BLOCK_TAGS.has(parent.name)
 }
 
-const imageFields = (el: Element, files: Manuscript['files']): ImageFields => {
+const imageFields = (
+  el: Element,
+  { files, fileUrl }: ConverterOptions,
+): ImageFields => {
   const fileId = el.attribs['data-fileid']
-
-  const file = (files ?? []).find(f => fileId && f.id === fileId) as
-    | { storedObjects?: { type: string; mimetype?: string }[] }
-    | undefined
-
-  const encodingFormat = file?.storedObjects?.find(
-    o => o.type === 'original',
-  )?.mimetype
+  const file = files.find(f => fileId && f.id === fileId)
 
   return {
-    url: el.attribs.src,
+    url: file ? fileUrl(file) : el.attribs.src,
     ...(el.attribs.alt ? { alt: el.attribs.alt } : {}),
-    ...(encodingFormat ? { encodingFormat } : {}),
+    ...(file ? { encodingFormat: file.mimetype } : {}),
   }
 }
 
@@ -70,12 +75,11 @@ export class ImageConverter extends BlockConverter {
     },
     ['url'],
   )
-  readonly leaf = true
   protected readonly selectors = ['img']
 
   protected toOxa(el: Element): OxaBlock | null {
     if (!el.attribs.src) return null
-    return { type: 'Image', ...imageFields(el, this.options.files) }
+    return { type: 'Image', ...imageFields(el, this.options) }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -83,6 +87,14 @@ export class ImageConverter extends BlockConverter {
     const alt = el.attribs.alt?.trim()
     if (!alt) return null
     return { type: 'Paragraph', children: [{ type: 'Text', value: alt }] }
+  }
+
+  fromOxa(node: OxaNode, children: string, { parent }: FromOxaContext): string {
+    const { url, alt } = node as OxaImage
+    const image = this.renderElement('img', { src: url, alt })
+    return parent?.type === 'Figure'
+      ? image
+      : this.renderElement('figure', {}, image)
   }
 }
 
@@ -99,7 +111,6 @@ export class InlineImageConverter extends InlineConverter {
     },
     ['url'],
   )
-  readonly leaf = true
   protected readonly selectors = ['img']
 
   matches(el: Element): boolean {
@@ -108,7 +119,7 @@ export class InlineImageConverter extends InlineConverter {
 
   protected toOxa(el: Element): OxaInline | null {
     if (!el.attribs.src) return null
-    return { type: 'InlineImage', ...imageFields(el, this.options.files) }
+    return { type: 'InlineImage', ...imageFields(el, this.options) }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -116,5 +127,10 @@ export class InlineImageConverter extends InlineConverter {
     const alt = el.attribs.alt?.trim()
     if (!alt) return null
     return { type: 'Text', value: alt }
+  }
+
+  fromOxa(node: OxaNode): string {
+    const { url, alt } = node as OxaInlineImage
+    return this.renderElement('img', { src: url, alt })
   }
 }

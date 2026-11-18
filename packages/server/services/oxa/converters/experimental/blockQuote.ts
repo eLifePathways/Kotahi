@@ -17,7 +17,7 @@ class BlockQuoteConverter extends BlockConverter {
 
     return {
       type: 'BlockQuote',
-      ...this.blockAttributes(el),
+      ...this.oxaBlockAttributes(el),
       children,
     }
   }
@@ -28,6 +28,14 @@ class BlockQuoteConverter extends BlockConverter {
     children: OxaNode[],
   ): OxaNode | OxaNode[] | null {
     return children
+  }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement(
+      'blockquote',
+      this.htmlBlockAttributes(node),
+      children,
+    )
   }
 }
 

@@ -25,6 +25,10 @@ class StrikethroughConverter extends InlineConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('span', { class: 'strikethrough' }, children)
+  }
 }
 
 export default StrikethroughConverter

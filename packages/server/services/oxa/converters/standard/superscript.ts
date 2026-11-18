@@ -12,6 +12,10 @@ class SuperscriptConverter extends InlineConverter {
     if (!children.length) return null
     return { type: 'Superscript', children: children as OxaInline[] }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('sup', {}, children)
+  }
 }
 
 export default SuperscriptConverter

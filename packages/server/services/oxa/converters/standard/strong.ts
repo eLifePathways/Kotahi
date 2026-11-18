@@ -12,6 +12,10 @@ class StrongConverter extends InlineConverter {
     if (!children.length) return null
     return { type: 'Strong', children: children as OxaInline[] }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('strong', {}, children)
+  }
 }
 
 export default StrongConverter

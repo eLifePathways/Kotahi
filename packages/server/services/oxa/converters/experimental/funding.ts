@@ -51,7 +51,12 @@ class FundingConverter extends BlockConverter {
     el: Element,
     children: OxaNode[],
   ): OxaNode | OxaNode[] | null {
-    return this.paragraph.convert(el, children)
+    return this.paragraph.convertToOxa(el, children)
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  fromOxa(): string {
+    return ''
   }
 }
 

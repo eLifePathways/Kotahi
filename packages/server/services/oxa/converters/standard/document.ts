@@ -16,6 +16,11 @@ class DocumentConverter extends OxaNodeConverter<OxaDocument> {
       children: this.wrapInlineRuns(children),
     }
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  fromOxa(node: OxaNode, children: string): string {
+    return children
+  }
 }
 
 export default DocumentConverter

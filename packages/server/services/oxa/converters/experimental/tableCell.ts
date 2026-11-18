@@ -59,6 +59,20 @@ class TableCellConverter extends BlockConverter {
 
     return { type: 'Paragraph', children: inlines }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    const { header, colspan, rowspan } = node as {
+      header?: boolean
+      colspan?: number
+      rowspan?: number
+    }
+
+    return this.renderElement(
+      header ? 'th' : 'td',
+      { colspan, rowspan },
+      children,
+    )
+  }
 }
 
 export default TableCellConverter

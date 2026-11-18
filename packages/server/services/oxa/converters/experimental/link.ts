@@ -41,6 +41,11 @@ class LinkConverter extends InlineConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    const { url, title } = node as { url?: string; title?: string }
+    return this.renderElement('a', { href: url, title }, children)
+  }
 }
 
 export default LinkConverter

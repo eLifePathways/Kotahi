@@ -41,6 +41,11 @@ class ListConverter extends BlockConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    const { ordered, start } = node as { ordered?: boolean; start?: number }
+    return this.renderElement(ordered ? 'ol' : 'ul', { start }, children)
+  }
 }
 
 export default ListConverter

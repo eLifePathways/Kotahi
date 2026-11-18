@@ -25,6 +25,10 @@ class SmallCapsConverter extends InlineConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('span', { class: 'small-caps' }, children)
+  }
 }
 
 export default SmallCapsConverter

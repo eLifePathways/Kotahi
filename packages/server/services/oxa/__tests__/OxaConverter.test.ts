@@ -1,35 +1,26 @@
 import { describe, it, expect } from 'vitest'
 
-import type Manuscript from '../../../models/manuscript/manuscript.model'
-import OxaConverter, { type OxaConverterOptions } from '../OxaConverter'
+import OxaConverter, {
+  type OxaConverterOptions,
+  type OxaSource,
+} from '../OxaConverter'
 import type { OxaDocument } from '../oxa.types'
 
-const manuscript = {
-  submission: {
-    $title: '<p>A <em>simple</em> manuscript</p>',
-    $authors: [
-      {
-        id: 'a1',
-        firstName: 'Jane',
-        lastName: 'Doe',
-        affiliation: 'Example University',
-      },
-    ],
-  },
-  meta: {
-    source: [
-      '<h1>Introduction</h1>',
-      '<p class="paragraph">Some <strong>bold</strong> text, see ',
-      '<a href="https://example.com">this link</a>.</p>',
-      '<ul><li><p class="paragraph">First item</p></li></ul>',
-    ].join(''),
-  },
-} as unknown as Manuscript
+const fileUrl = (file: { id: string }): string => `https://files/${file.id}`
+
+const source: OxaSource = {
+  title: '<p>A <em>simple</em> manuscript</p>',
+  body: [
+    '<h1>Introduction</h1>',
+    '<p class="paragraph">Some <strong>bold</strong> text, see ',
+    '<a href="https://example.com">this link</a>.</p>',
+    '<ul><li><p class="paragraph">First item</p></li></ul>',
+  ].join(''),
+}
 
 describe('OxaConverter', () => {
   it('converts to standard OXA that passes validation', () => {
-    const converter = new OxaConverter(manuscript)
-    const document = converter.convert()
+    const document = new OxaConverter({ fileUrl }).toOxa(source)
 
     expect(document).toEqual({
       type: 'Document',
@@ -61,22 +52,11 @@ describe('OxaConverter', () => {
   })
 
   it('emits RFC and experimental nodes when enabled', () => {
-    const converter = new OxaConverter(manuscript, {
+    const document = new OxaConverter({
       enableRFC: true,
       enableExperimental: true,
-    })
-
-    const document = converter.convert()
-
-    expect(document.metadata?.authors).toEqual([
-      {
-        identifier: 'author-a1',
-        name: 'Jane Doe',
-        givenName: 'Jane',
-        familyName: 'Doe',
-        affiliations: ['@aff-1'],
-      },
-    ])
+      fileUrl,
+    }).toOxa(source)
 
     expect(document.children[1]).toMatchObject({
       type: 'Paragraph',
@@ -93,50 +73,58 @@ describe('OxaConverter', () => {
 
   describe('document', () => {
     const convert = (
-      fields: Record<string, unknown>,
-      options: OxaConverterOptions = {},
-    ): OxaDocument =>
-      new OxaConverter(fields as unknown as Manuscript, options).convert()
+      input: OxaSource,
+      options: Omit<OxaConverterOptions, 'fileUrl'> = {},
+    ): OxaDocument => new OxaConverter({ ...options, fileUrl }).toOxa(input)
 
-    it('converts an empty manuscript to an empty document', () => {
+    it('converts an empty source to an empty document', () => {
       expect(convert({})).toEqual({ type: 'Document', children: [] })
     })
 
     it('reads a plain string title', () => {
-      expect(convert({ submission: { $title: 'Plain title' } }).title).toEqual([
+      expect(convert({ title: 'Plain title' }).title).toEqual([
         { type: 'Text', value: 'Plain title' },
       ])
     })
 
     it('joins headings and paragraphs in the title and drops other blocks', () => {
       expect(
-        convert({
-          submission: { $title: '<h1>Main</h1><hr><p>sub <em>title</em></p>' },
-        }).title,
+        convert({ title: '<h1>Main</h1><hr><p>sub <em>title</em></p>' }).title,
       ).toEqual([
         { type: 'Text', value: 'Main sub ' },
         { type: 'Emphasis', children: [{ type: 'Text', value: 'title' }] },
       ])
     })
 
-    it('falls back to the meta title', () => {
-      expect(convert({ meta: { title: 'Meta title' } }).title).toEqual([
-        { type: 'Text', value: 'Meta title' },
-      ])
-    })
-
     it('omits an empty title', () => {
-      expect(
-        convert({ submission: { $title: '<p> </p>' } }),
-      ).not.toHaveProperty('title')
+      expect(convert({ title: '<p> </p>' })).not.toHaveProperty('title')
     })
 
-    it('adds the abstract to metadata only when experimental is on', () => {
-      const fields = { submission: { $abstract: '<p>Abstract</p>' } }
+    it('puts metadata in data at its path', () => {
+      expect(
+        convert({
+          metadata: [
+            { path: 'doi', value: '10.1000/xyz' },
+            { path: 'topics', value: ['coral', 'reefs'] },
+            { path: 'meta.notes', value: 'Note' },
+          ],
+        }).data,
+      ).toEqual({
+        doi: '10.1000/xyz',
+        topics: ['coral', 'reefs'],
+        meta: { notes: 'Note' },
+      })
+    })
 
-      expect(convert(fields)).not.toHaveProperty('metadata')
-
-      expect(convert(fields, { enableExperimental: true }).metadata).toEqual({
+    it('converts HTML metadata and drops entries that convert to nothing', () => {
+      expect(
+        convert({
+          metadata: [
+            { path: 'abstract', value: '<p>Abstract</p>', html: true },
+            { path: 'empty', value: '<p></p>', html: true },
+          ],
+        }).data,
+      ).toEqual({
         abstract: [
           {
             type: 'Paragraph',
@@ -146,13 +134,80 @@ describe('OxaConverter', () => {
       })
     })
 
-    it('falls back to the meta abstract', () => {
+    it('ignores paths that would write to an object prototype', () => {
+      const document = convert({
+        metadata: [
+          { path: '__proto__.polluted', value: 'yes' },
+          { path: 'a.constructor.prototype.polluted', value: 'yes' },
+        ],
+      })
+
+      expect(document.data).not.toHaveProperty('polluted')
+      expect(({} as Record<string, unknown>).polluted).toBeUndefined()
+    })
+
+    it('keeps metadata from the body apart from source metadata', () => {
       expect(
         convert(
-          { meta: { abstract: '<p>Meta abstract</p>' } },
+          {
+            body: '<p class="fundingstatement">Funded by NSF.</p>',
+            metadata: [{ path: 'fundingStatement', value: 'From the form' }],
+          },
           { enableExperimental: true },
-        ).metadata,
-      ).toMatchObject({ abstract: [{ type: 'Paragraph' }] })
+        ).data,
+      ).toEqual({
+        fundingStatement: 'From the form',
+        _body: { fundingStatement: 'Funded by NSF.' },
+      })
+    })
+
+    it('lists file metadata with their URLs', () => {
+      expect(
+        convert({
+          metadata: [
+            {
+              path: 'attachments',
+              files: [
+                { id: 'f1', name: 'data.csv', mimetype: 'text/csv' },
+                { id: 'f2', name: 'raw.zip', mimetype: 'application/zip' },
+              ],
+            },
+          ],
+        }).data,
+      ).toEqual({
+        attachments: [
+          {
+            name: 'data.csv',
+            url: 'https://files/f1',
+            encodingFormat: 'text/csv',
+          },
+          {
+            name: 'raw.zip',
+            url: 'https://files/f2',
+            encodingFormat: 'application/zip',
+          },
+        ],
+      })
+    })
+
+    it('lets later entries win on the same path', () => {
+      expect(
+        convert({
+          metadata: [
+            { path: 'volumeNumber', value: '5' },
+            { path: 'volumeNumber', value: '4' },
+          ],
+        }).data,
+      ).toEqual({ volumeNumber: '4' })
+    })
+
+    it('never emits metadata', () => {
+      const document = convert(
+        { metadata: [{ path: 'doi', value: '10.1000/xyz' }] },
+        { enableRFC: true, enableExperimental: true },
+      )
+
+      expect(document).not.toHaveProperty('metadata')
     })
   })
 })

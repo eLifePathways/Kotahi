@@ -12,6 +12,10 @@ class EmphasisConverter extends InlineConverter {
     if (!children.length) return null
     return { type: 'Emphasis', children: children as OxaInline[] }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('em', {}, children)
+  }
 }
 
 export default EmphasisConverter

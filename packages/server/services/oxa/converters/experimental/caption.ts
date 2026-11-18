@@ -29,6 +29,10 @@ class CaptionConverter extends BlockConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('figcaption', {}, children)
+  }
 }
 
 export default CaptionConverter

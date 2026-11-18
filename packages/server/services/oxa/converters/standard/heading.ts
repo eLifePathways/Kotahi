@@ -1,6 +1,6 @@
 import type { Element } from 'cheerio'
 import { BlockConverter } from '../OxaNodeConverter'
-import type { OxaBlock, OxaInline, OxaNode } from '../../oxa.types'
+import type { OxaBlock, OxaInline, OxaNode, OxaHeading } from '../../oxa.types'
 
 class HeadingConverter extends BlockConverter {
   readonly tier = 'standard'
@@ -12,10 +12,19 @@ class HeadingConverter extends BlockConverter {
 
     return {
       type: 'Heading',
-      ...this.blockAttributes(el),
+      ...this.oxaBlockAttributes(el),
       level: Number(el.name.slice(1)),
       children: children as OxaInline[],
     }
+  }
+
+  fromOxa(node: OxaNode, children: string): string {
+    const { level } = node as OxaHeading
+    return this.renderElement(
+      `h${level}`,
+      this.htmlBlockAttributes(node),
+      children,
+    )
   }
 }
 

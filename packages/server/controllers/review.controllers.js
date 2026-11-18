@@ -22,12 +22,11 @@ const {
   deepMergeObjectsReplacingArrays,
 } = require('../utils/objectUtils')
 
+const isReviewFileField = field =>
+  ['SupplementaryFiles', 'VisualAbstract'].includes(field.component)
+
 const getFileFieldNames = form =>
-  form.structure.children
-    .filter(field =>
-      ['SupplementaryFiles', 'VisualAbstract'].includes(field.component),
-    )
-    .map(field => field.name)
+  form.structure.children.filter(isReviewFileField).map(field => field.name)
 
 // Paranoia, in case some files are already in full object form
 const toFileIds = value =>
@@ -296,9 +295,11 @@ module.exports = {
   getReviewFileIds,
   getReviewForm,
   getSubmissionForm,
+  isReviewFileField,
   isReviewSharedWithCurrentUser,
   lockUnlockCollaborativeReview,
   reviewUser,
+  toFileIds,
   updateReview,
   updateReviewerTeamMemberStatus,
 }

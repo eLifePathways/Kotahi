@@ -41,6 +41,10 @@ class TableRowConverter extends BlockConverter {
       ]),
     }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('tr', {}, children)
+  }
 }
 
 export default TableRowConverter

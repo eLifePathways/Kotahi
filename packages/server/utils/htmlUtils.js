@@ -1,3 +1,4 @@
+const cheerio = require('cheerio')
 const he = require('he')
 
 // note this regex is intended for node, and doesn't work in some browsers (so it breaks Storybook on Safari)
@@ -75,7 +76,17 @@ const illegalCharRegex =
 /** Remove surrogates, unassigned characters (including noncharacters) and control characters other than ASCII whitespace. */
 const removeIllegalCharacters = markup => markup.replace(illegalCharRegex, '')
 
+const bodyImageIds = body => {
+  if (!body) return []
+  const $ = cheerio.load(body)
+
+  return $('img[data-fileid]')
+    .map((index, image) => $(image).attr('data-fileid'))
+    .get()
+}
+
 module.exports = {
+  bodyImageIds,
   getParagraphOrListItems,
   convertTagsAndRemoveTags,
   convertCharacterEntities,

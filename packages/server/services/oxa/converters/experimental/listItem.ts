@@ -60,6 +60,10 @@ class ListItemConverter extends BlockConverter {
      */
     return prependMarker(this.wrapInlineRuns(children), listMarker(el))
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('li', {}, children)
+  }
 }
 
 export default ListItemConverter

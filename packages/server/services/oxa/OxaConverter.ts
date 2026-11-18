@@ -1,28 +1,51 @@
 import Ajv, { type ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 import { load, type AnyNode } from 'cheerio'
+import set from 'lodash/set'
 
-import type Manuscript from '../../models/manuscript/manuscript.model'
 import {
   type AnyConverter,
   type ConverterOptions,
+  type RenderChildren,
+  childrenOf,
   normalizeInlineElements,
 } from './converters/OxaNodeConverter'
 import type { OxaBlock, OxaDocument, OxaInline, OxaNode } from './oxa.types'
 
 import createConverters from './converters'
 import { ROOT_TAG } from './converters/standard/document'
-import buildMetadata from './metadata'
 import normalizeWhitespace from './whitespace'
+
+export type OxaSourceFile = {
+  id: string
+  name: string
+  mimetype: string
+}
+
+export type OxaFileUrl = (file: OxaSourceFile) => string
 
 export type OxaConverterOptions = {
   enableRFC?: boolean
   enableExperimental?: boolean
+  fileUrl: OxaFileUrl
+}
+
+export type OxaSourceMetadata =
+  | { path: string; value: unknown; html?: boolean }
+  | { path: string; files: OxaSourceFile[] }
+
+export type OxaSource = {
+  body?: string
+  title?: string
+  metadata?: OxaSourceMetadata[]
+  files?: OxaSourceFile[]
 }
 
 const oxaSchema = require('./schemas/oxa-0.2.1.schema.json')
 
 const validators = new Map<string, ValidateFunction>()
+
+const BODY_METADATA_KEY = '_body'
 
 const parse = (html: string): AnyNode[] =>
   normalizeWhitespace(
@@ -34,20 +57,18 @@ const parse = (html: string): AnyNode[] =>
   )
 
 class OxaConverter {
-  private readonly manuscript: Manuscript
   private readonly options: ConverterOptions
   private readonly converters: AnyConverter[]
 
-  constructor(manuscript: Manuscript, options: OxaConverterOptions = {}) {
-    this.manuscript = manuscript
-
+  constructor(options: OxaConverterOptions) {
     this.options = {
       enableRFC: options.enableRFC ?? false,
       enableExperimental: options.enableExperimental ?? false,
+      fileUrl: options.fileUrl,
       /**
        * Files are used for image conversions.
        */
-      files: manuscript.files ?? [],
+      files: [],
       /**
        * Which block-type converters are available is dynamic and each
        * converter does not know about other converters. So we construct this
@@ -62,11 +83,13 @@ class OxaConverter {
     this.converters = createConverters(this.options)
   }
 
-  convert(): OxaDocument {
+  toOxa(source: OxaSource): OxaDocument {
     // Some converters hold state. Wipe it before running again.
     this.converters.forEach(converter => converter.reset())
 
-    const body = this.convertBlocks(this.manuscript.meta?.source)
+    this.options.files = source.files ?? []
+
+    const body = this.convertBlocks(source.body)
 
     // some converters (eg. footnotes) can append content to the end of the body
     const endBlocks = this.converters.flatMap(converter =>
@@ -78,26 +101,41 @@ class OxaConverter {
       children: [...body, ...endBlocks],
     }
 
-    const title = this.convertTitle()
+    const title = this.convertTitle(source.title)
+
     if (title) document.title = title
 
-    const abstract = this.options.enableExperimental
-      ? this.convertBlocks(
-          this.manuscript.submission?.$abstract ||
-            this.manuscript.meta?.abstract,
-        )
-      : []
+    const metadata = this.convertMetadata(source.metadata)
 
-    const metadata = Object.assign(
-      buildMetadata(this.manuscript, this.options, abstract),
+    /**
+     * Some metadata fields come from the body of the docment and not the
+     * submission form. We prefix them to avoid potential collisions with the
+     * form fields. eg. we capture "funding" from the body, but a form field
+     * named "funding" would collide with it.
+     */
+    const bodyMetadata = Object.assign(
+      {},
       ...this.converters.map(converter => converter.metadata()),
     )
 
-    if (Object.keys(metadata).length) document.metadata = metadata
+    if (Object.keys(bodyMetadata).length)
+      metadata[BODY_METADATA_KEY] = bodyMetadata
+
+    /**
+     * There's an RFC for a metadata key on the document, but it does not define
+     * any valid keys yet. It also says that all unknown keys should go under
+     * data. All keys are unknown as it stands, so we put all under data.
+     */
+    if (Object.keys(metadata).length) document.data = metadata
 
     this.validate(document)
 
     return document
+  }
+
+  fromOxa(document: OxaDocument): string {
+    this.validate(document)
+    return this.renderNode(document, null)
   }
 
   private validate(document: OxaDocument): void {
@@ -174,19 +212,48 @@ class OxaConverter {
       return 'attribs' in node ? this.convertNodes(node.children) : []
 
     const children =
-      converter.leaf || !('children' in node)
+      converter.skipChildren || !('children' in node)
         ? []
         : this.convertNodes(node.children)
-    const result = converter.convert(node, children)
+    const result = converter.convertToOxa(node, children)
 
     if (!result) return []
     return Array.isArray(result) ? result : [result]
   }
 
-  private convertTitle(): OxaInline[] | undefined {
-    const html =
-      this.manuscript.submission?.$title || this.manuscript.meta?.title
+  private convertMetadata(
+    entries: OxaSourceMetadata[] = [],
+  ): Record<string, unknown> {
+    const metadata: Record<string, unknown> = {}
 
+    entries.forEach(entry => {
+      let value: unknown
+
+      if ('files' in entry) {
+        value = entry.files.map(file => this.convertFile(file))
+      } else if (entry.html && typeof entry.value === 'string') {
+        value = this.convertBlocks(entry.value)
+      } else {
+        value = entry.value
+      }
+
+      if (Array.isArray(value) && !value.length) return
+
+      set(metadata, entry.path, value)
+    })
+
+    return metadata
+  }
+
+  private convertFile(file: OxaSourceFile): Record<string, string> {
+    return {
+      name: file.name,
+      url: this.options.fileUrl(file),
+      encodingFormat: file.mimetype,
+    }
+  }
+
+  private convertTitle(html?: string): OxaInline[] | undefined {
     if (!html) return undefined
 
     const separator: OxaInline = { type: 'Text', value: ' ' }
@@ -201,6 +268,27 @@ class OxaConverter {
     )
 
     return title.length ? title : undefined
+  }
+
+  private renderChildren: RenderChildren = (
+    parent,
+    nodes = childrenOf(parent),
+  ) => nodes.map(node => this.renderNode(node, parent)).join('')
+
+  private renderNode(node: OxaNode, parent: OxaNode | null): string {
+    const converter = this.converters.find(c => c.oxaTypes.includes(node.type))
+
+    if (!converter) throw new Error(`No converter for OXA type ${node.type}`)
+
+    const childList = childrenOf(node).map(child =>
+      this.renderNode(child, node),
+    )
+
+    return converter.fromOxa(node, childList.join(''), {
+      parent,
+      childList,
+      renderChildren: this.renderChildren,
+    })
   }
 }
 

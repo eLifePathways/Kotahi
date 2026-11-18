@@ -4,7 +4,7 @@ type NodeBase = {
   data?: Record<string, unknown>
 }
 
-type OxaText = NodeBase & { type: 'Text'; value: string }
+export type OxaText = NodeBase & { type: 'Text'; value: string }
 
 type OxaEmphasis = NodeBase & {
   type: 'Emphasis'
@@ -23,7 +23,7 @@ type OxaSuperscript = NodeBase & {
   children: OxaInline[]
 }
 
-type OxaInlineCode = NodeBase & {
+export type OxaInlineCode = NodeBase & {
   type: 'InlineCode'
   value: string
   language?: string
@@ -41,13 +41,13 @@ export type OxaCite = NodeBase & {
   intent?: string
 }
 
-type OxaCiteGroup = NodeBase & {
+export type OxaCiteGroup = NodeBase & {
   type: 'CiteGroup'
   kind: 'narrative' | 'parenthetical'
   children: OxaCite[]
 }
 
-type OxaInlineImage = NodeBase & {
+export type OxaInlineImage = NodeBase & {
   type: 'InlineImage'
   url: string
   alt?: string
@@ -78,7 +78,7 @@ export type OxaInline =
   | OxaInlineImage
   | OxaExperimentalInline
 
-type OxaHeading = NodeBase & {
+export type OxaHeading = NodeBase & {
   type: 'Heading'
   level: number
   children: OxaInline[]
@@ -89,7 +89,7 @@ export type OxaParagraph = NodeBase & {
   children: OxaInline[]
 }
 
-type OxaCode = NodeBase & {
+export type OxaCode = NodeBase & {
   type: 'Code'
   value: string
   language?: string
@@ -105,7 +105,7 @@ export type OxaReference = NodeBase & {
   children?: OxaInline[]
 }
 
-type OxaImage = NodeBase & {
+export type OxaImage = NodeBase & {
   type: 'Image'
   url: string
   alt?: string

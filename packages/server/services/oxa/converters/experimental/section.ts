@@ -42,6 +42,19 @@ class SectionConverter extends BlockConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    const classes = (node.classes ?? []).map(
+      c =>
+        Object.keys(SECTION_KINDS).find(kind => SECTION_KINDS[kind] === c) ?? c,
+    )
+
+    return this.renderElement(
+      'section',
+      { id: node.id, class: classes.join(' ') },
+      children,
+    )
+  }
 }
 
 export default SectionConverter

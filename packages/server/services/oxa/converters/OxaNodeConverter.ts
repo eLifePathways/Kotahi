@@ -1,24 +1,36 @@
 import type { AnyNode, Element } from 'cheerio'
 
-import type Manuscript from '../../../models/manuscript/manuscript.model'
-
 import type { OxaBlock, OxaInline, OxaNode } from '../oxa.types'
 import type { NodeSchema } from './nodeSchema'
+import type { OxaFileUrl, OxaSourceFile } from '../OxaConverter'
 
 type NodeKind = 'block' | 'inline'
 
 export type IsBlock = (node: OxaNode) => boolean
-export type BlockAttributes = { id?: string; classes?: string[] }
+type OxaBlockAttributes = { id?: string; classes?: string[] }
 export type OxaTier = 'standard' | 'rfc' | 'experimental'
 export type ConverterOptions = {
   enableRFC: boolean
   enableExperimental: boolean
-  files: Manuscript['files']
+  fileUrl: OxaFileUrl
+  files: OxaSourceFile[]
   isBlock: IsBlock
+}
+type HtmlAttributes = Record<string, string | number | boolean | undefined>
+export type RenderChildren = (parent: OxaNode, nodes?: OxaNode[]) => string
+export type FromOxaContext = {
+  parent: OxaNode | null
+  childList: string[]
+  renderChildren: RenderChildren
 }
 
 export const getClasses = (el: Element): string[] =>
   (el.attribs.class || '').split(/\s+/).filter(Boolean)
+
+export const childrenOf = (node: OxaNode): OxaNode[] =>
+  'children' in node && Array.isArray(node.children)
+    ? (node.children as OxaNode[])
+    : []
 
 export const normalizeInlineElements = (inlines: OxaInline[]): OxaInline[] => {
   const merged: OxaInline[] = []
@@ -53,7 +65,7 @@ abstract class OxaNodeConverter<T extends OxaNode> {
   abstract readonly kind: NodeKind
   abstract readonly tier: OxaTier
   abstract readonly oxaTypes: string[]
-  readonly leaf: boolean = false // does not convert children if true
+  readonly skipChildren: boolean = false // does not convert children if true
   readonly schema: NodeSchema | null = null
   protected abstract readonly selectors: string[]
   protected readonly options: ConverterOptions
@@ -83,7 +95,35 @@ abstract class OxaNodeConverter<T extends OxaNode> {
     return true
   }
 
-  convert(node: AnyNode, children: OxaNode[]): OxaNode | OxaNode[] | null {
+  // eslint-disable-next-line class-methods-use-this
+  protected escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+  }
+
+  protected renderElement(
+    tag: string,
+    attributes: HtmlAttributes = {},
+    content?: string,
+  ): string {
+    const attrs = Object.entries(attributes)
+      // a simple !!value would drop a 0 value, which is a valid attribute value
+      .filter(([, value]) => typeof value === 'number' || !!value)
+      .map(([name, value]) =>
+        value === true ? name : `${name}="${this.escapeHtml(String(value))}"`,
+      )
+      .join(' ')
+
+    const openingTag = attrs ? `<${tag} ${attrs}>` : `<${tag}>`
+
+    if (content === undefined) return openingTag
+    return `${openingTag}${content}</${tag}>`
+  }
+
+  convertToOxa(node: AnyNode, children: OxaNode[]): OxaNode | OxaNode[] | null {
     if (!this.enabled && !this.fallback) {
       throw new Error(`${this.constructor.name} (${this.tier}) has no fallback`)
     }
@@ -171,20 +211,31 @@ abstract class OxaNodeConverter<T extends OxaNode> {
     node: AnyNode,
     children: OxaNode[],
   ): OxaNode | OxaNode[] | null
+
+  abstract fromOxa(
+    node: OxaNode,
+    children: string,
+    context: FromOxaContext,
+  ): string
 }
 
 export abstract class BlockConverter extends OxaNodeConverter<OxaBlock> {
   readonly kind = 'block'
-  protected readonly ignoredClasses: string[] = []
 
-  protected blockAttributes(el: Element): BlockAttributes {
-    const attributes: BlockAttributes = {}
+  // eslint-disable-next-line class-methods-use-this
+  protected oxaBlockAttributes(el: Element): OxaBlockAttributes {
+    const attributes: OxaBlockAttributes = {}
 
-    const classes = getClasses(el).filter(c => !this.ignoredClasses.includes(c))
+    const classes = getClasses(el)
 
     if (el.attribs.id) attributes.id = el.attribs.id
     if (classes.length) attributes.classes = classes
     return attributes
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  protected htmlBlockAttributes(node: OxaNode): HtmlAttributes {
+    return { id: node.id, class: (node.classes ?? []).join(' ') }
   }
 }
 

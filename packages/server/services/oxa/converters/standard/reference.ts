@@ -45,6 +45,20 @@ class ReferenceConverter extends BlockConverter {
 
     return node
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    const { id, identifier, csl } = node as OxaReference
+
+    return this.renderElement(
+      'p',
+      {
+        class: 'ref',
+        id: id || identifier,
+        'data-structure': JSON.stringify(csl),
+      },
+      children,
+    )
+  }
 }
 
 export default ReferenceConverter

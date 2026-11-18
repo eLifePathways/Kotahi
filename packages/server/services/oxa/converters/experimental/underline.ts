@@ -25,6 +25,10 @@ class UnderlineConverter extends InlineConverter {
   ): OxaNode | OxaNode[] | null {
     return children
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('u', {}, children)
+  }
 }
 
 export default UnderlineConverter

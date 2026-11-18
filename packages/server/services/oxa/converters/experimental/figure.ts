@@ -1,5 +1,9 @@
 import type { Element } from 'cheerio'
-import { BlockConverter } from '../OxaNodeConverter'
+import {
+  BlockConverter,
+  childrenOf,
+  type FromOxaContext,
+} from '../OxaNodeConverter'
 import { ANY_CHILDREN, nodeSchema } from '../nodeSchema'
 import type { OxaBlock, OxaNode } from '../../oxa.types'
 
@@ -17,7 +21,7 @@ class FigureConverter extends BlockConverter {
 
     return {
       type: 'Figure',
-      ...this.blockAttributes(el),
+      ...this.oxaBlockAttributes(el),
       children,
     }
   }
@@ -28,6 +32,29 @@ class FigureConverter extends BlockConverter {
     children: OxaNode[],
   ): OxaNode | OxaNode[] | null {
     return children
+  }
+
+  fromOxa(
+    node: OxaNode,
+    children: string,
+    { childList }: FromOxaContext,
+  ): string {
+    const nodes = childrenOf(node)
+
+    /**
+     * Wax has no figure around tables: its figure only holds images and a
+     * figcaption, and a table keeps its caption inside itself. The table has
+     * already rendered the caption into its <caption>, so return just the
+     * tables. Any other children of this figure are dropped.
+     */
+    const tables = childList.filter((_, index) => nodes[index].type === 'Table')
+    if (tables.length) return tables.join('')
+
+    return this.renderElement(
+      'figure',
+      this.htmlBlockAttributes(node),
+      children,
+    )
   }
 }
 

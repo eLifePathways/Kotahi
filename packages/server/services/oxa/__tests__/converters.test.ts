@@ -1,27 +1,28 @@
 import { describe, it, expect } from 'vitest'
 
-import type Manuscript from '../../../models/manuscript/manuscript.model'
-import OxaConverter, { type OxaConverterOptions } from '../OxaConverter'
+import OxaConverter, {
+  type OxaConverterOptions,
+  type OxaSource,
+} from '../OxaConverter'
 import type { OxaDocument } from '../oxa.types'
 
-const RFC: OxaConverterOptions = { enableRFC: true }
-const EXPERIMENTAL: OxaConverterOptions = { enableExperimental: true }
-const ALL: OxaConverterOptions = { enableRFC: true, enableExperimental: true }
+type Tiers = Omit<OxaConverterOptions, 'fileUrl'>
+
+const RFC: Tiers = { enableRFC: true }
+const EXPERIMENTAL: Tiers = { enableExperimental: true }
+const ALL: Tiers = { enableRFC: true, enableExperimental: true }
+
+const fileUrl = (file: { id: string }): string => `https://files/${file.id}`
 
 const convert = (
   source: string,
-  options: OxaConverterOptions = {},
-  extra: Record<string, unknown> = {},
+  options: Tiers = {},
+  extra: Partial<OxaSource> = {},
 ): OxaDocument =>
-  new OxaConverter(
-    { meta: { source }, submission: {}, ...extra } as unknown as Manuscript,
-    options,
-  ).convert()
+  new OxaConverter({ ...options, fileUrl }).toOxa({ body: source, ...extra })
 
-const body = (
-  source: string,
-  options: OxaConverterOptions = {},
-): OxaDocument['children'] => convert(source, options).children
+const body = (source: string, options: Tiers = {}): OxaDocument['children'] =>
+  convert(source, options).children
 
 const text = (value: string): Record<string, unknown> => ({
   type: 'Text',
@@ -176,6 +177,14 @@ describe('standard converters', () => {
       ])
     })
 
+    it('keeps the callout id', () => {
+      expect(
+        body(
+          `<p><span class="callout" id="c1" data-citationitems='[{"id":"r1"}]'>[1]</span></p>`,
+        ),
+      ).toMatchObject([{ children: [{ type: 'CiteGroup', id: 'c1' }] }])
+    })
+
     it('unwraps callouts without citation items', () => {
       expect(body(callout('[]', 'plain'))).toEqual([
         paragraph(text('see plain')),
@@ -247,18 +256,24 @@ describe('standard converters', () => {
 })
 
 describe('RFC converters', () => {
-  const files = [
-    {
-      id: 'f1',
-      storedObjects: [{ type: 'original', mimetype: 'image/png' }],
-    },
-  ]
+  const files = [{ id: 'f1', name: 'a.png', mimetype: 'image/png' }]
 
   const figure = '<figure><img src="a.png" alt="Alt" data-fileid="f1"></figure>'
 
-  it('converts block images with their encoding format', () => {
+  it("converts block images with their file's URL and encoding format", () => {
     expect(convert(figure, RFC, { files }).children).toEqual([
-      { type: 'Image', url: 'a.png', alt: 'Alt', encodingFormat: 'image/png' },
+      {
+        type: 'Image',
+        url: 'https://files/f1',
+        alt: 'Alt',
+        encodingFormat: 'image/png',
+      },
+    ])
+  })
+
+  it('falls back to the image src when no file matches', () => {
+    expect(convert(figure, RFC).children).toEqual([
+      { type: 'Image', url: 'a.png', alt: 'Alt' },
     ])
   })
 
@@ -571,12 +586,11 @@ describe('experimental converters', () => {
     })
 
     it('restarts numbering on every conversion', () => {
-      const converter = new OxaConverter({
-        meta: { source: note },
-        submission: {},
-      } as unknown as Manuscript)
+      const converter = new OxaConverter({ fileUrl })
 
-      expect(converter.convert()).toEqual(converter.convert())
+      const source = { body: note }
+
+      expect(converter.toOxa(source)).toEqual(converter.toOxa(source))
     })
   })
 
@@ -669,12 +683,14 @@ describe('experimental converters', () => {
 
       expect(document.children).toEqual([paragraph(text('Body'))])
 
-      expect(document.metadata).toMatchObject({
-        funding: [
-          { source: 'NSF', awardId: '123' },
-          { source: '', awardId: '456' },
-        ],
-        fundingStatement: 'Funded by NSF.',
+      expect(document.data).toEqual({
+        _body: {
+          funding: [
+            { source: 'NSF', awardId: '123' },
+            { source: '', awardId: '456' },
+          ],
+          fundingStatement: 'Funded by NSF.',
+        },
       })
     })
 

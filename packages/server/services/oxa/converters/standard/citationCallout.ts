@@ -1,6 +1,6 @@
 import { text, type Element } from 'cheerio'
 import { InlineConverter } from '../OxaNodeConverter'
-import type { OxaCite, OxaInline } from '../../oxa.types'
+import type { OxaCite, OxaInline, OxaCiteGroup, OxaNode } from '../../oxa.types'
 
 const citationIds = (el: Element): string[] => {
   const value = el.attribs['data-citationitems']
@@ -32,10 +32,29 @@ class CitationCalloutConverter extends InlineConverter {
 
     return {
       type: 'CiteGroup',
+      ...(el.attribs.id ? { id: el.attribs.id } : {}),
       kind: 'parenthetical',
       children: cites,
       ...(calloutText ? { data: { calloutText } } : {}),
     }
+  }
+
+  fromOxa(node: OxaNode): string {
+    const group = node.type === 'CiteGroup' ? (node as OxaCiteGroup) : null
+    const cites = group ? group.children : [node as OxaCite]
+    const label = String(group?.data?.calloutText ?? '')
+    const items = cites.map(cite => ({ id: cite.xref }))
+
+    return this.renderElement(
+      'span',
+      {
+        class: 'callout',
+        id: node.id,
+        'data-citationitems': JSON.stringify(items),
+        'data-citationcallouttext': label,
+      },
+      this.escapeHtml(label),
+    )
   }
 }
 

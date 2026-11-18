@@ -12,6 +12,10 @@ class SubscriptConverter extends InlineConverter {
     if (!children.length) return null
     return { type: 'Subscript', children: children as OxaInline[] }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('sub', {}, children)
+  }
 }
 
 export default SubscriptConverter

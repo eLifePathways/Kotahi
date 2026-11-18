@@ -55,6 +55,10 @@ class FootnoteConverter extends InlineConverter {
       children: [{ type: 'Text', value: String(this.notes.length) }],
     }
   }
+
+  fromOxa(node: OxaNode, children: string): string {
+    return this.renderElement('footnote', { id: node.id }, children)
+  }
 }
 
 export default FootnoteConverter
