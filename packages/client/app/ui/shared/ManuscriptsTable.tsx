@@ -36,7 +36,12 @@ import {
   Tooltip,
   type TableColumnType,
 } from 'antd'
-import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
+import type {
+  FilterDropdownProps,
+  SorterResult,
+  TableCurrentDataSource,
+  TablePaginationConfig,
+} from 'antd/es/table/interface'
 import dayjs from 'dayjs'
 import DOMPurify from 'isomorphic-dompurify'
 import { getReadableTextColor } from '../../shared/colorContrast'
@@ -1656,12 +1661,18 @@ const ManuscriptsTable = ({
    * clicked. Never sorts `dataSource` itself -- the caller re-fetches.
    */
   const handleTableChange = (
-    _pagination: unknown,
+    pagination: TablePaginationConfig,
     filters: Record<string, (string | number | boolean)[] | null>,
     sorter:
       | SorterResult<Record<string, any>>
       | SorterResult<Record<string, any>>[],
+    extra: TableCurrentDataSource<Record<string, any>>,
   ): void => {
+    if (extra.action === 'paginate') {
+      onPageChange(pagination.current, pagination.pageSize)
+      return
+    }
+
     if (filterableColumns.length > 0 && onFiltersChange) {
       onFiltersChange(
         Object.fromEntries(
@@ -1892,7 +1903,6 @@ const ManuscriptsTable = ({
               }}
             />
           ),
-          onChange: onPageChange,
         }}
         rowSelection={rowSelection}
       />
