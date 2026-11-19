@@ -1,10 +1,18 @@
+import { type ComponentProps, type ReactNode } from 'react'
 import styled from 'styled-components'
-import { Table as OriginalTable, th, grid } from '@coko/client'
+import { Table as AntTable } from 'antd'
+import { th, grid } from '@coko/client'
 
-const Table = styled(OriginalTable)`
+import Spinner from './Spinner'
+
+type TableProps = Omit<ComponentProps<typeof AntTable>, 'loading'> & {
+  loading?: boolean
+}
+
+const Wrapper = styled.div`
   /* stylelint-disable declaration-no-important */
 
-  .ant-table-wrapper {
+  .ant-table {
     border: 1px solid ${th('colorPrimary')};
     border-radius: ${th('borderRadius')};
     overflow: auto hidden;
@@ -100,5 +108,17 @@ const Table = styled(OriginalTable)`
     box-shadow: 0 0 0 1px ${th('colorPrimary')};
   }
 `
+
+const Table = (props: TableProps): ReactNode => {
+  const { className, loading = false, ...rest } = props
+
+  return (
+    <Wrapper className={className}>
+      <Spinner spinning={loading}>
+        <AntTable {...rest} />
+      </Spinner>
+    </Wrapper>
+  )
+}
 
 export default Table
