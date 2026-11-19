@@ -18,7 +18,7 @@ import {
 } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import styled from 'styled-components'
-import { th, grid, Search, Select, Switch, type ThemeValue } from '@coko/client'
+import { th, grid, Search, Select, type ThemeValue } from '@coko/client'
 import {
   ConfigProvider,
   DatePicker,
@@ -40,6 +40,7 @@ import Table from './Table'
 import Button from './Button'
 import ButtonGroup from './ButtonGroup'
 import RadioGroupInput from './Radio'
+import Switch from './Switch'
 import Badge from './Badge'
 import Avatar from './Avatar'
 import {
