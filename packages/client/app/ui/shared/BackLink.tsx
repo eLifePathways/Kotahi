@@ -1,26 +1,16 @@
 import { type ReactNode } from 'react'
 import styled from 'styled-components'
-import { grid, th, Link as UILink } from '@coko/client'
+import { grid, th } from '@coko/client'
 
 import { ArrowLeft } from '../base/Icons'
+import UILink from './Link'
 
 const StyledBackLink = styled(UILink)`
-  /* stylelint-disable declaration-no-important */
-
   display: inline-flex;
   align-items: center;
   gap: ${grid(2)};
   margin-bottom: ${grid(3)};
   font-size: ${th('fontSizeHeading6')};
-
-  && {
-    color: ${th('colorPrimary')} !important;
-
-    &:hover,
-    &:focus {
-      color: ${th('colorPrimary')} !important;
-    }
-  }
 `
 
 type BackLinkProps = {
