@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   height: 100%;
   min-height: 0;
   overflow: auto;
-  padding: ${grid(6)};
+  padding: ${grid(4)};
   font-family: ${th('fontInterface')};
   line-height: ${th('lineHeightBase')};
 `
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
 const Header = styled.h1`
   /* stylelint-disable declaration-no-important */
   margin-top: 0;
-  margin-bottom: ${grid(6)};
+  margin-bottom: ${grid(4)};
   border-bottom: 2px solid ${th('colorPrimary')};
 
   color: ${th('colorPrimary')} !important;
