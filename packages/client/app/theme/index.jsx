@@ -227,6 +227,9 @@ export const makeTheme = (
     breakpoints: [480, 768, 1000, 1272],
 
     antComponents: {
+      Notification: {
+        fontSizeLG: 16,
+      },
       Table: {
         headerBg: colorBrand1,
         headerColor: colorTextReverse,
