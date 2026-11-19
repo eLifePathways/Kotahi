@@ -18,15 +18,7 @@ import {
 } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import styled from 'styled-components'
-import {
-  th,
-  grid,
-  Search,
-  Select,
-  Radio as RadioGroupInput,
-  Switch,
-  type ThemeValue,
-} from '@coko/client'
+import { th, grid, Search, Select, Switch, type ThemeValue } from '@coko/client'
 import {
   ConfigProvider,
   DatePicker,
@@ -47,6 +39,7 @@ import { getReadableTextColor } from '../../shared/colorContrast'
 import Table from './Table'
 import Button from './Button'
 import ButtonGroup from './ButtonGroup'
+import RadioGroupInput from './Radio'
 import Badge from './Badge'
 import Avatar from './Avatar'
 import {
