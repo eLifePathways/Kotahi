@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import { Switch as AntSwitch } from 'antd'
-import { grid, type ThemeValue } from '@coko/client'
+import { grid, th, type ThemeValue } from '@coko/client'
 
 type LabelPosition = 'left' | 'right'
 
@@ -11,7 +11,11 @@ type SwitchProps = ComponentProps<typeof AntSwitch> & {
   labelPosition?: LabelPosition
 }
 
-const Wrapper = styled.span``
+const Wrapper = styled.span`
+  .ant-switch:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+  }
+`
 
 const Label = styled.span<{ $labelPosition: LabelPosition }>`
   ${(props): ThemeValue =>
