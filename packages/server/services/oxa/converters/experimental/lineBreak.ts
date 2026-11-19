@@ -9,12 +9,10 @@ class LineBreakConverter extends InlineConverter {
   readonly schema = nodeSchema('Break')
   protected readonly selectors = ['br']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(): OxaInline {
     return { type: 'Break' }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(): OxaInline {
     return { type: 'Text', value: '\n' }
   }

@@ -11,12 +11,10 @@ export class MathConverter extends BlockConverter {
   readonly skipChildren = true
   protected readonly selectors = ['math-display']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element): OxaBlock | null {
     return { type: 'Math', value: text([el]) }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(el: Element): OxaBlock {
     return { type: 'Code', language: 'latex', value: text([el]) }
   }
@@ -41,12 +39,10 @@ export class InlineMathConverter extends InlineConverter {
   readonly skipChildren = true
   protected readonly selectors = ['math-inline']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element): OxaInline | null {
     return { type: 'InlineMath', value: text([el]) }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(el: Element): OxaInline {
     return { type: 'InlineCode', language: 'latex', value: text([el]) }
   }

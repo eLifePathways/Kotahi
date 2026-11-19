@@ -9,14 +9,12 @@ class GlossarySection extends Tools {
   label = i18next.t('waxEditor.Glossary section')
   name = 'GlossarySection'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       wrapIn(state.config.schema.nodes.glossarySection)(state, dispatch)
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return (state, activeViewId) => {
       let isActive = false
@@ -32,13 +30,11 @@ class GlossarySection extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return state => {
       return Commands.setBlockType(state.config.schema.nodes.glossarySection)(

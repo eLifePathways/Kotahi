@@ -9,14 +9,12 @@ class MixedCitationSpan extends Tools {
   // icon = 'title'
   name = 'MixedCitationSpan'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       removeOrToggleMark(state, dispatch, 'mixedCitationSpan')
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = state => {
     const {
       selection: { from },
@@ -26,7 +24,6 @@ class MixedCitationSpan extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return state => {
       return Commands.markActive(state.config.schema.marks.mixedCitationSpan)(

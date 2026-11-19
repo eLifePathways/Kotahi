@@ -22,7 +22,6 @@ class LinkConverter extends InlineConverter {
     return super.matches(el) && !!el.attribs.href
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaInline | null {
     if (!children.length) return null
 
@@ -34,7 +33,6 @@ class LinkConverter extends InlineConverter {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(
     el: Element,
     children: OxaNode[],

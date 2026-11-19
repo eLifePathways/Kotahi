@@ -20,7 +20,6 @@ export class CodeBlockConverter extends BlockConverter {
   readonly skipChildren = true
   protected readonly selectors = ['pre']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element): OxaBlock | null {
     const language = el.attribs['data-language']
 
@@ -44,7 +43,6 @@ export class InlineCodeConverter extends InlineConverter {
   readonly skipChildren = true
   protected readonly selectors = ['code']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element): OxaInline | null {
     const language = el.attribs['data-language']
 
