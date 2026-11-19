@@ -32,11 +32,8 @@ const Status = styled.div`
   gap: ${grid(2)};
 `
 
-const Error = styled.div`
+const FullPageError = styled.div`
   color: ${th('colorError')};
-`
-
-const FullPageError = styled(Error)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,7 +79,7 @@ type NewSubmissionProps = {
   status: NewSubmissionStatus
   /** Which card the user chose, so the status is shown on that card and the other one is disabled. */
   activeOption?: NewSubmissionOption
-  /** Message shown when `status` is `error`. */
+  /** Message shown full-page when `status` is `error`. Only used when "Start without a file" is the only option; otherwise errors are expected to be reported outside this component. */
   errorMessage?: string
   /** Called with the selected or dropped file when the user chooses to upload a manuscript. */
   onUpload: (files: File[]) => void
@@ -109,15 +106,8 @@ const NewSubmission = (props: NewSubmissionProps): ReactNode => {
   const isBusy = status !== 'idle' && status !== 'error'
 
   const statusContent = (option: NewSubmissionOption): ReactNode => {
-    if (activeOption !== option || status === 'idle') return null
-
-    if (status === 'error') {
-      return (
-        <Error role="alert">
-          {t('newSubmission.errorUploading', { error: errorMessage })}
-        </Error>
-      )
-    }
+    if (activeOption !== option || status === 'idle' || status === 'error')
+      return null
 
     const stepText =
       status === 'completed'
