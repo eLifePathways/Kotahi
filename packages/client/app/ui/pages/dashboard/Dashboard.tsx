@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { AnimatePresence, m } from 'framer-motion'
-import { th, grid, Link as UILink, Result } from '@coko/client'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { th, grid, Result } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -524,9 +525,14 @@ const notificationLinkStyles = css`
   align-items: center;
   flex-grow: 1;
   gap: ${grid(2)};
+  color: ${th('colorText')};
+
+  &:hover {
+    color: ${th('colorText')};
+  }
 `
 
-const NotificationLink = styled(UILink)`
+const NotificationLink = styled(ReactRouterLink)`
   ${notificationLinkStyles}
 `
 
