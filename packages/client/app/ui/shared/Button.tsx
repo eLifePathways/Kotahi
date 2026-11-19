@@ -1,12 +1,13 @@
 import { type ComponentProps, type ReactNode } from 'react'
 import styled, { css, type RuleSet } from 'styled-components'
-import { Button as CokoButton, th, grid } from '@coko/client'
+import { Button as AntButton } from 'antd'
+import { darken, th, grid } from '@coko/client'
 
-type CokoButtonProps = ComponentProps<typeof CokoButton>
+type AntButtonProps = ComponentProps<typeof AntButton>
 
 type Size = 'small' | 'medium' | 'large'
 
-export type ButtonProps = Omit<CokoButtonProps, 'size'> & {
+export type ButtonProps = Omit<AntButtonProps, 'size'> & {
   reverse?: boolean
   size?: Size
 }
@@ -47,7 +48,7 @@ const iconOnlyWidth: Record<Size, RuleSet> = {
   `,
 }
 
-const StyledButton = styled(CokoButton)<{
+const StyledButton = styled(AntButton)<{
   $reverse?: boolean
   $ghost?: boolean
   $size: Size
@@ -58,7 +59,40 @@ const StyledButton = styled(CokoButton)<{
   align-items: center;
   justify-content: center;
   box-shadow: none !important;
+  font-size: ${th('fontSizeBase')};
   ${(props): RuleSet => sizeDimensions[props.$size]}
+
+  ${(props): RuleSet | false =>
+    props.$size === 'small' &&
+    css`
+      font-size: ${th('fontSizeBaseSmall')};
+    `}
+
+  ${(props): RuleSet | false =>
+    !props.disabled &&
+    props.type === 'primary' &&
+    !props.$ghost &&
+    css`
+      background-color: ${th('colorPrimary')};
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: ${darken('colorPrimary', 0.25)} !important;
+      }
+    `}
+
+  ${(props): RuleSet | false =>
+    !props.disabled &&
+    !(props.type === 'primary' && !props.$ghost) &&
+    css`
+      &:hover,
+      &:focus,
+      &:active {
+        border-color: ${darken('colorPrimary', 0.25)} !important;
+        color: ${darken('colorPrimary', 0.25)} !important;
+      }
+    `}
 
   ${(props): RuleSet | false =>
     props.$iconOnly &&
