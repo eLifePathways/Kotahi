@@ -3,6 +3,8 @@ import styled, { css, type RuleSet } from 'styled-components'
 import { Button as AntButton } from 'antd'
 import { darken, th, grid } from '@coko/client'
 
+import Spinner from './Spinner'
+
 type AntButtonProps = ComponentProps<typeof AntButton>
 
 type Size = 'small' | 'medium' | 'large'
@@ -34,6 +36,12 @@ const sizeDimensions: Record<Size, RuleSet> = {
     height: ${grid(10)} !important;
     padding-inline: ${grid(4)} !important;
   `,
+}
+
+const spinnerSize: Record<Size, number> = {
+  small: 3,
+  medium: 4,
+  large: 4,
 }
 
 const iconOnlyWidth: Record<Size, RuleSet> = {
@@ -177,14 +185,30 @@ const StyledButton = styled(AntButton)<{
     `}
 `
 
+const LoadingSpinner = styled(Spinner)`
+  display: block;
+`
+
 const Button = ({
   reverse,
   ghost,
   block,
   size = 'large',
+  loading,
+  type,
   children,
   ...props
 }: ButtonProps): ReactNode => {
+  const loadingConfig = loading && {
+    ...(typeof loading === 'object' ? loading : {}),
+    icon: (
+      <LoadingSpinner
+        reverse={reverse ? !!ghost : type === 'primary' && !ghost}
+        size={spinnerSize[size]}
+      />
+    ),
+  }
+
   return (
     <StyledButton
       $block={block}
@@ -194,7 +218,9 @@ const Button = ({
       $size={size}
       block={block}
       ghost={ghost}
+      loading={loadingConfig}
       size={ANTD_SIZE[size]}
+      type={type}
       {...props}
     >
       {children}
