@@ -7,7 +7,6 @@ class EmphasisConverter extends InlineConverter {
   readonly oxaTypes = ['Emphasis']
   protected readonly selectors = ['em', 'i']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaInline | null {
     if (!children.length) return null
     return { type: 'Emphasis', children: children as OxaInline[] }

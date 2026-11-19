@@ -7,12 +7,10 @@ class TextConverter extends InlineConverter {
   readonly oxaTypes = ['Text']
   protected readonly selectors: string[] = []
 
-  // eslint-disable-next-line class-methods-use-this
   matches(node: AnyNode): boolean {
     return String(node.type) === 'text'
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(node: AnyNode): OxaInline | null {
     const { data } = node as AnyNode & { data: string }
     return data ? { type: 'Text', value: data } : null

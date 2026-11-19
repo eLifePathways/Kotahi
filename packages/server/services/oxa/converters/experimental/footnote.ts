@@ -31,7 +31,6 @@ class FootnoteConverter extends InlineConverter {
     ]
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaInline | null {
     if (!children.length) return null
 

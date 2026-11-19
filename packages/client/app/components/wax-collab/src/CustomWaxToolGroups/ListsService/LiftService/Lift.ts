@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { lift } from 'prosemirror-commands'

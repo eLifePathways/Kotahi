@@ -21,7 +21,6 @@ class SectionConverter extends BlockConverter {
   ])
   protected readonly selectors = ['section']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaBlock | null {
     if (!children.length) return null
 
@@ -35,7 +34,6 @@ class SectionConverter extends BlockConverter {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(
     el: Element,
     children: OxaNode[],

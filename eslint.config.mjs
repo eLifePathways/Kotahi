@@ -118,6 +118,12 @@ const kotahiPlugin = {
 
 config.push(
   {
+    name: 'kotahi/overrides',
+    rules: {
+      'class-methods-use-this': 'off',
+    },
+  },
+  {
     name: 'kotahi/objection-only-in-models',
     files: ['packages/server/**/*.{js,ts}'],
     ignores: ['packages/server/models/**'],

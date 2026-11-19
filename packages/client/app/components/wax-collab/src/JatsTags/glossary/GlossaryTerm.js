@@ -11,14 +11,12 @@ class GlossaryTerm extends Tools {
   // icon = 'title'
   name = 'GlossaryTerm'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       toggleMark(state.config.schema.marks.glossaryTerm)(state, dispatch)
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = state => {
     const {
       selection: { from },
@@ -28,7 +26,6 @@ class GlossaryTerm extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return state => {
       return Commands.markActive(state.config.schema.marks.glossaryTerm)(state)

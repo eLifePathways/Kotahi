@@ -10,14 +10,12 @@ class AwardId extends Tools {
   color = 'colorAwardId'
   className = 'awardid'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       Commands.setBlockType(state.config.schema.nodes.awardId)(state, dispatch)
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return (state, activeViewId) => {
       let isActive = false
@@ -33,13 +31,11 @@ class AwardId extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return state => {
       return Commands.setBlockType(state.config.schema.nodes.awardId)(state)

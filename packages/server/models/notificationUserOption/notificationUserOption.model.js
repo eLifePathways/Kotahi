@@ -42,7 +42,6 @@ class NotificationUserOption extends BaseModel {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   $formatDatabaseJson(json) {
     if (json.path) {
       json.path = `{${json.path.join(',')}}`
