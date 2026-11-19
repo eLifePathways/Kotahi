@@ -107,6 +107,14 @@ const Wrapper = styled.div`
   .ant-input-search input:focus {
     box-shadow: 0 0 0 1px ${th('colorPrimary')};
   }
+
+  .ant-checkbox:has(.ant-checkbox-input:focus-visible) {
+    outline: 2px solid ${th('colorPrimary')};
+  }
+
+  .ant-table-thead .ant-checkbox:has(.ant-checkbox-input:focus-visible) {
+    outline-color: ${th('colorTextReverse')};
+  }
 `
 
 const Table = (props: TableProps): ReactNode => {
