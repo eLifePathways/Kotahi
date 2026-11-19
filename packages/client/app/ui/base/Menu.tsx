@@ -6,10 +6,15 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  Link as ReactRouterLink,
+} from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled, { css, RuleSet } from 'styled-components'
-import { grid, th, Link as UILink } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { Tooltip } from 'antd'
 
 import { collapseTransition } from '../constants'
@@ -197,7 +202,7 @@ const LinkItem = styled.div<{ $active: boolean }>`
     `};
 `
 
-const Link = styled(UILink)`
+const Link = styled(ReactRouterLink)`
   display: block;
 `
 

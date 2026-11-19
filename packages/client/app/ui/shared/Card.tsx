@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react'
 import styled, { css, RuleSet } from 'styled-components'
 import { Upload as AntUpload } from 'antd'
-import { grid, th, H2, Link as UILink } from '@coko/client'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { grid, th, H2 } from '@coko/client'
 
 import { ArrowRight, Upload } from '../base/Icons'
 import Surface from './Surface'
@@ -111,8 +112,14 @@ const states = css<StateProps>`
     `}
 `
 
-const Link = styled(UILink)`
+const Link = styled(ReactRouterLink)`
+  color: ${th('colorText')};
+
   ${interactive}
+
+  &:hover {
+    color: ${th('colorText')};
+  }
 
   &&:focus-visible {
     outline: none;

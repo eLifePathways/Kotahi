@@ -1,14 +1,24 @@
 import styled from 'styled-components'
-import { th, Link as UILink } from '@coko/client'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { th } from '@coko/client'
 
-const Link = styled(UILink)`
-  /* stylelint-disable declaration-no-important */
-  color: ${th('colorPrimary')} !important;
-  border-bottom: 2px solid transparent;
-  transition: border 0.2s ease-in-out;
+const Link = styled(ReactRouterLink)`
+  && {
+    color: ${th('colorPrimary')};
+    text-decoration: underline;
+    border-bottom: 2px solid transparent;
+    transition: border 0.2s ease-in-out;
 
-  &:hover {
-    border-bottom: 2px solid ${th('colorPrimary')};
+    &:hover {
+      color: ${th('colorPrimary')};
+      text-decoration: none;
+      border-bottom: 2px solid ${th('colorPrimary')};
+    }
+
+    &:focus {
+      color: ${th('colorPrimary')};
+      text-decoration: none;
+    }
   }
 `
 
