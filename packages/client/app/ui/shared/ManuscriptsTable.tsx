@@ -23,8 +23,6 @@ import {
   grid,
   Search,
   Select,
-  Button,
-  ButtonGroup,
   Radio as RadioGroupInput,
   Switch,
   type ThemeValue,
@@ -47,6 +45,8 @@ import DOMPurify from 'isomorphic-dompurify'
 import { getReadableTextColor } from '../../shared/colorContrast'
 
 import Table from './Table'
+import Button from './Button'
+import ButtonGroup from './ButtonGroup'
 import Badge from './Badge'
 import Avatar from './Avatar'
 import {
