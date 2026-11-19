@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 import styled, { css, RuleSet } from 'styled-components'
 import { Upload as AntUpload } from 'antd'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { grid, th, H2 } from '@coko/client'
+import { grid, th } from '@coko/client'
 
 import { ArrowRight, Upload } from '../base/Icons'
 import Surface from './Surface'
@@ -22,7 +22,8 @@ const IconWrapper = styled.div`
   }
 `
 
-const Title = styled(H2)`
+const Title = styled.h2`
+  font-weight: bold;
   border-bottom: 2px solid ${th('colorPrimary')};
 `
 
