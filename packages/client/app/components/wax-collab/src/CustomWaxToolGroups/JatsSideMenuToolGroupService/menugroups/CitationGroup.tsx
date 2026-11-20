@@ -1,8 +1,11 @@
 // @ts-nocheck
 
 import { decorate, injectable, inject } from 'inversify'
-import { ToolGroup, LeftMenuTitle } from 'wax-prosemirror-core'
 import i18next from 'i18next'
+import {
+  ToolGroup,
+  LeftMenuTitle,
+} from '../../../../../../ui/wax/wax-prosemirror-core'
 
 class CitationGroup extends ToolGroup {
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Citations')} />)

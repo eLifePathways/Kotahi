@@ -1,4 +1,4 @@
-import { SchemaHelpers } from 'wax-prosemirror-core'
+import { SchemaHelpers } from '../../../../../../../ui/wax/wax-prosemirror-core'
 
 const orderedListNode = {
   group: 'block',

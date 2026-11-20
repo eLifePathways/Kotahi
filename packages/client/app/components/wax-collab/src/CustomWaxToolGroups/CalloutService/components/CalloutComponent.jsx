@@ -2,8 +2,11 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useState, useEffect } from 'react'
-import { WaxContext, ApplicationContext } from 'wax-prosemirror-core'
 import { sanitize } from 'isomorphic-dompurify'
+import {
+  WaxContext,
+  ApplicationContext,
+} from '../../../../../../ui/wax/wax-prosemirror-core'
 import Modal from '../../../../../component-modal/src/Modal'
 import {
   findCalloutNodes,

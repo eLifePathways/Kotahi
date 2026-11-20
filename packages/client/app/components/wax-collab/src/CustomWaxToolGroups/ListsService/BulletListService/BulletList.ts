@@ -1,11 +1,14 @@
 // @ts-nocheck
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable import/no-extraneous-dependencies */
 
 import { injectable } from 'inversify'
 import { wrapInList } from 'prosemirror-schema-list'
-import { Commands, Tools, icons } from 'wax-prosemirror-core'
+import {
+  Commands,
+  Tools,
+  icons,
+} from '../../../../../../ui/wax/wax-prosemirror-core'
 
 @injectable()
 export default class BulletList extends Tools {

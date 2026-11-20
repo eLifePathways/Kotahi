@@ -1,7 +1,11 @@
 import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
-import { LeftSideButton, Commands, Tools } from 'wax-prosemirror-core'
 import i18next from 'i18next'
+import {
+  LeftSideButton,
+  Commands,
+  Tools,
+} from '../../../../../ui/wax/wax-prosemirror-core'
 
 class AwardId extends Tools {
   title = i18next.t('waxEditor.Change to award ID')

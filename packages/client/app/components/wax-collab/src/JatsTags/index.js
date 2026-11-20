@@ -1,4 +1,4 @@
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../ui/wax/wax-prosemirror-core'
 import Appendix from './Appendix'
 import FrontMatter from './FrontMatter'
 import Abstract from './Abstract'

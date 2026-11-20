@@ -1,8 +1,12 @@
 import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
-import { LeftSideButton, Commands, Tools } from 'wax-prosemirror-core'
 import { wrapIn } from 'prosemirror-commands'
 import i18next from 'i18next'
+import {
+  LeftSideButton,
+  Commands,
+  Tools,
+} from '../../../../ui/wax/wax-prosemirror-core'
 
 class FrontMatter extends Tools {
   label = i18next.t('waxEditor.Front matter')

@@ -1,9 +1,12 @@
 import { decorate, injectable } from 'inversify'
 import { Fragment } from 'prosemirror-model'
 import { uuid } from '@coko/client'
-import { LeftSideButton, Tools } from 'wax-prosemirror-core'
 import { NodeSelection } from 'prosemirror-state'
 import { isEmpty } from 'lodash'
+import {
+  LeftSideButton,
+  Tools,
+} from '../../../../../ui/wax/wax-prosemirror-core'
 
 class CalloutTool extends Tools {
   title = 'Reference callout'

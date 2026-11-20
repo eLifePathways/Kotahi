@@ -17,8 +17,12 @@ import {
   BottomInfoService,
   EditingSuggestingService,
   CommentsService,
-} from 'wax-prosemirror-services'
-import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
+} from '../../../../ui/wax/wax-prosemirror-services'
+import {
+  TablesService,
+  tableEditing,
+  columnResizing,
+} from '../../../../ui/wax/wax-table-service'
 // import TrackChangeService from '../CustomWaxToolGroups/TrackChangeService/TrackChangeService'
 // import CommentsService from '../extensions/CommentsService/CommentsService'
 import ListsService from '../CustomWaxToolGroups/ListsService/ListsService'
@@ -34,7 +38,6 @@ import KotahiSchema from './KotahiSchema'
 // import AnyStyleService from '../CustomWaxToolGroups/AnystyleService/AnyStyleService'
 import CitationService from '../CustomWaxToolGroups/CitationService/CitationService'
 import CalloutService from '../CustomWaxToolGroups/CalloutService/CalloutService'
-import 'wax-table-service/dist/index.css'
 
 // const updateTitle = title => {
 //   // this gets fired when the title is changed in original version of this—not called now, but might still be needed

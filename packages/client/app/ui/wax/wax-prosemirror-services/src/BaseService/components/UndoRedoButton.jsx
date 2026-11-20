@@ -1,0 +1,61 @@
+/* eslint react/prop-types: 0 */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/use-memo */
+
+import { useContext, useMemo } from 'react'
+import { isEmpty } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { WaxContext, MenuButton } from '../../../../wax-prosemirror-core'
+
+const UndoRedoButton = ({ view = {}, item }) => {
+  const { t, i18n } = useTranslation()
+  const { active, icon, label, run, select, title } = item
+
+  const {
+    pmViews: { main },
+    activeViewId,
+    activeView,
+  } = useContext(WaxContext)
+
+  const isEditable = main.props.editable(editable => {
+    return editable
+  })
+
+  const { state } = view
+
+  const handleMouseDown = e => {
+    e.preventDefault()
+    run(main.state, main.dispatch)
+  }
+
+  const isActive = !!(
+    active(activeView.state, activeViewId) &&
+    select(state, activeViewId, activeView)
+  )
+
+  let isDisabled = !select(state, activeViewId, activeView)
+  if (!isEditable) isDisabled = true
+
+  const UndoRedoButtonComponent = useMemo(
+    () => (
+      <MenuButton
+        active={isActive || false}
+        disabled={isDisabled}
+        iconName={icon}
+        label={label}
+        onMouseDown={e => handleMouseDown(e)}
+        // onMouseDown={e => handleMouseDown(e, main.state, main.dispatch)}
+        title={
+          !isEmpty(i18n) && i18n.exists(`Wax.Base.${title}`)
+            ? t(`Wax.Base.${title}`)
+            : title
+        }
+      />
+    ),
+    [isActive, isDisabled, t(`Wax.Base.${title}`)],
+  )
+
+  return UndoRedoButtonComponent
+}
+
+export default UndoRedoButton

@@ -1,0 +1,36 @@
+// @ts-nocheck
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+
+import { isEmpty } from 'lodash'
+import { injectable } from 'inversify'
+import { Tools } from '../../../../wax-prosemirror-core'
+import EditorShortCutsTool from './components/EditorShortCutsTool'
+
+@injectable()
+class ShortCutsInfoTool extends Tools {
+  title = 'ShortCuts Info'
+  name = 'ShortCutsInfo'
+
+  get run() {
+    return () => true
+  }
+
+  get enable() {
+    return () => {
+      return true
+    }
+  }
+
+  renderTool(view) {
+    if (isEmpty(view)) return null
+    return this.isDisplayed() ? (
+      <EditorShortCutsTool
+        item={this.toJSON()}
+        key="ShortCutsInfo"
+        view={view}
+      />
+    ) : null
+  }
+}
+
+export default ShortCutsInfoTool
