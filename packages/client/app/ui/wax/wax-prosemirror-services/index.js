@@ -21,7 +21,6 @@ export { default as TransformService } from './src/TransformService/TransformSer
 export { default as EditingSuggestingService } from './src/EditingSuggestingService/EditingSuggestingService'
 export { default as EnterService } from './src/EnterService/EnterService'
 export { default as YjsService } from './src/YjsService/YjsService'
-export { default as ExternalAPIContentService } from './src/ExternalAPIContentService/ExternalAPIContentService'
 export { default as AskAiContentService } from './src/AiService/AskAiContentService'
 export { default as ContentUpdateService } from './src/ContentUpdateService/ContentUpdateService'
 /*
