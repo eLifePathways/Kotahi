@@ -3,7 +3,6 @@ import ExtractProseService from './ExtractProseService/ExtractProseService'
 import ParagraphContinuedService from './ParagraphContinuedService/ParagraphContinuedService'
 import ParagraphService from './ParagraphService/ParagraphService'
 import SourceNoteService from './SourceNoteService/SourceNoteService'
-import TextToolGroupService from './TextToolGroupService/TextToolGroupService'
 
 export default [
   new ExtractPoetryService(),
@@ -11,5 +10,4 @@ export default [
   new ParagraphContinuedService(),
   new ParagraphService(),
   new SourceNoteService(),
-  new TextToolGroupService(),
 ]
