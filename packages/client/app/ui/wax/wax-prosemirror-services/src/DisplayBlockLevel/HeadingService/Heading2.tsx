@@ -1,6 +1,5 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
 import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import {
@@ -28,7 +27,7 @@ export default class Heading2 extends Tools {
       if (activeViewId !== 'main') return false
 
       const { from, to } = state.selection
-      state.doc.nodesBetween(from, to, (node, pos) => {
+      state.doc.nodesBetween(from, to, node => {
         if (node.type.name === 'heading2') {
           isActive = true
         }

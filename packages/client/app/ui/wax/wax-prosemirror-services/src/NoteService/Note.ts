@@ -31,7 +31,7 @@ export default class Note extends Tools {
   }
 
   get enable() {
-    return state => {
+    return () => {
       return false
     }
   }

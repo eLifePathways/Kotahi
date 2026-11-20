@@ -1,6 +1,6 @@
 /* eslint react/prop-types: 0 */
 import { Mark } from 'prosemirror-model'
-import React, { useContext, useState, useMemo, useCallback } from 'react'
+import { useContext, useState, useMemo, useCallback } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { each, uniqBy, sortBy } from 'lodash'
 import {

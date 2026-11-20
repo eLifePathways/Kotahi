@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint react/prop-types: 0 */
-import React, { useContext, useMemo, useState, useEffect } from 'react'
+import { useContext, useMemo, useState, useEffect } from 'react'
 import { uuid } from '@coko/client'
 import { TextSelection } from 'prosemirror-state'
 import { last, maxBy, minBy } from 'lodash'

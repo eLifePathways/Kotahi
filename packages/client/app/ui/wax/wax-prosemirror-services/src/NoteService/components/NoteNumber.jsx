@@ -1,5 +1,4 @@
 /* eslint react/prop-types: 0 */
-import React from 'react'
 import styled from 'styled-components'
 
 const NoteNumberStyled = styled.div`
@@ -20,7 +19,7 @@ const NoteNumberStyled = styled.div`
 
 const onClick = () => {}
 
-const NoteNumber = ({ number }) => {
+const NoteNumber = () => {
   return <NoteNumberStyled onClick={onClick} />
 }
 

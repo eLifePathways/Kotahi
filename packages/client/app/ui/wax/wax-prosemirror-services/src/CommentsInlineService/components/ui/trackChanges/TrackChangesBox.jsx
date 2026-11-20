@@ -1,5 +1,4 @@
 /* eslint react/prop-types: 0 */
-import React from 'react'
 import styled, { css } from 'styled-components'
 import { Icon } from '../../../../../../wax-prosemirror-core'
 import dayjs from 'dayjs'

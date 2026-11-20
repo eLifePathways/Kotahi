@@ -1,6 +1,5 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { injectable } from 'inversify'

@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable no-underscore-dangle */
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'

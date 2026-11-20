@@ -1,7 +1,7 @@
 /* eslint react/prop-types: 0 */
 /* stylelint-disable order/properties-alphabetical-order */
 
-import React, {
+import {
   useMemo,
   useContext,
   useState,

@@ -1,6 +1,6 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'

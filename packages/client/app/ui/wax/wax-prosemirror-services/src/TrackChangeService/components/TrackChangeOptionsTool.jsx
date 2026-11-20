@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { MenuButton } from '../../../../wax-prosemirror-core'
 import { grid } from '../../helpers'

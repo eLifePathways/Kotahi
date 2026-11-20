@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useContext } from 'react'
+import { useMemo, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { WaxContext, MenuButton } from '../../../../wax-prosemirror-core'
 

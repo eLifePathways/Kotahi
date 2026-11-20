@@ -8,7 +8,7 @@ const checkLevelFromConfig = (state, activeViewId, config) => {
   let sectionLevel = 0
   const { from, to } = state.selection
 
-  state.doc.nodesBetween(from, to, (node, pos) => {
+  state.doc.nodesBetween(from, to, node => {
     if (node.type.name === 'oen_section') {
       isNested = true
       count += 1
@@ -19,7 +19,7 @@ const checkLevelFromConfig = (state, activeViewId, config) => {
   })
 
   const levelToSeatch = isNested ? 'nestedHeadingLevel' : 'headingLevel'
-  state.doc.nodesBetween(from, to, (node, pos) => {
+  state.doc.nodesBetween(from, to, node => {
     if (node.type.name === 'oen_section' && count === 1) {
       config.forEach(group => {
         const headingLevel = result(

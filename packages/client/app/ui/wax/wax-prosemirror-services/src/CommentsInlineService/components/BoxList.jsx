@@ -1,6 +1,5 @@
 /* eslint react/prop-types: 0 */
 import { Mark } from 'prosemirror-model'
-import React from 'react'
 import ConnectedComment from './ConnectedComment'
 import ConnectedTrackChange from './ConnectedTrackChange'
 

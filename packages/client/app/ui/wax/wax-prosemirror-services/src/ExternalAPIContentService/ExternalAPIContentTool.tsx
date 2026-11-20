@@ -1,6 +1,5 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
 import { uuid } from '@coko/client'
 import { injectable } from 'inversify'
 import { Commands, Tools } from '../../../wax-prosemirror-core'

@@ -51,7 +51,7 @@ class MenuService extends Service {
               tl = context.container.get(tool)
             }
             tools.push(tl)
-          } catch (error) {
+          } catch {
             const service = tool.name ? tool.name : tool
             throw Error(
               `Could not load Service ${service}. Please configure service through config`,

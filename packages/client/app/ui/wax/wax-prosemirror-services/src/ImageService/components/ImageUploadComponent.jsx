@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useContext } from 'react'
-import { uuid } from '@coko/client'
+import { useContext } from 'react'
 import {
   WaxContext,
   ApplicationContext,
@@ -9,7 +8,7 @@ import { isEmpty } from 'lodash'
 import fileUpload from '../fileUpload'
 import ImageUpload from './ImageUpload'
 
-const ImageUploadComponent = ({ view, displayed, config, pmplugins, item }) => {
+const ImageUploadComponent = ({ view, config, pmplugins, item }) => {
   const context = useContext(WaxContext)
   const { app } = useContext(ApplicationContext)
   if (isEmpty(view)) return null
