@@ -12,13 +12,11 @@ class UnderlineConverter extends InlineConverter {
   ])
   protected readonly selectors = ['u']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaInline | null {
     if (!children.length) return null
     return { type: 'Underline', children: children as OxaInline[] }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(
     el: Element,
     children: OxaNode[],

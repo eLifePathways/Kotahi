@@ -32,7 +32,6 @@ class TableCellConverter extends BlockConverter {
   )
   protected readonly selectors = ['td', 'th']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaBlock | null {
     const colspan = Number.parseInt(el.attribs.colspan, 10)
     const rowspan = Number.parseInt(el.attribs.rowspan, 10)

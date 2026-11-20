@@ -83,7 +83,6 @@ class FundingConverter extends BlockConverter {
     return this.paragraph.convertToOxa(el, children)
   }
 
-  // eslint-disable-next-line class-methods-use-this
   fromOxa(): string {
     return ''
   }

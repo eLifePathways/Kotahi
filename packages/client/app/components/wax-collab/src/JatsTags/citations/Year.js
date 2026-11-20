@@ -10,14 +10,12 @@ class Year extends Tools {
   // icon = 'title'
   name = 'Year'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       removeOrToggleMark(state, dispatch, 'year')
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = state => {
     const {
       selection: { from },
@@ -27,7 +25,6 @@ class Year extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return state => {
       return Commands.markActive(state.config.schema.marks.year)(state)

@@ -10,14 +10,12 @@ class ArticleTitle extends Tools {
   // icon = 'title'
   name = 'ArticleTitle'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       removeOrToggleMark(state, dispatch, 'articleTitle')
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = state => {
     const {
       selection: { from },
@@ -27,7 +25,6 @@ class ArticleTitle extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return state => {
       return Commands.markActive(state.config.schema.marks.articleTitle)(state)

@@ -7,7 +7,6 @@ class SubscriptConverter extends InlineConverter {
   readonly oxaTypes = ['Subscript']
   protected readonly selectors = ['sub']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaInline | null {
     if (!children.length) return null
     return { type: 'Subscript', children: children as OxaInline[] }

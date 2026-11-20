@@ -31,12 +31,10 @@ class Connector {
     this.headers = options.headers ?? {}
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected async getAuthHeaders(): Promise<Record<string, string>> {
     return {}
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected async onUnauthorized(): Promise<boolean> {
     return false
   }

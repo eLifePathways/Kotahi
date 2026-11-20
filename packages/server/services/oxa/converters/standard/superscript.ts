@@ -7,7 +7,6 @@ class SuperscriptConverter extends InlineConverter {
   readonly oxaTypes = ['Superscript']
   protected readonly selectors = ['sup']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaInline | null {
     if (!children.length) return null
     return { type: 'Superscript', children: children as OxaInline[] }

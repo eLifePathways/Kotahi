@@ -17,13 +17,11 @@ class TableRowConverter extends BlockConverter {
   ])
   protected readonly selectors = ['tr']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaBlock | null {
     if (!children.length) return null
     return { type: 'TableRow', children }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(el: Element, children: OxaNode[]): OxaParagraph | null {
     const cells = children.filter(
       (child): child is OxaParagraph => child.type === 'Paragraph',

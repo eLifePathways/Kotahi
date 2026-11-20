@@ -10,7 +10,6 @@ class CalloutTool extends Tools {
   label = 'Reference callout'
   name = 'Callout'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       const { empty, $from, $to } = state.selection
@@ -37,13 +36,11 @@ class CalloutTool extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return () => {
       return false
