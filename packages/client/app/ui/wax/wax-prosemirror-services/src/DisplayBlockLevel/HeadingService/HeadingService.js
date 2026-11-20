@@ -8,19 +8,19 @@ import Heading6 from './Heading6'
 class HeadingService extends Service {
   register() {
     this.container.bind('Heading2').toDynamicValue(() => {
-      return new Heading2(this.config.get('config.OENContainersService'))
+      return new Heading2()
     })
     this.container.bind('Heading3').toDynamicValue(() => {
-      return new Heading3(this.config.get('config.OENContainersService'))
+      return new Heading3()
     })
     this.container.bind('Heading4').toDynamicValue(() => {
-      return new Heading4(this.config.get('config.OENContainersService'))
+      return new Heading4()
     })
     this.container.bind('Heading5').toDynamicValue(() => {
-      return new Heading5(this.config.get('config.OENContainersService'))
+      return new Heading5()
     })
     this.container.bind('Heading6').toDynamicValue(() => {
-      return new Heading6(this.config.get('config.OENContainersService'))
+      return new Heading6()
     })
     const createNode = this.container.get('CreateNode')
     createNode(

@@ -8,7 +8,6 @@ import {
   Tools,
 } from '../../../../wax-prosemirror-core'
 import TitleButton from './components/TitleButton'
-import checkLevelFromConfig from '../HeadingService/checkLevelFromConfig'
 
 @injectable()
 export default class Title extends Tools {
@@ -35,15 +34,6 @@ export default class Title extends Tools {
     const {
       selection: { $from, $to },
     } = state
-
-    if (this.config) {
-      const allowedLevel = checkLevelFromConfig(
-        state,
-        activeViewId,
-        this.config,
-      )
-      if (allowedLevel > 1) return false
-    }
 
     const titleCounter = DocumentHelpers.findChildrenByType(
       state.doc,

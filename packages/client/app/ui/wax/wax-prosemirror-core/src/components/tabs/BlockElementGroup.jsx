@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import { th } from '../../helpers'
 import Icon from '../icons/Icon'
 import CustomTagBlockComponent from './CustomTagBlockComponent'
-import OENToolGroup from './OENToolGroup'
 import BlockElement from './BlockElement'
 
 const GroupName = styled.div`
@@ -50,7 +49,7 @@ const BlockElementGroup = ({ groupName, items, view }) => {
 
   return (
     <>
-      {groupName !== 'Custom Block' && groupName !== 'OEN Containers' && (
+      {groupName !== 'Custom Block' && (
         <>
           <GroupName>
             {translatedLabel(`Wax.Various.${groupName}`, groupName)}
@@ -62,10 +61,6 @@ const BlockElementGroup = ({ groupName, items, view }) => {
               ))}
           </ListWrapper>
         </>
-      )}
-
-      {groupName === 'OEN Containers' && (
-        <OENToolGroup item={items[0]} key="oen" view={view} />
       )}
 
       {groupName === 'Custom Block' && (
