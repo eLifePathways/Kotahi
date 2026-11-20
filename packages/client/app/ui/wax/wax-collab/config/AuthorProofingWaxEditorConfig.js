@@ -3,13 +3,11 @@ import {
   InlineAnnotationsService,
   ImageService,
   LinkService,
-  // ListsService, // Uncomment this when we're using updated Wax
   BaseService,
   DisplayBlockLevelService,
   TextBlockLevelService,
   NoteService,
   TrackChangeService,
-  // CommentsService,
   MathService,
   FindAndReplaceService,
   FullScreenService,
@@ -23,10 +21,7 @@ import {
   tableEditing,
   columnResizing,
 } from '../../wax-table-service'
-// import TrackChangeService from '../CustomWaxToolGroups/TrackChangeService/TrackChangeService'
-// import CommentsService from '../extensions/CommentsService/CommentsService'
 import ListsService from '../CustomWaxToolGroups/ListsService/ListsService'
-// import TrackChangeService from '../CustomWaxToolGroups/TrackChangeService/TrackChangeService'
 import {
   KotahiBlockDropDownToolGroupService,
   JatsSideMenuToolGroupService,
@@ -35,7 +30,6 @@ import {
 import JatsTagsService from '../JatsTags'
 import CharactersList from './CharactersList'
 import KotahiSchema from './KotahiSchema'
-// import AnyStyleService from '../CustomWaxToolGroups/AnystyleService/AnyStyleService'
 import CitationService from '../CustomWaxToolGroups/CitationService/CitationService'
 import CalloutService from '../CustomWaxToolGroups/CalloutService/CalloutService'
 

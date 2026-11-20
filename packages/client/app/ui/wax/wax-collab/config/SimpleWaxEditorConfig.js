@@ -3,11 +3,9 @@ import { DefaultSchema } from '../../wax-prosemirror-core'
 import {
   // AnnotationToolGroupService,
   BottomInfoService,
-  // DisplayToolGroupService,
   // EditorInfoToolGroupServices,
   InlineAnnotationsService,
   LinkService,
-  // ListsService,
   // ListToolGroupService,
   MathService,
   NoteService,
@@ -15,7 +13,6 @@ import {
   SpecialCharactersService,
   // SpecialCharactersToolGroupService,
   TextBlockLevelService,
-  // TextToolGroupService,
   DisplayBlockLevelService,
 } from '../../wax-prosemirror-services'
 import ListsService from '../CustomWaxToolGroups/ListsService/ListsService'
@@ -65,7 +62,6 @@ const simpleWaxEditorConfig = props => ({
   services: [
     // new AnnotationToolGroupService(),
     new BottomInfoService(),
-    // new DisplayToolGroupService(),
     // new EditorInfoToolGroupServices(),
     new InlineAnnotationsService(),
     new LinkService(),
@@ -77,7 +73,6 @@ const simpleWaxEditorConfig = props => ({
     new SpecialCharactersService(),
     // new SpecialCharactersToolGroupService(),
     new TextBlockLevelService(),
-    // new TextToolGroupService(),
     // this is what I've added::
     ...(props?.autocompleteConfig ? [new AutocompleteService()] : []),
     new KotahiBlockDropDownToolGroupService(),

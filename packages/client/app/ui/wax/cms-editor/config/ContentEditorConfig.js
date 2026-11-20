@@ -3,7 +3,6 @@ import {
   InlineAnnotationsService,
   ImageService,
   LinkService,
-  // ListsService,
   BaseService,
   DisplayBlockLevelService,
   TextBlockLevelService,

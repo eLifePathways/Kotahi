@@ -12,17 +12,6 @@ import { useTranslation } from 'react-i18next'
 import { ToolGroup } from '../../../wax-prosemirror-core'
 import { VerticalTabs, BlockLevelTools } from './VerticalTabs'
 
-// nb this was forked from /wax-prosemirror-services/src/WaxToolGroups/DisplayTextToolGroupService/DisplayText.js
-
-// QUESTIONS:
-// 1) where do 'Display' and 'Text' come from? Those are the lists of elements that are coming in
-// -- Text is coming from /wax-prosemirror-services/src/WaxToolGroups/TextToolGroupService/Text.js
-// ---- though it's taking in other things
-// -- Display is coming from /wax-prosemirror-services/src/WaxToolGroups/DisplayToolGroupService/Display.js
-// ---- though it's also taking in other things
-// 2) where are those paragraph formats defined?
-// ----- from, e.g. /wax-prosemirror-schema/src/nodes/epigraphProseNode.js – this is similar to what I did to make H5/H6
-
 class JatsSideMenu extends ToolGroup {
   constructor(
     /* stylelint-disable */

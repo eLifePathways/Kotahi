@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import { useContext } from 'react'
-// import { useInjection } from './WaxContext';
 
 import { ApplicationContext } from './ApplicationContext'
 
