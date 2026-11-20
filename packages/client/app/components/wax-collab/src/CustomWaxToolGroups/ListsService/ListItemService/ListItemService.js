@@ -1,4 +1,4 @@
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../../ui/wax/wax-prosemirror-core'
 import listItemNode from './schema/listItemNode'
 
 class ListItemService extends Service {

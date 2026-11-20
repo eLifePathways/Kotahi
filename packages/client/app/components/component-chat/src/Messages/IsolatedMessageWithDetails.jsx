@@ -4,7 +4,7 @@
 /* eslint-disable jsx-a11y/no-autofocus */
 
 import styled from 'styled-components'
-import { Wax } from 'wax-prosemirror-core'
+import { Wax } from '../../../../ui/wax/wax-prosemirror-core'
 import {
   convertTimestampToDateWithTimeString,
   convertTimestampToTimeString,

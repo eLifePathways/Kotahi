@@ -9,7 +9,7 @@ import {
   ComponentPlugin,
   DocumentHelpers,
   WaxView,
-} from 'wax-prosemirror-core'
+} from '../../../../ui/wax/wax-prosemirror-core'
 import {
   NotesAreaContainer,
   NotesHeading,
@@ -26,8 +26,6 @@ import {
   SideMenu,
 } from './EditorStyles'
 import { CommentsContainerNotes } from './CommentsStyles'
-import 'wax-prosemirror-core/dist/index.css'
-import 'wax-prosemirror-services/dist/index.css'
 
 const TopBar = ComponentPlugin('topBar')
 const NotesArea = ComponentPlugin('notesArea')

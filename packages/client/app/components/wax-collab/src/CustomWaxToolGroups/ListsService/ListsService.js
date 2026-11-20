@@ -1,4 +1,4 @@
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../ui/wax/wax-prosemirror-core'
 import ListsServices from './index'
 import './lists.css'
 

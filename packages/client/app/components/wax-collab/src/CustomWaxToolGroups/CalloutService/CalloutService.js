@@ -1,4 +1,4 @@
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../ui/wax/wax-prosemirror-core'
 import CalloutTool from './CalloutTool'
 import calloutDefinition from './schema/callout'
 import calloutPlugin from './plugins/calloutPlugin'

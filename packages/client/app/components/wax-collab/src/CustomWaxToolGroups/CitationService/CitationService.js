@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../ui/wax/wax-prosemirror-core'
 import ReferenceTool from './ReferenceTool'
 import CitationComponent from './components/CitationComponent'
 import referenceDefinition from './schema/reference'

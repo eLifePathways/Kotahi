@@ -19,8 +19,12 @@ import {
   EditingSuggestingService,
   CommentsService,
   AskAiContentService,
-} from 'wax-prosemirror-services'
-import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
+} from '../../../../ui/wax/wax-prosemirror-services'
+import {
+  TablesService,
+  tableEditing,
+  columnResizing,
+} from '../../../../ui/wax/wax-table-service'
 import ListsService from '../CustomWaxToolGroups/ListsService/ListsService'
 import { KotahiBlockDropDownToolGroupService } from '../CustomWaxToolGroups'
 import JatsTagsService from '../JatsTags'
@@ -28,7 +32,6 @@ import CharactersList from './CharactersList'
 import KotahiSchema from './KotahiSchema'
 import CitationService from '../CustomWaxToolGroups/CitationService/CitationService'
 import CalloutService from '../CustomWaxToolGroups/CalloutService/CalloutService'
-import 'wax-table-service/dist/index.css'
 
 /* eslint-disable-next-line no-unused-vars */
 const updateTrackStatus = change => {

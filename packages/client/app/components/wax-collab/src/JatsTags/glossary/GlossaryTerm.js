@@ -1,7 +1,7 @@
 import { decorate, injectable } from 'inversify'
 import { toggleMark } from 'prosemirror-commands'
-import { Commands, Tools } from 'wax-prosemirror-core'
 import i18next from 'i18next'
+import { Commands, Tools } from '../../../../../ui/wax/wax-prosemirror-core'
 
 class GlossaryTerm extends Tools {
   title = i18next.t('waxEditor.Change to glossary term')
