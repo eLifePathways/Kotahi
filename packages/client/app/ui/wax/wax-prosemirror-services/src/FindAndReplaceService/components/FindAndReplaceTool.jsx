@@ -12,7 +12,6 @@ import styled from 'styled-components'
 import { WaxContext, MenuButton } from '../../../../wax-prosemirror-core'
 import { grid, override } from '../../helpers'
 import FindAndReplaceComponent from './FindAndReplaceComponent'
-// import epigraphPoetry from '../../TrackChangeService/schema/trackChangesNodes/epigraphPoetryTrackNode';
 
 const Wrapper = styled.div`
   font-size: 0;
