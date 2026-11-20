@@ -81,10 +81,7 @@ const fullWaxEditorConfig = (
     {
       templateArea: 'topBar',
       toolGroups: [
-        {
-          name: 'Base',
-          exclude: ['Save'],
-        },
+        'Base',
         'KotahiBlockDropDown',
         {
           name: 'Annotations',

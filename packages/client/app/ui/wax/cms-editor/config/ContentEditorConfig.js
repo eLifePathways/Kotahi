@@ -28,10 +28,7 @@ const fullWaxEditorConfig = handleAssetManager => ({
     {
       templateArea: 'topBar',
       toolGroups: [
-        {
-          name: 'Base',
-          exclude: ['Save'],
-        },
+        'Base',
         'KotahiBlockDropDown',
         {
           name: 'Annotations',
