@@ -1,11 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { th } from '../../helpers'
-import Icon from '../icons/Icon'
-import CustomTagBlockComponent from './CustomTagBlockComponent'
 import BlockElement from './BlockElement'
 
 const GroupName = styled.div`
@@ -20,25 +16,7 @@ const ListWrapper = styled.div`
   }
 `
 
-const FlexDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
-
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
-  fill: ${th('colorPrimary')};
-  height: 14px;
-  width: 14px;
-`
-
 const BlockElementGroup = ({ groupName, items, view }) => {
-  const [isIconClicked, setIconClicked] = useState(false)
-
-  const onIconClick = () => {
-    setIconClicked(!isIconClicked)
-  }
-
   const { t, i18n } = useTranslation()
 
   const translatedLabel = (translation, defaultLabel) => {
@@ -49,40 +27,15 @@ const BlockElementGroup = ({ groupName, items, view }) => {
 
   return (
     <>
-      {groupName !== 'Custom Block' && (
-        <>
-          <GroupName>
-            {translatedLabel(`Wax.Various.${groupName}`, groupName)}
-          </GroupName>
-          <ListWrapper>
-            {items &&
-              items.map(item => (
-                <BlockElement item={item} key={item.name} view={view} />
-              ))}
-          </ListWrapper>
-        </>
-      )}
-
-      {groupName === 'Custom Block' && (
-        <>
-          <FlexDiv>
-            <GroupName>
-              {translatedLabel(`Wax.Various.${groupName}`, groupName)}
-            </GroupName>
-            <div aria-hidden="true" onClick={onIconClick}>
-              {!isIconClicked && <StyledIcon name="IconCross" />}
-              {isIconClicked && <StyledIcon name="IconMinus" />}
-            </div>
-          </FlexDiv>
-          <ListWrapper>
-            <CustomTagBlockComponent
-              isShowTag={isIconClicked}
-              item={items[0]}
-              view={view}
-            />
-          </ListWrapper>
-        </>
-      )}
+      <GroupName>
+        {translatedLabel(`Wax.Various.${groupName}`, groupName)}
+      </GroupName>
+      <ListWrapper>
+        {items &&
+          items.map(item => (
+            <BlockElement item={item} key={item.name} view={view} />
+          ))}
+      </ListWrapper>
     </>
   )
 }

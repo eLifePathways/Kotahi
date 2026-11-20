@@ -48,19 +48,6 @@ const blockActive = (nodeType, attrs = {}) => {
   }
 }
 
-const customTagBlockActive =
-  (type, attrs = {}) =>
-  state => {
-    const { $from } = state.selection
-
-    if (
-      $from.parent.attrs.class === attrs.class &&
-      $from.parent.type.name === 'customTagBlock'
-    )
-      return true
-    return false
-  }
-
 // const blockActive = (type, attrs = {}) => state => {
 //   const { $from, to, node } = state.selection;
 //
@@ -159,7 +146,6 @@ export default {
   isInTable,
   setBlockType,
   blockActive,
-  customTagBlockActive,
   canInsert,
   createLink,
   createTable,
