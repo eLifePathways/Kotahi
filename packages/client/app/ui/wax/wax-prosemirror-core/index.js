@@ -9,7 +9,6 @@ export { default as Service } from './src/Service'
 /* Context & ComponentPlugin */
 export { WaxContext, useInjection } from './src/WaxContext'
 export { ApplicationContext } from './src/ApplicationContext'
-export { StateContext } from './src/StateContext'
 export { PortalContext } from './src/PortalContext'
 export { default as ComponentPlugin } from './src/ComponentPlugin'
 
@@ -40,13 +39,10 @@ export { default as trackedTransaction } from './src/utilities/track-changes/tra
 
 export { default as LeftMenuTitle } from './src/components/LeftMenuTitle'
 export { default as LeftSideButton } from './src/components/LeftSideButton'
-export { default as ReactDropDownStyles } from './src/components/helpers/ReactDropDownStyles'
 export { default as useDebounce } from './src/components/helpers/useDebounce'
 export { default as useOnClickOutside } from './src/components/helpers/useOnClickOutside'
 export { default as ToolGroupComponent } from './src/components/ToolGroupComponent'
 export { default as ToolGroups } from './src/components/ToolGroups'
-export { default as BlockLevelTools } from './src/components/tabs/BlockLevelTools'
-export { default as Tabs } from './src/components/tabs/Tabs'
 export { default as MenuButton } from './src/components/ui/MenuButton'
 export { default as icons } from './src/components/icons/icons'
 export { default as Icon } from './src/components/icons/Icon'
