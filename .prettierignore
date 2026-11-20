@@ -2,3 +2,4 @@
 *.mdx
 .docusaurus
 packages/client/app/ui/wax/__tests__/__fixtures__/
+**/__snapshots__/

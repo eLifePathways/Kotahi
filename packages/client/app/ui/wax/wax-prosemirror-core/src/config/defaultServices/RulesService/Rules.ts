@@ -1,7 +1,6 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
 import { inputRules, smartQuotes } from 'prosemirror-inputrules'
 
 const defaultRules = [
@@ -31,7 +30,6 @@ const defaultRules = [
   // ),
 ]
 
-@injectable()
 class Rules {
   extendedRules = defaultRules
   addRule(rule) {

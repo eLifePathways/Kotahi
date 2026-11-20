@@ -1,23 +1,18 @@
 // @ts-nocheck
 
-import { decorate, injectable, inject } from 'inversify'
 import i18next from 'i18next'
 import { ToolGroup, LeftMenuTitle } from '../../../../wax-prosemirror-core'
 /* stylelint-disable */
 
 class FrontMatterGroup extends ToolGroup {
+  static inject = ['FrontMatter', 'Title', 'Abstract']
+
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Front matter')} />)
 
-  constructor(
-    @inject('FrontMatter') frontMatter,
-    @inject('Title') title,
-    @inject('Abstract') abstractSection,
-  ) {
+  constructor(frontMatter, title, abstractSection) {
     super()
     this._tools = [frontMatter, title, abstractSection]
   }
 }
-
-decorate(injectable(), FrontMatterGroup)
 
 export default FrontMatterGroup

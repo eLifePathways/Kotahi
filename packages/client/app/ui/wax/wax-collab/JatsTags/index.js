@@ -4,18 +4,6 @@ import FrontMatter from './FrontMatter'
 import Abstract from './Abstract'
 import AcknowledgementsSection from './AcknowledgementSection'
 import RefList from './citations/RefList'
-import ArticleTitle from './citations/ArticleTitle'
-import JournalTitle from './citations/JournalTitle'
-import CitationLabel from './citations/CitationLabel'
-import MixedCitationSpan from './citations/MixedCitationSpan'
-import AuthorName from './citations/AuthorName'
-import AuthorGroup from './citations/AuthorGroup'
-import Volume from './citations/Volume'
-import Issue from './citations/Issue'
-import Doi from './citations/Doi'
-import Year from './citations/Year'
-import FirstPage from './citations/FirstPage'
-import LastPage from './citations/LastPage'
 import AwardId from './funding/AwardId'
 import FundingSource from './funding/FundingSource'
 import FundingStatement from './funding/FundingStatement'
@@ -31,24 +19,11 @@ class JatsTagsService extends Service {
     this.container.bind('Appendix').to(Appendix)
     this.container.bind('RefList').to(RefList)
     this.container.bind('FrontMatter').to(FrontMatter)
-    // this.container.bind('Title').to(Title)
     this.container.bind('Abstract').to(Abstract)
     this.container.bind('AwardId').to(AwardId)
     this.container.bind('FundingStatement').to(FundingStatement)
     this.container.bind('FundingSource').to(FundingSource)
     this.container.bind('AcknowledgementsSection').to(AcknowledgementsSection)
-    this.container.bind('ArticleTitle').to(ArticleTitle)
-    this.container.bind('JournalTitle').to(JournalTitle)
-    this.container.bind('MixedCitationSpan').to(MixedCitationSpan)
-    this.container.bind('AuthorName').to(AuthorName)
-    this.container.bind('AuthorGroup').to(AuthorGroup)
-    this.container.bind('CitationLabel').to(CitationLabel)
-    this.container.bind('Doi').to(Doi)
-    this.container.bind('Volume').to(Volume)
-    this.container.bind('Issue').to(Issue)
-    this.container.bind('Year').to(Year)
-    this.container.bind('FirstPage').to(FirstPage)
-    this.container.bind('LastPage').to(LastPage)
     this.container.bind('KeywordList').to(KeywordList)
     this.container.bind('Keyword').to(Keyword)
     this.container.bind('GlossarySection').to(GlossarySection)

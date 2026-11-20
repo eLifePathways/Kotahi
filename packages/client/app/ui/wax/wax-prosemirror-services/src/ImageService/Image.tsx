@@ -1,12 +1,10 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable } from 'inversify'
 import { Commands, Tools } from '../../../wax-prosemirror-core'
 import { uuid } from '@coko/client'
 
 import ImageUploadComponent from './components/ImageUploadComponent'
 
-@injectable()
 export default class Image extends Tools {
   title = 'Upload Image'
   icon = 'image'

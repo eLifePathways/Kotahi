@@ -2,13 +2,11 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, array-callback-return, react-hooks/rules-of-hooks */
 
 import { useMemo } from 'react'
-import { injectable } from 'inversify'
 import { uuid } from '@coko/client'
 import { isEmpty } from 'lodash'
 import ToolGroups from '../../components/ToolGroups'
 import ToolGroupComponent from '../../components/ToolGroupComponent'
 
-@injectable()
 class ToolGroup {
   _config = {}
   title = ''

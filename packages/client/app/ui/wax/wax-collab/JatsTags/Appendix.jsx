@@ -1,4 +1,3 @@
-import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { wrapIn } from 'prosemirror-commands'
 import i18next from 'i18next'
@@ -57,7 +56,5 @@ class Appendix extends Tools {
     ) : null
   }
 }
-
-decorate(injectable(), Appendix)
 
 export default Appendix

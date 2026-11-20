@@ -1,11 +1,9 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { isEmpty } from 'lodash'
-import { injectable } from 'inversify'
 import { Tools } from '../../../wax-prosemirror-core'
 import FullScreenButton from './components/FullScreenButton'
 
-@injectable()
 export default class FullScreenTool extends Tools {
   title = 'Full screen'
   icon = 'fullScreen'

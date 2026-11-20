@@ -1,18 +1,17 @@
 // @ts-nocheck
 
-import { decorate, injectable, inject } from 'inversify'
 import i18next from 'i18next'
 import { ToolGroup, LeftMenuTitle } from '../../../../wax-prosemirror-core'
 
 class KeywordGroup extends ToolGroup {
+  static inject = ['KeywordList', 'Keyword']
+
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Keywords')} />)
 
-  constructor(@inject('KeywordList') keywordList, @inject('Keyword') keyword) {
+  constructor(keywordList, keyword) {
     super()
     this._tools = [keywordList, keyword]
   }
 }
-
-decorate(injectable(), KeywordGroup)
 
 export default KeywordGroup

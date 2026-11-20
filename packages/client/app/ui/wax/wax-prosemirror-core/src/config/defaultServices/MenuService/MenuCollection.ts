@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 /* eslint-disable no-unused-vars */
-import { injectable, multiInject } from 'inversify'
 
-@injectable()
 class MenuCollection {
+  static inject = [{ all: 'Menu' }]
+
   menus = []
-  constructor(@multiInject('Menu') menus) {
+  constructor(menus) {
     this.menus = menus
   }
 

@@ -3,11 +3,9 @@
 
 import { isEmpty } from 'lodash'
 import { undo } from 'prosemirror-history'
-import { injectable } from 'inversify'
 import { Tools } from '../../../../wax-prosemirror-core'
 import UndoRedoButton from '../components/UndoRedoButton'
 
-@injectable()
 export default class Undo extends Tools {
   title = 'Undo'
   icon = 'undo'

@@ -2,11 +2,9 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
 import { wrapInList } from 'prosemirror-schema-list'
 import { Commands, Tools } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class OrderedList extends Tools {
   title = 'Wrap in ordered list'
   icon = 'numberedList'

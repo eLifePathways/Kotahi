@@ -5,7 +5,6 @@
 
 import { useMemo } from 'react'
 
-import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
@@ -13,16 +12,24 @@ import { ToolGroup } from '../../../wax-prosemirror-core'
 import { VerticalTabs, BlockLevelTools } from './VerticalTabs'
 
 class JatsSideMenu extends ToolGroup {
+  static inject = [
+    'FrontMatterGroup',
+    'FundingGroup',
+    'AppendixGroup',
+    'CitationGroup',
+    'AcknowledgementsGroup',
+    'KeywordGroup',
+    'GlossaryGroup',
+  ]
+
   constructor(
-    /* stylelint-disable */
-    @inject('FrontMatterGroup') frontmattergroup,
-    @inject('FundingGroup') fundinggroup,
-    @inject('AppendixGroup') appendixgroup,
-    @inject('CitationGroup') citationgroup,
-    @inject('AcknowledgementsGroup') acknowledgementsgroup,
-    @inject('KeywordGroup') keywordgroup,
-    @inject('GlossaryGroup') glossarygroup,
-    /* stylelint-enable */
+    frontmattergroup,
+    fundinggroup,
+    appendixgroup,
+    citationgroup,
+    acknowledgementsgroup,
+    keywordgroup,
+    glossarygroup,
   ) {
     super()
     this._toolGroups = [
@@ -105,7 +112,5 @@ class JatsSideMenu extends ToolGroup {
     return TabsComponent
   }
 }
-
-decorate(injectable(), JatsSideMenu)
 
 export default JatsSideMenu

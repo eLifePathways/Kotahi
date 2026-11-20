@@ -4,7 +4,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import { useContext } from 'react'
-import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import styled from 'styled-components'
@@ -45,14 +44,24 @@ const DropdownStyled = styled(Dropdown)`
 `
 
 class KotahiBlockDropDown extends ToolGroup {
+  static inject = [
+    'Title',
+    'Heading2',
+    'Heading3',
+    'Heading4',
+    'Heading5',
+    'Heading6',
+    'Paragraph',
+  ]
+
   constructor(
-    @inject('Title') title,
-    @inject('Heading2') heading2,
-    @inject('Heading3') heading3,
-    @inject('Heading4') heading4,
-    @inject('Heading5') heading5,
-    @inject('Heading6') heading6,
-    @inject('Paragraph') paragraph,
+    title,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
+    paragraph,
   ) {
     super()
 
@@ -109,7 +118,5 @@ class KotahiBlockDropDown extends ToolGroup {
     )
   }
 }
-
-decorate(injectable(), KotahiBlockDropDown)
 
 export default KotahiBlockDropDown

@@ -1,7 +1,6 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
 import { keymap } from 'prosemirror-keymap'
 import { undo, redo } from 'prosemirror-history'
 import { splitListItem } from 'prosemirror-schema-list'
@@ -139,7 +138,6 @@ const getKeys = {
   Enter: pressEnter,
 }
 
-@injectable()
 export default class ShortCuts {
   keys = getKeys
 

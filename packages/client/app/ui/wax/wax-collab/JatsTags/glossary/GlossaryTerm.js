@@ -1,4 +1,3 @@
-import { decorate, injectable } from 'inversify'
 import { toggleMark } from 'prosemirror-commands'
 import i18next from 'i18next'
 import { Commands, Tools } from '../../../wax-prosemirror-core'
@@ -32,7 +31,5 @@ class GlossaryTerm extends Tools {
     }
   }
 }
-
-decorate(injectable(), GlossaryTerm)
 
 export default GlossaryTerm

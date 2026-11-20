@@ -2,11 +2,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
-import { injectable } from 'inversify'
 import { Tools } from '../../../wax-prosemirror-core'
 import SpecialCharactersTool from './components/SpecialCharactersTool'
 
-@injectable()
 export default class SpecialCharacters extends Tools {
   title = 'Special Characters'
   icon = 'specialCharacters'

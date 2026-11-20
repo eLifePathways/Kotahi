@@ -1,4 +1,3 @@
-import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { wrapIn } from 'prosemirror-commands'
 import i18next from 'i18next'
@@ -59,7 +58,5 @@ class Abstract extends Tools {
     ) : null
   }
 }
-
-decorate(injectable(), Abstract)
 
 export default Abstract

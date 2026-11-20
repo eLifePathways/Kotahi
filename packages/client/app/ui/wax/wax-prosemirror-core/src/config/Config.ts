@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { set, get, isArrayLikeObject } from 'lodash'
-import { injectable, inject } from 'inversify'
 
-@injectable()
 export default class Config {
+  static inject = ['config']
+
   _config = {}
-  constructor(@inject('config') config) {
+  constructor(config) {
     this._config = config
   }
 

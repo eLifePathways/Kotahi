@@ -1,5 +1,3 @@
-import { Container } from 'inversify'
-import 'reflect-metadata'
 import deepmerge from 'deepmerge'
 
 import { uuid } from '@coko/client'
@@ -7,6 +5,7 @@ import { cloneDeep } from 'lodash'
 import Config from './config/Config'
 import defaultConfig from './config/defaultConfig'
 import PmPlugins from './PmPlugins'
+import Registry from './Registry'
 
 export default class Application {
   constructor(container) {
@@ -105,7 +104,7 @@ export default class Application {
     Create Container
     */
 
-    const container = new Container()
+    const container = new Registry()
     /*
 
     Set base bindings for the App to work
