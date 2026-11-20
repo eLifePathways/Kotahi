@@ -7,13 +7,9 @@ import { ToolGroup } from '../../../../wax-prosemirror-core'
 @injectable()
 class Base extends ToolGroup {
   tools = []
-  constructor(
-    @inject('Undo') undo,
-    @inject('Redo') redo,
-    @inject('Save') save,
-  ) {
+  constructor(@inject('Undo') undo, @inject('Redo') redo) {
     super()
-    this.tools = [undo, redo, save]
+    this.tools = [undo, redo]
   }
 }
 
