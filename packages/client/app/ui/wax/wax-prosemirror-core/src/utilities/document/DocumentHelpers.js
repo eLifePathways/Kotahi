@@ -29,25 +29,9 @@ const findMark = (state, PMmark, toArr = false) => {
   return markFound
 }
 
-const findNode = (state, PMnode, findInParent) => {
+const findNode = (state, PMnode) => {
   let nodeFound
-  if (findInParent) {
-    state.doc.nodesBetween(state.selection.from, state.selection.to, node => {
-      if (
-        node.type.name === 'oen_container' &&
-        node.attrs.class === 'outline'
-      ) {
-        nodeFound = {
-          from: state.selection.from,
-          to: state.selection.to,
-          node,
-        }
-      }
-    })
-  } else if (
-    state.selection.node &&
-    state.selection.node.type.name === PMnode.name
-  ) {
+  if (state.selection.node && state.selection.node.type.name === PMnode.name) {
     nodeFound = {
       from: state.selection.from,
       to: state.selection.to,

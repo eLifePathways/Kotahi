@@ -7,7 +7,6 @@ import {
   Commands,
   LeftSideButton,
 } from '../../../../wax-prosemirror-core'
-import checkLevelFromConfig from './checkLevelFromConfig'
 
 @injectable()
 export default class Heading2 extends Tools {
@@ -38,14 +37,6 @@ export default class Heading2 extends Tools {
 
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
-    if (this.config) {
-      const allowedLevel = checkLevelFromConfig(
-        state,
-        activeViewId,
-        this.config,
-      )
-      if (allowedLevel > 2) return false
-    }
 
     return Commands.setBlockType(state.config.schema.nodes.heading2)(state)
   }
