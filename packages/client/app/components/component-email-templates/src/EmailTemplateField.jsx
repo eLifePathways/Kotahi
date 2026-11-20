@@ -4,7 +4,7 @@ import { camelCase } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { required } from '../../xpub-validators/src'
 import { ValidatedFieldFormik } from '../../pubsweet'
-import { handlebars } from './handlebarsAutocomplete/constants'
+import { handlebars } from '../../../ui/wax/handlebars-autocomplete/constants'
 
 const makePropsFromFieldType = ({ item, onDataChanged, setFieldValue }) => {
   const { autocompleteConfig } = handlebars.stored

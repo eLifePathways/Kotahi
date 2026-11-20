@@ -13,7 +13,7 @@ import { css } from '@codemirror/lang-css'
 import Page from '../../../../ui/shared/Page'
 import { FlexRow } from '../../../../globals'
 import { ConfigContext } from '../../../config/src'
-import ProductionWaxEditor from '../../../wax-collab/src/ProductionWaxEditor'
+import ProductionWaxEditor from '../../../../ui/wax/wax-collab/ProductionWaxEditor'
 import { DownloadDropdown } from './DownloadDropdown'
 import {
   ErrorBoundary,
@@ -33,6 +33,7 @@ import PreviousFeedbackSubmissions from './PreviousFeedbackSubmissions'
 import { CssAssistantProvider } from '../../../component-ai-assistant/hooks/CssAssistantContext'
 import AiPDFDesigner from '../../../component-ai-assistant/AiPDFDesigner'
 import Versioning from './Versioning'
+import useCitationApi from '../useCitationApi'
 import VerifyPayloadModal from './VerifyPayloadModal/VerifyPayloadModal'
 import { isEditableManuscriptFile } from '../../../../shared/manuscriptUtils'
 
@@ -118,6 +119,9 @@ const Production = ({
   addNewVersion,
 }) => {
   const [activeKey, setActiveKey] = useState('editor')
+
+  const { updateAnystyle, updateCrossRef, updateCiteProc, updateCallout } =
+    useCitationApi(client)
 
   const versions = gatherManuscriptVersions(unparsedManuscript)
 
@@ -230,7 +234,6 @@ const Production = ({
             {manuscript ? (
               <ProductionWaxEditor
                 aiConfig={aiConfig}
-                client={client}
                 fallbackOnCrossrefAfterDatacite={
                   fallbackOnCrossrefAfterDatacite
                 }
@@ -242,6 +245,10 @@ const Production = ({
                 readonly={isReadOnlyVersion || false}
                 saveSource={debouncedSave}
                 setComments={getManuscriptComments}
+                updateAnystyle={updateAnystyle}
+                updateCallout={updateCallout}
+                updateCiteProc={updateCiteProc}
+                updateCrossRef={updateCrossRef}
                 user={currentUser}
                 value={manuscript.meta.source}
               />
