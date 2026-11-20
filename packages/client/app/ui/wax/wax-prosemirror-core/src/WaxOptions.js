@@ -1,21 +1,6 @@
-/* eslint-disable new-cap */
-
-import { DOMParser } from 'prosemirror-model'
 import Placeholder from './config/plugins/placeholder'
 import defaultPlugins from './config/plugins/defaultPlugins'
-
-const parser = schema => {
-  const WaxParser = DOMParser.fromSchema(schema)
-
-  return content => {
-    const container = document.createElement('article')
-
-    container.innerHTML = content
-    return WaxParser.parse(container, {
-      preserveWhitespace: true,
-    })
-  }
-}
+import { parser } from './helpers/htmlFormat'
 
 export default ({ placeholder, targetFormat, value, schema, plugins }) => {
   let finalPlugins = []
