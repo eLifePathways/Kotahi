@@ -41,4 +41,4 @@ const override =
     `
   }
 
-export { grid, th, override }
+export { grid, override }

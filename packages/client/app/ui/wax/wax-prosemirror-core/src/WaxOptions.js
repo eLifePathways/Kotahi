@@ -4,7 +4,7 @@ import { DOMParser } from 'prosemirror-model'
 import Placeholder from './config/plugins/placeholder'
 import defaultPlugins from './config/plugins/defaultPlugins'
 
-export const parser = schema => {
+const parser = schema => {
   const WaxParser = DOMParser.fromSchema(schema)
 
   return content => {
