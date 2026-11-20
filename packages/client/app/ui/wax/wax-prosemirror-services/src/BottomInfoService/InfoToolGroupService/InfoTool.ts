@@ -7,12 +7,9 @@ import { ToolGroup } from '../../../../wax-prosemirror-core'
 @injectable()
 class InfoToolGroup extends ToolGroup {
   tools = []
-  constructor(
-    @inject('CounterInfoTool') counterinfotool,
-    @inject('ShortCutsInfoTool') shortcutsinfotool,
-  ) {
+  constructor(@inject('CounterInfoTool') counterinfotool) {
     super()
-    this.tools = [shortcutsinfotool, counterinfotool]
+    this.tools = [counterinfotool]
   }
 }
 

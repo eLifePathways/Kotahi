@@ -46,7 +46,7 @@ const simpleWaxEditorConfig = props => ({
     },
     {
       templateArea: 'bottomRightInfo',
-      toolGroups: [{ name: 'InfoToolGroup', exclude: ['ShortCutsInfo'] }],
+      toolGroups: ['InfoToolGroup'],
     },
   ],
 
