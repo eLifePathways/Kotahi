@@ -20,7 +20,6 @@ export { default as BottomInfoService } from './src/BottomInfoService/BottomInfo
 export { default as TransformService } from './src/TransformService/TransformService'
 export { default as EditingSuggestingService } from './src/EditingSuggestingService/EditingSuggestingService'
 export { default as EnterService } from './src/EnterService/EnterService'
-export { default as YjsService } from './src/YjsService/YjsService'
 export { default as AskAiContentService } from './src/AiService/AskAiContentService'
 export { default as ContentUpdateService } from './src/ContentUpdateService/ContentUpdateService'
 /*
