@@ -3,13 +3,11 @@ import {
   InlineAnnotationsService,
   ImageService,
   LinkService,
-  // ListsService,
   BaseService,
   DisplayBlockLevelService,
   TextBlockLevelService,
   NoteService,
   TrackChangeService,
-  // CommentsService,
   MathService,
   FindAndReplaceService,
   FullScreenService,
@@ -25,7 +23,6 @@ import {
   columnResizing,
 } from '../../wax-table-service'
 import ListsService from '../CustomWaxToolGroups/ListsService/ListsService'
-// import TrackChangeService from '../CustomWaxToolGroups/TrackChangeService/TrackChangeService'
 import {
   KotahiBlockDropDownToolGroupService,
   JatsSideMenuToolGroupService,
