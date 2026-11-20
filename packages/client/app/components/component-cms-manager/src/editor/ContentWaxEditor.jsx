@@ -4,7 +4,7 @@
 
 import { useRef, useMemo } from 'react'
 
-import { Wax } from 'wax-prosemirror-core'
+import { Wax } from '../../../../ui/wax/wax-prosemirror-core'
 
 import { CmsWidthAndHeightContainer } from '../style'
 

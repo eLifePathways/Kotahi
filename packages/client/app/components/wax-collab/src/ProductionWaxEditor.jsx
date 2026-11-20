@@ -6,8 +6,8 @@
 
 import { useCallback, useMemo, useRef, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
-import { Wax } from 'wax-prosemirror-core'
 import styled, { ThemeProvider, useTheme } from 'styled-components'
+import { Wax } from '../../../ui/wax/wax-prosemirror-core'
 import waxTheme from './layout/waxTheme'
 import { JournalContext } from '../../xpub-journal'
 

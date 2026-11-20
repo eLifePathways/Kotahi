@@ -4,15 +4,15 @@
 /* eslint-disable new-cap */
 
 import React, { useContext } from 'react'
+import styled from 'styled-components'
+import { Send } from 'react-feather'
+import { useTranslation } from 'react-i18next'
 import {
   ComponentPlugin,
   WaxView,
   WaxContext,
   Commands,
-} from 'wax-prosemirror-core'
-import styled from 'styled-components'
-import { Send } from 'react-feather'
-import { useTranslation } from 'react-i18next'
+} from '../../../../ui/wax/wax-prosemirror-core'
 
 import {
   SimpleGrid,
@@ -21,8 +21,6 @@ import {
   SimpleInfoContainer,
   SimpleMenu,
 } from './EditorStyles'
-import 'wax-prosemirror-core/dist/index.css'
-import 'wax-prosemirror-services/dist/index.css'
 
 import ToolbarButton from '../SuperChatInput/ToolbarButton'
 import { ActionButton } from '../../../shared'

@@ -14,4 +14,6 @@ import { stylelint } from '@coko/lint'
 //   'packages/client/app/components/wax-collab/src/CustomWaxToolGroups/ListsService/ListToolGroupService/Lists.js',
 // ]
 
+stylelint.ignoreFiles = ['packages/client/app/ui/wax/**']
+
 export default stylelint

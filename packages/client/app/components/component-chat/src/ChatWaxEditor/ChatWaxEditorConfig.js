@@ -1,5 +1,5 @@
 import { emDash, ellipsis } from 'prosemirror-inputrules'
-import { DefaultSchema } from 'wax-prosemirror-core'
+import { DefaultSchema } from '../../../../ui/wax/wax-prosemirror-core'
 import {
   BottomInfoService,
   InlineAnnotationsService,
@@ -11,7 +11,7 @@ import {
   TextBlockLevelService,
   DisplayBlockLevelService,
   EnterService,
-} from 'wax-prosemirror-services'
+} from '../../../../ui/wax/wax-prosemirror-services'
 import ListsService from '../../../wax-collab/src/CustomWaxToolGroups/ListsService/ListsService'
 import { KotahiBlockDropDownToolGroupService } from '../../../wax-collab/src/CustomWaxToolGroups'
 import CharactersList from '../../../wax-collab/src/config/CharactersList'

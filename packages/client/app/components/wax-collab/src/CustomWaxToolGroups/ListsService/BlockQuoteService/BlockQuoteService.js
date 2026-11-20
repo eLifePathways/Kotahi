@@ -1,4 +1,4 @@
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../../ui/wax/wax-prosemirror-core'
 import blockQuoteNode from './schema/blockQuoteNode'
 import BlockQuote from './BlockQuote'
 import BlockQuoteToolGroupService from './BlockQuoteToolGroupService/BlockQuoteToolGroupService'

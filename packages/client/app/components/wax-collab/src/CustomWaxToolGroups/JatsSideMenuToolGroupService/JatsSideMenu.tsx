@@ -8,8 +8,8 @@ import { useMemo } from 'react'
 import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
-import { ToolGroup } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
+import { ToolGroup } from '../../../../../ui/wax/wax-prosemirror-core'
 import { VerticalTabs, BlockLevelTools } from './VerticalTabs'
 
 // nb this was forked from /wax-prosemirror-services/src/WaxToolGroups/DisplayTextToolGroupService/DisplayText.js

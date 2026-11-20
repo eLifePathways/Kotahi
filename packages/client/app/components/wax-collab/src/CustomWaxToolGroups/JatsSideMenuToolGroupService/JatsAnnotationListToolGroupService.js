@@ -1,4 +1,4 @@
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../ui/wax/wax-prosemirror-core'
 import AppendixGroup from './menugroups/AppendixGroup'
 import FrontMatterGroup from './menugroups/FrontMatterGroup'
 import FundingGroup from './menugroups/FundingGroup'

@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { injectable, inject } from 'inversify'
-import { ToolGroup } from 'wax-prosemirror-core'
+import { ToolGroup } from '../../../../../../ui/wax/wax-prosemirror-core'
 
 @injectable()
 class Lists extends ToolGroup {
