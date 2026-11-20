@@ -8,7 +8,7 @@ const MATH_PLUGIN_KEY = new PluginKey('prosemirror-math')
  * @param displayMode TRUE for block math, FALSE for inline math.
  * @see https://prosemirror.net/docs/ref/#view.EditorProps.nodeViews
  */
-export function createMathView(displayMode) {
+function createMathView(displayMode) {
   return (node, view, getPos) => {
     /** @todo is this necessary?
      * Docs says that for any function proprs, the current plugin instance

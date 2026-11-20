@@ -1,9 +1,6 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
-
-@injectable()
 export default class Portals {
   portals = []
 

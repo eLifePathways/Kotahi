@@ -1,13 +1,10 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
-import { injectable } from 'inversify'
 import { Tools } from '../../../wax-prosemirror-core'
 import FindAndReplaceTool from './components/FindAndReplaceTool'
 
-@injectable()
 export default class FindAndReplace extends Tools {
   title = 'Find And Replace'
   icon = 'findAndReplace'

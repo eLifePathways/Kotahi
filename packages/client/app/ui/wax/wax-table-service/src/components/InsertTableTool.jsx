@@ -8,7 +8,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable react/prop-types */
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { withTheme } from 'styled-components'
 
 const clamp = (min, val, max) => {

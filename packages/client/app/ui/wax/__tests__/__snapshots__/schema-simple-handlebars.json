@@ -1,0 +1,471 @@
+{
+  "topNode": "doc",
+  "nodes": [
+    {
+      "name": "doc",
+      "content": "block+"
+    },
+    {
+      "name": "text",
+      "group": "inline"
+    },
+    {
+      "name": "hard_break",
+      "inline": true,
+      "group": "inline",
+      "selectable": false,
+      "parseDOM": [
+        {
+          "tag": "br"
+        }
+      ],
+      "toDOM": "<br>"
+    },
+    {
+      "name": "paragraph",
+      "group": "block",
+      "content": "inline*",
+      "attrs": {
+        "class": "paragraph"
+      },
+      "parseDOM": [
+        {
+          "tag": "p.paragraph",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<p class=\"paragraph\"></p>"
+    },
+    {
+      "name": "blockquote",
+      "content": "block+",
+      "group": "block",
+      "defining": true,
+      "parseDOM": [
+        {
+          "tag": "blockquote"
+        }
+      ],
+      "toDOM": "<blockquote></blockquote>"
+    },
+    {
+      "name": "math_display",
+      "group": "block math",
+      "content": "text*",
+      "atom": true,
+      "code": true,
+      "toDOM": "<math-display class=\"math-node\"></math-display>",
+      "parseDOM": [
+        {
+          "tag": "math-display"
+        }
+      ]
+    },
+    {
+      "name": "math_inline",
+      "group": "inline math",
+      "content": "text*",
+      "inline": true,
+      "atom": true,
+      "toDOM": "<math-inline class=\"math-node\"></math-inline>",
+      "parseDOM": [
+        {
+          "tag": "math-inline"
+        }
+      ]
+    },
+    {
+      "name": "footnote",
+      "group": "notes inline",
+      "content": "inline*",
+      "inline": true,
+      "atom": true,
+      "attrs": {
+        "id": ""
+      },
+      "toDOM": "<footnote id=\"\"></footnote>",
+      "parseDOM": [
+        {
+          "tag": "footnote",
+          "getAttrs": "[function]"
+        }
+      ]
+    },
+    {
+      "name": "list_item",
+      "atom": false,
+      "inline": false,
+      "group": "",
+      "content": "paragraph block*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {
+        "id": "",
+        "track": [],
+        "group": "",
+        "viewid": "",
+        "listnumber": ""
+      },
+      "parseDOM": [
+        {
+          "tag": "li",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<li data-listnumber=\"\"></li>"
+    },
+    {
+      "name": "bulletlist",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "list_item+",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {
+        "id": "",
+        "track": [],
+        "group": "",
+        "viewid": ""
+      },
+      "parseDOM": [
+        {
+          "tag": "ul",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<ul></ul>"
+    },
+    {
+      "name": "orderedlist",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "list_item+",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {
+        "order": 1,
+        "track": [],
+        "id": "",
+        "group": "",
+        "viewid": ""
+      },
+      "parseDOM": [
+        {
+          "tag": "ol",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<ol></ol>"
+    },
+    {
+      "name": "heading2",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "inline*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "h2",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<h2></h2>"
+    },
+    {
+      "name": "heading3",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "inline*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "h3",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<h3></h3>"
+    },
+    {
+      "name": "heading4",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "inline*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "h4",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<h4></h4>"
+    },
+    {
+      "name": "heading5",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "inline*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "h5",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<h5></h5>"
+    },
+    {
+      "name": "heading6",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "inline*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "h6",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<h6></h6>"
+    },
+    {
+      "name": "title",
+      "atom": false,
+      "inline": false,
+      "group": "block",
+      "content": "inline*",
+      "isolating": false,
+      "draggable": false,
+      "attrs": {
+        "level": 1
+      },
+      "parseDOM": [
+        {
+          "tag": "h1",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<h1></h1>"
+    }
+  ],
+  "marks": [
+    {
+      "name": "code",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": true,
+      "excludes": "",
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "code",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<code></code>"
+    },
+    {
+      "name": "strong",
+      "parseDOM": [
+        {
+          "tag": "strong"
+        },
+        {
+          "tag": "b",
+          "getAttrs": "[function]"
+        },
+        {
+          "style": "font-weight",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<strong></strong>"
+    },
+    {
+      "name": "em",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": true,
+      "excludes": "",
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "i",
+          "getAttrs": "[function]"
+        },
+        {
+          "tag": "em",
+          "getAttrs": "[function]"
+        },
+        {
+          "style": "font-style=italic",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<em></em>"
+    },
+    {
+      "name": "subscript",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": true,
+      "excludes": "superscript",
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "sub",
+          "getAttrs": "[function]"
+        },
+        {
+          "style": "vertical-align=sub",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<sub></sub>"
+    },
+    {
+      "name": "superscript",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": true,
+      "excludes": "subscript",
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "sup",
+          "getAttrs": "[function]"
+        },
+        {
+          "style": "vertical-align=super",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<sup></sup>"
+    },
+    {
+      "name": "strikethrough",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": false,
+      "excludes": "",
+      "attrs": {
+        "class": "strikethrough",
+        "style": "text-decoration:line-through"
+      },
+      "parseDOM": [
+        {
+          "tag": "span.strikethrough",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<span class=\"strikethrough\" style=\"text-decoration:line-through\"></span>"
+    },
+    {
+      "name": "underline",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": true,
+      "excludes": "",
+      "attrs": {},
+      "parseDOM": [
+        {
+          "tag": "u",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<u></u>"
+    },
+    {
+      "name": "math_select",
+      "toDOM": "<math-select></math-select>",
+      "parseDOM": [
+        {
+          "tag": "math-select"
+        }
+      ]
+    },
+    {
+      "name": "handlebars_tag",
+      "attrs": {
+        "class": "handlebars"
+      },
+      "inclusive": false,
+      "parseDOM": [
+        {
+          "tag": "span.handlebars",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<span class=\"handlebars\"></span>"
+    },
+    {
+      "name": "smallcaps",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": true,
+      "excludes": "",
+      "attrs": {
+        "class": "small-caps"
+      },
+      "parseDOM": [
+        {
+          "tag": "span.small-caps",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<span class=\"small-caps\"></span>"
+    },
+    {
+      "name": "link",
+      "inline": false,
+      "group": "",
+      "content": "",
+      "draggable": false,
+      "inclusive": false,
+      "excludes": "link",
+      "attrs": {
+        "href": null,
+        "rel": "",
+        "target": "blank",
+        "title": null
+      },
+      "parseDOM": [
+        {
+          "tag": "a[href]",
+          "getAttrs": "[function]"
+        }
+      ],
+      "toDOM": "<a rel=\"\" target=\"blank\"></a>"
+    }
+  ]
+}

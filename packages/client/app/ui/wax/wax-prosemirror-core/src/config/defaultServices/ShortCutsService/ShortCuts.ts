@@ -1,7 +1,6 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
 import { keymap } from 'prosemirror-keymap'
 import { undo, redo } from 'prosemirror-history'
 import { splitListItem } from 'prosemirror-schema-list'
@@ -52,7 +51,7 @@ const backSpaceShortCut = (state, dispatch, view) => {
     }
   })
 
-  state.doc.nodesBetween($from.pos, $to.pos, (node, from) => {
+  state.doc.nodesBetween($from.pos, $to.pos, node => {
     if (node.type.name === 'math_display') {
       const $start = state.tr.doc.resolve(state.tr.selection.$anchor.start())
       const $end = state.tr.doc.resolve(state.tr.selection.$anchor.end())
@@ -139,7 +138,6 @@ const getKeys = {
   Enter: pressEnter,
 }
 
-@injectable()
 export default class ShortCuts {
   keys = getKeys
 

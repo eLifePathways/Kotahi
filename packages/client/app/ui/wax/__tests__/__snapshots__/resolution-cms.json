@@ -1,0 +1,577 @@
+[
+  {
+    "id": "PmPlugins",
+    "count": 1,
+    "value": {
+      "class": "PmPlugins"
+    },
+    "shared": true
+  },
+  {
+    "id": "Wax",
+    "count": 1,
+    "value": {
+      "class": "Application"
+    },
+    "shared": true
+  },
+  {
+    "id": "config",
+    "count": 1,
+    "value": {
+      "class": "Object"
+    },
+    "shared": true
+  },
+  {
+    "id": "Config",
+    "count": 1,
+    "value": {
+      "class": "Config"
+    },
+    "shared": true
+  },
+  {
+    "id": "Schema",
+    "count": 1,
+    "value": {
+      "class": "Schema"
+    },
+    "shared": true
+  },
+  {
+    "id": "CreateNode",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "CreateMark",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "Rules",
+    "count": 1,
+    "value": {
+      "class": "Rules"
+    },
+    "shared": true
+  },
+  {
+    "id": "CreateRule",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "ShortCuts",
+    "count": 1,
+    "value": {
+      "class": "ShortCuts"
+    },
+    "shared": true
+  },
+  {
+    "id": "CreateShortCut",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "Layout",
+    "count": 1,
+    "value": {
+      "class": "Layout"
+    },
+    "shared": true
+  },
+  {
+    "id": "Portals",
+    "count": 1,
+    "value": {
+      "class": "Portals"
+    },
+    "shared": true
+  },
+  {
+    "id": "AddPortal",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "Menu",
+    "count": 1,
+    "value": {
+      "class": "Menu",
+      "templateArea": "topBar"
+    },
+    "shared": true
+  },
+  {
+    "id": "MenuCollection",
+    "count": 1,
+    "value": {
+      "class": "MenuCollection",
+      "menus": [
+        {
+          "class": "Menu",
+          "templateArea": "topBar"
+        }
+      ]
+    },
+    "shared": true
+  },
+  {
+    "id": "createTools",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "CreateOverlay",
+    "count": 1,
+    "value": "[function]",
+    "shared": true
+  },
+  {
+    "id": "Undo",
+    "count": 1,
+    "value": {
+      "class": "Undo",
+      "name": "Undo",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Redo",
+    "count": 1,
+    "value": {
+      "class": "Redo",
+      "name": "Redo",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Base",
+    "count": 1,
+    "value": {
+      "class": "Base",
+      "tools": [
+        "Undo",
+        "Redo"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "FindAndReplace",
+    "count": 1,
+    "value": {
+      "class": "FindAndReplace",
+      "name": "find",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "FindAndReplaceTool",
+    "count": 1,
+    "value": {
+      "class": "FindAndReplaceTool",
+      "tools": [
+        "find"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "Image",
+    "count": 1,
+    "value": {
+      "class": "Image",
+      "name": "Image",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Images",
+    "count": 1,
+    "value": {
+      "class": "Images",
+      "tools": [
+        "Image"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "Code",
+    "count": 1,
+    "value": {
+      "class": "Code",
+      "name": "Code",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Strong",
+    "count": 1,
+    "value": {
+      "class": "Strong",
+      "name": "Strong",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Emphasis",
+    "count": 1,
+    "value": {
+      "class": "Emphasis",
+      "name": "Emphasis",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Subscript",
+    "count": 1,
+    "value": {
+      "class": "Subscript",
+      "name": "Subscript",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Superscript",
+    "count": 1,
+    "value": {
+      "class": "Superscript",
+      "name": "Superscript",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "StrikeThrough",
+    "count": 1,
+    "value": {
+      "class": "StrikeThrough",
+      "name": "StrikeThrough",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Underline",
+    "count": 1,
+    "value": {
+      "class": "Underline",
+      "name": "Underline",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "SmallCaps",
+    "count": 1,
+    "value": {
+      "class": "SmallCaps",
+      "name": "SmallCaps",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Annotations",
+    "count": 1,
+    "value": {
+      "class": "Annotations",
+      "tools": [
+        "Strong",
+        "Emphasis",
+        "Code",
+        "LinkTool",
+        "StrikeThrough",
+        "Underline",
+        "Subscript",
+        "Superscript",
+        "SmallCaps"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "Link",
+    "count": 1,
+    "value": {
+      "class": "LinkTool",
+      "name": "LinkTool",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "BlockQuote",
+    "count": 1,
+    "value": {
+      "class": "BlockQuote",
+      "name": "BlockQuote",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "BulletList",
+    "count": 1,
+    "value": {
+      "class": "BulletList",
+      "name": "BulletList",
+      "config": "Config",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "OrderedList",
+    "count": 1,
+    "value": {
+      "class": "OrderedList",
+      "name": "OrderedList",
+      "config": "Config",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "JoinUp",
+    "count": 1,
+    "value": {
+      "class": "JoinUp",
+      "name": "JoinUp",
+      "config": "Config",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "Lift",
+    "count": 1,
+    "value": {
+      "class": "Lift",
+      "name": "Lift",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Lists",
+    "count": 1,
+    "value": {
+      "class": "Lists",
+      "tools": [
+        "BlockQuote",
+        "OrderedList",
+        "BulletList",
+        "JoinUp",
+        "Lift"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "SpecialCharactersTool",
+    "count": 1,
+    "value": {
+      "class": "SpecialCharacters",
+      "name": "specialCharacters",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "SpecialCharacters",
+    "count": 1,
+    "value": {
+      "class": "SpecialCharacters",
+      "tools": [
+        "specialCharacters"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "Table",
+    "count": 1,
+    "value": {
+      "class": "Table",
+      "name": "Table",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "TableDropDownOptions",
+    "count": 1,
+    "value": {
+      "class": "TableDropDownOptions",
+      "name": "TableDropDownOptions",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Tables",
+    "count": 1,
+    "value": {
+      "class": "Tables",
+      "tools": [
+        "Table",
+        "TableDropDownOptions"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "Paragraph",
+    "count": 1,
+    "value": {
+      "class": "Paragraph",
+      "name": "Paragraph",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "Heading2",
+    "count": 1,
+    "value": {
+      "class": "Heading2",
+      "name": "Heading2",
+      "config": "undefined",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "Heading3",
+    "count": 1,
+    "value": {
+      "class": "Heading3",
+      "name": "Heading3",
+      "config": "undefined",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "Heading4",
+    "count": 1,
+    "value": {
+      "class": "Heading4",
+      "name": "Heading4",
+      "config": "undefined",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "Heading5",
+    "count": 1,
+    "value": {
+      "class": "Heading2",
+      "name": "Heading5",
+      "config": "undefined",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "Heading6",
+    "count": 1,
+    "value": {
+      "class": "Heading2",
+      "name": "Heading6",
+      "config": "undefined",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "Title",
+    "count": 1,
+    "value": {
+      "class": "Title",
+      "name": "Title",
+      "config": "undefined",
+      "pmplugins": "undefined"
+    },
+    "shared": false
+  },
+  {
+    "id": "FullScreenTool",
+    "count": 1,
+    "value": {
+      "class": "FullScreenTool",
+      "name": "FullScreen",
+      "config": "Config",
+      "pmplugins": "PmPlugins"
+    },
+    "shared": false
+  },
+  {
+    "id": "FullScreen",
+    "count": 1,
+    "value": {
+      "class": "FullScreen",
+      "tools": [
+        "FullScreen"
+      ]
+    },
+    "shared": false
+  },
+  {
+    "id": "KotahiBlockDropDown",
+    "count": 1,
+    "value": {
+      "class": "KotahiBlockDropDown",
+      "tools": [
+        "Title",
+        "Heading2",
+        "Heading3",
+        "Heading4",
+        "Heading5",
+        "Heading6",
+        "Paragraph"
+      ]
+    },
+    "shared": false
+  }
+]

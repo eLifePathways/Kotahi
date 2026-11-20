@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Mapping, RemoveMarkStep, ReplaceStep } from 'prosemirror-transform'
 import { Slice } from 'prosemirror-model'
-import { injectable } from 'inversify'
 import { Tools } from '../../../../wax-prosemirror-core'
 import removeNode from '../track-changes/helpers/removeNode'
 
@@ -18,7 +17,6 @@ const checkFromConfig = (mark, user, config) => {
   return true
 }
 
-@injectable()
 export default class AcceptTrackChange extends Tools {
   title = 'Accept Changes'
   label = 'Accept in selection'
@@ -115,14 +113,6 @@ export default class AcceptTrackChange extends Tools {
           node.attrs.track &&
           node.attrs.track.find(track => track.type === 'block_change')
         ) {
-          const blockChangeTrack = node.attrs.track.find(
-            track => track.type === 'block_change',
-          )
-
-          const track = node.attrs.track.filter(
-            track => track !== blockChangeTrack,
-          )
-
           tr.setNodeMarkup(
             map.map(pos),
             null,
@@ -148,6 +138,6 @@ export default class AcceptTrackChange extends Tools {
   }
 
   get active() {
-    return state => {}
+    return () => {}
   }
 }

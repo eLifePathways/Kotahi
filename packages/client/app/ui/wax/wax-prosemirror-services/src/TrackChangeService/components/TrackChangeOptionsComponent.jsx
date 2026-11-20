@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types, array-callback-return */
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import styled from 'styled-components'
 import { each, isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'

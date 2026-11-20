@@ -1,16 +1,12 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
-import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import {
   Tools,
   Commands,
   LeftSideButton,
 } from '../../../../wax-prosemirror-core'
-import checkLevelFromConfig from './checkLevelFromConfig'
 
-@injectable()
 export default class Heading3 extends Tools {
   title = 'Change to heading level 3'
   label = 'Heading 3'
@@ -28,7 +24,7 @@ export default class Heading3 extends Tools {
       if (activeViewId !== 'main') return false
 
       const { from, to } = state.selection
-      state.doc.nodesBetween(from, to, (node, pos) => {
+      state.doc.nodesBetween(from, to, node => {
         if (node.type.name === 'heading3') {
           isActive = true
         }
@@ -39,14 +35,6 @@ export default class Heading3 extends Tools {
 
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
-    if (this.config) {
-      const allowedLevel = checkLevelFromConfig(
-        state,
-        activeViewId,
-        this.config,
-      )
-      if (allowedLevel > 3) return false
-    }
 
     return Commands.setBlockType(state.config.schema.nodes.heading3)(state)
   }

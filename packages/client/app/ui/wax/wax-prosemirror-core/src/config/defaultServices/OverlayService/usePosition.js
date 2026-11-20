@@ -51,10 +51,10 @@ export default options => {
   }
 
   const displayOnNode = (focusedView, overlayOptions) => {
-    const { nodeType, followCursor, findInParent } = overlayOptions
+    const { nodeType, followCursor } = overlayOptions
     const PMnode = focusedView.state.schema.nodes[nodeType]
 
-    node = DocumentHelpers.findNode(focusedView.state, PMnode, findInParent)
+    node = DocumentHelpers.findNode(focusedView.state, PMnode)
     if (!isObject(node)) return defaultOverlay
     const { from, to } = followCursor ? focusedView.state.selection : node
 

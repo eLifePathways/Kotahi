@@ -1,11 +1,11 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { WaxContext } from '../WaxContext'
 import MenuButton from './ui/MenuButton'
 
-const Button = ({ view = {}, item }) => {
+const Button = ({ item }) => {
   const { t, i18n } = useTranslation()
   const { active, icon, label, run, select, title } = item
   const context = useContext(WaxContext)

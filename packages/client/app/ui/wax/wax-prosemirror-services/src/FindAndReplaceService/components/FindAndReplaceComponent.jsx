@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { TextSelection } from 'prosemirror-state'
 import { WaxContext } from '../../../../wax-prosemirror-core'
 import FindComponent from './FindComponent'

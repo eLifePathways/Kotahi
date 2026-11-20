@@ -1,10 +1,8 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { toggleMark } from 'prosemirror-commands'
-import { injectable } from 'inversify'
 import { Commands, Tools } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class SmallCaps extends Tools {
   title = 'Toggle Small Caps'
   icon = 'smallCaps'

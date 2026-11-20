@@ -1,24 +1,34 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useMemo } from 'react'
-import { injectable, inject } from 'inversify'
+import { useMemo } from 'react'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { ToolGroup, ToolGroupComponent } from '../../../../wax-prosemirror-core'
 
-@injectable()
 class Annotations extends ToolGroup {
+  static inject = [
+    'Code',
+    'Emphasis',
+    'Link',
+    'StrikeThrough',
+    'Strong',
+    'Subscript',
+    'Superscript',
+    'Underline',
+    'SmallCaps',
+  ]
+
   tools = []
   constructor(
-    @inject('Code') code,
-    @inject('Emphasis') emphasis,
-    @inject('Link') link,
-    @inject('StrikeThrough') strikethrough,
-    @inject('Strong') strong,
-    @inject('Subscript') subscript,
-    @inject('Superscript') superscript,
-    @inject('Underline') underline,
-    @inject('SmallCaps') smallcaps,
+    code,
+    emphasis,
+    link,
+    strikethrough,
+    strong,
+    subscript,
+    superscript,
+    underline,
+    smallcaps,
   ) {
     super()
     this.tools = [

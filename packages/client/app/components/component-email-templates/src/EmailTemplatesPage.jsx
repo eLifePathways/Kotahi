@@ -5,7 +5,7 @@ import { CommsErrorBanner } from '../../shared'
 import Spinner from '../../../ui/shared/Spinner'
 import EmailTemplates from './EmailTemplates'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
-import { handlebars } from './handlebarsAutocomplete/constants'
+import { handlebars } from '../../../ui/wax/handlebars-autocomplete/constants'
 import { ConfigContext } from '../../config/src'
 import { GET_TEMPLATE_VARIABLES } from '../../../queries'
 

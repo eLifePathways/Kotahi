@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 
-import SimpleWaxEditor from '../../../wax-collab/src/SimpleWaxEditor'
+import SimpleWaxEditor from '../../../../ui/wax/wax-collab/SimpleWaxEditor'
 import { Icon, Action, LooseRow } from '../../../shared'
 import Badge from '../../../../ui/shared/Badge'
 

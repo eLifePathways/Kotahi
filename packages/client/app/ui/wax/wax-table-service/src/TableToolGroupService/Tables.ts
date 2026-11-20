@@ -1,15 +1,12 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable, inject } from 'inversify'
 import { ToolGroup } from '../../../wax-prosemirror-core'
 
-@injectable()
 class Tables extends ToolGroup {
+  static inject = ['Table', 'TableDropDownOptions']
+
   tools = []
-  constructor(
-    @inject('Table') table,
-    @inject('TableDropDownOptions') tableDropDownOptions,
-  ) {
+  constructor(table, tableDropDownOptions) {
     super()
     this.tools = [table, tableDropDownOptions]
   }

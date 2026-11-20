@@ -3,13 +3,13 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import findSelectedChanges from './FindSelectedChanges'
 
-export const key = new PluginKey('track')
+const key = new PluginKey('track')
 
-export default options => {
+export default () => {
   return new Plugin({
     key,
     state: {
-      init(config, state) {
+      init() {
         return {
           decos: DecorationSet.empty,
         }
@@ -45,7 +45,7 @@ export default options => {
               )
             ) {
               let nodeSize = pos
-              node.descendants((childNode, childPos) => {
+              node.descendants(childNode => {
                 nodeSize += childNode.nodeSize
               })
               // Active block
@@ -100,7 +100,7 @@ export default options => {
         return decos
       },
       handleDOMEvents: {
-        focus: (view, _event) => {
+        focus: () => {
           // view.dispatch(deactivateAllSelectedChanges(view.state.tr));
         },
       },

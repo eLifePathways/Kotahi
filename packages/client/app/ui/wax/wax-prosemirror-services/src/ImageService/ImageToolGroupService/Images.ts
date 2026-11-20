@@ -1,12 +1,12 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable, inject } from 'inversify'
 import { ToolGroup } from '../../../../wax-prosemirror-core'
 
-@injectable()
 class Images extends ToolGroup {
+  static inject = ['Image']
+
   tools = []
-  constructor(@inject('Image') image) {
+  constructor(image) {
     super()
     this.tools = [image]
   }

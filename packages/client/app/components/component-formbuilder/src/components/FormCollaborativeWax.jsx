@@ -1,23 +1,37 @@
-/* eslint-disable react/prop-types, react/display-name */
+/* eslint-disable react/prop-types */
 
-import CollaborativeWax from '../../../wax-collab/src/CollaborativeWax'
+import { useContext } from 'react'
+import YjsContext from '../../../provider-yjs/YjsProvider'
 
-const FormCollaborateComponent =
-  component =>
-  /* eslint-disable-next-line no-unused-vars */
-  ({ onChange, collaborativeObject, ...rest }) => {
-    const { identifier } = collaborativeObject
+import Spinner from '../../../../ui/shared/Spinner'
+
+const FormCollaborateComponent = Component => {
+  const FormCollaborativeField = ({
+    // eslint-disable-next-line no-unused-vars
+    onChange,
+    collaborativeObject,
+    setComments,
+    ...rest
+  }) => {
+    const { identifier, currentUser } = collaborativeObject
+    const { wsProvider, ydoc } = useContext(YjsContext)
+
+    if (!wsProvider || !ydoc) return <Spinner fullpage />
 
     return (
-      <CollaborativeWax
-        component={component}
-        editorMode={null}
+      <Component
         identifier={identifier}
         {...rest}
-        collaborativeObject={collaborativeObject}
         onChange={() => {}}
+        setComments={setComments}
+        user={currentUser}
+        wsProvider={wsProvider}
+        ydoc={ydoc}
       />
     )
   }
+
+  return FormCollaborativeField
+}
 
 export default FormCollaborateComponent

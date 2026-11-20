@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useState, useMemo, useEffect } from 'react'
+import { useContext, useState, useMemo, useEffect } from 'react'
 import { differenceBy } from 'lodash'
 import { WaxContext, DocumentHelpers } from '../../../wax-prosemirror-core'
 import NoteEditor from './NoteEditor'
@@ -26,7 +26,7 @@ export default ({ view }) => {
       )
       if (notes.length > currentNotes.length) {
         const difference = differenceBy(notes, currentNotes, 'node.attrs.id')
-        difference.forEach((item, i) => {
+        difference.forEach(item => {
           context.removeView(item.node.attrs.id)
         })
 

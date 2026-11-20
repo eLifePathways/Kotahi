@@ -2,11 +2,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
-import { injectable } from 'inversify'
 import { each } from 'lodash'
 import { Tools } from '../../../../wax-prosemirror-core'
 
-@injectable()
 class ShowHideTrackChange extends Tools {
   title = 'Show/Hide Changes'
   icon = 'showTrack'
@@ -38,12 +36,12 @@ class ShowHideTrackChange extends Tools {
     }
   }
 
-  select = (state, activeViewId, activeView) => {
+  select = () => {
     return true
   }
 
   get active() {
-    return state => {
+    return () => {
       return this._showHidden
     }
   }

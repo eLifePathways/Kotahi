@@ -3,7 +3,6 @@
 /* eslint-disable new-cap */
 
 import { useEffect, useState, forwardRef } from 'react'
-import { DOMSerializer } from 'prosemirror-model'
 import CryptoJS from 'crypto-js'
 import stringify from 'safe-stable-stringify'
 import DefaultSchema from './utilities/schema/DefaultSchema'
@@ -12,15 +11,7 @@ import PortalProvider from './PortalContext'
 import ApplicationProvider from './ApplicationContext'
 import Application from './Application'
 import helpers from './helpers/helpers'
-
-const serializer = schema => {
-  const WaxSerializer = DOMSerializer.fromSchema(schema)
-  return content => {
-    const container = document.createElement('article')
-    container.appendChild(WaxSerializer.serializeFragment(content))
-    return container.innerHTML
-  }
-}
+import { serializer } from './helpers/htmlFormat'
 
 const createApplication = props => {
   const application = Application.create(props)

@@ -1,10 +1,8 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable } from 'inversify'
 import { toggleMark } from 'prosemirror-commands'
 import { Commands, Tools } from '../../../wax-prosemirror-core'
 
-@injectable()
 export default class LinkTool extends Tools {
   title = 'Add or remove link'
   icon = 'link'

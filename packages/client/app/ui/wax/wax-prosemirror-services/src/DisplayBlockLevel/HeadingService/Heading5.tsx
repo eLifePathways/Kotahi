@@ -1,16 +1,12 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
-import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import {
   Tools,
   Commands,
   LeftSideButton,
 } from '../../../../wax-prosemirror-core'
-import checkLevelFromConfig from './checkLevelFromConfig'
 
-@injectable()
 export default class Heading2 extends Tools {
   title = 'Change to heading level 5'
   label = 'Heading 5'
@@ -39,14 +35,6 @@ export default class Heading2 extends Tools {
 
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
-    if (this.config) {
-      const allowedLevel = checkLevelFromConfig(
-        state,
-        activeViewId,
-        this.config,
-      )
-      if (allowedLevel > 5) return false
-    }
 
     return true
   }

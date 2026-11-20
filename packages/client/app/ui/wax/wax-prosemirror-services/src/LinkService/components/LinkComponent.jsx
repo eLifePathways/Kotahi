@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useRef, useEffect, useState, useContext } from 'react'
+import { useRef, useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { WaxContext, DocumentHelpers } from '../../../../wax-prosemirror-core'
 import { grid, th, override } from '../../helpers'

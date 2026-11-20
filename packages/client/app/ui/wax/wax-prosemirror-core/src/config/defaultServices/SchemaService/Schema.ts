@@ -2,11 +2,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { Schema as PmPschema } from 'prosemirror-model'
-import { injectable } from 'inversify'
 import Node from './Node'
 import Mark from './Mark'
 
-@injectable()
 export default class Schema {
   _nodes = {}
   _marks = {}

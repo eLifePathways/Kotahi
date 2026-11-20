@@ -6,68 +6,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { icons } from '../../../../wax-prosemirror-core'
 import { isBoolean, keys } from 'lodash'
-import { th } from '../../helpers'
-import SwitchComponent from './Switch'
 
 // #region STYLED COMPONENTS ---------------------------------------------
-
-export const ToggleInput = styled(SwitchComponent)`
-  --width: 20px;
-  --divisor: 2.1;
-  --height: calc(var(--width) / var(--divisor));
-  --padding: 1px;
-  --border-width: 0px;
-  --label-font-size: 12px;
-
-  align-items: center;
-  display: flex;
-  gap: 10px;
-  padding: 0.5rem 0.2rem;
-
-  button {
-    align-items: center;
-    border-radius: calc(
-      var(--height) + (var(--padding) * 2) + var(--border-width)
-    );
-    display: flex;
-    height: fit-content;
-    padding: var(--padding);
-    transition: all 0.3s;
-    width: var(--width);
-
-    &:focus {
-      box-shadow: none;
-      outline: 1px solid #d5f1fd;
-      outline-offset: 1px;
-    }
-  }
-
-  label {
-    color: var(--ai-tool-switch-label-color, #777);
-    font-size: var(--label-font-size);
-    margin: 0;
-  }
-
-  .rc-switch {
-    border-width: var(--border-width);
-
-    &::after {
-      height: calc(var(--height) - (var(--padding) * 2));
-      position: unset;
-      transition: margin 0.2s cubic-bezier(0.35, 0, 0.25, 1);
-      width: calc(var(--height) - (var(--padding) * 2));
-    }
-  }
-
-  .rc-switch-checked {
-    border: var(--border-width) solid ${th('colorPrimary')};
-
-    &::after {
-      border: none;
-      margin-left: calc(var(--width) - var(--height));
-    }
-  }
-`
 
 const SettingsContainer = styled.div`
   align-items: center;

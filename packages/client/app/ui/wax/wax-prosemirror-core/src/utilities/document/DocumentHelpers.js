@@ -29,25 +29,9 @@ const findMark = (state, PMmark, toArr = false) => {
   return markFound
 }
 
-const findNode = (state, PMnode, findInParent) => {
+const findNode = (state, PMnode) => {
   let nodeFound
-  if (findInParent) {
-    state.doc.nodesBetween(state.selection.from, state.selection.to, node => {
-      if (
-        node.type.name === 'oen_container' &&
-        node.attrs.class === 'outline'
-      ) {
-        nodeFound = {
-          from: state.selection.from,
-          to: state.selection.to,
-          node,
-        }
-      }
-    })
-  } else if (
-    state.selection.node &&
-    state.selection.node.type.name === PMnode.name
-  ) {
+  if (state.selection.node && state.selection.node.type.name === PMnode.name) {
     nodeFound = {
       from: state.selection.from,
       to: state.selection.to,
@@ -186,7 +170,7 @@ const findMarkPosition = (state, initialPos, markType) => {
   return { from: startPos, to: endPos, attrs: actualMark.attrs }
 }
 
-export const flatten = (node, descend = true) => {
+const flatten = (node, descend = true) => {
   if (!node) {
     throw new Error('Invalid "node" parameter')
   }
@@ -225,12 +209,12 @@ const findChildrenByMark = (node, markType, descend) => {
   return findChildren(node, child => markType.isInSet(child.marks), descend)
 }
 
-export const findChildrenByAttr = (node, predicate, descend) => {
+const findChildrenByAttr = (node, predicate, descend) => {
   return findChildren(node, child => !!predicate(child.attrs), descend)
 }
 
 /* Find and Replace Matches */
-export const findMatches = (doc, searchValue, matchCase) => {
+const findMatches = (doc, searchValue, matchCase) => {
   const allNodes = []
 
   doc.descendants((node, pos) => {

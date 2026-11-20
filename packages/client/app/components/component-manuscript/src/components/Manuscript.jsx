@@ -2,7 +2,7 @@
 
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import FullWaxEditor from '../../../wax-collab/src/FullWaxEditor'
+import FullWaxEditor from '../../../../ui/wax/wax-collab/FullWaxEditor'
 import { isEditableManuscriptFile } from '../../../../shared/manuscriptUtils'
 
 const Info = styled.span`

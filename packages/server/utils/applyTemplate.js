@@ -24,7 +24,7 @@ const njkFilters = require('./pdfTemplates/njkFilters')
 
 //  Sort out all the different CSSes and make sure that they are being applied correctly
 //    ./pdfTemplates/styles.css: this is from Julien & Harshna, used for PDF export
-//    /app/components/wax-collab/src/layout/EditorElements.js: this exports styles
+//    /app/ui/wax/wax-collab/layout/EditorElements.js: this exports styles
 //			split this into base styles & editor styles
 //        for wax: import base styles, then editor styles
 //        for production: import base styles, then pagedjs styles

@@ -1,5 +1,4 @@
 /* eslint no-underscore-dangle: 0 */
-import React from 'react'
 import { uuid } from '@coko/client'
 import ToolGroupComponent from './ToolGroupComponent'
 
