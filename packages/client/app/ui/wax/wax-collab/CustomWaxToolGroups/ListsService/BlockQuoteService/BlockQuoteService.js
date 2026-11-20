@@ -1,7 +1,6 @@
 import { Service } from '../../../../wax-prosemirror-core'
 import blockQuoteNode from './schema/blockQuoteNode'
 import BlockQuote from './BlockQuote'
-import BlockQuoteToolGroupService from './BlockQuoteToolGroupService/BlockQuoteToolGroupService'
 import './blockQuote.css'
 
 class BlockQuoteService extends Service {
@@ -14,8 +13,6 @@ class BlockQuoteService extends Service {
       blockquote: blockQuoteNode,
     })
   }
-
-  dependencies = [new BlockQuoteToolGroupService()]
 }
 
 export default BlockQuoteService

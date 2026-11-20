@@ -25,8 +25,6 @@ export { default as ContentUpdateService } from './src/ContentUpdateService/Cont
 /*
 ToolGroups
 */
-export { default as DisplayTextToolGroupService } from './src/WaxToolGroups/DisplayTextToolGroupService/DisplayTextToolGroupService'
-export { default as BlockDropDownToolGroupService } from './src/WaxToolGroups/BlockDropDownToolGroupService/BlockDropDownToolGroupService'
 
 /* Plugins */
 export { default as disallowPasteImagesPlugin } from './src/ImageService/plugins/disallowPasteImagesPlugin'
