@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CombinedGraphQLErrors } from '@apollo/client'
 import { useMutation, useQuery, useSubscription } from '@apollo/client/react'
-import { uuid } from '@coko/client'
+import { useNotification, uuid } from '@coko/client'
 
 import { ConfigContext } from '../components/config/src'
 import {
@@ -45,6 +45,7 @@ const SKIP_SUBMIT_OPTIONS = [
 const NewSubmissionPage = (): ReactNode => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const notify = useNotification()
   const config = useContext(ConfigContext)
 
   // @ts-ignore
@@ -121,17 +122,25 @@ const NewSubmissionPage = (): ReactNode => {
           ? error.errors[0]?.extensions?.code
           : undefined
 
-        setStatus('error')
-
-        setErrorMessage(
-          t(
-            ERROR_TRANSLATION_KEYS[String(code)] ??
-              'newSubmission.errorUnknown',
-            {
-              maxSizeMb: maxUploadSizeMb,
-            },
-          ),
+        const message = t(
+          ERROR_TRANSLATION_KEYS[String(code)] ?? 'newSubmission.errorUnknown',
+          {
+            maxSizeMb: maxUploadSizeMb,
+          },
         )
+
+        if (!showUpload) {
+          setStatus('error')
+          setErrorMessage(message)
+          return
+        }
+
+        setStatus('idle')
+        setActiveOption(undefined)
+        notify.error({
+          title: message,
+          duration: 0,
+        })
       }
     },
     [
@@ -140,7 +149,9 @@ const NewSubmissionPage = (): ReactNode => {
       instanceName,
       maxUploadSizeMb,
       navigate,
+      notify,
       operationId,
+      showUpload,
       t,
       urlFrag,
     ],
