@@ -145,7 +145,7 @@ class RejectTrackChange extends Tools {
   }
 
   get active() {
-    return state => {}
+    return () => {}
   }
 }
 

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useMemo, useContext } from 'react'
+import { useMemo, useContext } from 'react'
 import Overlay from './OverLay'
 import { WaxContext } from '../../../WaxContext'
 import usePosition from './usePosition'

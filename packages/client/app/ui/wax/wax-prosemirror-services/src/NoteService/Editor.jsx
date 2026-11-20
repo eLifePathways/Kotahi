@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useMemo, useCallback } from 'react'
+import { useContext, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import { filter } from 'lodash'
 import { EditorView } from 'prosemirror-view'
@@ -63,7 +63,7 @@ export default ({ node, view }) => {
           dispatchTransaction,
           disallowedTools: ['Tables', 'Images', 'Lists', 'CodeBlock'],
           handleDOMEvents: {
-            blur: (editorView, event) => {
+            blur: () => {
               if (pmViews[noteId]) {
                 pmViews[noteId].dispatch(
                   pmViews[noteId].state.tr.setSelection(
@@ -79,7 +79,7 @@ export default ({ node, view }) => {
               // if (noteView.hasFocus()) noteView.focus();
             },
           },
-          handleTextInput: (editorView, from, to, text) => {
+          handleTextInput: () => {
             typing = true
           },
 

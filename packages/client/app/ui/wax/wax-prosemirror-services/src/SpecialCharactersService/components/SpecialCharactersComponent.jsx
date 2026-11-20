@@ -1,12 +1,6 @@
 /* eslint-disable consistent-return */
 /* eslint react/prop-types: 0 */
-import React, {
-  useRef,
-  useState,
-  useContext,
-  useCallback,
-  useEffect,
-} from 'react'
+import { useRef, useState, useContext, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { filter, groupBy, debounce, isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -173,7 +167,7 @@ const SpecialCharactersComponent = () => {
         ) {
           setOption({ activeTextareaId: null })
         }
-      } catch (error) {
+      } catch {
         // Ignore errors if view is not ready
       }
     }
@@ -269,7 +263,7 @@ const SpecialCharactersComponent = () => {
             data: character.unicode,
             inputType: 'insertText',
           })
-        } catch (e) {
+        } catch {
           // Fallback to Event if InputEvent not supported
           inputEvent = new Event('input', { bubbles: true, cancelable: true })
         }

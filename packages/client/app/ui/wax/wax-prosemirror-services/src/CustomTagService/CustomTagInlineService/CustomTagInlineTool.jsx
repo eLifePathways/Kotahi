@@ -1,4 +1,3 @@
-import React from 'react'
 import { uuid } from '@coko/client'
 import { Tools } from '../../../../wax-prosemirror-core'
 import CustomTagInlineComponent from '../components/CustomTagInlineComponent'

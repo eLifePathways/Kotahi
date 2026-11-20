@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'

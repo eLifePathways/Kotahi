@@ -1,4 +1,3 @@
-import React from 'react'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { DocumentHelpers, Tools } from '../../../wax-prosemirror-core'

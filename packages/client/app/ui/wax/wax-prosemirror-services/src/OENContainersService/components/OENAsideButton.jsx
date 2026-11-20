@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { WaxContext, MenuButton } from '../../../../wax-prosemirror-core'
 import { wrapIn } from 'prosemirror-commands'
 import { liftTarget } from 'prosemirror-transform'

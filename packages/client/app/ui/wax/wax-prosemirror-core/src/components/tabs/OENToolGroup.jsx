@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { wrapIn } from 'prosemirror-commands'
 import { uuid } from '@coko/client'

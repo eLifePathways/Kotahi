@@ -1,4 +1,3 @@
-import React from 'react'
 import { isEmpty } from 'lodash'
 import { Commands, Tools } from '../../../../wax-prosemirror-core'
 import CustomBlockDropDownComponent from '../components/CustomBlockDropDownComponent'

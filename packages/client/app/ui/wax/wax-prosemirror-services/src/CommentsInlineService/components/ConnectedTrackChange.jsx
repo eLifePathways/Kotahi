@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useMemo, useState, useEffect } from 'react'
+import { useContext, useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import {
   WaxContext,

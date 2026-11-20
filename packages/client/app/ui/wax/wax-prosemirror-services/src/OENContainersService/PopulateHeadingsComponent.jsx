@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useContext, useLayoutEffect } from 'react'
+import { useContext, useLayoutEffect } from 'react'
 import { WaxContext, Icon } from '../../../wax-prosemirror-core'
 import { DOMParser } from 'prosemirror-model'
 import { ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform'

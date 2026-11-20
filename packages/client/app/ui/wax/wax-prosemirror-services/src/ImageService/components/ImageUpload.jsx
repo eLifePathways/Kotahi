@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useContext, useRef, useMemo } from 'react'
+import { useContext, useRef, useMemo } from 'react'
 import { TextSelection } from 'prosemirror-state'
 import { uuid } from '@coko/client'
 import { isEmpty } from 'lodash'

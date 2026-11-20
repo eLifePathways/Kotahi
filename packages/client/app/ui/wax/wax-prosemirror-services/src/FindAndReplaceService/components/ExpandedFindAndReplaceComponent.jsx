@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useState, useRef, useContext, useEffect } from 'react'
+import { useState, useRef, useContext, useEffect } from 'react'
 import { each, eachRight, isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import {

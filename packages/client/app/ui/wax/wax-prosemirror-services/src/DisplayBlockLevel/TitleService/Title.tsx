@@ -1,6 +1,5 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
 import { isEmpty } from 'lodash'
 import { injectable } from 'inversify'
 import {

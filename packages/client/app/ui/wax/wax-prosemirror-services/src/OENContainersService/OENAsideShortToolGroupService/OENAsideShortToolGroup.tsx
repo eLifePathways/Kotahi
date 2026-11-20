@@ -1,6 +1,5 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
 import { injectable, inject } from 'inversify'
 import { ToolGroup, LeftMenuTitle } from '../../../../wax-prosemirror-core'
 

@@ -38,12 +38,12 @@ class ShowHideTrackChange extends Tools {
     }
   }
 
-  select = (state, activeViewId, activeView) => {
+  select = () => {
     return true
   }
 
   get active() {
-    return state => {
+    return () => {
       return this._showHidden
     }
   }

@@ -115,14 +115,6 @@ export default class AcceptTrackChange extends Tools {
           node.attrs.track &&
           node.attrs.track.find(track => track.type === 'block_change')
         ) {
-          const blockChangeTrack = node.attrs.track.find(
-            track => track.type === 'block_change',
-          )
-
-          const track = node.attrs.track.filter(
-            track => track !== blockChangeTrack,
-          )
-
           tr.setNodeMarkup(
             map.map(pos),
             null,
@@ -148,6 +140,6 @@ export default class AcceptTrackChange extends Tools {
   }
 
   get active() {
-    return state => {}
+    return () => {}
   }
 }

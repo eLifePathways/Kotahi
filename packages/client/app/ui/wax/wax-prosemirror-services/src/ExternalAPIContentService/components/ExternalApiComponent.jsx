@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { uuid } from '@coko/client'
 import { WaxContext } from '../../../../wax-prosemirror-core'
 import { isEmpty } from 'lodash'

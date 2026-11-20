@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useLayoutEffect, useContext } from 'react'
+import { useLayoutEffect, useContext } from 'react'
 import {
   WaxContext,
   DocumentHelpers,
