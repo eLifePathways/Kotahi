@@ -27,7 +27,10 @@ const bulletListNode = {
     const attrs = {}
 
     if (hook.node.attrs.track && hook.node.attrs.track.length) {
+      attrs['data-id'] = hook.node.attrs.id
       attrs['data-track'] = JSON.stringify(hook.node.attrs.track)
+      attrs['data-group'] = hook.node.attrs.group
+      attrs['data-viewid'] = hook.node.attrs.viewid
     }
 
     hook.value = ['ul', attrs, 0]
