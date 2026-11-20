@@ -12,7 +12,7 @@ import {
   Row,
   TextInput,
 } from '../misc/styleds'
-import SimpleWaxEditor from '../../wax-collab/src/SimpleWaxEditor'
+import SimpleWaxEditor from '../../../ui/wax/wax-collab/SimpleWaxEditor'
 import { objIf } from '../../../shared/generalUtils'
 import { T } from '../misc/constants'
 import {

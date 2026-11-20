@@ -1,17 +1,13 @@
 /* eslint-disable react/prop-types */
-
-/* eslint-disable new-cap */
 /* eslint-disable jsx-a11y/no-autofocus */
 
 import styled from 'styled-components'
-import { Wax } from '../../../../ui/wax/wax-prosemirror-core'
+import ChatWaxEditor from '../../../../ui/wax/chat-editor'
 import {
   convertTimestampToDateWithTimeString,
   convertTimestampToTimeString,
 } from '../../../../shared/dateUtils'
 import { LooseRowSpaced } from '../../../shared'
-import chatWaxEditorConfig from '../ChatWaxEditor/ChatWaxEditorConfig'
-import ChatWaxEditorLayout from '../ChatWaxEditor/ChatWaxEditorLayout'
 
 const MessageGroupContainer = styled.div`
   padding: 4px 30px;
@@ -47,11 +43,10 @@ const IsolatedMessageWithDetails = ({ message, onChange, onEnterPress }) => {
           : convertTimestampToDateWithTimeString(new Date(message.created))}
       </LooseRowSpaced>
       <WaxEditorContainer>
-        <Wax
+        <ChatWaxEditor
           autoFocus
-          config={chatWaxEditorConfig({ onEnterPress })}
-          layout={ChatWaxEditorLayout(isReadOnly)}
           onChange={onChange}
+          onEnterPress={onEnterPress}
           readonly={isReadOnly}
           value={message.content}
         />

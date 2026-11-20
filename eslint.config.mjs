@@ -5,7 +5,9 @@ const config = defineEslintConfig(rootEslintConfig)
 const extraIgnores = [
   './packages/devdocs/',
   '.ux/',
-  'packages/client/app/ui/wax/',
+  'packages/client/app/ui/wax/wax-prosemirror-core/',
+  'packages/client/app/ui/wax/wax-prosemirror-services/',
+  'packages/client/app/ui/wax/wax-table-service/',
 ]
 
 const globalIgnoresObject = config.find(o => o.name?.includes('globalIgnores'))

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types, react/display-name */
 
-import CollaborativeWax from '../../../wax-collab/src/CollaborativeWax'
+import CollaborativeWax from './CollaborativeWax'
 
 const FormCollaborateComponent =
   component =>

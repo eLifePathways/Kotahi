@@ -23,7 +23,7 @@ import {
 } from '../../../../../shared'
 import { UserAvatar } from '../../../../../component-avatar/src'
 import Modal from '../../../../../component-modal/src/ConfirmationModal'
-import SimpleWaxEditor from '../../../../../wax-collab/src/SimpleWaxEditor'
+import SimpleWaxEditor from '../../../../../../ui/wax/wax-collab/SimpleWaxEditor'
 import { hasValue } from '../../../../../../shared/htmlUtils'
 import { ConfigContext } from '../../../../../config/src'
 
