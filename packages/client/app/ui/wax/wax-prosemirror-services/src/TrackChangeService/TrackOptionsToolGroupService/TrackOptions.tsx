@@ -1,19 +1,19 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useMemo } from 'react'
-import { injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { ToolGroup, ToolGroupComponent } from '../../../../wax-prosemirror-core'
 
-@injectable()
 class TrackOptions extends ToolGroup {
+  static inject = [
+    'ShowHideTrackChange',
+    'AcceptTrackChange',
+    'RejectTrackChange',
+  ]
+
   tools = []
-  constructor(
-    @inject('ShowHideTrackChange') showHideTrackChange,
-    @inject('AcceptTrackChange') acceptTrackChange,
-    @inject('RejectTrackChange') rejectTrackChange,
-  ) {
+  constructor(showHideTrackChange, acceptTrackChange, rejectTrackChange) {
     super()
     this.tools = [showHideTrackChange, acceptTrackChange, rejectTrackChange]
   }

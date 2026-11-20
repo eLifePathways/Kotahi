@@ -8,7 +8,6 @@ import {
 } from 'prosemirror-transform'
 import { Slice } from 'prosemirror-model'
 import { Tools } from '../../../../wax-prosemirror-core'
-import { injectable } from 'inversify'
 import removeNode from '../track-changes/helpers/removeNode'
 
 const checkFromConfig = (mark, user, config) => {
@@ -23,7 +22,6 @@ const checkFromConfig = (mark, user, config) => {
   return true
 }
 
-@injectable()
 class RejectTrackChange extends Tools {
   title = 'Reject Changes'
   label = 'Reject in selection'

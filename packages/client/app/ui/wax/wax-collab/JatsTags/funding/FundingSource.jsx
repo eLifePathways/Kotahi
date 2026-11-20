@@ -1,4 +1,3 @@
-import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import i18next from 'i18next'
 import { LeftSideButton, Commands, Tools } from '../../../wax-prosemirror-core'
@@ -55,7 +54,5 @@ class FundingSource extends Tools {
     ) : null
   }
 }
-
-decorate(injectable(), FundingSource)
 
 export default FundingSource

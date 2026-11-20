@@ -1,10 +1,8 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { toggleMark } from 'prosemirror-commands'
-import { injectable } from 'inversify'
 import { Commands, Tools } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class StrikeThrough extends Tools {
   title = 'Toggle strikethrough'
   icon = 'strikethrough'

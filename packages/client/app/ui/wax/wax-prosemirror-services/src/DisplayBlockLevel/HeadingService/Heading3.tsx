@@ -1,6 +1,5 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import {
   Tools,
@@ -8,7 +7,6 @@ import {
   LeftSideButton,
 } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class Heading3 extends Tools {
   title = 'Change to heading level 3'
   label = 'Heading 3'

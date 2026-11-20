@@ -1,18 +1,17 @@
 // @ts-nocheck
 
-import { decorate, injectable, inject } from 'inversify'
 import i18next from 'i18next'
 import { ToolGroup, LeftMenuTitle } from '../../../../wax-prosemirror-core'
 
 class AppendixGroup extends ToolGroup {
+  static inject = ['Appendix']
+
   title = (<LeftMenuTitle title={i18next.t('waxEditor.Appendices')} />)
 
-  constructor(@inject('Appendix') appendix) {
+  constructor(appendix) {
     super()
     this._tools = [appendix]
   }
 }
-
-decorate(injectable(), AppendixGroup)
 
 export default AppendixGroup

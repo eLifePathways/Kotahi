@@ -3,11 +3,11 @@
 
 import { uuid } from '@coko/client'
 import { isEmpty } from 'lodash'
-import { injectable, inject } from 'inversify'
 import Button from '../../components/Button'
 
-@injectable()
 class Tools {
+  static inject = ['Config', 'PmPlugins']
+
   title = 'title'
   _isDisplayed = true
   _isHiddenInToolGroup = false
@@ -16,7 +16,7 @@ class Tools {
   pmplugins = {}
   name = 'name'
 
-  constructor(@inject('Config') config, @inject('PmPlugins') pmplugins) {
+  constructor(config, pmplugins) {
     this.config = config
     this.pmplugins = pmplugins
   }

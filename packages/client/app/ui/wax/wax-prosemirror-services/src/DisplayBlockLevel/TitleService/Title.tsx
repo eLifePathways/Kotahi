@@ -1,7 +1,6 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { isEmpty } from 'lodash'
-import { injectable } from 'inversify'
 import {
   Commands,
   DocumentHelpers,
@@ -9,7 +8,6 @@ import {
 } from '../../../../wax-prosemirror-core'
 import TitleButton from './components/TitleButton'
 
-@injectable()
 export default class Title extends Tools {
   title = 'Change to Title'
   label = 'Title'

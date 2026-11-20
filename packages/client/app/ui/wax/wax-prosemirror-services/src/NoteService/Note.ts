@@ -1,11 +1,9 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable } from 'inversify'
 import { Fragment } from 'prosemirror-model'
 import { uuid } from '@coko/client'
 import { Tools } from '../../../wax-prosemirror-core'
 
-@injectable()
 export default class Note extends Tools {
   title = 'Insert Note'
   icon = 'note'

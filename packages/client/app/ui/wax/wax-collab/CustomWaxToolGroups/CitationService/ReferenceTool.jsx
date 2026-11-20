@@ -1,4 +1,3 @@
-import { decorate, injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import i18next from 'i18next'
 import { LeftSideButton, Commands, Tools } from '../../../wax-prosemirror-core'
@@ -86,7 +85,5 @@ class ReferenceTool extends Tools {
     ) : null
   }
 }
-
-decorate(injectable(), ReferenceTool)
 
 export default ReferenceTool

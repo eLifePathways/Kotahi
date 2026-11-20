@@ -1,12 +1,12 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable, inject } from 'inversify'
 import { ToolGroup } from '../../../../wax-prosemirror-core'
 
-@injectable()
 class FullScreen extends ToolGroup {
+  static inject = ['FullScreenTool']
+
   tools = []
-  constructor(@inject('FullScreenTool') fullScreenTool) {
+  constructor(fullScreenTool) {
     super()
     this.tools = [fullScreenTool]
   }

@@ -2,18 +2,18 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable no-underscore-dangle */
 import { useMemo } from 'react'
-import { injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { ToolGroup } from '../../../../wax-prosemirror-core'
 import TrackChangeOptionsTool from '../components/TrackChangeOptionsTool'
 
-@injectable()
 class TrackCommentOptions extends ToolGroup {
+  static inject = ['TrackOptions']
+
   tools = []
   toolGroups = []
 
-  constructor(@inject('TrackOptions') trackOptions) {
+  constructor(trackOptions) {
     super()
     this.toolGroups = [
       {

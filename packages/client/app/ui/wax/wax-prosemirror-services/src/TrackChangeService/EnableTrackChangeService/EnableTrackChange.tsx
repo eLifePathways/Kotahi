@@ -1,12 +1,10 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import { Tools } from '../../../../wax-prosemirror-core'
 import TrackChangeEnable from '../../CommentsService/components/ui/trackChanges/TrackChangeEnable'
 
-@injectable()
 export default class EnableTrackChange extends Tools {
   title = 'Toggle Track Changes'
   label = 'Track Changes'

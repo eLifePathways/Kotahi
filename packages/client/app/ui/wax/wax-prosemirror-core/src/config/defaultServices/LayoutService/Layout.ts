@@ -1,11 +1,9 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
 import DefaultLayout from './DefaultLayout/DefaultLayout'
 import LayoutFactory from './components/LayoutFactory'
 
-@injectable()
 export default class Layout {
   components = []
   layoutComponent = LayoutFactory(DefaultLayout)

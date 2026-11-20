@@ -1,10 +1,8 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { toggleMark } from 'prosemirror-commands'
-import { injectable } from 'inversify'
 import { Commands, Tools } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class Emphasis extends Tools {
   title = 'Toggle emphasis'
   icon = 'italic'

@@ -1,12 +1,10 @@
 // @ts-nocheck
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { uuid } from '@coko/client'
-import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { Commands, Tools } from '../../../wax-prosemirror-core'
 import TableDropDown from '../components/TableDropDown'
 
-@injectable()
 export default class TableDropDownOptions extends Tools {
   title = 'Select Options'
   content = 'table'

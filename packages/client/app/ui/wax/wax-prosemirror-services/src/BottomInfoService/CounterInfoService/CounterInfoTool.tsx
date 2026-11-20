@@ -2,11 +2,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { isEmpty } from 'lodash'
-import { injectable } from 'inversify'
 import { Tools } from '../../../../wax-prosemirror-core'
 import EditorInfoTool from './components/EditorInfoTool'
 
-@injectable()
 class CounterInfoTool extends Tools {
   title = 'Counter Info'
   name = 'CounterInfo'

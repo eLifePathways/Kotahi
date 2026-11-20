@@ -5,10 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
 
-  oxc: {
-    decorator: { legacy: true },
-  },
-
   resolve: {
     alias: {
       pages: path.resolve(import.meta.dirname, 'app/pages'),

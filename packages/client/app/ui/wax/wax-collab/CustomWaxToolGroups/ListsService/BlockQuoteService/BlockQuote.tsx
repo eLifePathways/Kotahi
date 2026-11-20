@@ -4,13 +4,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React from 'react'
-import { injectable } from 'inversify'
 import { isEmpty } from 'lodash'
 import { wrapIn } from 'prosemirror-commands'
 import { NodeSelection } from 'prosemirror-state'
 import { Tools, LeftSideButton } from '../../../../wax-prosemirror-core'
 
-@injectable()
 class BlockQuote extends Tools {
   title = 'Change to Block Quote'
   icon = 'blockquote'

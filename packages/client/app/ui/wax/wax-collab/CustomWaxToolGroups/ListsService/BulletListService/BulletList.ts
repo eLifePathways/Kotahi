@@ -2,11 +2,9 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import { injectable } from 'inversify'
 import { wrapInList } from 'prosemirror-schema-list'
 import { Commands, Tools, icons } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class BulletList extends Tools {
   title = 'Wrap in bullet list'
   content = icons.bullet_list

@@ -4,10 +4,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { joinUp } from 'prosemirror-commands'
-import { injectable } from 'inversify'
 import { Tools } from '../../../../wax-prosemirror-core'
 
-@injectable()
 export default class JoinUp extends Tools {
   title = 'Join with above block'
   icon = 'arrowUp'

@@ -1,4 +1,3 @@
-import { decorate, injectable } from 'inversify'
 import { Fragment } from 'prosemirror-model'
 import { uuid } from '@coko/client'
 import { NodeSelection } from 'prosemirror-state'
@@ -55,7 +54,5 @@ class CalloutTool extends Tools {
     ) : null
   }
 }
-
-decorate(injectable(), CalloutTool)
 
 export default CalloutTool

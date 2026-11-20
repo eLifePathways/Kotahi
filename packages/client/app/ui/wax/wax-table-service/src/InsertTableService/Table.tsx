@@ -2,11 +2,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
-import { injectable } from 'inversify'
 import { Commands, Tools } from '../../../wax-prosemirror-core'
 import CreateTable from '../components/CreateTable'
 
-@injectable()
 export default class Table extends Tools {
   title = 'Insert table'
   icon = 'table'
