@@ -3,7 +3,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import findSelectedChanges from './FindSelectedChanges'
 
-export const key = new PluginKey('track')
+const key = new PluginKey('track')
 
 export default () => {
   return new Plugin({

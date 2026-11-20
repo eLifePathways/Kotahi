@@ -170,7 +170,7 @@ const findMarkPosition = (state, initialPos, markType) => {
   return { from: startPos, to: endPos, attrs: actualMark.attrs }
 }
 
-export const flatten = (node, descend = true) => {
+const flatten = (node, descend = true) => {
   if (!node) {
     throw new Error('Invalid "node" parameter')
   }
@@ -209,12 +209,12 @@ const findChildrenByMark = (node, markType, descend) => {
   return findChildren(node, child => markType.isInSet(child.marks), descend)
 }
 
-export const findChildrenByAttr = (node, predicate, descend) => {
+const findChildrenByAttr = (node, predicate, descend) => {
   return findChildren(node, child => !!predicate(child.attrs), descend)
 }
 
 /* Find and Replace Matches */
-export const findMatches = (doc, searchValue, matchCase) => {
+const findMatches = (doc, searchValue, matchCase) => {
   const allNodes = []
 
   doc.descendants((node, pos) => {

@@ -2,9 +2,7 @@
 /* eslint react/destructuring-assignment: 0 */
 /* eslint-disable react/display-name */
 
-import React, { useContext, useState } from 'react'
-
-import ApplicationContext from './ApplicationContext'
+import React, { useState } from 'react'
 
 export const WaxContext = React.createContext({
   pmViews: {},
@@ -54,16 +52,4 @@ export default props => {
       {props.children}
     </WaxContext.Provider>
   )
-}
-
-export const useInjection = identifier => {
-  const context = useContext(ApplicationContext)
-
-  if (!context.app.container) {
-    throw new Error()
-  }
-
-  return context.app.container.isBound(identifier)
-    ? { instance: context.app.container.get(identifier) }
-    : null
 }
