@@ -4,7 +4,7 @@
 
 import { lift } from 'prosemirror-commands'
 import { injectable } from 'inversify'
-import { Tools } from 'wax-prosemirror-core'
+import { Tools } from '../../../../../../ui/wax/wax-prosemirror-core'
 
 @injectable()
 export default class Lift extends Tools {

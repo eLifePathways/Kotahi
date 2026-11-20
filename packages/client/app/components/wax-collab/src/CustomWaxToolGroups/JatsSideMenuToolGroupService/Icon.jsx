@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { icons } from 'wax-prosemirror-core'
 import { th } from '@coko/client'
+import { icons } from '../../../../../ui/wax/wax-prosemirror-core'
 
 // Source: https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/components/icons/Icon.js
 // modified to allow more icons, which can be defined like this:  https://github.com/Coko-Foundation/wax-prosemirror/blob/master/wax-prosemirror-core/src/components/icons/icons.js

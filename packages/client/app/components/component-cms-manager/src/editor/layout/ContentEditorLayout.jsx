@@ -5,11 +5,13 @@
 
 import { useContext } from 'react'
 import styled from 'styled-components'
-import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import {
+  WaxContext,
+  ComponentPlugin,
+  WaxView,
+} from '../../../../../ui/wax/wax-prosemirror-core'
 import { Grid, EditorDiv, Menu, FullWaxEditorGrid } from '../EditorStyles'
 import HandlebarsAutocomplete from '../../../../component-email-templates/src/handlebarsAutocomplete/components/HandleBarsAutocomplete'
-import 'wax-prosemirror-core/dist/index.css'
-import 'wax-prosemirror-services/dist/index.css'
 
 const WaxContainer = styled.div`
   height: 100%;

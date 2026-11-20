@@ -3,7 +3,7 @@
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { WaxContext } from 'wax-prosemirror-core'
+import { WaxContext } from '../../../../../ui/wax/wax-prosemirror-core'
 import { FlexRow } from '../../../../component-cms-manager/src/style'
 import { getUpdatedPosition, normalize } from '../helpers'
 import { DROPDOWN_ID, handlebars } from '../constants'

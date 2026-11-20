@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-autofocus */
 
 import PropTypes from 'prop-types'
-import { Wax } from 'wax-prosemirror-core'
+import { Wax } from '../../../../ui/wax/wax-prosemirror-core'
 import chatWaxEditorConfig from './ChatWaxEditorConfig'
 import chatWaxEditorLayout from './ChatWaxEditorLayout'
 

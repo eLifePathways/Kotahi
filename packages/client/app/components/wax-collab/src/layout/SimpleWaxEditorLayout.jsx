@@ -2,7 +2,10 @@
 
 /* eslint-disable new-cap */
 
-import { ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import {
+  ComponentPlugin,
+  WaxView,
+} from '../../../../ui/wax/wax-prosemirror-core'
 import {
   SimpleGrid,
   SimpleEditorDiv,
@@ -11,8 +14,6 @@ import {
   SimpleMenu,
 } from './EditorStyles'
 import HandlebarsAutocomplete from '../../../component-email-templates/src/handlebarsAutocomplete/components/HandleBarsAutocomplete'
-import 'wax-prosemirror-core/dist/index.css'
-import 'wax-prosemirror-services/dist/index.css'
 
 const TopBar = ComponentPlugin('topBar')
 const CounterInfo = ComponentPlugin('bottomRightInfo')
