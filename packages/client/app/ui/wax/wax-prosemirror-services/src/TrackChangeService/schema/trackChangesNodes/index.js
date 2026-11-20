@@ -12,11 +12,7 @@ import paragraphContTrackNode from './paragraphContTrackNode'
 import extractProseTrackNode from './extractProseTrackNode'
 import extractPoetryTrackNode from './extractPoetryTrackNode'
 import sourceNoteTrackNode from './sourceNoteTrackNode'
-// import bulletListTrackNode from './bulletListTrackNode';
 import orderedListTrackNode from './orderedListTrackNode'
-// import listItemTrackNode from './listItemTrackNode';
-// import figureTrackNode from './figureTrackNode';
-// import imageTrackNode from './imageTrackNode';
 import customBlockTrackNode from './customBlockTrackNode'
 
 export default {
@@ -36,8 +32,4 @@ export default {
   heading5: heading5TrackNode,
   heading6: heading6TrackNode,
   customTagBlock: customBlockTrackNode,
-  // bulletlist: bulletListTrackNode,
-  // list_item: listItemTrackNode,
-  // figure: figureTrackNode,
-  // image: imageTrackNode
 }

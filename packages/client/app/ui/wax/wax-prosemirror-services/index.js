@@ -22,12 +22,3 @@ export { default as EditingSuggestingService } from './src/EditingSuggestingServ
 export { default as EnterService } from './src/EnterService/EnterService'
 export { default as AskAiContentService } from './src/AiService/AskAiContentService'
 export { default as ContentUpdateService } from './src/ContentUpdateService/ContentUpdateService'
-/*
-ToolGroups
-*/
-
-/* Plugins */
-export { default as disallowPasteImagesPlugin } from './src/ImageService/plugins/disallowPasteImagesPlugin'
-
-/* Various */
-export { default as insertImage } from './src/ImageService/components/Upload'
