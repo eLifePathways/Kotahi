@@ -22,6 +22,12 @@ extend type Query {
     groupId: ID!
     searchInAllVersions: Boolean!
   ): PaginatedManuscripts
+  publishedManuscripts(
+    sort: String
+    offset: Int
+    limit: Int
+    groupId: ID!
+  ): PaginatedManuscripts
   validateDOI(doiOrUrl: String): validateDOIResponse
   validateSuffix(suffix: String, groupId: ID!): validateDOIResponse
 
