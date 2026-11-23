@@ -1085,6 +1085,10 @@ const publishedManuscriptEditors = async manuscript => {
   )
 }
 
+const publishedManuscripts = async (sort, offset, limit, groupId) => {
+  return Manuscript.findPublishedInGroup(groupId, { sort, limit, offset })
+}
+
 const publishedManuscriptReviews = async (manuscript, userId, options = {}) => {
   const { ctx } = options
   let reviews = await getRelatedReviews(manuscript, userId, true, { ctx })
@@ -2213,6 +2217,7 @@ module.exports = {
   publishedManuscriptDecisions,
   publishedManuscriptEditors,
   publishedManuscriptReviews,
+  publishedManuscripts,
   publishManuscript,
   refreshAdaStatus,
   removeAuthor,
