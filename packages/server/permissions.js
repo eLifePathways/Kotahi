@@ -543,6 +543,7 @@ const permissions = {
     paginatedUsers: or(userIsGroupAdmin, userIsAdmin),
     publishedArtifacts: allow,
     publishedManuscript: allow,
+    publishedManuscripts: allow,
     publishingCollection: allow,
     reviewersActivity: or(userIsGroupAdmin, userIsAdmin),
     searchRor: allow,

@@ -20,6 +20,7 @@ const {
   getManuscript,
   manuscriptsUserHasCurrentRoleIn,
   manuscripts,
+  publishedManuscripts,
   paginatedManuscripts,
   manuscriptsPublishedSinceDate,
   publishedManuscript,
@@ -275,6 +276,10 @@ const resolvers = {
 
     async manuscripts() {
       return manuscripts()
+    },
+
+    async publishedManuscripts(_, { sort, offset, limit, groupId }) {
+      return publishedManuscripts(sort, offset, limit, groupId)
     },
 
     async paginatedManuscripts(
