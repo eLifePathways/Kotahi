@@ -33,7 +33,6 @@ export type FullWaxEditorProps = YjsProps & {
   value?: string
   validationStatus?: string
   readonly?: boolean
-  autoFocus?: boolean
   saveSource?: (html: string) => void
   getComments?: (comments: Comment[]) => void
   setComments?: () => Comment[]
@@ -56,7 +55,6 @@ const FullWaxEditor = ({
   value = '',
   validationStatus,
   readonly = false,
-  autoFocus = false,
   saveSource,
   getComments,
   setComments,
@@ -145,7 +143,6 @@ const FullWaxEditor = ({
       <ReferenceServicesProvider value={references}>
         <WaxProvider
           features={features}
-          focusOnMount={autoFocus}
           nodeViews={nodeViews}
           onChange={ydoc ? undefined : save}
           placeholder={placeholder}

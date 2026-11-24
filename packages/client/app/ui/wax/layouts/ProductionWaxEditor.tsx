@@ -30,7 +30,6 @@ export type ProductionWaxEditorProps = YjsProps & {
   value?: string
   validationStatus?: string
   readonly?: boolean
-  autoFocus?: boolean
   saveSource?: ((html: string) => void) | null
   getComments?: (comments: Comment[]) => void
   setComments?: () => Comment[]
@@ -56,7 +55,6 @@ const ProductionWaxEditor = ({
   value = '',
   validationStatus = '',
   readonly = false,
-  autoFocus = false,
   saveSource,
   getComments,
   setComments,
@@ -141,7 +139,6 @@ const ProductionWaxEditor = ({
       <ReferenceServicesProvider value={references}>
         <WaxProvider
           features={features}
-          focusOnMount={autoFocus}
           nodeViews={nodeViews}
           onChange={saveSource ?? undefined}
           placeholder={placeholder}

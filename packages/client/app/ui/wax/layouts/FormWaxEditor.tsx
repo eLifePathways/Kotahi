@@ -10,7 +10,6 @@ export type FormWaxEditorProps = YjsProps & {
   value?: string
   validationStatus?: string
   readonly?: boolean
-  autoFocus?: boolean
   onChange?: (html: string) => void
   onBlur?: (html: string) => void
   placeholder?: string
@@ -22,7 +21,6 @@ const FormWaxEditor = ({
   value = '',
   validationStatus,
   readonly = false,
-  autoFocus = false,
   onChange,
   onBlur,
   placeholder = '',
@@ -43,7 +41,6 @@ const FormWaxEditor = ({
     <div className={validationStatus}>
       <WaxProvider
         features={features}
-        focusOnMount={autoFocus}
         onChange={ydoc ? undefined : onChange}
         placeholder={placeholder}
         readonly={readonly}

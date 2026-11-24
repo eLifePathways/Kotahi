@@ -14,7 +14,6 @@ export type SimpleWaxEditorProps = YjsProps & {
   value?: string
   validationStatus?: string
   readonly?: boolean
-  autoFocus?: boolean
   onBlur?: (html: string) => void
   onChange?: (html: string) => void
   placeholder?: string
@@ -26,7 +25,6 @@ const SimpleWaxEditor = ({
   value = '',
   validationStatus,
   readonly = false,
-  autoFocus = false,
   onBlur,
   onChange,
   placeholder = '',
@@ -62,7 +60,6 @@ const SimpleWaxEditor = ({
     <div className={validationStatus}>
       <WaxProvider
         features={features}
-        focusOnMount={autoFocus}
         onChange={save}
         placeholder={placeholder}
         readonly={readonly}
