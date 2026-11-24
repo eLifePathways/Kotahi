@@ -1,18 +1,13 @@
-import { css, type RuleSet } from 'styled-components'
+import { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import lightenBy from '../../../../shared/lightenBy'
 import featureStyles from '../../ui/featureStyles'
 
 // This should only include styles specific to the editor */
-/* Styles that are purely presentational for text should be in textStyles.css */
 
 const EditorStyles = css`
   /* stylelint-disable selector-class-pattern */
   ${featureStyles}
-
-  /* include textStyles here */
-  ${(props): RuleSet | string =>
-    (props.theme as { textStyles?: RuleSet | string }).textStyles ?? ''}
 
   .ProseMirror {
     background: unset;

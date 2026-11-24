@@ -1,4 +1,4 @@
-import { type ReactNode, useContext, useEffect, useMemo } from 'react'
+import { type ReactNode, useEffect, useMemo } from 'react'
 import { useParams, Outlet } from 'react-router-dom'
 import { useQuery } from '@apollo/client/react'
 import { ThemeProvider } from 'styled-components'
@@ -12,7 +12,6 @@ import Spinner from '../ui/shared/Spinner'
 import ErrorPageFallback from '../ui/base/ErrorPageFallback'
 import { ConfigProvider } from '../components/config/src'
 import { YjsProvider } from '../components/provider-yjs/YjsProvider'
-import { JournalContext } from '../components/xpub-journal'
 import { WaxAppProvider } from '../ui/wax'
 import useUploadManuscriptImage from '../hooks/useUploadManuscriptImage'
 import DynamicFavicon from '../dynamicFavicon'
@@ -28,7 +27,6 @@ const GroupPage = (): ReactNode => {
    */
 
   const { loading, error, data } = useQuery(GET_GROUPS)
-  const journal = useContext(JournalContext)
   const uploadManuscriptImage = useUploadManuscriptImage()
 
   // @ts-ignore
@@ -111,8 +109,6 @@ const GroupPage = (): ReactNode => {
           <WaxAppProvider
             // @ts-ignore
             citationStyleName={config?.production?.citationStyles?.styleName}
-            // @ts-ignore
-            textStyles={journal?.textStyles}
             uploadManuscriptImage={uploadManuscriptImage}
           >
             <YjsProvider>

@@ -30,9 +30,6 @@ export const CURRENT_USER = gql`
       }
       isOnline
     }
-    builtCss {
-      css
-    }
     userHasTaskAlerts
   }
 `

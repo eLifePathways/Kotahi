@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/immutability */
-
 import { type ReactNode, useContext, useEffect, useRef } from 'react'
 import { Outlet, Navigate, useParams, useLocation } from 'react-router-dom'
 import { LinkError } from '@apollo/client/errors'
@@ -9,7 +7,6 @@ import i18next from 'i18next'
 
 import { CURRENT_USER, UPDATE_LANGUAGE } from '../queries'
 import Spinner from '../ui/shared/Spinner'
-import { JournalContext } from '../components/xpub-journal'
 import { ConfigContext } from '../components/config/src'
 import { getLanguages } from '../i18n'
 import { CurrentUserContext } from './hooks/useCurrentUser'
@@ -19,7 +16,6 @@ const AuthenticatedPage = (): ReactNode => {
   const { pathname } = useLocation()
   const { groupName } = useParams()
   const config = useContext(ConfigContext)
-  const journal = useContext(JournalContext)
   const notification = useNotification()
   const wasDisconnected = useRef(false)
   const logout = useLogout()
@@ -83,11 +79,6 @@ const AuthenticatedPage = (): ReactNode => {
   if (!currentUser) {
     return <Navigate replace to={`/${groupName}/login`} />
   }
-
-  // TO DO - we do not need to keep this info in the context. we just need to
-  // read the query data.
-  // @ts-ignore
-  journal.textStyles = data?.builtCss?.css
 
   if (
     ['journal', 'prc'].includes(instanceName) &&

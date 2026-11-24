@@ -461,7 +461,6 @@ const permissions = {
   Query: {
     authorsActivity: or(userIsGroupAdmin, userIsAdmin),
     buildCitationsCSL: isAuthenticated,
-    builtCss: isAuthenticated,
     checkApiPayload: or(
       userIsEditorOfAnyManuscript,
       userIsGm,

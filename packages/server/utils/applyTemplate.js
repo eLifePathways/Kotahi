@@ -43,34 +43,12 @@ const generateCss = async noPagedJs => {
 
   outputCss += defaultCssBuffer.toString()
 
-  try {
-    const userCssBuffer = await fs.readFile(
-      `${userTemplatePath}/textStyles.css`,
+  if (!noPagedJs) {
+    const pagedCssBuffer = await fs.readFile(
+      `${defaultTemplatePath}/pagedJsStyles.css`,
     )
 
-    logger.info('Using user-defined text styles.')
-    outputCss += userCssBuffer.toString()
-  } catch {
-    logger.info('No user text stylesheet found')
-  }
-
-  if (!noPagedJs) {
-    try {
-      const userCssBuffer = await fs.readFile(
-        `${userTemplatePath}/pagedJsStyles.css`,
-      )
-
-      logger.info('Using user-defined PagedJS styles.')
-      outputCss += userCssBuffer.toString()
-    } catch {
-      logger.info('No user PagedJS stylesheet found')
-
-      const pagedCssBuffer = await fs.readFile(
-        `${defaultTemplatePath}/pagedJsStyles.css`,
-      )
-
-      outputCss += pagedCssBuffer.toString()
-    }
+    outputCss += pagedCssBuffer.toString()
   }
 
   // logger.log('textStyles.css: ', outputCss)

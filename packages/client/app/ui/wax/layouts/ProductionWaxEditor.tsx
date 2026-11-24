@@ -73,7 +73,7 @@ const ProductionWaxEditor = ({
   name,
 }: ProductionWaxEditorProps): ReactNode => {
   const theme = useTheme()
-  const { textStyles, citationStyleName } = useWaxApp()
+  const { citationStyleName } = useWaxApp()
   const upload = useImageUpload(manuscriptId)
   const latest = useLatest({ getComments })
   const [fullScreen, setFullScreen] = useState(false)
@@ -138,9 +138,7 @@ const ProductionWaxEditor = ({
   )
 
   return (
-    <ThemeProvider
-      theme={{ ...({ textStyles } as object), ...theme, ...waxTheme }}
-    >
+    <ThemeProvider theme={{ ...theme, ...waxTheme }}>
       <div className={validationStatus}>
         <ReferenceServicesProvider value={references}>
           <WaxProvider

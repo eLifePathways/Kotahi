@@ -21,7 +21,6 @@ import useLatest from './shared/useLatest'
 import { allowAll, toWaxUser, type KotahiUser } from './shared/user'
 import useYjsFeatures, { type YjsProps } from './shared/yjs'
 import waxTheme from './styles/waxTheme'
-import { useWaxApp } from './WaxAppContext'
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
@@ -74,7 +73,6 @@ const FullWaxEditor = ({
   name,
 }: FullWaxEditorProps): ReactNode => {
   const theme = useTheme()
-  const { textStyles } = useWaxApp()
   const upload = useImageUpload(manuscriptId)
   const latest = useLatest({ saveSource, getComments, ydoc })
   const [fullScreen, setFullScreen] = useState(false)
@@ -139,9 +137,7 @@ const FullWaxEditor = ({
   )
 
   return (
-    <ThemeProvider
-      theme={{ ...({ textStyles } as object), ...theme, ...waxTheme }}
-    >
+    <ThemeProvider theme={{ ...theme, ...waxTheme }}>
       <div className={validationStatus}>
         <ReferenceServicesProvider value={readOnlyReferences}>
           <WaxProvider
