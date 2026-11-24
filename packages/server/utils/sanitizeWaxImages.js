@@ -65,7 +65,12 @@ const createFileFromBase64 = async (
   trx,
 ) => {
   const raw = await crypto.randomBytes(16)
-  const extension = base64Match[0].split('/')[1]
+  const mimetype = base64Match[0]
+
+  const extension =
+    getExtensionFromMimetype(mimetype)?.replace(/^\./, '') ??
+    mimetype.split('/')[1]
+
   const filename = `${raw.toString('hex')}.${extension}`
 
   return createFile(src, filename, {

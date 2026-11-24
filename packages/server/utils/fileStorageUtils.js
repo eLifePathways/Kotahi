@@ -69,6 +69,21 @@ const setFileUrls = async (storedObjects, options = {}) => {
   return updatedStoredObjects
 }
 
+/**
+ * URL of the file's stored object of the given size. Falls back to the original
+ * when that size does not exist.
+ *
+ * SVGs always use the original: they scale without needing other sizes.
+ */
+const storedObjectUrl = (file, size) => {
+  const storedObjects = file.storedObjects ?? []
+  const original = storedObjects.find(({ type }) => type === 'original')
+
+  if (original?.mimetype === 'image/svg+xml') return original.url
+
+  return (storedObjects.find(({ type }) => type === size) ?? original)?.url
+}
+
 /** Replace file URLs in source html with regenerated URLs to files of specified size */
 const replaceImageSrc = async (source, files, size) => {
   const $ = cheerio.load(source)
@@ -90,11 +105,9 @@ const replaceImageSrc = async (source, files, size) => {
     const correspondingFile = find(files, { id: fileId })
 
     if (correspondingFile) {
-      const { url } = correspondingFile.storedObjects.find(
-        storedObject => storedObject.type === size,
-      )
+      const url = storedObjectUrl(correspondingFile, size)
 
-      $elem.attr('src', url)
+      if (url) $elem.attr('src', url)
 
       if (correspondingFile.alt) {
         $elem.attr('alt', correspondingFile.alt)
@@ -114,11 +127,9 @@ const replaceImageFromNunjucksTemplate = (source, files, size) => {
   return source.replace(imageRegex, (match, dataId) => {
     const correspondingFile = find(files, { id: dataId })
 
-    if (correspondingFile) {
-      const { url } = correspondingFile.storedObjects.find(
-        storedObject => storedObject.type === size,
-      )
+    const url = correspondingFile && storedObjectUrl(correspondingFile, size)
 
+    if (url) {
       return match.replace(/src=["'][^"']*["']/, `src="${url}"`)
     }
 
@@ -188,24 +199,12 @@ const replaceImageSrcResponsive = async (source, files) => {
     const correspondingFile = find(files, { id: fileId })
 
     if (correspondingFile) {
-      const { url } = correspondingFile.storedObjects.find(
-        storedObject => storedObject.type === 'medium',
-      )
+      const url = storedObjectUrl(correspondingFile, 'medium')
 
       $elem.attr('src', url) // medium sized image url for frontend representation
-      $elem.attr(
-        'data-low-def',
-        correspondingFile.storedObjects.find(
-          storedObject => storedObject.type === 'small',
-        ).url,
-      ) // small sized image url as data-low-def
+      $elem.attr('data-low-def', storedObjectUrl(correspondingFile, 'small')) // small sized image url as data-low-def
       $elem.attr('data-standard-def', url) // medium sized image url as data-standard-def
-      $elem.attr(
-        'data-hi-def',
-        correspondingFile.storedObjects.find(
-          storedObject => storedObject.type === 'original',
-        ).url,
-      ) // original image url as data-hi-def
+      $elem.attr('data-hi-def', storedObjectUrl(correspondingFile, 'original')) // original image url as data-hi-def
 
       if (correspondingFile.alt) {
         $elem.attr('alt', correspondingFile.alt)

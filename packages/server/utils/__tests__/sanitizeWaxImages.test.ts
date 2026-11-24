@@ -18,6 +18,11 @@ import Manuscript from '../../models/manuscript/manuscript.model'
 const otherBase64Image =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 
+// The mimetype subtype (svg+xml) is not a valid file extension
+const svgBase64Image = `data:image/svg+xml;base64,${Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#2a6f97"/></svg>',
+).toString('base64')}`
+
 const getFileIds = (html: string): string[] => {
   const $ = cheerio.load(html)
   return $('img')
@@ -62,6 +67,30 @@ describe('Sanitize wax images', () => {
 
     expect($(sanitizedImage).attr('src')).toBe(undefined)
     expect(uuidValidate($(sanitizedImage).attr('data-fileid'))).toBe(true) // is uuid
+  })
+
+  it('stores base64 svg images as images, with every size', async () => {
+    const manuscript = await Manuscript.insert({})
+
+    const [fileId] = getFileIds(
+      await sanitizeWaxImages(`<img src="${svgBase64Image}" />`, manuscript.id),
+    )
+
+    const file = await File.findById(fileId)
+
+    expect(file.name).toMatch(/\.svg$/)
+
+    // the svg mimetype is what makes image src helpers serve the original
+    expect(
+      file.storedObjects.find(({ type }) => type === 'original').mimetype,
+    ).toBe('image/svg+xml')
+
+    expect(file.storedObjects.map(({ type }) => type).sort()).toEqual([
+      'full',
+      'medium',
+      'original',
+      'small',
+    ])
   })
 
   it('removes src from images', async () => {
