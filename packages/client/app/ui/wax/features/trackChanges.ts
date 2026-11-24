@@ -38,6 +38,11 @@ type Permission = { accept: boolean; reject: boolean }
 
 export type TrackPermissions = { own: Permission; others: Permission }
 
+export type TrackChangesContext = {
+  trackChanges?: boolean
+  user?: TrackingUser
+}
+
 const insertionSpec: WaxMarkSpec = {
   attrs: {
     class: { default: 'insertion' },
@@ -1584,8 +1589,10 @@ const trackChanges: WaxFeature = {
     trackChangePlugin: trackChangePlugin(),
     hideShowPlugin: hideShowPlugin(),
   }),
-  transformTransaction: (tr, state, { trackChanges: enabled, user }) =>
-    enabled ? trackedTransaction(tr, state, user as TrackingUser) : tr,
+  transformTransaction: (tr, state, context) => {
+    const { trackChanges: enabled, user } = context as TrackChangesContext
+    return enabled && user ? trackedTransaction(tr, state, user) : tr
+  },
 }
 
 export default trackChanges

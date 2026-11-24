@@ -83,7 +83,7 @@ const ContentWaxEditor = ({
         onChange={onChange}
         placeholder={placeholder}
         readonly={readonly}
-        user={toWaxUser(user)}
+        transactionContext={{ user: toWaxUser(user) }}
         value={value}
       >
         <BlurArea onBlur={onBlur}>

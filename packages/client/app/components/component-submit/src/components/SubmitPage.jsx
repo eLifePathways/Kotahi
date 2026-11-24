@@ -162,6 +162,7 @@ const SubmitPage = () => {
 
   const client = useApolloClient()
   const uploadManuscriptImage = useUploadManuscriptImage()
+  const [suggesting, setSuggesting] = useState(false)
 
   if (loading) return <Spinner fullpage />
 
@@ -317,6 +318,7 @@ const SubmitPage = () => {
       onChange={handleChange}
       onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       onSubmit={onSubmit}
+      onSuggestingChange={setSuggesting}
       parent={manuscript}
       republish={republish}
       reviewForm={reviewForm}
@@ -326,6 +328,7 @@ const SubmitPage = () => {
           : null
       }
       submissionForm={submissionForm}
+      suggesting={suggesting}
       threadedDiscussionProps={threadedDiscussionProps}
       updateManuscript={updateManuscript}
       uploadImage={uploadManuscriptImage}

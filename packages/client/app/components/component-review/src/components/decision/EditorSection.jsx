@@ -31,6 +31,8 @@ const EditorSection = ({
   editorSection,
   queryAI,
   uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const {
     submission: { submissionPage = {} },
@@ -147,9 +149,11 @@ const EditorSection = ({
           getComments={saveComments}
           manuscriptId={manuscript.id}
           onAssetManager={onAssetManager}
+          onSuggestingChange={onSuggestingChange}
           readonly={readonly}
           saveSource={saveSource}
           setComments={() => JSON.parse(manuscript.meta.comments) || []}
+          suggesting={suggesting}
           uploadImage={uploadImage}
           useComments={
             !!(
@@ -181,6 +185,8 @@ EditorSection.propTypes = {
   }).isRequired,
   readonly: PropTypes.bool,
   uploadImage: PropTypes.func,
+  suggesting: PropTypes.bool,
+  onSuggestingChange: PropTypes.func,
 }
 
 export default EditorSection

@@ -118,6 +118,8 @@ const Production = ({
   authorList,
   addNewVersion,
   uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const [activeKey, setActiveKey] = useState('editor')
 
@@ -246,9 +248,11 @@ const Production = ({
                 isAuthorProofingVersion={isAuthorProofingVersion}
                 manuscriptId={manuscript.id}
                 onAssetManager={onAssetManager}
+                onSuggestingChange={onSuggestingChange}
                 readonly={isReadOnlyVersion || false}
                 saveSource={debouncedSave}
                 setComments={getManuscriptComments}
+                suggesting={suggesting}
                 updateAnystyle={updateAnystyle}
                 updateCallout={updateCallout}
                 updateCiteProc={updateCiteProc}

@@ -7,13 +7,8 @@ import {
   type ReactNode,
 } from 'react'
 
-import type { WaxFeature } from '../features/types'
-import {
-  WaxEngineContext,
-  type LatestProps,
-  type WaxEngine,
-  type WaxUser,
-} from './context'
+import type { TransactionContext, WaxFeature } from '../features/types'
+import { WaxEngineContext, type LatestProps, type WaxEngine } from './context'
 import { parse } from './htmlFormat'
 import { createPortalStore, NodeViewPortals, type NodeViews } from './nodeViews'
 import buildSchema from './schema'
@@ -23,31 +18,30 @@ const SAVED_HISTORY_SIZE = 20
 
 const noop = (): void => {}
 const noNodeViews: NodeViews = {}
+const noTransactionContext: TransactionContext = {}
 
 export type WaxProviderProps = {
-  features: WaxFeature[]
-  nodeViews?: NodeViews
-  value?: string
-  onChange?: (html: string) => void
-  readonly?: boolean
-  placeholder?: string
-  focusOnMount?: boolean
-  trackChanges?: boolean
-  user?: WaxUser
   children?: ReactNode
+  features: WaxFeature[]
+  focusOnMount?: boolean
+  nodeViews?: NodeViews
+  onChange?: (html: string) => void
+  placeholder?: string
+  readonly?: boolean
+  transactionContext?: TransactionContext
+  value?: string
 }
 
 const WaxProvider = ({
-  features,
-  nodeViews = noNodeViews,
-  value = '',
-  onChange = noop,
-  readonly = false,
-  placeholder = '',
-  focusOnMount = false,
-  trackChanges = false,
-  user,
   children,
+  features,
+  focusOnMount = false,
+  nodeViews = noNodeViews,
+  onChange = noop,
+  placeholder = '',
+  readonly = false,
+  transactionContext = noTransactionContext,
+  value = '',
 }: WaxProviderProps): ReactNode => {
   const [store] = useState(createStore)
   const [portalStore] = useState(createPortalStore)
@@ -59,8 +53,7 @@ const WaxProvider = ({
     readonly,
     placeholder,
     focusOnMount,
-    trackChanges,
-    user,
+    transactionContext,
     onSave: noop,
   })
 
@@ -70,8 +63,7 @@ const WaxProvider = ({
       readonly,
       placeholder,
       focusOnMount,
-      trackChanges,
-      user,
+      transactionContext,
       onSave: (html: string): void => {
         savedValues.current = [...savedValues.current, html].slice(
           -SAVED_HISTORY_SIZE,

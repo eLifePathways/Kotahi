@@ -80,6 +80,7 @@ const DecisionPage = () => {
   // start of code from submit page to handle possible form changes
   const client = useApolloClient()
   const uploadManuscriptImage = useUploadManuscriptImage()
+  const [suggesting, setSuggesting] = useState(false)
   const config = useContext(ConfigContext)
   const { urlFrag } = config
 
@@ -648,6 +649,7 @@ const DecisionPage = () => {
       manuscript={manuscript}
       onDiscussionVisibilityChange={onDiscussionVisibilityChange}
       onRefreshAdaStatus={refreshAdaStatus}
+      onSuggestingChange={setSuggesting}
       publishManuscript={handlePublishManuscript}
       queryAI={queryAI}
       refetch={() => {
@@ -666,6 +668,7 @@ const DecisionPage = () => {
       setExternalEmail={setExternalEmail}
       setSelectedEmail={setSelectedEmail}
       setShouldPublishField={setShouldPublishField}
+      suggesting={suggesting}
       teamLabels={config.teams}
       teams={data?.manuscript?.teams}
       threadedDiscussionProps={threadedDiscussionProps}

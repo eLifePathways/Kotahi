@@ -182,10 +182,11 @@ const WaxSurface = ({
             : features.reduce(
                 (next, feature) =>
                   feature.transformTransaction
-                    ? feature.transformTransaction(next, view.state, {
-                        trackChanges: current.trackChanges,
-                        user: current.user,
-                      })
+                    ? feature.transformTransaction(
+                        next,
+                        view.state,
+                        current.transactionContext,
+                      )
                     : next,
                 transaction,
               )

@@ -44,6 +44,8 @@ export type ProductionWaxEditorProps = YjsProps & {
   getDataFromDatacite?: boolean
   citationStyleName?: string
   uploadImage?: UploadImage
+  suggesting?: boolean
+  onSuggestingChange?: (suggesting: boolean) => void
 }
 
 const ProductionWaxEditor = ({
@@ -67,6 +69,8 @@ const ProductionWaxEditor = ({
   getDataFromDatacite = false,
   citationStyleName,
   uploadImage,
+  suggesting = false,
+  onSuggestingChange,
   wsProvider,
   ydoc,
   name,
@@ -74,7 +78,6 @@ const ProductionWaxEditor = ({
   const upload = useImageUpload(uploadImage, manuscriptId)
   const latest = useLatest({ getComments })
   const [fullScreen, setFullScreen] = useState(false)
-  const [suggesting, setSuggesting] = useState(isAuthorProofingVersion)
   const [initialComments] = useState(() => setComments?.() ?? [])
   const yjsFeatures = useYjsFeatures({ wsProvider, ydoc, name })
 
@@ -126,11 +129,15 @@ const ProductionWaxEditor = ({
               onAssetManager(manuscriptId)
           : undefined,
       }}
-      tracking={{
-        suggesting: trackingOn,
-        onChange: setSuggesting,
-        locked: isAuthorProofingVersion,
-      }}
+      tracking={
+        onSuggestingChange
+          ? {
+              suggesting: trackingOn,
+              onChange: onSuggestingChange,
+              locked: isAuthorProofingVersion,
+            }
+          : undefined
+      }
     />
   )
 
@@ -143,8 +150,7 @@ const ProductionWaxEditor = ({
           onChange={saveSource ?? undefined}
           placeholder={placeholder}
           readonly={readonly}
-          trackChanges={trackingOn}
-          user={waxUser}
+          transactionContext={{ trackChanges: trackingOn, user: waxUser }}
           value={value}
         >
           <SaveOnUnmount onSave={saveSource} />

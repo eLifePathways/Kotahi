@@ -79,6 +79,8 @@ const Submit = ({
   initialChatExpanded,
   onDiscussionVisibilityChange,
   uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const config = useContext(ConfigContext)
 
@@ -129,6 +131,7 @@ const Submit = ({
         <EditorSection
           currentUser={currentUser}
           manuscript={version}
+          onSuggestingChange={onSuggestingChange}
           readonly={!userCanEditManuscriptAndFormData}
           saveComments={comments => {
             debouncedSaveComments(comments, version.id)
@@ -136,6 +139,7 @@ const Submit = ({
           saveSource={source => {
             debouncedSave(source, version.id)
           }}
+          suggesting={suggesting}
           uploadImage={uploadImage}
         />
       ),
@@ -316,6 +320,8 @@ const formPropTypes = PropTypes.shape({
 
 Submit.propTypes = {
   uploadImage: PropTypes.func,
+  suggesting: PropTypes.bool,
+  onSuggestingChange: PropTypes.func,
   versions: PropTypes.arrayOf(
     PropTypes.shape({
       manuscript: PropTypes.objectOf(PropTypes.any),

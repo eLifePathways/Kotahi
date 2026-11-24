@@ -44,6 +44,8 @@ export type FullWaxEditorProps = YjsProps & {
   getActiveViewDom?: (html: string) => void
   citationStyleName?: string
   uploadImage?: UploadImage
+  suggesting?: boolean
+  onSuggestingChange?: (suggesting: boolean) => void
 }
 
 const FullWaxEditor = ({
@@ -66,6 +68,8 @@ const FullWaxEditor = ({
   getActiveViewDom,
   citationStyleName,
   uploadImage,
+  suggesting = false,
+  onSuggestingChange,
   wsProvider,
   ydoc,
   name,
@@ -73,7 +77,6 @@ const FullWaxEditor = ({
   const upload = useImageUpload(uploadImage, manuscriptId)
   const latest = useLatest({ saveSource, getComments, ydoc })
   const [fullScreen, setFullScreen] = useState(false)
-  const [suggesting, setSuggesting] = useState(false)
   const [initialComments] = useState(() => setComments?.() ?? [])
 
   const references = useMemo(
@@ -134,7 +137,11 @@ const FullWaxEditor = ({
             }
       }
       notes={!hideNotes}
-      tracking={{ suggesting, onChange: setSuggesting }}
+      tracking={
+        onSuggestingChange
+          ? { suggesting, onChange: onSuggestingChange }
+          : undefined
+      }
     />
   )
 
@@ -147,8 +154,7 @@ const FullWaxEditor = ({
           onChange={ydoc ? undefined : save}
           placeholder={placeholder}
           readonly={readonly}
-          trackChanges={suggesting}
-          user={waxUser}
+          transactionContext={{ trackChanges: suggesting, user: waxUser }}
           value={ydoc ? '' : value}
         >
           <ActiveViewDom onChange={getActiveViewDom} />

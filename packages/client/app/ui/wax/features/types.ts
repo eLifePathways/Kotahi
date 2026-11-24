@@ -42,10 +42,7 @@ export type WaxNodeSpec = Omit<NodeSpec, 'parseDOM' | 'toDOM'> & {
   toDOM?: HookToDOM<Node>
 }
 
-export type TransactionContext = {
-  trackChanges: boolean
-  user?: Record<string, unknown>
-}
+export type TransactionContext = Record<string, unknown>
 
 export type WaxFeature = {
   name: string
