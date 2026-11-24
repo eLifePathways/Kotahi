@@ -106,11 +106,7 @@ const GroupPage = (): ReactNode => {
     <ThemeProvider theme={theme}>
       <AntConfigProvider theme={theme}>
         <ConfigProvider config={config}>
-          <WaxAppProvider
-            // @ts-ignore
-            citationStyleName={config?.production?.citationStyles?.styleName}
-            uploadManuscriptImage={uploadManuscriptImage}
-          >
+          <WaxAppProvider uploadManuscriptImage={uploadManuscriptImage}>
             <YjsProvider>
               <DynamicFavicon config={config} />
               <Outlet />

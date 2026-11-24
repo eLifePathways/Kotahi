@@ -3,7 +3,6 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import type { UploadResult } from '../features/images'
 
 export type WaxAppSettings = {
-  citationStyleName?: string
   uploadManuscriptImage?: (
     file: File,
     manuscriptId: string,
@@ -15,13 +14,12 @@ const WaxAppContext = createContext<WaxAppSettings>({})
 type WaxAppProviderProps = WaxAppSettings & { children: ReactNode }
 
 export const WaxAppProvider = ({
-  citationStyleName,
   uploadManuscriptImage,
   children,
 }: WaxAppProviderProps): ReactNode => {
   const value = useMemo(
-    () => ({ citationStyleName, uploadManuscriptImage }),
-    [citationStyleName, uploadManuscriptImage],
+    () => ({ uploadManuscriptImage }),
+    [uploadManuscriptImage],
   )
 
   return (

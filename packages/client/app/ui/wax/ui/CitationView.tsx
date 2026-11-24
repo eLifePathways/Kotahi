@@ -6,6 +6,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import { sanitize } from 'isomorphic-dompurify'
+import { useTranslation } from 'react-i18next'
 import striptags from 'striptags'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -44,6 +45,25 @@ const Wrapper = styled.div<{ $readOnly: boolean }>`
   p {
     margin: 0;
   }
+
+  & [data-citation-number]::before {
+    content: attr(data-citation-number) '.';
+    display: inline-block;
+    min-width: 3em;
+    text-align: right;
+  }
+
+  & [data-citation-number] p.ref {
+    display: inline;
+    margin-left: 0.5em;
+  }
+`
+
+const StyleName = styled.span`
+  color: ${th('colorTextMuted')};
+  font-size: ${th('fontSizeBaseSmall')};
+  font-weight: normal;
+  margin-left: ${grid(1)};
 `
 
 const Status = styled.span`
@@ -120,6 +140,7 @@ const versionsFrom = (structures: Structures): Version[] => {
 
 const CitationView = ({ node, view, getPos }: NodeViewProps): ReactNode => {
   const services = useReferenceServices()
+  const { t } = useTranslation()
   const { needsReview, needsValidation, possibleStructures, citationNumber } =
     node.attrs
   const html = `<p class="ref">${referenceHtml(view.state, node)}</p>`
@@ -289,7 +310,14 @@ const CitationView = ({ node, view, getPos }: NodeViewProps): ReactNode => {
           setEditing(false)
         }}
         open={open}
-        title={editing ? 'Edit citation' : 'Select citation'}
+        title={
+          <>
+            {editing ? 'Edit citation' : 'Select citation'}
+            <StyleName>
+              {t(`configPage.production.${services.styleName || 'apa'}`)}
+            </StyleName>
+          </>
+        }
         width={800}
       >
         {editing ? (

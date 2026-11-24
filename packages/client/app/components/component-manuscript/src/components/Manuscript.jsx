@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 
+import { useContext } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { FullWaxEditor } from '../../../../ui/wax'
+import { ConfigContext } from '../../../config/src'
 import { isEditableManuscriptFile } from '../../../../shared/manuscriptUtils'
 
 const Info = styled.span`
@@ -42,12 +44,14 @@ const ManuscriptContainer = styled.div`
 
 const Manuscript = ({ file, content, currentUser, manuscript }) => {
   const { t } = useTranslation()
+  const config = useContext(ConfigContext)
 
   return (
     <Columns>
       {isEditableManuscriptFile(file) ? (
         <ManuscriptContainer>
           <FullWaxEditor
+            citationStyleName={config?.production?.citationStyles?.styleName}
             readonly
             setComments={() => JSON.parse(manuscript.meta.comments) || []}
             user={currentUser}

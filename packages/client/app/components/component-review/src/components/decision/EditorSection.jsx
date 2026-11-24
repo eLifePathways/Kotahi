@@ -142,6 +142,7 @@ const EditorSection = ({
         <FullWaxEditor
           aiConfig={aiConfig}
           authorComments={isAuthorMode}
+          citationStyleName={config?.production?.citationStyles?.styleName}
           getComments={saveComments}
           manuscriptId={manuscript.id}
           onAssetManager={onAssetManager}

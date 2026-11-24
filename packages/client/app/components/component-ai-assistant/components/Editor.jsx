@@ -4,6 +4,7 @@
 import { useContext, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { CssAssistantContext } from '../hooks/CssAssistantContext'
+import { ConfigContext } from '../../config/src'
 import { setImagesDefaultStyles } from '../utils'
 import { FullWaxEditor } from '../../../ui/wax'
 import useIncrementalTarget from '../hooks/useIncrementalTarget'
@@ -62,6 +63,8 @@ const Editor = ({
     createStyleSheet,
     onHistory,
   } = useContext(CssAssistantContext)
+
+  const config = useContext(ConfigContext)
 
   const selectionHandler = useIncrementalTarget(500)
   const editorRef = useRef(null)
@@ -165,6 +168,7 @@ const Editor = ({
       {!passedContent && (
         <HiddenWaxEditor>
           <FullWaxEditor
+            citationStyleName={config?.production?.citationStyles?.styleName}
             getActiveViewDom={setPassedContent}
             readonly={!contentEditable}
             setComments={setComments}

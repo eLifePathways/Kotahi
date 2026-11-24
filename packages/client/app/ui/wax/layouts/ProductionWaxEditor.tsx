@@ -20,7 +20,6 @@ import useLatest from './shared/useLatest'
 import { allowAll, toWaxUser, type KotahiUser } from './shared/user'
 import useYjsFeatures, { type YjsProps } from './shared/yjs'
 import waxTheme from './styles/waxTheme'
-import { useWaxApp } from './WaxAppContext'
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
@@ -46,6 +45,7 @@ export type ProductionWaxEditorProps = YjsProps & {
   ) => Promise<AssetFile | AssetFile[] | null>
   isAuthorProofingVersion?: boolean
   getDataFromDatacite?: boolean
+  citationStyleName?: string
 }
 
 const ProductionWaxEditor = ({
@@ -68,12 +68,12 @@ const ProductionWaxEditor = ({
   onAssetManager,
   isAuthorProofingVersion = false,
   getDataFromDatacite = false,
+  citationStyleName,
   wsProvider,
   ydoc,
   name,
 }: ProductionWaxEditorProps): ReactNode => {
   const theme = useTheme()
-  const { citationStyleName } = useWaxApp()
   const upload = useImageUpload(manuscriptId)
   const latest = useLatest({ getComments })
   const [fullScreen, setFullScreen] = useState(false)

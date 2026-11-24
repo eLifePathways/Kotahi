@@ -24,8 +24,6 @@ import waxTheme from './styles/waxTheme'
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
-const readOnlyReferences = { readOnly: true }
-
 export type FullWaxEditorProps = YjsProps & {
   aiConfig?: AiConfig
   onAssetManager?: (
@@ -47,6 +45,7 @@ export type FullWaxEditorProps = YjsProps & {
   user?: KotahiUser
   manuscriptId?: string
   getActiveViewDom?: (html: string) => void
+  citationStyleName?: string
 }
 
 const FullWaxEditor = ({
@@ -68,6 +67,7 @@ const FullWaxEditor = ({
   user,
   manuscriptId,
   getActiveViewDom,
+  citationStyleName,
   wsProvider,
   ydoc,
   name,
@@ -78,6 +78,11 @@ const FullWaxEditor = ({
   const [fullScreen, setFullScreen] = useState(false)
   const [suggesting, setSuggesting] = useState(false)
   const [initialComments] = useState(() => setComments?.() ?? [])
+
+  const references = useMemo(
+    () => ({ readOnly: true, styleName: citationStyleName }),
+    [citationStyleName],
+  )
   const yjsFeatures = useYjsFeatures({ wsProvider, ydoc, name })
 
   const features = useMemo(
@@ -139,7 +144,7 @@ const FullWaxEditor = ({
   return (
     <ThemeProvider theme={{ ...theme, ...waxTheme }}>
       <div className={validationStatus}>
-        <ReferenceServicesProvider value={readOnlyReferences}>
+        <ReferenceServicesProvider value={references}>
           <WaxProvider
             features={features}
             focusOnMount={autoFocus}

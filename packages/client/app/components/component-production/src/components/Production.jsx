@@ -234,6 +234,9 @@ const Production = ({
             {manuscript ? (
               <ProductionWaxEditor
                 aiConfig={aiConfig}
+                citationStyleName={
+                  config?.production?.citationStyles?.styleName
+                }
                 fallbackOnCrossrefAfterDatacite={
                   fallbackOnCrossrefAfterDatacite
                 }
