@@ -8,7 +8,7 @@ module.exports = app => {
       const document = await manuscriptToOxa(req.params.manuscriptId)
 
       if (!document)
-        return res.status(404).send({ error: 'Manuscript not found' })
+        return res.status(404).send({ error: 'Published manuscript not found' })
 
       return res.json(document)
     } catch (error) {
