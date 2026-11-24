@@ -1,15 +1,39 @@
-const { createFile, deleteFiles, File } = require('@coko/server')
-const { map, uniq, flatten } = require('lodash')
+const {
+  createFile,
+  deleteFiles,
+  File,
+  fileStorage,
+  FileStorageConstructor,
+  serverUrl,
+  uuidValidate,
+} = require('@coko/server')
+const { map, uniq, flatten, get } = require('lodash')
 const { decrypt } = require('../utils/encryptDecryptUtils')
 const Form = require('../models/form/form.model')
 
-const { Manuscript } = require('../models')
+const { Manuscript, Review } = require('../models')
 
 const {
   getFileWithUrl,
   getFilesWithUrl,
   imageFinder,
 } = require('../utils/fileStorageUtils')
+
+const { bodyImageIds } = require('../utils/htmlUtils')
+const { publishedFormFields } = require('./manuscript/manuscriptUtils')
+const {
+  getDecisionForm,
+  getReviewForm,
+  getSubmissionForm,
+  isReviewFileField,
+  toFileIds,
+} = require('./review.controllers')
+
+const FILE_COMPONENT_TAGS = {
+  ManuscriptFile: 'manuscript',
+  SupplementaryFiles: 'supplementary',
+  VisualAbstract: 'visualAbstract',
+}
 
 const createFileFn = async (file, meta) => {
   const { createReadStream, filename } = await file
@@ -221,13 +245,151 @@ const uploadFiles = async (files, fileType, entityId) => {
   return uploadedFiles
 }
 
+const fileFieldTag = field =>
+  field.component === 'GenericFiles'
+    ? field.name
+    : FILE_COMPONENT_TAGS[field.component]
+
+const isFileField = field => !!fileFieldTag(field)
+
+const filesForField = (files, field) => {
+  const tag = fileFieldTag(field)
+  if (!tag) return []
+
+  return files.filter(file => file.tags?.includes(tag))
+}
+
+const externalStorage = (file, formFields) => {
+  const element = formFields.find(
+    field => field.id === file.meta?.formElementId,
+  )
+  if (!element) return null
+
+  return new FileStorageConstructor({
+    accessKeyId: element.s3AccessId
+      ? decrypt(element.s3AccessId)
+      : element.s3AccessId,
+    secretAccessKey: element.s3AccessToken
+      ? decrypt(element.s3AccessToken)
+      : element.s3AccessToken,
+    bucket: file.meta.bucket || element.s3Bucket,
+    region: element.s3Region,
+    url: element.s3Url,
+  })
+}
+
+const isPublicFile = (file, manuscript, formFields) => {
+  if (!manuscript.published || file.objectId !== manuscript.id) return false
+  if (bodyImageIds(manuscript.meta?.source).includes(file.id)) return true
+
+  return publishedFormFields(manuscript, formFields).some(
+    field => filesForField([file], field).length > 0,
+  )
+}
+
+const isPublicReviewFile = (file, review, manuscript, formFields) => {
+  if (
+    !manuscript.published ||
+    file.objectId !== review.id ||
+    review.manuscriptId !== manuscript.id
+  )
+    return false
+
+  const data = review.jsonData ?? {}
+
+  return publishedFormFields(manuscript, formFields, review.id).some(
+    field =>
+      isReviewFileField(field) &&
+      toFileIds(get(data, field.name)).includes(file.id),
+  )
+}
+
+const publicFileFormFields = async file => {
+  const manuscript = await Manuscript.findById(file.objectId, {
+    throwIfNotFound: false,
+  })
+
+  if (manuscript) {
+    const form = await getSubmissionForm(manuscript.groupId)
+    const formFields = form.getFields()
+    return isPublicFile(file, manuscript, formFields) ? formFields : null
+  }
+
+  const review = await Review.findById(file.objectId, {
+    throwIfNotFound: false,
+  })
+  if (!review) return null
+
+  const reviewManuscript = await Manuscript.findById(review.manuscriptId, {
+    throwIfNotFound: false,
+  })
+
+  if (!reviewManuscript) return null
+
+  if (!review.isDecision) {
+    const completed = await Manuscript.getReviews(reviewManuscript.id, [
+      'completed',
+    ])
+
+    if (!completed.some(completedReview => completedReview.id === review.id))
+      return null
+  }
+
+  const form = review.isDecision
+    ? await getDecisionForm(reviewManuscript.groupId)
+    : await getReviewForm(reviewManuscript.groupId)
+
+  const formFields = form.getFields()
+
+  return isPublicReviewFile(file, review, reviewManuscript, formFields)
+    ? formFields
+    : null
+}
+
+const publicFileUrl = file => `${serverUrl}/api/files/${file.id}`
+
+const publishedFileUrl = async (fileId, size = 'original') => {
+  if (!uuidValidate(fileId)) return null
+
+  const file = await File.findById(fileId, { throwIfNotFound: false })
+  if (!file?.objectId) return null
+
+  const formFields = await publicFileFormFields(file)
+  if (!formFields) return null
+
+  const storedObject = file.storedObjects.find(object => object.type === size)
+  if (!storedObject) return null
+
+  const storage = file.tags?.includes('externalAttachmentSource')
+    ? externalStorage(file, formFields)
+    : fileStorage
+
+  if (!storage) return null
+
+  const url = await storage.getURL(storedObject.key, {
+    /**
+     * Keep expiration short. If a manuscript is unpublished, the file should
+     * stop being available fairly quickly.
+     */
+    expiresIn: 300, // 5 minutes
+  })
+
+  return url || null
+}
+
 module.exports = {
   createFile: createFileFn,
   deleteFile,
   deleteFiles: deleteFilesFn,
+  filesForField,
   getEntityFiles,
   getFilesByTagOrId,
   getSpecificFiles,
+  isFileField,
+  isPublicFile,
+  isPublicReviewFile,
+  publicFileUrl,
+  publishedFileUrl,
   updateFile,
   updateTagsFile,
   uploadFiles,

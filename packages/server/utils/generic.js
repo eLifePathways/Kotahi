@@ -18,6 +18,7 @@ const getExtensionFromMimetype = mimeType => {
     'image/bmp': '.bmp',
     'image/tiff': '.tiff',
     'image/x-icon': '.ico',
+    'image/svg+xml': '.svg',
     'application/pdf': '.pdf',
     'application/zip': '.zip',
     'text/html': '.html',

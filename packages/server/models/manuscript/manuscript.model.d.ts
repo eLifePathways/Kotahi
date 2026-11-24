@@ -29,7 +29,7 @@ declare class Manuscript extends BaseModel {
   shortId: number
   parentId: string | null
   manuscriptVersions: Record<string, unknown> | null
-  files: Record<string, unknown>[] | null
+  files: File[] | null
   teams: Record<string, unknown>[] | null
   tasks: Record<string, unknown>[] | null
   reviews: Record<string, unknown>[] | null

@@ -1,9 +1,13 @@
 import { describe, it, expect } from 'vitest'
+import cheerio from 'cheerio'
 
 import {
   filterOutUnreferencedImages,
   getImageFileIdsInSource,
   remapImageFileIds,
+  replaceImageFromNunjucksTemplate,
+  replaceImageSrc,
+  replaceImageSrcResponsive,
 } from '../fileStorageUtils'
 
 const file = (
@@ -89,5 +93,89 @@ describe('remapImageFileIds', () => {
 
     expect(remapImageFileIds(source, new Map())).toBe(source)
     expect(remapImageFileIds(null, new Map([['a', 'b']]))).toBeNull()
+  })
+})
+
+describe('image src replacement', () => {
+  const withSizes = (
+    id: string,
+    sizes: string[],
+    mimetype = 'image/png',
+  ): {
+    id: string
+    storedObjects: { type: string; url: string; mimetype: string }[]
+  } => ({
+    id,
+    storedObjects: sizes.map(type => ({
+      type,
+      url: `${id}-${type}`,
+      mimetype,
+    })),
+  })
+
+  const ALL_SIZES = ['original', 'small', 'medium', 'full']
+
+  const files = [
+    withSizes('image', ALL_SIZES),
+    // Files that file storage did not recognise as images (eg. base64 svgs
+    // saved as ".svg+xml") only have an original, so other sizes must not be
+    // required.
+    withSizes('originalOnly', ['original']),
+    withSizes('empty', []),
+    // File storage writes PNG data into the other sizes of an SVG, so only the
+    // original can be displayed.
+    withSizes('svg', ALL_SIZES, 'image/svg+xml'),
+  ]
+
+  const imageAttribute = (html: string, id: string, name: string): string =>
+    cheerio.load(html)(`img[data-fileid="${id}"]`).attr(name)
+
+  it('replaceImageSrc uses the requested size, or the original when that size is missing or the image is an svg', async () => {
+    const html = await replaceImageSrc(
+      '<img data-fileid="image" /><img data-fileid="originalOnly" />' +
+        '<img data-fileid="empty" src="kept" /><img data-fileid="svg" />',
+      files,
+      'medium',
+    )
+
+    expect(imageAttribute(html, 'image', 'src')).toBe('image-medium')
+    expect(imageAttribute(html, 'originalOnly', 'src')).toBe(
+      'originalOnly-original',
+    )
+    expect(imageAttribute(html, 'empty', 'src')).toBe('kept')
+    expect(imageAttribute(html, 'svg', 'src')).toBe('svg-original')
+  })
+
+  it.each(['originalOnly', 'svg'])(
+    'replaceImageSrcResponsive uses the original for every size of %s',
+    async id => {
+      const html = await replaceImageSrcResponsive(
+        `<img data-fileid="${id}" />`,
+        files,
+      )
+
+      const attribute = (name: string): string => imageAttribute(html, id, name)
+
+      expect(attribute('src')).toBe(`${id}-original`)
+      expect(attribute('data-low-def')).toBe(`${id}-original`)
+      expect(attribute('data-standard-def')).toBe(`${id}-original`)
+      expect(attribute('data-hi-def')).toBe(`${id}-original`)
+    },
+  )
+
+  it('replaceImageFromNunjucksTemplate uses the original when the size is missing or the image is an svg', () => {
+    expect(
+      replaceImageFromNunjucksTemplate(
+        '<img src="old" data-id="image" /><img src="old" data-id="originalOnly" />' +
+          '<img src="old" data-id="empty" /><img src="old" data-id="svg" />',
+        files,
+        'medium',
+      ),
+    ).toBe(
+      '<img src="image-medium" data-id="image" />' +
+        '<img src="originalOnly-original" data-id="originalOnly" />' +
+        '<img src="old" data-id="empty" />' +
+        '<img src="svg-original" data-id="svg" />',
+    )
   })
 })

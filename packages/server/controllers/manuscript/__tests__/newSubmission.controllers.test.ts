@@ -22,6 +22,7 @@ import DbTestUtils from '../../../models/DbTestUtils'
 import Group from '../../../models/group/group.model'
 import User from '../../../models/user/user.model'
 import Config from '../../../models/config/config.model'
+import Form from '../../../models/form/form.model'
 import Manuscript from '../../../models/manuscript/manuscript.model'
 import Task from '../../../models/task/task.model'
 import TaskEmailNotification from '../../../models/taskEmailNotification/taskEmailNotification.model'
@@ -52,6 +53,9 @@ const docx = (name = 'paper.docx'): File =>
   new File(['docx content'], name, {
     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   })
+
+const oxa = (document: Record<string, unknown>, name = 'paper.json'): File =>
+  new File([JSON.stringify(document)], name, { type: 'application/json' })
 
 const manuscriptFiles = async (manuscriptId: string): Promise<FileModel[]> =>
   (await FileModel.find({ objectId: manuscriptId })).result
@@ -185,6 +189,120 @@ describe('createManuscriptFromFile', () => {
       await create(userId, groupId, docx('PAPER.DOCX'))
 
       expect(docxToHtml).toHaveBeenCalled()
+    })
+  })
+
+  describe('with an OXA .json file', () => {
+    beforeEach(async () => {
+      // @ts-ignore
+      await Form.insert({
+        groupId,
+        purpose: 'submit',
+        category: 'submission',
+        structure: {
+          name: 'submission',
+          children: [
+            { name: 'submission.$title', component: 'TextField' },
+            { name: 'submission.summary', component: 'AbstractEditor' },
+          ] as Form.FormField[],
+        },
+      })
+    })
+
+    it('converts the document into the source and submission fields', async () => {
+      const manuscript = await create(
+        userId,
+        groupId,
+        oxa({
+          type: 'Document',
+          title: [{ type: 'Text', value: 'OXA title' }],
+          children: [
+            { type: 'Paragraph', children: [{ type: 'Text', value: 'Body' }] },
+          ],
+          data: {
+            summary: [
+              { type: 'Paragraph', children: [{ type: 'Text', value: 'S' }] },
+            ],
+          },
+        }),
+      )
+
+      expect(docxToHtml).not.toHaveBeenCalled()
+      expect(prefillSubmission).not.toHaveBeenCalled()
+      expect(manuscript.meta.source).toContain('<p class="paragraph">Body</p>')
+
+      expect(manuscript.submission).toMatchObject({
+        $title: 'OXA title',
+        summary: '<p class="paragraph">S</p>',
+      })
+
+      expect(await manuscriptFiles(manuscript.id)).toHaveLength(1)
+    })
+
+    it('stores the images of the document and points the source at them', async () => {
+      const manuscript = await create(
+        userId,
+        groupId,
+        oxa({ type: 'Document', children: [{ type: 'Image', url: PNG }] }),
+      )
+
+      const files = await manuscriptFiles(manuscript.id)
+      const image = files.find(file => file.name !== 'paper.json')
+      const $ = load(manuscript.meta.source)
+
+      expect(files).toHaveLength(2)
+      expect($('figure img').attr('data-fileid')).toBe(image.id)
+      expect($('img').attr('src')).toBeUndefined()
+    })
+
+    it('reports converting and creating the manuscript', async () => {
+      const steps: string[] = []
+
+      await create(
+        userId,
+        groupId,
+        oxa({ type: 'Document', children: [] }),
+        step => steps.push(step),
+      )
+
+      expect(steps).toEqual(['converting', 'creatingManuscript'])
+    })
+
+    it('rejects JSON files that are not OXA documents', async () => {
+      const files = [
+        oxa({ type: 'Person' }),
+        new File(['not json'], 'paper.json', { type: 'application/json' }),
+      ]
+
+      await Promise.all(
+        files.map(async file => {
+          const steps: string[] = []
+
+          const error = await create(userId, groupId, file, step =>
+            steps.push(step),
+          ).catch(e => e)
+
+          expect(error).toBeInstanceOf(NewSubmissionError)
+          expect(error.code).toBe('UNSUPPORTED_FILE_TYPE')
+          expect(steps).toEqual([])
+        }),
+      )
+
+      expect(await manuscriptCount()).toBe(0)
+      expect(await fileCount()).toBe(0)
+    })
+
+    it('fails without storing anything when the document is not valid OXA', async () => {
+      const error = await create(
+        userId,
+        groupId,
+        oxa({ type: 'Document' }),
+      ).catch(e => e)
+
+      expect(error).toBeInstanceOf(NewSubmissionError)
+      expect(error.code).toBe('CONVERSION_FAILED')
+      expect(await manuscriptCount()).toBe(0)
+      expect(await fileCount()).toBe(0)
     })
   })
 
@@ -462,6 +580,7 @@ describe('getNewSubmissionSettings', () => {
         '.pdf',
         '.epub',
         '.zip',
+        '.json',
       ],
     })
   })

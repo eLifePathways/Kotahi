@@ -12,6 +12,7 @@ import { ConfigContext } from '../../../../config/src'
 import { Info } from '../style'
 import { useGetSpecificFiles } from '../../../../asset-manager/src/queries'
 import ModalContext from '../../../../asset-manager/src/ui/Modal/ModalContext'
+import { isEditableManuscriptFile } from '../../../../../shared/manuscriptUtils'
 
 const Wrapper = styled.div`
   background: ${th('color.backgroundA')};
@@ -54,10 +55,7 @@ const EditorSection = ({
   const { t } = useTranslation()
 
   if (
-    ((manuscriptFile &&
-      manuscriptFile.storedObjects[0].mimetype !==
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
-      !manuscriptFile) &&
+    !isEditableManuscriptFile(manuscriptFile) &&
     allowAuthorSubmitFormWithBlankEditor === false
   )
     return <Info>{t('editorSection.noSupportedView')}</Info>

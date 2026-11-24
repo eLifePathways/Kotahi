@@ -19,39 +19,13 @@ type FormFieldValidateValue = {
   minSize: string | null
 } | null
 
-type FormField = {
-  options: FormFieldOption[] | null
-  title: string | null
-  shortDescription: string | null
-  id: string
-  component: string
-  name: string
-  description: string | null
-  uploadAttachmentSource: string
-  s3Url: string
-  s3AccessId: string
-  s3AccessToken: string
-  s3Bucket: string
-  s3Region: string
-  doiValidation: string | null
-  placeholder: string | null
-  isReadOnly: string | null
-  hideFromReviewers: string | null
-  inline: string | null
-  sectioncss: string | null
-  parse: string | null
-  format: string | null
-  validate: FormFieldValidateItem[] | null
-  validateValue: FormFieldValidateValue
-}
-
 type FormStructure = {
   name: string | null
   description: string | null
   haspopup: string
   popuptitle: string | null
   popupdescription: string | null
-  children: FormField[]
+  children: Form.FormField[]
 }
 
 declare class Form extends BaseModel {
@@ -60,7 +34,7 @@ declare class Form extends BaseModel {
   structure: FormStructure
   groupId: string | null
 
-  getFields(): FormField[]
+  getFields(): Form.FormField[]
 
   static findActiveInGroup(
     groupId: string,
@@ -72,6 +46,35 @@ declare class Form extends BaseModel {
     exceptId: string,
     options?: { trx?: Transaction },
   ): Promise<number>
+}
+
+declare namespace Form {
+  export type FormField = {
+    options: FormFieldOption[] | null
+    title: string | null
+    shortDescription: string | null
+    id: string
+    component: string
+    name: string
+    description: string | null
+    uploadAttachmentSource: string
+    s3Url: string
+    s3AccessId: string
+    s3AccessToken: string
+    s3Bucket: string
+    s3Region: string
+    doiValidation: string | null
+    placeholder: string | null
+    isReadOnly: string | null
+    hideFromReviewers: string | null
+    permitPublishing: string | null
+    inline: string | null
+    sectioncss: string | null
+    parse: string | null
+    format: string | null
+    validate: FormFieldValidateItem[] | null
+    validateValue: FormFieldValidateValue
+  }
 }
 
 export = Form

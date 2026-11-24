@@ -547,6 +547,7 @@ describe('new submission API', () => {
           '.pdf',
           '.epub',
           '.zip',
+          '.json',
         ],
       })
     })

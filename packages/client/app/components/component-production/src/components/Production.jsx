@@ -34,6 +34,7 @@ import { CssAssistantProvider } from '../../../component-ai-assistant/hooks/CssA
 import AiPDFDesigner from '../../../component-ai-assistant/AiPDFDesigner'
 import Versioning from './Versioning'
 import VerifyPayloadModal from './VerifyPayloadModal/VerifyPayloadModal'
+import { isEditableManuscriptFile } from '../../../../shared/manuscriptUtils'
 
 const useVersioning = true
 
@@ -209,10 +210,7 @@ const Production = ({
   let showContent = false
 
   if (file) {
-    showContent =
-      file &&
-      file.storedObjects[0].mimetype ===
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    showContent = isEditableManuscriptFile(file)
 
     if (!showContent) {
       showContent = canSubmitWithBlankEditor || false
