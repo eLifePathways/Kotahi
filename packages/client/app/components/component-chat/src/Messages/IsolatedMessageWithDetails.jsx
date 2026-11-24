@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-autofocus */
 
 import styled from 'styled-components'
-import ChatWaxEditor from '../../../../ui/wax/chat-editor'
+import { ChatWaxEditor } from '../../../../ui/wax'
 import {
   convertTimestampToDateWithTimeString,
   convertTimestampToTimeString,

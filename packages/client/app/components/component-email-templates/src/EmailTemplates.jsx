@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { useTheme } from 'styled-components'
 
 import EmailTemplateContent from './EmailTemplateContent'
@@ -7,7 +9,7 @@ import { ConfirmationModal } from '../../component-modal/src/ConfirmationModal'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
 import { Content, Root } from '../misc/styleds'
 
-const EmailTemplates = () => {
+const EmailTemplates = ({ templateVariables }) => {
   const theme = useTheme()
   const { handleDelete, deleteModalState, t } = useEmailTemplatesContext()
 
@@ -15,7 +17,7 @@ const EmailTemplates = () => {
     <Root>
       <EmailTemplatesHeader />
       <Content>
-        <EmailTemplateContent />
+        <EmailTemplateContent templateVariables={templateVariables} />
         <EmailTemplatesNav />
       </Content>
       <ConfirmationModal

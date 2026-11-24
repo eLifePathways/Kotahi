@@ -1,26 +1,19 @@
-import { Fragment, useContext, useEffect } from 'react'
+import { Fragment, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
 import { CommsErrorBanner } from '../../shared'
 import Spinner from '../../../ui/shared/Spinner'
 import EmailTemplates from './EmailTemplates'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
-import { handlebars } from '../../../ui/wax/handlebars-autocomplete/constants'
 import { ConfigContext } from '../../config/src'
 import { GET_TEMPLATE_VARIABLES } from '../../../queries'
 
 const EmailTemplatesPage = ({ wrapper: Wrapper = Fragment }) => {
-  const config = useContext(ConfigContext)
-  const { groupId } = config
+  const { groupId } = useContext(ConfigContext)
+
   const { data: templateVariablesData } = useQuery(GET_TEMPLATE_VARIABLES, {
     variables: { groupId },
   })
-
-  useEffect(() => {
-    if (templateVariablesData?.getVariables) {
-      handlebars.store({ variables: templateVariablesData.getVariables })
-    }
-  }, [templateVariablesData])
 
   const { loading, error, emailTemplates } = useEmailTemplatesContext()
 
@@ -29,7 +22,9 @@ const EmailTemplatesPage = ({ wrapper: Wrapper = Fragment }) => {
 
   return (
     <Wrapper>
-      <EmailTemplates />
+      <EmailTemplates
+        templateVariables={templateVariablesData?.getVariables ?? []}
+      />
     </Wrapper>
   )
 }

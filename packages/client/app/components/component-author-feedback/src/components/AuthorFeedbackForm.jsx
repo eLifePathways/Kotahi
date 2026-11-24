@@ -15,7 +15,7 @@ import {
   Attachment,
 } from '../../../shared'
 import { ValidatedFieldFormik } from '../../../pubsweet'
-import SimpleWaxEditor from '../../../../ui/wax/wax-collab/SimpleWaxEditor'
+import { SimpleWaxEditor } from '../../../../ui/wax'
 import { CREATE_FILE, DELETE_FILE } from '../../../../queries'
 import SubmittedStatus from './SubmittedStatus'
 import { Legend } from '../../../component-submit/src/style'

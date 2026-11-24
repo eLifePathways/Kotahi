@@ -13,7 +13,7 @@ import ErrorPageFallback from '../ui/base/ErrorPageFallback'
 import { ConfigProvider } from '../components/config/src'
 import { YjsProvider } from '../components/provider-yjs/YjsProvider'
 import { JournalContext } from '../components/xpub-journal'
-import { WaxAppProvider } from '../ui/wax/WaxAppContext'
+import { WaxAppProvider } from '../ui/wax'
 import useUploadManuscriptImage from '../hooks/useUploadManuscriptImage'
 import DynamicFavicon from '../dynamicFavicon'
 

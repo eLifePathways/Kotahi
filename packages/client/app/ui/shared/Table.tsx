@@ -43,7 +43,7 @@ const Wrapper = styled.div`
     height: 2.7em !important;
   }
 
-  /* necessary because of wax-table-service injecting global css */
+  /* necessary because the wax tables feature (ui/wax/features/tables.css) injects global css */
   th,
   td {
     border: 0;

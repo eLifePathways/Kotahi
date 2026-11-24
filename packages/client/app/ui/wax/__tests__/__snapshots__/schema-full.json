@@ -165,7 +165,7 @@
         "style": null
       },
       "content": "table_caption? table_body*",
-      "tableRole": "table",
+      "tableRole": "wrapper",
       "isolating": true,
       "group": "block",
       "parseDOM": [
@@ -196,7 +196,7 @@
         "style": null
       },
       "content": "table_row+",
-      "tableRole": "body",
+      "tableRole": "table",
       "isolating": true,
       "parseDOM": [
         {
@@ -783,8 +783,7 @@
       "inclusive": false,
       "excludes": "",
       "attrs": {
-        "class": "strikethrough",
-        "style": "text-decoration:line-through"
+        "class": "strikethrough"
       },
       "parseDOM": [
         {
@@ -792,7 +791,7 @@
           "getAttrs": "[function]"
         }
       ],
-      "toDOM": "<span class=\"strikethrough\" style=\"text-decoration:line-through\"></span>"
+      "toDOM": "<span class=\"strikethrough\"></span>"
     },
     {
       "name": "underline",

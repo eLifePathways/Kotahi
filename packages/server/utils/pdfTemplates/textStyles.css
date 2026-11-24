@@ -115,3 +115,7 @@ math-display .katex-display {
 .math-node.ProseMirror-selectednode .math-render {
   display: none;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}

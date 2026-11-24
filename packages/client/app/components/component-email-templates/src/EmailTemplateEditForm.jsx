@@ -15,6 +15,7 @@ const EmailTemplateEditForm = ({
   setFieldValue,
   setTouched,
   currentValues,
+  templateVariables,
 }) => {
   const { activeTemplate, autoSave, t, savedState, isDraft } =
     useEmailTemplatesContext()
@@ -57,6 +58,7 @@ const EmailTemplateEditForm = ({
                 onDataChanged={onDataChanged}
                 setFieldValue={setFieldValue}
                 setTouched={setTouched}
+                templateVariables={templateVariables}
               />
             </Section>
           )

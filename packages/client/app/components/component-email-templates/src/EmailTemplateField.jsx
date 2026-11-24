@@ -4,11 +4,13 @@ import { camelCase } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { required } from '../../xpub-validators/src'
 import { ValidatedFieldFormik } from '../../pubsweet'
-import { handlebars } from '../../../ui/wax/handlebars-autocomplete/constants'
 
-const makePropsFromFieldType = ({ item, onDataChanged, setFieldValue }) => {
-  const { autocompleteConfig } = handlebars.stored
-
+const makePropsFromFieldType = ({
+  item,
+  onDataChanged,
+  setFieldValue,
+  variables,
+}) => {
   const propsByFieldType = {
     'text-input': {
       onChange: input => {
@@ -27,8 +29,7 @@ const makePropsFromFieldType = ({ item, onDataChanged, setFieldValue }) => {
         setFieldValue(item.name, value)
         onDataChanged(item.name, value)
       },
-      autocompleteConfig, // for config
-      useHandlebarsAutocomplete: true, // for layout
+      handlebarsVariables: variables,
     },
   }
 
@@ -41,6 +42,7 @@ const EmailTemplateField = ({
   setTouched,
   setFieldValue,
   onDataChanged,
+  templateVariables,
 }) => {
   const { t } = useTranslation()
 
@@ -48,6 +50,7 @@ const EmailTemplateField = ({
     item,
     onDataChanged,
     setFieldValue,
+    variables: templateVariables,
   })
 
   const labelFontSize =

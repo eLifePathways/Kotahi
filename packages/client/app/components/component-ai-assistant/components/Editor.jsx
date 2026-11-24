@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { CssAssistantContext } from '../hooks/CssAssistantContext'
 import { setImagesDefaultStyles } from '../utils'
-import FullWaxEditor from '../../../ui/wax/wax-collab/FullWaxEditor'
+import { FullWaxEditor } from '../../../ui/wax'
 import useIncrementalTarget from '../hooks/useIncrementalTarget'
 
 const StyledEditor = styled.div`

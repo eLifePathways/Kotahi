@@ -9,7 +9,7 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import ChatWaxEditor from '../../../../ui/wax/chat-editor'
+import { ChatWaxEditor } from '../../../../ui/wax'
 
 const EditorWrapper = styled.div`
   position: relative;

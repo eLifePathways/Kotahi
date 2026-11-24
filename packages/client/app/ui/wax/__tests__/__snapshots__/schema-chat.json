@@ -390,8 +390,7 @@
       "inclusive": false,
       "excludes": "",
       "attrs": {
-        "class": "strikethrough",
-        "style": "text-decoration:line-through"
+        "class": "strikethrough"
       },
       "parseDOM": [
         {
@@ -399,7 +398,7 @@
           "getAttrs": "[function]"
         }
       ],
-      "toDOM": "<span class=\"strikethrough\" style=\"text-decoration:line-through\"></span>"
+      "toDOM": "<span class=\"strikethrough\"></span>"
     },
     {
       "name": "underline",

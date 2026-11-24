@@ -2,7 +2,7 @@
 
 import { set } from 'lodash'
 
-import ContentWaxEditor from '../../../ui/wax/cms-editor/ContentWaxEditor'
+import { ContentWaxEditor } from '../../../ui/wax'
 
 import StaticTextInput from './components/StaticTextInput'
 

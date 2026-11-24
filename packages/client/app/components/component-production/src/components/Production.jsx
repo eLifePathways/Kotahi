@@ -13,7 +13,7 @@ import { css } from '@codemirror/lang-css'
 import Page from '../../../../ui/shared/Page'
 import { FlexRow } from '../../../../globals'
 import { ConfigContext } from '../../../config/src'
-import ProductionWaxEditor from '../../../../ui/wax/wax-collab/ProductionWaxEditor'
+import { ProductionWaxEditor } from '../../../../ui/wax'
 import { DownloadDropdown } from './DownloadDropdown'
 import {
   ErrorBoundary,

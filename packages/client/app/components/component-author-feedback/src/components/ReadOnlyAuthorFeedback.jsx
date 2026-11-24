@@ -7,7 +7,7 @@ import { grid } from '@coko/client'
 import { PaddedContent, Attachment } from '../../../shared'
 import { Legend } from '../../../component-submit/src/style'
 import SubmittedStatus from './SubmittedStatus'
-import SimpleWaxEditor from '../../../../ui/wax/wax-collab/SimpleWaxEditor'
+import { SimpleWaxEditor } from '../../../../ui/wax'
 
 const Content = styled(PaddedContent)`
   margin-bottom: ${grid(2)};

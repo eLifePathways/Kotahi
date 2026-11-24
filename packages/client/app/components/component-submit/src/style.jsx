@@ -119,6 +119,10 @@ export const SubNote = styled.span`
     font-variant: small-caps;
   }
 
+  & .strikethrough {
+    text-decoration: line-through;
+  }
+
   & a {
     color: blue;
   }

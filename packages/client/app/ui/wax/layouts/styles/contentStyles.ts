@@ -1,0 +1,81 @@
+/* stylelint-disable string-quotes, declaration-block-no-redundant-longhand-properties */
+
+import styled from 'styled-components'
+import { th, grid } from '@coko/client'
+import waxDefaultStyles from './waxDefaultStyles'
+import EditorElements from './editorElements'
+
+// this grid goes around the menu and the editor area beneath it.
+export const Grid = styled.div<{ $readonly?: boolean; $production?: boolean }>`
+  display: grid;
+  grid-template:
+    'menu' ${(props): string => (props.$readonly ? '0' : 'minmax(40px, auto)')}
+    'editor' 1fr
+    / 100%;
+  height: 100%;
+  ${(props): string | false =>
+    props.$production && 'min-height: calc(100vh - 108px);'}
+  position: relative;
+`
+
+export const Menu = styled.div`
+  align-items: center;
+  background: #fff;
+  border: 1px solid ${th('color.gray80')};
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12.8px;
+  grid-area: menu;
+  height: fit-content;
+  max-width: 100%;
+  min-height: 40px;
+  position: sticky;
+  top: -20px;
+  user-select: none;
+  z-index: 5;
+
+  & > div {
+    /* height: 36px; */
+  }
+`
+
+export const FullWaxEditorGrid = styled.div<{ $useComments?: boolean }>`
+  grid-area: editor;
+  grid-template-columns: [editorCol] auto [commentsCol] ${(
+      props,
+    ): string | number => (props.$useComments ? 'auto' : 0)};
+  /* stylelint-disable-next-line value-keyword-case */
+  grid-template-rows: [editorRow] auto [notesRow] auto [infoRow] 40px;
+  height: 18rem;
+  ${waxDefaultStyles}
+  position: relative;
+  z-index: 0;
+`
+
+export const EditorDiv = styled.div<{ $hideComments?: boolean }>`
+  background-color: ${th('colorBackground')};
+  border: 1px solid ${th('color.gray80')};
+  border-width: 0 1px 1px;
+  grid-column-start: editorCol;
+  grid-row-start: editorRow;
+  height: 100%;
+  ${(props): string | false => !props.$hideComments && 'min-width: 800px'};
+  overflow: auto;
+  padding: ${grid(4)};
+  position: relative;
+
+  .error & {
+    border: 1px solid ${th('colorError')};
+  }
+
+  & > div {
+    ${(props): string | false => !props.$hideComments && 'max-width: 800px'};
+  }
+
+  ${EditorElements}
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  & .ProseMirror {
+    height: inherit;
+  }
+`
