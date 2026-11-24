@@ -1,5 +1,4 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { ThemeProvider, useTheme } from 'styled-components'
 
 import { WaxProvider } from '../editor'
 import type { Comment } from '../features/comments'
@@ -19,7 +18,6 @@ import { FullToolbar, type AiConfig } from './shared/toolbars'
 import useLatest from './shared/useLatest'
 import { allowAll, toWaxUser, type KotahiUser } from './shared/user'
 import useYjsFeatures, { type YjsProps } from './shared/yjs'
-import waxTheme from './styles/waxTheme'
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
@@ -75,7 +73,6 @@ const ProductionWaxEditor = ({
   ydoc,
   name,
 }: ProductionWaxEditorProps): ReactNode => {
-  const theme = useTheme()
   const upload = useImageUpload(uploadImage, manuscriptId)
   const latest = useLatest({ getComments })
   const [fullScreen, setFullScreen] = useState(false)
@@ -140,43 +137,41 @@ const ProductionWaxEditor = ({
   )
 
   return (
-    <ThemeProvider theme={{ ...theme, ...waxTheme }}>
-      <div className={validationStatus}>
-        <ReferenceServicesProvider value={references}>
-          <WaxProvider
-            features={features}
-            focusOnMount={autoFocus}
-            nodeViews={nodeViews}
-            onChange={saveSource ?? undefined}
-            placeholder={placeholder}
+    <div className={validationStatus}>
+      <ReferenceServicesProvider value={references}>
+        <WaxProvider
+          features={features}
+          focusOnMount={autoFocus}
+          nodeViews={nodeViews}
+          onChange={saveSource ?? undefined}
+          placeholder={placeholder}
+          readonly={readonly}
+          trackChanges={trackingOn}
+          user={waxUser}
+          value={value}
+        >
+          <SaveOnUnmount onSave={saveSource} />
+          <ProductionLayout
+            comments={
+              useComments
+                ? {
+                    user: {
+                      userId: waxUser.userId,
+                      displayName: waxUser.username,
+                      username: waxUser.username,
+                    },
+                    permissions: allowAll(!readonly),
+                  }
+                : undefined
+            }
+            fullScreen={fullScreen}
             readonly={readonly}
-            trackChanges={trackingOn}
-            user={waxUser}
-            value={value}
-          >
-            <SaveOnUnmount onSave={saveSource} />
-            <ProductionLayout
-              comments={
-                useComments
-                  ? {
-                      user: {
-                        userId: waxUser.userId,
-                        displayName: waxUser.username,
-                        username: waxUser.username,
-                      },
-                      permissions: allowAll(!readonly),
-                    }
-                  : undefined
-              }
-              fullScreen={fullScreen}
-              readonly={readonly}
-              sideMenu={<JatsSideMenu />}
-              toolbar={toolbar}
-            />
-          </WaxProvider>
-        </ReferenceServicesProvider>
-      </div>
-    </ThemeProvider>
+            sideMenu={<JatsSideMenu />}
+            toolbar={toolbar}
+          />
+        </WaxProvider>
+      </ReferenceServicesProvider>
+    </div>
   )
 }
 

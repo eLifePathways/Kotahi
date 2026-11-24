@@ -1,4 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
+import styled from 'styled-components'
+import { th, grid } from '@coko/client'
 
 import { useWax, WaxSurface } from '../../editor'
 import { getComments } from '../../features/comments'
@@ -14,12 +16,6 @@ import {
   WordCount,
 } from '../../ui'
 import {
-  CommentsContainer,
-  CommentTrackOptions,
-  CommentTrackTools,
-  CommentTrackToolsContainer,
-} from '../styles/commentsStyles'
-import {
   EditorArea,
   EditorContainer,
   EditorDiv,
@@ -32,12 +28,110 @@ import {
   SideMenu,
   WaxSurfaceScroll,
 } from '../styles/editorStyles'
-import {
-  NotesAreaContainer,
-  NotesContainer,
-  ReadOnlyNotesAreaContainer,
-} from '../styles/notesStyles'
+import EditorElements from '../styles/editorElements'
 import { fullScreenStyle, TrackCommentOptions } from './toolbars'
+
+const CommentsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 35%;
+`
+
+const CommentTrackToolsContainer = styled.div<{
+  $authorComments?: boolean
+}>`
+  /* background: white; */
+  align-self: flex-end;
+  display: flex;
+  /* margin-right: 30px; */
+  padding-top: 5px;
+  position: fixed;
+  user-select: none;
+  z-index: 0;
+  /* z-index: 1; */
+
+  & button {
+    font-size: 15px;
+  }
+
+  & ~ div > div > div > button {
+    ${(props): string | false => props.$authorComments && 'display: none;'}
+  }
+`
+
+const CommentTrackTools = styled.div`
+  display: flex;
+  font-size: 12px;
+  margin-left: auto;
+  position: relative;
+  /* white-space: nowrap; */
+  z-index: 1;
+`
+
+const CommentTrackOptions = styled.div`
+  bottom: 5px;
+  display: flex;
+  margin-left: 10px;
+  max-width: 100%;
+  /* overflow-x: auto; */
+  position: relative;
+`
+
+const NotesAreaContainer = styled.div`
+  /* stylelint-disable selector-class-pattern */
+  background: ${th('color.backgroundA')};
+  bottom: ${grid(-2)};
+  box-shadow: 0 ${grid(-0.3)} ${grid(0.5)} ${grid(-0.2)} gray;
+  display: flex; /* this is so that comments on notes appear beside the notes */
+  grid-column-start: editorCol;
+  grid-row-start: notesRow;
+  /* height: 20vh;
+  overflow-y: scroll;
+  position: sticky; */
+  width: 100%;
+
+  &.productionnotes {
+    grid-column-start: initial;
+    grid-row-start: initial;
+    position: relative;
+  }
+
+  .ProseMirror {
+    display: inline;
+  }
+
+  /* stylelint-disable-next-line order/properties-alphabetical-order */
+  ${EditorElements}
+`
+
+const ReadOnlyNotesAreaContainer = styled.div`
+  background: ${th('color.backgroundA')};
+  border-top: 1px solid ${th('color.gray90')};
+  grid-column-start: editorCol;
+  grid-row-start: notesRow;
+  width: 100%;
+
+  .ProseMirror {
+    display: inline;
+  }
+
+  /* stylelint-disable-next-line order/properties-alphabetical-order */
+  ${EditorElements}
+`
+
+const NotesContainer = styled.div`
+  counter-reset: footnote-view;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: ${grid(4)};
+  padding-left: 32px;
+  width: calc(100% - ${grid(4)});
+
+  & > div > div > div:first-child {
+    margin-top: 4px; /* fix alignment of numbers */
+  }
+`
 
 const Notes = ({ readonly }: { readonly: boolean }): ReactNode => {
   const count: number = useWax(({ state }) =>

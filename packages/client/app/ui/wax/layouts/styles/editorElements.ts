@@ -3,6 +3,31 @@ import { grid, th } from '@coko/client'
 import lightenBy from '../../../../shared/lightenBy'
 import featureStyles from '../../ui/featureStyles'
 
+const tagColors = {
+  colorCitation: '#ccc',
+  colorCitationLabel: '#ccc',
+  colorAuthorName: 'blue',
+  colorAuthorGroup: 'blue',
+  colorArticleTitle: '#FF0340',
+  colorJournalTitle: '#7B61FF',
+  colorDoi: '#6CBA4E',
+  colorVolume: 'orange',
+  colorIssue: 'magenta',
+  colorYear: '#D29435',
+  colorFirstPage: 'lime',
+  colorLastPage: '#7599F8',
+  colorFunding: '#cccccccc',
+  colorFundingSource: '#b48ee8',
+  colorFundingStatement: '#dc7be5',
+  colorAwardId: '#e57dba',
+  colorKeyword: '#EFEFF9',
+  colorGlossary: '#B8B8D2',
+  colorFrontMatter: 'pink',
+  colorAppendix: 'teal',
+  colorAcknowledgements: 'palegreen',
+  colorAbstract: 'red',
+}
+
 // This should only include styles specific to the editor */
 
 const EditorStyles = css`
@@ -401,7 +426,7 @@ const EditorStyles = css`
     position: relative;
 
     &::before {
-      background-color: ${th('colorFrontMatter')};
+      background-color: ${tagColors.colorFrontMatter};
       border: 1px solid #ccc;
       border-radius: 4px;
       content: '';
@@ -426,7 +451,7 @@ const EditorStyles = css`
     position: relative;
 
     &::before {
-      background-color: ${th('colorAbstract')};
+      background-color: ${tagColors.colorAbstract};
       border: 1px solid #ccc;
       border-radius: 4px;
       content: '';
@@ -451,7 +476,7 @@ const EditorStyles = css`
     position: relative;
 
     &::before {
-      background-color: ${th('colorCitation')};
+      background-color: ${tagColors.colorCitation};
       border: 1px solid #ccc;
       border-radius: 4px;
       content: '';
@@ -467,7 +492,7 @@ const EditorStyles = css`
     }
 
     & p:not(.ref) {
-      --citation-color-values: ${th('colorCitation')};
+      --citation-color-values: ${tagColors.colorCitation};
       --citation-text-color: black;
       --citation-offset: 2px;
       border-radius: 2px;
@@ -506,7 +531,7 @@ const EditorStyles = css`
     position: relative;
 
     &::before {
-      background-color: ${th('colorAcknowledgements')};
+      background-color: ${tagColors.colorAcknowledgements};
       border: 1px solid #ccc;
       border-radius: 4px;
       content: '';
@@ -531,7 +556,7 @@ const EditorStyles = css`
     position: relative;
 
     &::before {
-      background-color: ${th('colorAppendix')};
+      background-color: ${tagColors.colorAppendix};
       border: 1px solid #ccc;
       border-radius: 4px;
       content: '';
@@ -607,16 +632,16 @@ const EditorStyles = css`
   .fundingsource,
   .fundingstatement,
   .awardid {
-    --funding-color-values: ${th('colorFunding')};
+    --funding-color-values: ${tagColors.colorFunding};
     --funding-offset: 2px;
     border-radius: 2px;
-    outline: ${th('colorFunding')} 1px solid;
+    outline: ${tagColors.colorFunding} 1px solid;
     outline-offset: var(--funding-offset);
     transition: 0.25s;
   }
 
   .fundingsource {
-    --funding-color-values: ${th('colorFundingSource')};
+    --funding-color-values: ${tagColors.colorFundingSource};
 
     &:hover {
       outline-color: var(--funding-color-values);
@@ -624,7 +649,7 @@ const EditorStyles = css`
   }
 
   .fundingstatement {
-    --funding-color-values: ${th('colorFundingStatement')};
+    --funding-color-values: ${tagColors.colorFundingStatement};
 
     &:hover {
       outline-color: var(--funding-color-values);
@@ -632,7 +657,7 @@ const EditorStyles = css`
   }
 
   .awardid {
-    --funding-color-values: ${th('colorAwardId')};
+    --funding-color-values: ${tagColors.colorAwardId};
 
     &:hover {
       outline-color: var(--funding-color-values);
@@ -654,7 +679,7 @@ const EditorStyles = css`
   /* CITATIONS */
 
   span.mixed-citation {
-    --citation-color-values: ${th('colorCitation')};
+    --citation-color-values: ${tagColors.colorCitation};
     --citation-text-color: black;
     --citation-offset: 2px;
     border-radius: 2px;
@@ -666,59 +691,59 @@ const EditorStyles = css`
   }
 
   span.citation-label {
-    --citation-color-values: ${th('colorCitationLabel')};
+    --citation-color-values: ${tagColors.colorCitationLabel};
     --citation-text-color: white;
   }
 
   span.article-title {
-    --citation-color-values: ${th('colorArticleTitle')};
+    --citation-color-values: ${tagColors.colorArticleTitle};
     --citation-text-color: white;
   }
 
   span.journal-title {
-    --citation-color-values: ${th('colorJournalTitle')};
+    --citation-color-values: ${tagColors.colorJournalTitle};
     --citation-text-color: white;
     font-style: italic;
   }
 
   span.author-group {
-    --citation-color-values: ${th('colorAuthorGroup')};
+    --citation-color-values: ${tagColors.colorAuthorGroup};
     --citation-offset: 4px;
     --citation-text-color: white;
   }
 
   span.author-name {
-    --citation-color-values: ${th('colorAuthorName')};
+    --citation-color-values: ${tagColors.colorAuthorName};
     --citation-text-color: white;
   }
 
   a.doi {
-    --citation-color-values: ${th('colorDoi')};
+    --citation-color-values: ${tagColors.colorDoi};
     --citation-text-color: white;
   }
 
   span.volume {
-    --citation-color-values: ${th('colorVolume')};
+    --citation-color-values: ${tagColors.colorVolume};
     --citation-text-color: white;
   }
 
   span.issue {
-    --citation-color-values: ${th('colorIssue')};
+    --citation-color-values: ${tagColors.colorIssue};
     --citation-text-color: white;
   }
 
   span.first-page {
-    --citation-color-values: ${th('colorFirstPage')};
+    --citation-color-values: ${tagColors.colorFirstPage};
     --citation-text-color: white;
   }
 
   span.last-page {
-    --citation-color-values: ${th('colorLastPage')};
+    --citation-color-values: ${tagColors.colorLastPage};
     --citation-text-color: white;
   }
 
   span.year {
-    --citation-color-values: ${th('colorYear')};
+    --citation-color-values: ${tagColors.colorYear};
     --citation-text-color: white;
   }
 
@@ -737,7 +762,7 @@ const EditorStyles = css`
     --citation-text-color: black;
     --citation-offset: 2px;
     border-radius: 2px;
-    outline: ${th('colorCitation')} 1px solid;
+    outline: ${tagColors.colorCitation} 1px solid;
     outline-offset: var(--citation-offset);
     position: relative;
 
@@ -767,47 +792,47 @@ const EditorStyles = css`
   }
 
   .show-article-title .article-title {
-    outline: ${th('colorArticleTitle')} 2px solid;
+    outline: ${tagColors.colorArticleTitle} 2px solid;
   }
 
   .show-journal-title .journal-title {
-    outline: ${th('colorJournalTitle')} 2px solid;
+    outline: ${tagColors.colorJournalTitle} 2px solid;
   }
 
   .show-citation-label .citation-label {
-    outline: ${th('colorCitationLabel')} 2px solid;
+    outline: ${tagColors.colorCitationLabel} 2px solid;
   }
 
   .show-author-group .author-group {
-    outline: ${th('colorAuthorGroup')} 2px solid;
+    outline: ${tagColors.colorAuthorGroup} 2px solid;
   }
 
   .show-author-name .author-name {
-    outline: ${th('colorAuthorName')} 2px solid;
+    outline: ${tagColors.colorAuthorName} 2px solid;
   }
 
   .show-volume .volume {
-    outline: ${th('colorVolume')} 2px solid;
+    outline: ${tagColors.colorVolume} 2px solid;
   }
 
   .show-issue .issue {
-    outline: ${th('colorIssue')} 2px solid;
+    outline: ${tagColors.colorIssue} 2px solid;
   }
 
   .show-year .year {
-    outline: ${th('colorYear')} 2px solid;
+    outline: ${tagColors.colorYear} 2px solid;
   }
 
   .show-first-page .first-page {
-    outline: ${th('colorFirstPage')} 2px solid;
+    outline: ${tagColors.colorFirstPage} 2px solid;
   }
 
   .show-last-page .last-page {
-    outline: ${th('colorLastPage')} 2px solid;
+    outline: ${tagColors.colorLastPage} 2px solid;
   }
 
   .show-doi a.doi {
-    outline: ${th('colorDoi')} 2px solid;
+    outline: ${tagColors.colorDoi} 2px solid;
   }
 
   /* keywords */
@@ -816,7 +841,7 @@ const EditorStyles = css`
     --keyword-color-values: transparent;
     --keyword-offset: 2px;
     border-radius: 2px;
-    outline: ${th('colorKeyword')} 1px solid;
+    outline: ${tagColors.colorKeyword} 1px solid;
     outline-offset: var(--funding-offset);
     transition: 0.25s;
   }
@@ -827,7 +852,7 @@ const EditorStyles = css`
     --keyword-offset: 2px;
     border-radius: 2px;
     font-weight: bold;
-    outline: ${th('colorKeyword')} 1px solid;
+    outline: ${tagColors.colorKeyword} 1px solid;
     outline-offset: var(--keyword-offset);
     position: relative;
 
@@ -859,7 +884,7 @@ const EditorStyles = css`
     position: relative;
 
     &::before {
-      background-color: ${th('colorGlossary')};
+      background-color: ${tagColors.colorGlossary};
       border: 1px solid #ccc;
       border-radius: 4px;
       content: '';

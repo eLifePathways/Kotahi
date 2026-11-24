@@ -6,7 +6,6 @@ import {
   type ReactNode,
 } from 'react'
 import { debounce } from 'lodash'
-import { ThemeProvider, useTheme } from 'styled-components'
 
 import { WaxProvider } from '../editor'
 import type { Comment } from '../features/comments'
@@ -20,7 +19,6 @@ import { FullToolbar, type AiConfig } from './shared/toolbars'
 import useLatest from './shared/useLatest'
 import { allowAll, toWaxUser, type KotahiUser } from './shared/user'
 import useYjsFeatures, { type YjsProps } from './shared/yjs'
-import waxTheme from './styles/waxTheme'
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
@@ -74,7 +72,6 @@ const FullWaxEditor = ({
   ydoc,
   name,
 }: FullWaxEditorProps): ReactNode => {
-  const theme = useTheme()
   const upload = useImageUpload(uploadImage, manuscriptId)
   const latest = useLatest({ saveSource, getComments, ydoc })
   const [fullScreen, setFullScreen] = useState(false)
@@ -144,48 +141,46 @@ const FullWaxEditor = ({
   )
 
   return (
-    <ThemeProvider theme={{ ...theme, ...waxTheme }}>
-      <div className={validationStatus}>
-        <ReferenceServicesProvider value={references}>
-          <WaxProvider
-            features={features}
-            focusOnMount={autoFocus}
-            nodeViews={nodeViews}
-            onChange={ydoc ? undefined : save}
-            placeholder={placeholder}
-            readonly={readonly}
-            trackChanges={suggesting}
-            user={waxUser}
-            value={ydoc ? '' : value}
-          >
-            <ActiveViewDom onChange={getActiveViewDom} />
-            {useComments ? (
-              <ProductionLayout
-                comments={{
-                  user: {
-                    userId: waxUser.userId,
-                    displayName: waxUser.username,
-                    username: waxUser.username,
-                  },
-                  permissions,
-                  hideTools: authorComments,
-                  toolsPosition: commentsToolPosition,
-                }}
-                fullScreen={fullScreen}
-                readonly={readonly}
-                toolbar={toolbar}
-              />
-            ) : (
-              <FullLayout
-                fullScreen={fullScreen}
-                readonly={readonly}
-                toolbar={toolbar}
-              />
-            )}
-          </WaxProvider>
-        </ReferenceServicesProvider>
-      </div>
-    </ThemeProvider>
+    <div className={validationStatus}>
+      <ReferenceServicesProvider value={references}>
+        <WaxProvider
+          features={features}
+          focusOnMount={autoFocus}
+          nodeViews={nodeViews}
+          onChange={ydoc ? undefined : save}
+          placeholder={placeholder}
+          readonly={readonly}
+          trackChanges={suggesting}
+          user={waxUser}
+          value={ydoc ? '' : value}
+        >
+          <ActiveViewDom onChange={getActiveViewDom} />
+          {useComments ? (
+            <ProductionLayout
+              comments={{
+                user: {
+                  userId: waxUser.userId,
+                  displayName: waxUser.username,
+                  username: waxUser.username,
+                },
+                permissions,
+                hideTools: authorComments,
+                toolsPosition: commentsToolPosition,
+              }}
+              fullScreen={fullScreen}
+              readonly={readonly}
+              toolbar={toolbar}
+            />
+          ) : (
+            <FullLayout
+              fullScreen={fullScreen}
+              readonly={readonly}
+              toolbar={toolbar}
+            />
+          )}
+        </WaxProvider>
+      </ReferenceServicesProvider>
+    </div>
   )
 }
 
