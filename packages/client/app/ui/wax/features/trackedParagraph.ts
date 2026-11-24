@@ -1,6 +1,5 @@
 import type { Attrs, NodeSpec } from 'prosemirror-model'
 
-import base from './base'
 import { parseTracks } from './helpers'
 import type { WaxFeature } from './types'
 
@@ -40,10 +39,9 @@ const paragraph: NodeSpec = {
   toDOM: node => ['p', blockLevelToDOM(node.attrs), 0],
 }
 
-const kotahiBase: WaxFeature = {
-  name: 'kotahiBase',
-  nodes: { ...base.nodes, paragraph },
-  marks: {},
+const trackedParagraph: WaxFeature = {
+  name: 'trackedParagraph',
+  nodes: { paragraph },
 }
 
-export default kotahiBase
+export default trackedParagraph

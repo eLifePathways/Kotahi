@@ -5,16 +5,16 @@ import { BoldOutlined } from '@ant-design/icons'
 
 import preview from '../../.storybook/preview'
 import { WaxProvider, WaxSurface, useWax } from '../../app/ui/wax/editor'
-import base from '../../app/ui/wax/features/base'
 import strong, {
   canToggleStrong,
   isStrongActive,
   toggleStrong,
 } from '../../app/ui/wax/features/strong'
 import emphasis from '../../app/ui/wax/features/emphasis'
+import type { WaxFeature } from '../../app/ui/wax/features/types'
 import { CommandButton } from '../../app/ui/wax/ui'
 
-const plainFeatures = [base, strong, emphasis]
+const plainFeatures = [strong, emphasis]
 
 // #region styled
 const barStyles = css`
@@ -95,7 +95,7 @@ const SelectionInfo = (): ReactNode => {
 }
 // #endregion helpers
 
-const features = [base]
+const features: WaxFeature[] = []
 
 const PlainEditor = ({ value }: { value: string }): ReactNode => {
   const [saved, setSaved] = useState(value)

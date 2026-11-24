@@ -1,7 +1,6 @@
 import type { AutocompleteAction, Options } from 'prosemirror-autocomplete'
 
 import askAi from '../features/askAi'
-import base from '../features/base'
 import blockQuote from '../features/blockQuote'
 import callout from '../features/callout'
 import citation from '../features/citation'
@@ -15,7 +14,7 @@ import headings from '../features/headings'
 import history from '../features/history'
 import images from '../features/images'
 import jatsTags from '../features/jatsTags'
-import kotahiBase from '../features/kotahiBase'
+import trackedParagraph from '../features/trackedParagraph'
 import link from '../features/link'
 import lists from '../features/lists'
 import math from '../features/math'
@@ -60,7 +59,6 @@ type ImageOptions = { imageConfig?: unknown }
 export const simpleFeatures = ({
   handlebarsActions,
 }: { handlebarsActions?: HandlebarsActions } = {}): WaxFeature[] => [
-  base,
   typography,
   history,
   ...marks(),
@@ -79,7 +77,6 @@ export const chatFeatures = ({
   onEnterPress: (html: string) => void
   autoCompleteReducer: Options['reducer']
 }): WaxFeature[] => [
-  base,
   typography,
   history,
   mention({ reducer: autoCompleteReducer }),
@@ -97,7 +94,7 @@ export const fullFeatures = ({
   onCommentsChange,
   imageConfig,
 }: CommentOptions & ImageOptions = {}): WaxFeature[] => [
-  kotahiBase,
+  trackedParagraph,
   typography,
   askAi,
   history,
@@ -122,7 +119,7 @@ export const productionFeatures = ({
   onCommentsChange,
   imageConfig,
 }: CommentOptions & ImageOptions = {}): WaxFeature[] => [
-  kotahiBase,
+  trackedParagraph,
   typography,
   askAi,
   history,
@@ -145,7 +142,7 @@ export const productionFeatures = ({
 export const contentFeatures = ({
   imageConfig,
 }: ImageOptions = {}): WaxFeature[] => [
-  kotahiBase,
+  trackedParagraph,
   typography,
   history,
   findAndReplace,

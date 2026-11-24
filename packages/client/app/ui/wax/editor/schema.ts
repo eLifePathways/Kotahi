@@ -2,6 +2,36 @@ import { Schema, type MarkSpec, type NodeSpec } from 'prosemirror-model'
 
 import type { WaxFeature } from '../features/types'
 
+const baseNodes: Record<string, NodeSpec> = {
+  doc: {
+    content: 'block+',
+  },
+  text: {
+    group: 'inline',
+  },
+  hard_break: {
+    inline: true,
+    group: 'inline',
+    selectable: false,
+    parseDOM: [{ tag: 'br' }],
+    toDOM: () => ['br'],
+  },
+  paragraph: {
+    group: 'block',
+    content: 'inline*',
+    attrs: {
+      class: { default: 'paragraph' },
+    },
+    parseDOM: [
+      {
+        tag: 'p.paragraph',
+        getAttrs: (dom: HTMLElement) => ({ class: dom.getAttribute('class') }),
+      },
+    ],
+    toDOM: node => ['p', node.attrs, 0],
+  },
+}
+
 type Hook = Record<string, unknown>
 type HookFn = (hook: Hook, next: () => void) => void
 
@@ -203,6 +233,7 @@ class SchemaBuilder {
 
 const buildSchema = (features: WaxFeature[]): Schema => {
   const builder = new SchemaBuilder()
+  builder.addPlain('nodes', baseNodes)
 
   features.forEach(feature => {
     builder.addPlain('nodes', feature.nodes)

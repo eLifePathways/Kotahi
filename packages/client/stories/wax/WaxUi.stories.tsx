@@ -4,7 +4,6 @@ import { grid, th } from '@coko/client'
 
 import preview from '../../.storybook/preview'
 import { WaxProvider, WaxSurface } from '../../app/ui/wax/editor'
-import base from '../../app/ui/wax/features/base'
 import characters from '../../app/ui/wax/layouts/shared/characters'
 import blockQuote from '../../app/ui/wax/features/blockQuote'
 import code from '../../app/ui/wax/features/code'
@@ -71,7 +70,6 @@ import {
 } from '../../app/ui/wax/ui'
 
 const features = [
-  base,
   history,
   strong,
   emphasis,
@@ -171,7 +169,6 @@ export const Base = meta.story({
 })
 
 const panelFeatures = [
-  base,
   history,
   strong,
   emphasis,
@@ -245,7 +242,7 @@ export const Panels = meta.story({
   parameters: { docs: { source: { type: 'code' } } },
 })
 
-const referenceFeatures = [base, history, strong, citation(), callout(), askAi]
+const referenceFeatures = [history, strong, citation(), callout(), askAi]
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
