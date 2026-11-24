@@ -78,6 +78,7 @@ const Submit = ({
   validationOrcid,
   initialChatExpanded,
   onDiscussionVisibilityChange,
+  uploadImage,
 }) => {
   const config = useContext(ConfigContext)
 
@@ -135,6 +136,7 @@ const Submit = ({
           saveSource={source => {
             debouncedSave(source, version.id)
           }}
+          uploadImage={uploadImage}
         />
       ),
       key: `editor`,
@@ -313,6 +315,7 @@ const formPropTypes = PropTypes.shape({
 })
 
 Submit.propTypes = {
+  uploadImage: PropTypes.func,
   versions: PropTypes.arrayOf(
     PropTypes.shape({
       manuscript: PropTypes.objectOf(PropTypes.any),

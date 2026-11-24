@@ -30,6 +30,7 @@ const EditorSection = ({
   currentUser,
   editorSection,
   queryAI,
+  uploadImage,
 }) => {
   const {
     submission: { submissionPage = {} },
@@ -149,6 +150,7 @@ const EditorSection = ({
           readonly={readonly}
           saveSource={saveSource}
           setComments={() => JSON.parse(manuscript.meta.comments) || []}
+          uploadImage={uploadImage}
           useComments={
             !!(
               currentUserIsEditor ||
@@ -178,6 +180,7 @@ EditorSection.propTypes = {
     }).isRequired,
   }).isRequired,
   readonly: PropTypes.bool,
+  uploadImage: PropTypes.func,
 }
 
 export default EditorSection

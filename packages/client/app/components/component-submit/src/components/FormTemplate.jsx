@@ -538,6 +538,11 @@ const FormTemplate = ({
                             'labelColor',
                           ])}
                           aria-label={element.placeholder || element.title}
+                          citationStyleName={
+                            element.component === 'FullWaxField'
+                              ? config?.production?.citationStyles?.styleName
+                              : undefined
+                          }
                           collaborativeObject={collaborativeObject}
                           component={
                             isCollaborative

@@ -13,6 +13,7 @@ import DownloadPdfComponent from './DownloadPdf'
 import DownloadJatsComponent from './DownloadJats'
 import { waxAiToolSystem } from '../../helpers'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
+import useUploadManuscriptImage from '../../../../hooks/useUploadManuscriptImage'
 
 import {
   GET_SPECIFIC_FILES,
@@ -55,6 +56,7 @@ const ProductionPage = () => {
   const currentUser = useCurrentUser()
   const { groupId, controlPanel, submission } = useContext(ConfigContext)
   const client = useApolloClient()
+  const uploadManuscriptImage = useUploadManuscriptImage()
   const {
     showModal,
     hideModal,
@@ -341,6 +343,7 @@ const ProductionPage = () => {
           unparsedManuscript={unparsedManuscript}
           updateManuscript={updateManuscript}
           updateTemplate={updateTemplate}
+          uploadImage={uploadManuscriptImage}
         />
       </div>
     </>

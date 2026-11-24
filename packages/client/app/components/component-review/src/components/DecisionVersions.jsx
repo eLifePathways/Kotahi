@@ -84,6 +84,7 @@ const DecisionVersions = ({
   emailTemplates,
   queryAI,
   unpublish,
+  uploadImage,
 }) => {
   const versions = gatherManuscriptVersions(manuscript)
   const firstVersion = versions[versions.length - 1]
@@ -176,6 +177,7 @@ const DecisionVersions = ({
                 updateTasks={updateTasks}
                 updateTeam={updateTeam}
                 updateTeamMember={updateTeamMember}
+                uploadImage={uploadImage}
                 urlFrag={urlFrag}
                 validateDoi={validateDoi}
                 validateSuffix={validateSuffix}

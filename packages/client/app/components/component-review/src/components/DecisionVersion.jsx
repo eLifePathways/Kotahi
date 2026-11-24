@@ -107,6 +107,7 @@ const DecisionVersion = ({
   emailTemplates,
   queryAI,
   unpublish,
+  uploadImage,
 }) => {
   const teamLabelsTransformed = transformTeamsToLegacy(teamLabels)
 
@@ -172,6 +173,7 @@ const DecisionVersion = ({
           readonly={isReadOnly}
           saveComments={debouncedSaveComments}
           saveSource={isReadOnly ? null : saveSource}
+          uploadImage={uploadImage}
         />
       ),
       key: `editor`,

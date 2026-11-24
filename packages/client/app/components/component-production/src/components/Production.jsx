@@ -117,6 +117,7 @@ const Production = ({
   canSubmitWithBlankEditor,
   authorList,
   addNewVersion,
+  uploadImage,
 }) => {
   const [activeKey, setActiveKey] = useState('editor')
 
@@ -252,6 +253,7 @@ const Production = ({
                 updateCallout={updateCallout}
                 updateCiteProc={updateCiteProc}
                 updateCrossRef={updateCrossRef}
+                uploadImage={uploadImage}
                 user={currentUser}
                 value={manuscript.meta.source}
               />

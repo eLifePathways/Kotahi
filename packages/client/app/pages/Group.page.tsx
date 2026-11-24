@@ -12,8 +12,6 @@ import Spinner from '../ui/shared/Spinner'
 import ErrorPageFallback from '../ui/base/ErrorPageFallback'
 import { ConfigProvider } from '../components/config/src'
 import { YjsProvider } from '../components/provider-yjs/YjsProvider'
-import { WaxAppProvider } from '../ui/wax'
-import useUploadManuscriptImage from '../hooks/useUploadManuscriptImage'
 import DynamicFavicon from '../dynamicFavicon'
 
 const GroupPage = (): ReactNode => {
@@ -27,7 +25,6 @@ const GroupPage = (): ReactNode => {
    */
 
   const { loading, error, data } = useQuery(GET_GROUPS)
-  const uploadManuscriptImage = useUploadManuscriptImage()
 
   // @ts-ignore
   const currentGroup = data?.groups.find(group => group.name === groupName)
@@ -106,12 +103,10 @@ const GroupPage = (): ReactNode => {
     <ThemeProvider theme={theme}>
       <AntConfigProvider theme={theme}>
         <ConfigProvider config={config}>
-          <WaxAppProvider uploadManuscriptImage={uploadManuscriptImage}>
-            <YjsProvider>
-              <DynamicFavicon config={config} />
-              <Outlet />
-            </YjsProvider>
-          </WaxAppProvider>
+          <YjsProvider>
+            <DynamicFavicon config={config} />
+            <Outlet />
+          </YjsProvider>
         </ConfigProvider>
       </AntConfigProvider>
     </ThemeProvider>

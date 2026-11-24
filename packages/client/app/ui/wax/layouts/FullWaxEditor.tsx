@@ -14,7 +14,7 @@ import type { AssetFile } from '../features/images'
 import { CalloutView, CitationView, ReferenceServicesProvider } from '../ui'
 import { fullFeatures } from './featureSets'
 import { ActiveViewDom } from './shared/EditorEffects'
-import useImageUpload from './shared/imageUpload'
+import useImageUpload, { type UploadImage } from './shared/imageUpload'
 import { FullLayout, ProductionLayout } from './shared/ManuscriptLayout'
 import { FullToolbar, type AiConfig } from './shared/toolbars'
 import useLatest from './shared/useLatest'
@@ -46,6 +46,7 @@ export type FullWaxEditorProps = YjsProps & {
   manuscriptId?: string
   getActiveViewDom?: (html: string) => void
   citationStyleName?: string
+  uploadImage?: UploadImage
 }
 
 const FullWaxEditor = ({
@@ -68,12 +69,13 @@ const FullWaxEditor = ({
   manuscriptId,
   getActiveViewDom,
   citationStyleName,
+  uploadImage,
   wsProvider,
   ydoc,
   name,
 }: FullWaxEditorProps): ReactNode => {
   const theme = useTheme()
-  const upload = useImageUpload(manuscriptId)
+  const upload = useImageUpload(uploadImage, manuscriptId)
   const latest = useLatest({ saveSource, getComments, ydoc })
   const [fullScreen, setFullScreen] = useState(false)
   const [suggesting, setSuggesting] = useState(false)

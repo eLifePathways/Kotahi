@@ -13,7 +13,7 @@ import {
 } from '../ui'
 import { productionFeatures } from './featureSets'
 import { SaveOnUnmount } from './shared/EditorEffects'
-import useImageUpload from './shared/imageUpload'
+import useImageUpload, { type UploadImage } from './shared/imageUpload'
 import { ProductionLayout } from './shared/ManuscriptLayout'
 import { FullToolbar, type AiConfig } from './shared/toolbars'
 import useLatest from './shared/useLatest'
@@ -46,6 +46,7 @@ export type ProductionWaxEditorProps = YjsProps & {
   isAuthorProofingVersion?: boolean
   getDataFromDatacite?: boolean
   citationStyleName?: string
+  uploadImage?: UploadImage
 }
 
 const ProductionWaxEditor = ({
@@ -69,12 +70,13 @@ const ProductionWaxEditor = ({
   isAuthorProofingVersion = false,
   getDataFromDatacite = false,
   citationStyleName,
+  uploadImage,
   wsProvider,
   ydoc,
   name,
 }: ProductionWaxEditorProps): ReactNode => {
   const theme = useTheme()
-  const upload = useImageUpload(manuscriptId)
+  const upload = useImageUpload(uploadImage, manuscriptId)
   const latest = useLatest({ getComments })
   const [fullScreen, setFullScreen] = useState(false)
   const [suggesting, setSuggesting] = useState(isAuthorProofingVersion)

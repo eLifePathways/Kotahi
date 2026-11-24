@@ -21,6 +21,7 @@ import DecisionVersions from './DecisionVersions'
 import { roles } from '../../../../globals'
 import { waxAiToolSystem } from '../../../component-production/helpers'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
+import useUploadManuscriptImage from '../../../../hooks/useUploadManuscriptImage'
 
 import {
   ADD_REVIEWER,
@@ -78,6 +79,7 @@ const DecisionPage = () => {
   const { t } = useTranslation()
   // start of code from submit page to handle possible form changes
   const client = useApolloClient()
+  const uploadManuscriptImage = useUploadManuscriptImage()
   const config = useContext(ConfigContext)
   const { urlFrag } = config
 
@@ -681,6 +683,7 @@ const DecisionPage = () => {
       updateTasks={updateTasks}
       updateTeam={updateTeam}
       updateTeamMember={updateTeamMember}
+      uploadImage={uploadManuscriptImage}
       urlFrag={urlFrag}
       validateDoi={validateDoi(client)}
       validateSuffix={validateSuffix(client, config.groupId)}

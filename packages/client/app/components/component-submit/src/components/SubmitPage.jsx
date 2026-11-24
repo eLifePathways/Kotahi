@@ -15,6 +15,7 @@ import { validateDoi, validateSuffix } from '../../../../shared/commsUtils'
 import useChat from '../../../../hooks/useChat'
 import { collapseTimeMs } from '../../../../ui/constants'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
+import useUploadManuscriptImage from '../../../../hooks/useUploadManuscriptImage'
 import {
   PUBLISH_MANUSCRIPT,
   SET_SHOULD_PUBLISH_FIELD,
@@ -160,6 +161,7 @@ const SubmitPage = () => {
   })
 
   const client = useApolloClient()
+  const uploadManuscriptImage = useUploadManuscriptImage()
 
   if (loading) return <Spinner fullpage />
 
@@ -326,6 +328,7 @@ const SubmitPage = () => {
       submissionForm={submissionForm}
       threadedDiscussionProps={threadedDiscussionProps}
       updateManuscript={updateManuscript}
+      uploadImage={uploadManuscriptImage}
       validateDoi={validateDoi(client)}
       validateSuffix={validateSuffix(client, config.groupId)}
       validationOrcid={validationOrcid}
