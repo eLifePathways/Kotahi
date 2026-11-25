@@ -5,6 +5,8 @@ import {
   type ReactNode,
 } from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
+import { useNotification } from '@coko/client'
 
 import preview from '../../../.storybook/preview'
 import NewSubmission, {
@@ -18,9 +20,7 @@ type NewSubmissionProps = ComponentProps<typeof NewSubmission>
 type DemoProps = Omit<
   NewSubmissionProps,
   'status' | 'activeOption' | 'errorMessage' | 'onUpload' | 'onSkip'
-> & {
-  outcome: 'completed' | 'error'
-}
+>
 
 const uploadSteps: NewSubmissionStep[] = [
   'uploading',
@@ -34,41 +34,76 @@ const skipSteps: NewSubmissionStep[] = ['creatingManuscript']
 
 const STEP_DURATION = 1500
 
+const wait = (ms: number): Promise<void> =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+
 const Demo = (props: DemoProps): ReactNode => {
-  const { outcome, ...rest } = props
   const [status, setStatus] = useState<NewSubmissionStatus>('idle')
   const [activeOption, setActiveOption] = useState<NewSubmissionOption>()
 
   const simulate = (option: NewSubmissionOption): void => {
     const steps = option === 'upload' ? uploadSteps : skipSteps
-    const failAt = outcome === 'error' ? 2 : steps.length
 
     setActiveOption(option)
 
-    steps.slice(0, failAt).forEach((step, index) => {
+    steps.forEach((step, index) => {
       setTimeout(() => setStatus(step), index * STEP_DURATION)
     })
 
-    setTimeout(
-      () => {
-        setStatus(outcome)
-        setTimeout(() => setStatus('idle'), 3000)
-      },
-      Math.min(failAt, steps.length) * STEP_DURATION,
-    )
+    setTimeout(() => {
+      setStatus('completed')
+      setTimeout(() => setStatus('idle'), 3000)
+    }, steps.length * STEP_DURATION)
   }
 
   return (
     <NewSubmission
-      {...rest}
+      {...props}
       activeOption={activeOption}
-      errorMessage={
-        activeOption === 'skip'
-          ? 'The submission could not be created.'
-          : 'The file could not be converted.'
-      }
       onSkip={(): void => simulate('skip')}
       onUpload={(): void => simulate('upload')}
+      status={status}
+    />
+  )
+}
+
+const FailingDemo = (props: DemoProps): ReactNode => {
+  const { t } = useTranslation()
+  const notify = useNotification()
+  const [status, setStatus] = useState<NewSubmissionStatus>('idle')
+  const [activeOption, setActiveOption] = useState<NewSubmissionOption>()
+
+  const simulate = async (option: NewSubmissionOption): Promise<void> => {
+    setActiveOption(option)
+
+    try {
+      setStatus('uploading')
+      await wait(STEP_DURATION)
+      setStatus('converting')
+      await wait(STEP_DURATION)
+      throw new Error('CONVERSION_FAILED')
+    } catch {
+      setStatus('idle')
+      setActiveOption(undefined)
+      notify.error({
+        title: t('newSubmission.errorConversionFailed'),
+        duration: 0,
+      })
+    }
+  }
+
+  return (
+    <NewSubmission
+      {...props}
+      activeOption={activeOption}
+      onSkip={(): void => {
+        simulate('skip')
+      }}
+      onUpload={(): void => {
+        simulate('upload')
+      }}
       status={status}
     />
   )
@@ -110,12 +145,7 @@ const meta = preview.meta({
 
 /** Drop a file on the upload card (or click it) to step through uploading, converting, preparing, AI metadata and creating. Click the other card to step through creating a submission without a file. */
 export const Base = meta.story({
-  render: () => <Demo {...baseArgs} outcome="completed" />,
-})
-
-/** Uploading fails during conversion, and starting without a file fails while creating the submission. */
-export const UploadFails = meta.story({
-  render: () => <Demo {...baseArgs} outcome="error" />,
+  render: () => <Demo {...baseArgs} />,
 })
 
 export const UploadOnly = meta.story({
@@ -196,6 +226,11 @@ export const CreatingManuscript = meta.story({
   } satisfies NewSubmissionProps,
 })
 
+/** Drop a file on the upload card (or click it): conversion fails, the cards reset and an error toast is shown. */
+export const FailedToCreateManuscript = meta.story({
+  render: () => <FailingDemo {...baseArgs} />,
+})
+
 export const CreatingWithoutFile = meta.story({
   args: {
     ...baseArgs,
@@ -209,14 +244,5 @@ export const Created = meta.story({
     ...baseArgs,
     status: 'completed',
     activeOption: 'upload',
-  } satisfies NewSubmissionProps,
-})
-
-export const Failed = meta.story({
-  args: {
-    ...baseArgs,
-    status: 'error',
-    activeOption: 'upload',
-    errorMessage: 'The file could not be converted.',
   } satisfies NewSubmissionProps,
 })

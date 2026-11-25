@@ -335,7 +335,7 @@ test.describe('new submission errors', () => {
       buffer: Buffer.from('MZ'),
     })
 
-    await expect(uploadCard(page)).toContainText(
+    await expect(page.locator('.ant-notification-notice')).toContainText(
       'This file type is not supported.',
     )
 
@@ -367,7 +367,7 @@ test.describe('new submission errors', () => {
 
     await upload(page, MANUSCRIPT_DOCX)
 
-    await expect(uploadCard(page)).toContainText(
+    await expect(page.locator('.ant-notification-notice')).toContainText(
       'This file is larger than 50 MB.',
     )
   })
