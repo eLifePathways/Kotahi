@@ -3074,7 +3074,7 @@ test.describe('manuscripts table scrolling', () => {
     await page.setViewportSize({ width: 400, height: 720 })
     await navigateTo('/admin/manuscripts')
 
-    const wrapper = page.locator('.ant-table-wrapper')
+    const wrapper = page.locator('.ant-table')
     await expect(wrapper).toBeVisible()
 
     const dimensions = await wrapper.evaluate(el => ({
@@ -3107,7 +3107,7 @@ test.describe('manuscripts table scrolling', () => {
     await page.setViewportSize({ width: 2000, height: 720 })
     await navigateTo('/admin/manuscripts')
 
-    const wrapper = page.locator('.ant-table-wrapper')
+    const wrapper = page.locator('.ant-table')
     await expect(wrapper).toBeVisible()
 
     const dimensions = await wrapper.evaluate(el => ({

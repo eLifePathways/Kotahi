@@ -20,7 +20,7 @@ import {
   useApolloClient,
 } from '@apollo/client/react'
 import styled, { ThemeProvider, useTheme } from 'styled-components'
-import { grid, th, Modal } from '@coko/client'
+import { grid, th } from '@coko/client'
 import get from 'lodash/get'
 import mapValues from 'lodash/mapValues'
 
@@ -39,6 +39,7 @@ import {
 } from '../../queries'
 
 import Link from '../../ui/shared/Link'
+import Modal from '../../ui/shared/Modal'
 import {
   reviewerStatusValues,
   reviewerStatusTranslationKeys,

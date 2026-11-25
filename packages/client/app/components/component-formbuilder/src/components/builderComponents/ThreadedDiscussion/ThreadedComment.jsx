@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 
 import { useContext, useState } from 'react'
-import { DateParser } from '@coko/client'
 import { useTranslation } from 'react-i18next'
+
+import DateParser from '../../../../../../ui/shared/DateParser'
 import Tooltip from '../../../../../component-reporting/src/Tooltip'
 import {
   CommentMetaWrapper,

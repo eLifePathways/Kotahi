@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { grid, th, DateParser } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { values } from 'lodash'
 import { useNavigate } from 'react-router-dom'
 
 import { ActionButton, Collapse, FlexRow } from '../../../../shared'
+import DateParser from '../../../../../ui/shared/DateParser'
 import Spinner from '../../../../../ui/shared/Spinner'
 import { articleStatuses } from '../../../../../globals'
 import EditPayloadModal from './EditPayloadModal'
