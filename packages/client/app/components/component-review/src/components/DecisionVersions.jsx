@@ -84,6 +84,9 @@ const DecisionVersions = ({
   emailTemplates,
   queryAI,
   unpublish,
+  uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const versions = gatherManuscriptVersions(manuscript)
   const firstVersion = versions[versions.length - 1]
@@ -142,6 +145,7 @@ const DecisionVersions = ({
                 manuscriptLatestVersionId={manuscriptLatestVersionId}
                 onChange={handleChange}
                 onRefreshAdaStatus={onRefreshAdaStatus}
+                onSuggestingChange={onSuggestingChange}
                 parent={firstVersion.manuscript}
                 publishManuscript={publishManuscript}
                 queryAI={queryAI}
@@ -159,6 +163,7 @@ const DecisionVersions = ({
                 setExternalEmail={setExternalEmail}
                 setSelectedEmail={setSelectedEmail}
                 setShouldPublishField={setShouldPublishField}
+                suggesting={suggesting}
                 teamLabels={teamLabels}
                 teams={teams}
                 threadedDiscussionProps={threadedDiscussionProps}
@@ -176,6 +181,7 @@ const DecisionVersions = ({
                 updateTasks={updateTasks}
                 updateTeam={updateTeam}
                 updateTeamMember={updateTeamMember}
+                uploadImage={uploadImage}
                 urlFrag={urlFrag}
                 validateDoi={validateDoi}
                 validateSuffix={validateSuffix}

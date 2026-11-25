@@ -3,8 +3,6 @@ const {
   pdfHandler,
 } = require('../../../controllers/pdfExport.controllers')
 
-const { generateCss } = require('../../../utils/applyTemplate')
-
 module.exports = {
   Query: {
     convertToPdf: async (_, { manuscriptId, useHtml }) => {
@@ -13,11 +11,6 @@ module.exports = {
         : pdfHandler(manuscriptId))
 
       return { pdfUrl: outUrl || 'busted!' }
-    },
-
-    builtCss: async () => {
-      const css = await generateCss(true)
-      return { css }
     },
   },
 }

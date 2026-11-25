@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { th } from '@coko/client'
-import FullWaxEditor from '../../../../wax-collab/src/FullWaxEditor'
+import { FullWaxEditor } from '../../../../../ui/wax'
 import { ConfigContext } from '../../../../config/src'
 import { Info } from '../style'
 import { useGetSpecificFiles } from '../../../../asset-manager/src/queries'
@@ -30,6 +30,9 @@ const EditorSection = ({
   currentUser,
   editorSection,
   queryAI,
+  uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const {
     submission: { submissionPage = {} },
@@ -142,12 +145,16 @@ const EditorSection = ({
         <FullWaxEditor
           aiConfig={aiConfig}
           authorComments={isAuthorMode}
+          citationStyleName={config?.production?.citationStyles?.styleName}
           getComments={saveComments}
           manuscriptId={manuscript.id}
           onAssetManager={onAssetManager}
+          onSuggestingChange={onSuggestingChange}
           readonly={readonly}
           saveSource={saveSource}
           setComments={() => JSON.parse(manuscript.meta.comments) || []}
+          suggesting={suggesting}
+          uploadImage={uploadImage}
           useComments={
             !!(
               currentUserIsEditor ||
@@ -177,6 +184,9 @@ EditorSection.propTypes = {
     }).isRequired,
   }).isRequired,
   readonly: PropTypes.bool,
+  uploadImage: PropTypes.func,
+  suggesting: PropTypes.bool,
+  onSuggestingChange: PropTypes.func,
 }
 
 export default EditorSection

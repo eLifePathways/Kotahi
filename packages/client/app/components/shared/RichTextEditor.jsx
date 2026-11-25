@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { set } from 'lodash'
 import { hasValue } from '../../shared/htmlUtils'
-import FormWaxEditor from '../component-formbuilder/src/components/FormWaxEditor'
+import { FormWaxEditor } from '../../ui/wax'
 
 const RichTextEditor = ({
   validationStatus,

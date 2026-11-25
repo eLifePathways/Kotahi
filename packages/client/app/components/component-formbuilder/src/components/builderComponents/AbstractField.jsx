@@ -1,4 +1,4 @@
-import SimpleWaxEditor from '../../../../wax-collab/src/SimpleWaxEditor'
+import { SimpleWaxEditor } from '../../../../../ui/wax'
 
 const AbstractInput = props => <SimpleWaxEditor {...props} />
 

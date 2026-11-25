@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/purity */
 /* eslint-disable react/prop-types */
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import styled from 'styled-components'
 import i18next from 'i18next'
 import diff from 'node-htmldiff'
-import FullWaxEditor from '../../../wax-collab/src/FullWaxEditor'
+import { FullWaxEditor } from '../../../../ui/wax'
 import { ActionButton, Section, Checkbox } from '../../../shared'
 import { getLanguages } from '../../../../i18n'
 import { convertTimestampToDateString } from '../../../../shared/dateUtils'
-// import { ConfigContext } from '../../../config/src'
+import { ConfigContext } from '../../../config/src'
 
 /*
 
@@ -164,6 +164,7 @@ const Versioning = ({
   addNewVersion,
   setComments,
 }) => {
+  const config = useContext(ConfigContext)
   // const { production } = useContext(ConfigContext)
   // const historyIntervalInMinutes = production.manuscriptVersionHistory.historyIntervalInMinutes || 10
   const { username } = currentUser
@@ -341,6 +342,7 @@ const Versioning = ({
               ) : null}
             </h5>
             <FullWaxEditor
+              citationStyleName={config?.production?.citationStyles?.styleName}
               key={`${useDiffing}-${versionList[shownVersion].created}`}
               readonly
               setComments={setComments}

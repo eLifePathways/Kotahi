@@ -1,4 +1,4 @@
-import SimpleWaxEditor from '../../../../wax-collab/src/SimpleWaxEditor'
+import { SimpleWaxEditor } from '../../../../../ui/wax'
 
 import Image from './Image'
 import Active from './Active'

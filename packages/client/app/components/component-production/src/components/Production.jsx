@@ -13,7 +13,7 @@ import { css } from '@codemirror/lang-css'
 import Page from '../../../../ui/shared/Page'
 import { FlexRow } from '../../../../globals'
 import { ConfigContext } from '../../../config/src'
-import ProductionWaxEditor from '../../../wax-collab/src/ProductionWaxEditor'
+import { ProductionWaxEditor } from '../../../../ui/wax'
 import { DownloadDropdown } from './DownloadDropdown'
 import {
   ErrorBoundary,
@@ -33,6 +33,7 @@ import PreviousFeedbackSubmissions from './PreviousFeedbackSubmissions'
 import { CssAssistantProvider } from '../../../component-ai-assistant/hooks/CssAssistantContext'
 import AiPDFDesigner from '../../../component-ai-assistant/AiPDFDesigner'
 import Versioning from './Versioning'
+import useCitationApi from '../useCitationApi'
 import VerifyPayloadModal from './VerifyPayloadModal/VerifyPayloadModal'
 import { isEditableManuscriptFile } from '../../../../shared/manuscriptUtils'
 
@@ -116,8 +117,14 @@ const Production = ({
   canSubmitWithBlankEditor,
   authorList,
   addNewVersion,
+  uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const [activeKey, setActiveKey] = useState('editor')
+
+  const { updateAnystyle, updateCrossRef, updateCiteProc, updateCallout } =
+    useCitationApi(client)
 
   const versions = gatherManuscriptVersions(unparsedManuscript)
 
@@ -230,7 +237,9 @@ const Production = ({
             {manuscript ? (
               <ProductionWaxEditor
                 aiConfig={aiConfig}
-                client={client}
+                citationStyleName={
+                  config?.production?.citationStyles?.styleName
+                }
                 fallbackOnCrossrefAfterDatacite={
                   fallbackOnCrossrefAfterDatacite
                 }
@@ -239,9 +248,16 @@ const Production = ({
                 isAuthorProofingVersion={isAuthorProofingVersion}
                 manuscriptId={manuscript.id}
                 onAssetManager={onAssetManager}
+                onSuggestingChange={onSuggestingChange}
                 readonly={isReadOnlyVersion || false}
                 saveSource={debouncedSave}
                 setComments={getManuscriptComments}
+                suggesting={suggesting}
+                updateAnystyle={updateAnystyle}
+                updateCallout={updateCallout}
+                updateCiteProc={updateCiteProc}
+                updateCrossRef={updateCrossRef}
+                uploadImage={uploadImage}
                 user={currentUser}
                 value={manuscript.meta.source}
               />

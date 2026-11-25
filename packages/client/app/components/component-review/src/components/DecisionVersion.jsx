@@ -107,6 +107,9 @@ const DecisionVersion = ({
   emailTemplates,
   queryAI,
   unpublish,
+  uploadImage,
+  suggesting,
+  onSuggestingChange,
 }) => {
   const teamLabelsTransformed = transformTeamsToLegacy(teamLabels)
 
@@ -168,10 +171,13 @@ const DecisionVersion = ({
           currentUser={user}
           editorSection="CPEditor"
           manuscript={manuscript}
+          onSuggestingChange={onSuggestingChange}
           queryAI={queryAI}
           readonly={isReadOnly}
           saveComments={debouncedSaveComments}
           saveSource={isReadOnly ? null : saveSource}
+          suggesting={suggesting}
+          uploadImage={uploadImage}
         />
       ),
       key: `editor`,

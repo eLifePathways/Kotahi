@@ -24,7 +24,7 @@ const njkFilters = require('./pdfTemplates/njkFilters')
 
 //  Sort out all the different CSSes and make sure that they are being applied correctly
 //    ./pdfTemplates/styles.css: this is from Julien & Harshna, used for PDF export
-//    /app/components/wax-collab/src/layout/EditorElements.js: this exports styles
+//    /app/ui/wax/layouts/styles/editorElements.ts: this exports styles
 //			split this into base styles & editor styles
 //        for wax: import base styles, then editor styles
 //        for production: import base styles, then pagedjs styles
@@ -43,34 +43,12 @@ const generateCss = async noPagedJs => {
 
   outputCss += defaultCssBuffer.toString()
 
-  try {
-    const userCssBuffer = await fs.readFile(
-      `${userTemplatePath}/textStyles.css`,
+  if (!noPagedJs) {
+    const pagedCssBuffer = await fs.readFile(
+      `${defaultTemplatePath}/pagedJsStyles.css`,
     )
 
-    logger.info('Using user-defined text styles.')
-    outputCss += userCssBuffer.toString()
-  } catch {
-    logger.info('No user text stylesheet found')
-  }
-
-  if (!noPagedJs) {
-    try {
-      const userCssBuffer = await fs.readFile(
-        `${userTemplatePath}/pagedJsStyles.css`,
-      )
-
-      logger.info('Using user-defined PagedJS styles.')
-      outputCss += userCssBuffer.toString()
-    } catch {
-      logger.info('No user PagedJS stylesheet found')
-
-      const pagedCssBuffer = await fs.readFile(
-        `${defaultTemplatePath}/pagedJsStyles.css`,
-      )
-
-      outputCss += pagedCssBuffer.toString()
-    }
+    outputCss += pagedCssBuffer.toString()
   }
 
   // logger.log('textStyles.css: ', outputCss)

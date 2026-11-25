@@ -1,6 +1,6 @@
 /* eslint-disable promise/catch-or-return, promise/always-return */
 
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react'
 
@@ -13,6 +13,7 @@ import DownloadPdfComponent from './DownloadPdf'
 import DownloadJatsComponent from './DownloadJats'
 import { waxAiToolSystem } from '../../helpers'
 import { useCurrentUser } from '../../../../pages/hooks/useCurrentUser'
+import useUploadManuscriptImage from '../../../../hooks/useUploadManuscriptImage'
 
 import {
   GET_SPECIFIC_FILES,
@@ -55,6 +56,8 @@ const ProductionPage = () => {
   const currentUser = useCurrentUser()
   const { groupId, controlPanel, submission } = useContext(ConfigContext)
   const client = useApolloClient()
+  const uploadManuscriptImage = useUploadManuscriptImage()
+  const [suggesting, setSuggesting] = useState(false)
   const {
     showModal,
     hideModal,
@@ -336,11 +339,14 @@ const ProductionPage = () => {
           makePdf={setMakingPdf}
           manuscript={manuscript}
           onAssetManager={onAssetManager}
+          onSuggestingChange={setSuggesting}
           queryAI={queryAI}
           submitAuthorProofingFeedback={submitAuthorProofingFeedback}
+          suggesting={suggesting}
           unparsedManuscript={unparsedManuscript}
           updateManuscript={updateManuscript}
           updateTemplate={updateTemplate}
+          uploadImage={uploadManuscriptImage}
         />
       </div>
     </>

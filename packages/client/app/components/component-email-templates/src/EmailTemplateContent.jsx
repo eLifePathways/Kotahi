@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { Formik } from 'formik'
 import { CmsWidthAndHeightContainer } from '../../component-cms-manager/src/style'
 import EmailTemplateEditForm from './EmailTemplateEditForm'
@@ -6,7 +8,7 @@ import { getEmailContentFrom } from '../misc/utils'
 import { useEmailTemplatesContext } from '../hooks/EmailTemplatesContext'
 import { EditSection } from '../misc/styleds'
 
-const EmailTemplateContent = () => {
+const EmailTemplateContent = ({ templateVariables }) => {
   const { handleSubmit, handleValidate, activeTemplate } =
     useEmailTemplatesContext()
 
@@ -29,6 +31,7 @@ const EmailTemplateContent = () => {
                 onSubmit={formikProps.handleSubmit}
                 setFieldValue={formikProps.setFieldValue}
                 setTouched={formikProps.setTouched}
+                templateVariables={templateVariables}
               />
             )
           }}

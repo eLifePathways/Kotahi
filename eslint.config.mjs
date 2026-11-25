@@ -2,11 +2,7 @@ import { defineEslintConfig, rootEslintConfig } from '@coko/lint'
 
 const config = defineEslintConfig(rootEslintConfig)
 
-const extraIgnores = [
-  './packages/devdocs/',
-  '.ux/',
-  'packages/client/app/ui/wax/',
-]
+const extraIgnores = ['./packages/devdocs/', '.ux/']
 
 const globalIgnoresObject = config.find(o => o.name?.includes('globalIgnores'))
 globalIgnoresObject.ignores = [...globalIgnoresObject.ignores, ...extraIgnores]
