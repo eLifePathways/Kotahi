@@ -143,7 +143,7 @@ const WaxSurface = ({
   const context = useContext(WaxContext)
   if (!context) throw new Error('WaxSurface must be used inside a WaxProvider')
 
-  const { schema, features, store, latest, ensureState } = context
+  const { schema, features, store, latest } = context
   const mount = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
   const attributes = useRef(attributesFor(spellCheck, className))
@@ -153,7 +153,7 @@ const WaxSurface = ({
   })
 
   useLayoutEffect(() => {
-    const state = ensureState()
+    const { state } = store.getSnapshot()
 
     const view: EditorView = new EditorView(
       { mount: mount.current },
@@ -202,7 +202,7 @@ const WaxSurface = ({
       store.setSnapshot({ view: undefined, state: view.state })
       view.destroy()
     }
-  }, [ensureState, schema, features, store, latest])
+  }, [schema, features, store, latest])
 
   useEffect(() => {
     const view = viewRef.current

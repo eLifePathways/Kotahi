@@ -4,7 +4,7 @@ import { WaxProvider } from '../editor'
 import { simpleFeatures } from './featureSets'
 import BlurArea from './shared/BlurArea'
 import SimpleLayout from './shared/SimpleLayout'
-import useYjsFeatures, { type YjsProps } from './shared/yjs'
+import useYjsFeatures, { yjsKey, type YjsProps } from './shared/yjs'
 
 export type FormWaxEditorProps = YjsProps & {
   value?: string
@@ -41,6 +41,7 @@ const FormWaxEditor = ({
     <div className={validationStatus}>
       <WaxProvider
         features={features}
+        key={yjsKey({ wsProvider, ydoc, name })}
         onChange={ydoc ? undefined : onChange}
         placeholder={placeholder}
         readonly={readonly}

@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -69,9 +68,9 @@ export type WaxProviderProps = {
 
 const WaxProvider = ({
   children,
-  features,
+  features: initialFeatures,
   focusOnMount = false,
-  nodeViews = noNodeViews,
+  nodeViews: initialNodeViews = noNodeViews,
   onChange = noop,
   placeholder = '',
   readonly = false,
@@ -79,14 +78,15 @@ const WaxProvider = ({
   value = '',
 }: WaxProviderProps): ReactNode => {
   const [portalStore] = useState(createPortalStore)
-  const schema = useMemo(() => buildSchema(features), [features])
+  const [features] = useState(initialFeatures)
+  const [schema] = useState(() => buildSchema(features))
 
   const [store] = useState(() =>
     createStore(
       createState({
         schema,
         features,
-        nodeViews,
+        nodeViews: initialNodeViews,
         portalStore,
         value,
         placeholder,
@@ -94,7 +94,6 @@ const WaxProvider = ({
     ),
   )
 
-  const builtFrom = useRef({ features, nodeViews })
   const savedValues = useRef<string[]>([value])
 
   const latest = useRef<LatestProps>({
@@ -147,36 +146,9 @@ const WaxProvider = ({
     if (view && !view.isDestroyed) view.setProps({ editable: () => !readonly })
   }, [store, readonly])
 
-  const ensureState = useCallback((): EditorState => {
-    const { view, state } = store.getSnapshot()
-
-    if (
-      builtFrom.current.features === features &&
-      builtFrom.current.nodeViews === nodeViews
-    )
-      return state
-
-    const next = createState({
-      schema,
-      features,
-      nodeViews,
-      portalStore,
-      value: latest.current.value,
-      placeholder: latest.current.placeholder,
-    })
-
-    builtFrom.current = { features, nodeViews }
-    store.setSnapshot({ view, state: next })
-    return next
-  }, [schema, features, nodeViews, portalStore, store])
-
-  useLayoutEffect(() => {
-    ensureState()
-  }, [ensureState])
-
   const context = useMemo<WaxContextValue>(
-    () => ({ schema, features, store, latest, ensureState }),
-    [schema, features, store, ensureState],
+    () => ({ schema, features, store, latest }),
+    [schema, features, store],
   )
 
   return (

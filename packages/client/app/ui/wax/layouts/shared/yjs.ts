@@ -26,4 +26,7 @@ const useYjsFeatures = ({ wsProvider, ydoc, name }: YjsProps): WaxFeature[] =>
     [wsProvider, ydoc, name],
   )
 
+export const yjsKey = ({ wsProvider, ydoc, name }: YjsProps): string =>
+  wsProvider && ydoc ? `yjs:${ydoc.guid}:${name ?? ''}` : 'local'
+
 export default useYjsFeatures

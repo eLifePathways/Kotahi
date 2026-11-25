@@ -17,7 +17,7 @@ import { ProductionLayout } from './shared/ManuscriptLayout'
 import { FullToolbar, type AiConfig } from './shared/toolbars'
 import useLatest from './shared/useLatest'
 import { allowAll, toWaxUser, type KotahiUser } from './shared/user'
-import useYjsFeatures, { type YjsProps } from './shared/yjs'
+import useYjsFeatures, { yjsKey, type YjsProps } from './shared/yjs'
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 
@@ -146,6 +146,7 @@ const ProductionWaxEditor = ({
       <ReferenceServicesProvider value={references}>
         <WaxProvider
           features={features}
+          key={yjsKey({ wsProvider, ydoc, name })}
           nodeViews={nodeViews}
           onChange={saveSource ?? undefined}
           placeholder={placeholder}

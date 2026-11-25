@@ -1,6 +1,5 @@
 import { createContext, type RefObject } from 'react'
 import type { Schema } from 'prosemirror-model'
-import type { EditorState } from 'prosemirror-state'
 
 import type { TransactionContext, WaxFeature } from '../features/types'
 import type { WaxStore } from './store'
@@ -19,7 +18,6 @@ export type WaxContextValue = {
   features: WaxFeature[]
   store: WaxStore
   latest: RefObject<LatestProps>
-  ensureState: () => EditorState
 }
 
 export const WaxContext = createContext<WaxContextValue | null>(null)

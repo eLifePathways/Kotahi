@@ -8,7 +8,7 @@ import { simpleFeatures } from './featureSets'
 import BlurArea from './shared/BlurArea'
 import SimpleLayout from './shared/SimpleLayout'
 import useLatest from './shared/useLatest'
-import useYjsFeatures, { type YjsProps } from './shared/yjs'
+import useYjsFeatures, { yjsKey, type YjsProps } from './shared/yjs'
 
 export type SimpleWaxEditorProps = YjsProps & {
   value?: string
@@ -60,6 +60,7 @@ const SimpleWaxEditor = ({
     <div className={validationStatus}>
       <WaxProvider
         features={features}
+        key={`${yjsKey({ wsProvider, ydoc, name })}:${withHandlebars}`}
         onChange={save}
         placeholder={placeholder}
         readonly={readonly}

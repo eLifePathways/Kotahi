@@ -80,6 +80,7 @@ const ContentWaxEditor = ({
     <Container>
       <WaxProvider
         features={features}
+        key={`${simple}:${withHandlebars}`}
         onChange={onChange}
         placeholder={placeholder}
         readonly={readonly}
