@@ -5,6 +5,8 @@ import {
   type ReactNode,
 } from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
+import { useNotification } from '@coko/client'
 
 import preview from '../../../.storybook/preview'
 import NewSubmission, {
@@ -32,6 +34,11 @@ const skipSteps: NewSubmissionStep[] = ['creatingManuscript']
 
 const STEP_DURATION = 1500
 
+const wait = (ms: number): Promise<void> =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+
 const Demo = (props: DemoProps): ReactNode => {
   const [status, setStatus] = useState<NewSubmissionStatus>('idle')
   const [activeOption, setActiveOption] = useState<NewSubmissionOption>()
@@ -57,6 +64,46 @@ const Demo = (props: DemoProps): ReactNode => {
       activeOption={activeOption}
       onSkip={(): void => simulate('skip')}
       onUpload={(): void => simulate('upload')}
+      status={status}
+    />
+  )
+}
+
+const FailingDemo = (props: DemoProps): ReactNode => {
+  const { t } = useTranslation()
+  const notify = useNotification()
+  const [status, setStatus] = useState<NewSubmissionStatus>('idle')
+  const [activeOption, setActiveOption] = useState<NewSubmissionOption>()
+
+  const simulate = async (option: NewSubmissionOption): Promise<void> => {
+    setActiveOption(option)
+
+    try {
+      setStatus('uploading')
+      await wait(STEP_DURATION)
+      setStatus('converting')
+      await wait(STEP_DURATION)
+      throw new Error('CONVERSION_FAILED')
+    } catch {
+      setStatus('idle')
+      setActiveOption(undefined)
+      notify.error({
+        title: t('newSubmission.errorConversionFailed'),
+        duration: 0,
+      })
+    }
+  }
+
+  return (
+    <NewSubmission
+      {...props}
+      activeOption={activeOption}
+      onSkip={(): void => {
+        simulate('skip')
+      }}
+      onUpload={(): void => {
+        simulate('upload')
+      }}
       status={status}
     />
   )
@@ -177,6 +224,11 @@ export const CreatingManuscript = meta.story({
     status: 'creatingManuscript',
     activeOption: 'upload',
   } satisfies NewSubmissionProps,
+})
+
+/** Drop a file on the upload card (or click it): conversion fails, the cards reset and an error toast is shown. */
+export const FailedToCreateManuscript = meta.story({
+  render: () => <FailingDemo {...baseArgs} />,
 })
 
 export const CreatingWithoutFile = meta.story({
