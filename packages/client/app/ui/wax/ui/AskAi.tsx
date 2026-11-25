@@ -93,7 +93,7 @@ const AskAiPanel = ({
   knowledgeBase = false,
   onClose,
 }: AskAiProps & { onClose: () => void }): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const resultRef = useRef<HTMLDivElement>(null)
   const [prompt, setPrompt] = useState('')
   const [askKb, setAskKb] = useState(false)
@@ -270,10 +270,8 @@ const AskAiPanel = ({
 }
 
 const AskAiButton = (props: AskAiProps): ReactNode => {
-  const view = useWax(s => s.view)
-  const hasSelection: boolean = useWax(
-    ({ state }) => !!state && !state.selection.empty,
-  )
+  const { view, state } = useWax()
+  const hasSelection = !state.selection.empty
   const [open, setOpen] = useState(false)
 
   const toggle = (): void => {

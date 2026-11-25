@@ -24,7 +24,7 @@ type ImageFormProps = {
 }
 
 const ImageForm = ({ image }: ImageFormProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const [alt, setAlt] = useState(image.alt)
   const [longDescription, setLongDescription] = useState(image.longDescription)
 
@@ -73,10 +73,8 @@ type ImageDetailsProps = {
 }
 
 const ImageDetails = ({ className }: ImageDetailsProps): ReactNode => {
-  const image: SelectedImage | null = useWax(
-    ({ state }) => (state ? getSelectedImage(state) : null),
-    (a, b) => JSON.stringify(a) === JSON.stringify(b),
-  )
+  const { state } = useWax()
+  const image = getSelectedImage(state)
 
   if (!image) return null
 

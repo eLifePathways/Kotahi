@@ -472,10 +472,10 @@ export type TrackedChange = {
 
 const trackTypes = ['insertion', 'deletion', 'format_change'] as const
 
-export const findTrackedChanges = (state: EditorState): TrackedChange[] => {
+export const findTrackedChanges = (doc: Node): TrackedChange[] => {
   const changes: TrackedChange[] = []
 
-  state.doc.descendants((node, pos) => {
+  doc.descendants((node, pos) => {
     if (!node.isInline) return
     node.marks.forEach(mark => {
       const type = trackTypes.find(t => t === mark.type.name)

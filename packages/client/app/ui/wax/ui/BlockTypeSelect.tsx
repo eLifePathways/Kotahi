@@ -70,29 +70,19 @@ type BlockTypeSelectProps = {
 }
 
 const BlockTypeSelect = ({ className }: BlockTypeSelectProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view, state } = useWax()
 
-  const options = useWax(
-    ({ state }) =>
-      state
-        ? blockTypes
-            .filter(type => state.schema.nodes[type.node])
-            .map(type => ({
-              value: type.value,
-              label: type.label,
-              disabled: !type.isActive(state) && !type.isEnabled(state),
-            }))
-        : [],
-    (a, b) => JSON.stringify(a) === JSON.stringify(b),
-  )
+  const options = blockTypes
+    .filter(type => state.schema.nodes[type.node])
+    .map(type => ({
+      value: type.value,
+      label: type.label,
+      disabled: !type.isActive(state) && !type.isEnabled(state),
+    }))
 
-  const current: string | undefined = useWax(({ state }) =>
-    state
-      ? blockTypes.find(
-          type => state.schema.nodes[type.node] && type.isActive(state),
-        )?.value
-      : undefined,
-  )
+  const current = blockTypes.find(
+    type => state.schema.nodes[type.node] && type.isActive(state),
+  )?.value
 
   const handleChange = (value: unknown): void => {
     const type = blockTypes.find(t => t.value === value)

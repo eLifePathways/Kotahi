@@ -14,7 +14,7 @@ const BlurArea = ({
   className,
   onBlur,
 }: BlurAreaProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
 
   const handleBlur = (event: FocusEvent<HTMLDivElement>): void => {
     if (!onBlur || !view) return

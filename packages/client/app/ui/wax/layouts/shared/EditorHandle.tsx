@@ -10,7 +10,7 @@ type EditorHandleProps = {
 }
 
 const EditorHandle = ({ editorRef }: EditorHandleProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
 
   useImperativeHandle(
     editorRef,

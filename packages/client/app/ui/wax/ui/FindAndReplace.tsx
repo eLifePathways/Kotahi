@@ -29,10 +29,8 @@ const Count = styled.span`
 `
 
 const FindAndReplace = (): ReactNode => {
-  const view = useWax(s => s.view)
-  const count: number = useWax(({ state }) =>
-    state ? getMatches(state).length : 0,
-  )
+  const { view, state } = useWax()
+  const count = getMatches(state).length
   const [open, setOpen] = useState(false)
   const [find, setFind] = useState('')
   const [replace, setReplace] = useState('')

@@ -40,7 +40,7 @@ const Grid = styled.div`
 const SpecialCharacters = ({
   characters,
 }: SpecialCharactersProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const [search, setSearch] = useState('')
 
   const groups = useMemo(() => {

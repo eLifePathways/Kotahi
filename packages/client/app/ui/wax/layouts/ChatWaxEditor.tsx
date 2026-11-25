@@ -342,7 +342,7 @@ const Row = styled.div`
 
 const SendMessage = (): ReactNode => {
   const { t } = useTranslation()
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const label = t('chat.Send')
 
   return (

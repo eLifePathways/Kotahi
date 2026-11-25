@@ -1,5 +1,5 @@
 import { Fragment, type Node, type NodeSpec } from 'prosemirror-model'
-import type { Command, EditorState } from 'prosemirror-state'
+import type { Command } from 'prosemirror-state'
 import { uuid } from '@coko/client'
 
 import type { WaxFeature } from './types'
@@ -42,10 +42,10 @@ export const insertNote: Command = (state, dispatch) => {
 
 export type Note = { id: string; pos: number; number: number; node: Node }
 
-export const findNotes = (state: EditorState): Note[] => {
+export const findNotes = (doc: Node): Note[] => {
   const result: Note[] = []
 
-  state.doc.descendants((node, pos) => {
+  doc.descendants((node, pos) => {
     if (node.type.name === 'footnote')
       result.push({ id: node.attrs.id, pos, number: result.length + 1, node })
   })

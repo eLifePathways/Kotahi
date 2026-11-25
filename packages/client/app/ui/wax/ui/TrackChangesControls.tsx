@@ -38,7 +38,7 @@ export const TrackingMode = ({
 )
 
 export const ShowChangesButton = (): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const [hidden, setHidden] = useState(false)
 
   const toggle = (): void => {

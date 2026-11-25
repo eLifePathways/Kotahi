@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { useMemo, type CSSProperties, type ReactNode } from 'react'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 
@@ -134,9 +134,8 @@ const NotesContainer = styled.div`
 `
 
 const Notes = ({ readonly }: { readonly: boolean }): ReactNode => {
-  const count: number = useWax(({ state }) =>
-    state ? findNotes(state).length : 0,
-  )
+  const { doc } = useWax().state
+  const count = useMemo(() => findNotes(doc).length, [doc])
   if (!count) return null
   const Container = readonly ? ReadOnlyNotesAreaContainer : NotesAreaContainer
 
@@ -162,9 +161,10 @@ const Comments = ({
   hideTools,
   toolsPosition,
 }: CommentsArea): ReactNode => {
-  const count: number = useWax(({ state }) =>
-    state ? getComments(state).length + findTrackedChanges(state).length : 0,
-  )
+  const { state } = useWax()
+  const { doc } = state
+  const changeCount = useMemo(() => findTrackedChanges(doc).length, [doc])
+  const count = getComments(state).length + changeCount
 
   return (
     <CommentsContainer>

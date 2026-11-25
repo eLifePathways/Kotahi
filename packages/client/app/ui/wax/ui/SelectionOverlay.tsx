@@ -29,8 +29,8 @@ const SelectionOverlay = ({
   className,
   label,
 }: SelectionOverlayProps): ReactNode => {
-  const view = useWax(s => s.view)
-  const to: number = useWax(({ state }) => state?.selection.to ?? 0)
+  const { view, state } = useWax()
+  const { to } = state.selection
   const [position, setPosition] = useState<Position | null>(null)
 
   useLayoutEffect(() => {

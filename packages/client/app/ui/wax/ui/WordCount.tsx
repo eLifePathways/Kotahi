@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 
@@ -17,15 +17,14 @@ const countWords = (text: string): number =>
   text.trim() ? text.trim().split(/\s+/).length : 0
 
 const WordCount = ({ className }: WordCountProps): ReactNode => {
-  const words: number = useWax(({ state }) =>
-    state
-      ? countWords(state.doc.textBetween(0, state.doc.content.size, ' ', ' '))
-      : 0,
+  const { doc } = useWax().state
+
+  const words = useMemo(
+    () => countWords(doc.textBetween(0, doc.content.size, ' ', ' ')),
+    [doc],
   )
 
-  const characters: number = useWax(({ state }) =>
-    state ? state.doc.textContent.length : 0,
-  )
+  const characters = useMemo(() => doc.textContent.length, [doc])
 
   return (
     <Wrapper aria-live="polite" className={className}>

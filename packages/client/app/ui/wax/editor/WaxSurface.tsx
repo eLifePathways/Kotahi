@@ -5,16 +5,15 @@ import {
   useRef,
   type ReactNode,
 } from 'react'
-import { EditorState, type Transaction } from 'prosemirror-state'
+import type { Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import styled, { keyframes } from 'styled-components'
 import { th } from '@coko/client'
 
-import { WaxEngineContext } from './context'
-import { parse, serialize } from './htmlFormat'
-import { nodeViewsPlugin } from './nodeViews'
-import createPlugins from './plugins'
+import { WaxContext } from './context'
+import { serialize } from './htmlFormat'
 
+// #region styled
 const cursorBlink = keyframes`
   to {
     visibility: hidden;
@@ -122,6 +121,7 @@ const Mount = styled.div`
     content: attr(data-content);
   }
 `
+// #endregion styled
 
 type WaxSurfaceProps = {
   className?: string
@@ -140,10 +140,10 @@ const WaxSurface = ({
   className,
   spellCheck = false,
 }: WaxSurfaceProps): ReactNode => {
-  const engine = useContext(WaxEngineContext)
-  if (!engine) throw new Error('WaxSurface must be used inside a WaxProvider')
+  const context = useContext(WaxContext)
+  if (!context) throw new Error('WaxSurface must be used inside a WaxProvider')
 
-  const { schema, features, nodeViews, portalStore, store, latest } = engine
+  const { schema, features, store, latest, ensureState } = context
   const mount = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
   const attributes = useRef(attributesFor(spellCheck, className))
@@ -153,19 +153,7 @@ const WaxSurface = ({
   })
 
   useLayoutEffect(() => {
-    const initial = latest.current
-
-    const state = EditorState.create({
-      doc: parse(schema, initial.value),
-      plugins: [
-        ...createPlugins({
-          features,
-          schema,
-          placeholder: initial.placeholder,
-        }),
-        nodeViewsPlugin(nodeViews, portalStore),
-      ],
-    })
+    const state = ensureState()
 
     const view: EditorView = new EditorView(
       { mount: mount.current },
@@ -207,14 +195,14 @@ const WaxSurface = ({
 
     viewRef.current = view
     store.setSnapshot({ view, state })
-    if (initial.focusOnMount) view.focus()
+    if (latest.current.focusOnMount) view.focus()
 
     return (): void => {
       viewRef.current = null
-      store.setSnapshot({ view: undefined, state: undefined })
+      store.setSnapshot({ view: undefined, state: view.state })
       view.destroy()
     }
-  }, [schema, features, nodeViews, portalStore, store, latest])
+  }, [ensureState, schema, features, store, latest])
 
   useEffect(() => {
     const view = viewRef.current

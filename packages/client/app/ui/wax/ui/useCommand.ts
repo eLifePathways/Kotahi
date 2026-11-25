@@ -17,15 +17,11 @@ const useCommand = (
   isActive?: Query,
   isEnabled?: Query,
 ): CommandState => {
-  const view: EditorView | undefined = useWax(s => s.view)
+  const { view, state } = useWax()
 
-  const active: boolean = useWax(({ state }) =>
-    Boolean(state && isActive && isActive(state)),
-  )
+  const active = Boolean(isActive && isActive(state))
 
-  const enabled: boolean = useWax(({ state }) =>
-    Boolean(state && (isEnabled ? isEnabled(state) : command(state))),
-  )
+  const enabled = isEnabled ? isEnabled(state) : command(state)
 
   const run = (): void => {
     if (!view || !enabled) return

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { baseKeymap } from 'prosemirror-commands'
 import { keymap } from 'prosemirror-keymap'
 import { EditorState } from 'prosemirror-state'
@@ -34,7 +34,7 @@ const NoteEditor = ({ note, view }: NoteEditorProps): ReactNode => {
   const inner = useRef<EditorView | null>(null)
   useEffect(() => {
     const findSelf = (): Note | undefined =>
-      findNotes(view.state).find(n => n.id === note.id)
+      findNotes(view.state.doc).find(n => n.id === note.id)
 
     const onMain =
       (command: typeof undo) =>
@@ -93,22 +93,14 @@ const NoteEditor = ({ note, view }: NoteEditorProps): ReactNode => {
   return <Mount aria-label={`Note ${note.number}`} ref={mount} />
 }
 
-const sameNotes = (a: Note[], b: Note[]): boolean =>
-  a.length === b.length &&
-  a.every(
-    (n, i) => n.id === b[i].id && n.pos === b[i].pos && n.node === b[i].node,
-  )
-
 type NotesPanelProps = {
   className?: string
 }
 
 const NotesPanel = ({ className }: NotesPanelProps): ReactNode => {
-  const view: EditorView | undefined = useWax(s => s.view)
-  const notes: Note[] = useWax(
-    ({ state }) => (state ? findNotes(state) : []),
-    sameNotes,
-  )
+  const { view, state } = useWax()
+  const { doc } = state
+  const notes = useMemo(() => findNotes(doc), [doc])
 
   return (
     <PanelList aria-label="Notes" className={className} role="region">

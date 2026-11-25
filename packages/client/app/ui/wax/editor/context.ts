@@ -1,8 +1,8 @@
 import { createContext, type RefObject } from 'react'
 import type { Schema } from 'prosemirror-model'
+import type { EditorState } from 'prosemirror-state'
 
 import type { TransactionContext, WaxFeature } from '../features/types'
-import type { NodeViews, PortalStore } from './nodeViews'
 import type { WaxStore } from './store'
 
 export type LatestProps = {
@@ -14,13 +14,12 @@ export type LatestProps = {
   onSave: (html: string) => void
 }
 
-export type WaxEngine = {
+export type WaxContextValue = {
   schema: Schema
   features: WaxFeature[]
-  nodeViews: NodeViews
-  portalStore: PortalStore
   store: WaxStore
   latest: RefObject<LatestProps>
+  ensureState: () => EditorState
 }
 
-export const WaxEngineContext = createContext<WaxEngine | null>(null)
+export const WaxContext = createContext<WaxContextValue | null>(null)

@@ -112,7 +112,7 @@ const HandlebarsAutocomplete = ({
   listener,
   variables,
 }: HandlebarsAutocompleteProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [index, setIndex] = useState(0)

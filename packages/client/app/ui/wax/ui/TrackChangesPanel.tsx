@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 
 import Button from '../../shared/Button'
 import ButtonGroup from '../../shared/ButtonGroup'
@@ -36,12 +36,10 @@ const TrackChangesPanel = ({
   permissions,
   className,
 }: TrackChangesPanelProps): ReactNode => {
-  const view = useWax(s => s.view)
-  const changes: TrackedChange[] = useWax(
-    ({ state }) => (state ? findTrackedChanges(state) : []),
-    (a, b) => JSON.stringify(a) === JSON.stringify(b),
-  )
-  const cursor: number = useWax(({ state }) => state?.selection.from ?? 0)
+  const { view, state } = useWax()
+  const { doc } = state
+  const changes = useMemo(() => findTrackedChanges(doc), [doc])
+  const cursor = state.selection.from
 
   const run = (change: TrackedChange, action: typeof acceptChange): void => {
     if (!view) return

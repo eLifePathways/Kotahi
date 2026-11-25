@@ -78,14 +78,13 @@ const Output = styled.pre`
 
 // #region helpers
 const CharacterCount = (): ReactNode => {
-  const characters = useWax(({ state }) => state?.doc.textContent.length ?? 0)
+  const characters = useWax().state.doc.textContent.length
 
   return <Status>{characters} characters</Status>
 }
 
 const SelectionInfo = (): ReactNode => {
-  const from = useWax(({ state }) => state?.selection.from ?? 0)
-  const to = useWax(({ state }) => state?.selection.to ?? 0)
+  const { from, to } = useWax().state.selection
 
   return (
     <Status>

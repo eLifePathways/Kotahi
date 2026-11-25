@@ -7,8 +7,7 @@ import useLatest from './useLatest'
 type ActiveViewDomProps = { onChange?: (html: string) => void }
 
 export const ActiveViewDom = ({ onChange }: ActiveViewDomProps): ReactNode => {
-  const view = useWax(s => s.view)
-  const state = useWax(s => s.state)
+  const { view, state } = useWax()
 
   useEffect(() => {
     if (onChange && view?.dom?.outerHTML) onChange(view.dom.outerHTML)
@@ -20,7 +19,7 @@ export const ActiveViewDom = ({ onChange }: ActiveViewDomProps): ReactNode => {
 type SaveOnUnmountProps = { onSave?: ((html: string) => void) | null }
 
 export const SaveOnUnmount = ({ onSave }: SaveOnUnmountProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const latest = useLatest({ view, onSave })
 
   useEffect(

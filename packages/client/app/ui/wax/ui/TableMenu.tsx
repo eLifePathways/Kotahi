@@ -34,10 +34,8 @@ const Form = styled.form`
 `
 
 export const InsertTableButton = (): ReactNode => {
-  const view = useWax(s => s.view)
-  const enabled: boolean = useWax(({ state }) =>
-    Boolean(state && canInsertTable(state)),
-  )
+  const { view, state } = useWax()
+  const enabled = canInsertTable(state)
   const [open, setOpen] = useState(false)
   const [rows, setRows] = useState(2)
   const [cols, setCols] = useState(2)
@@ -129,15 +127,11 @@ const actions: { key: string; label: string; command: Command }[] = [
 ]
 
 export const TableActions = (): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view, state } = useWax()
 
-  const available: string[] = useWax(
-    ({ state }) =>
-      state && isInTable(state)
-        ? actions.filter(a => a.command(state)).map(a => a.key)
-        : [],
-    (a, b) => a.join() === b.join(),
-  )
+  const available = isInTable(state)
+    ? actions.filter(a => a.command(state)).map(a => a.key)
+    : []
 
   const items = actions.map(action => ({
     key: action.key,

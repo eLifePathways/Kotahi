@@ -24,10 +24,8 @@ const ImageUploadButton = ({
   showLongDesc = false,
   accept = 'image/*',
 }: ImageUploadButtonProps): ReactNode => {
-  const view = useWax(s => s.view)
-  const enabled: boolean = useWax(({ state }) =>
-    Boolean(state && canInsertImage(state)),
-  )
+  const { view, state } = useWax()
+  const enabled = canInsertImage(state)
   const input = useRef<HTMLInputElement>(null)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {

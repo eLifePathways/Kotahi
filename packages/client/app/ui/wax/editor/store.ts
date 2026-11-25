@@ -3,7 +3,7 @@ import type { EditorView } from 'prosemirror-view'
 
 export type WaxSnapshot = {
   view: EditorView | undefined
-  state: EditorState | undefined
+  state: EditorState
 }
 
 export type WaxStore = {
@@ -12,8 +12,8 @@ export type WaxStore = {
   setSnapshot: (next: WaxSnapshot) => void
 }
 
-const createStore = (): WaxStore => {
-  let snapshot: WaxSnapshot = { view: undefined, state: undefined }
+const createStore = (initialState: EditorState): WaxStore => {
+  let snapshot: WaxSnapshot = { view: undefined, state: initialState }
   const listeners = new Set<() => void>()
 
   return {

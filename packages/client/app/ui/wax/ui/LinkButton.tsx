@@ -22,17 +22,12 @@ const Form = styled.form`
 `
 
 const LinkButton = (): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view, state } = useWax()
   const [open, setOpen] = useState(false)
   const [href, setHref] = useState('')
 
-  const enabled: boolean = useWax(({ state }) =>
-    Boolean(state && (getActiveLink(state) || canToggleLink(state))),
-  )
-
-  const active: boolean = useWax(({ state }) =>
-    Boolean(state && getActiveLink(state)),
-  )
+  const enabled = Boolean(getActiveLink(state) || canToggleLink(state))
+  const active = Boolean(getActiveLink(state))
 
   const handleOpenChange = (next: boolean): void => {
     if (next && view) setHref(getActiveLink(view.state)?.href ?? '')

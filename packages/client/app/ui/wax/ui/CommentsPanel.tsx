@@ -51,7 +51,7 @@ type ReplyFormProps = {
 }
 
 const ReplyForm = ({ comment, showTitle, user }: ReplyFormProps): ReactNode => {
-  const view = useWax(s => s.view)
+  const { view } = useWax()
   const [content, setContent] = useState('')
   const [title, setTitle] = useState(comment.data.title)
   const isNew = comment.data.conversation.length === 0
@@ -116,13 +116,9 @@ const CommentsPanel = ({
   showTitle = false,
   className,
 }: CommentsPanelProps): ReactNode => {
-  const view = useWax(s => s.view)
-  const comments: Comment[] = useWax(({ state }) =>
-    state ? getComments(state) : [],
-  )
-  const activeId: string | undefined = useWax(({ state }) =>
-    state ? getActiveComment(state)?.id : undefined,
-  )
+  const { view, state } = useWax()
+  const comments: Comment[] = getComments(state)
+  const activeId = getActiveComment(state)?.id
 
   return (
     <PanelList aria-label="Comments" className={className} role="region">

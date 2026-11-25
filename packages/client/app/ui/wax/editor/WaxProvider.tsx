@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -6,11 +7,20 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import type { Schema } from 'prosemirror-model'
+import { EditorState } from 'prosemirror-state'
 
 import type { TransactionContext, WaxFeature } from '../features/types'
-import { WaxEngineContext, type LatestProps, type WaxEngine } from './context'
+import { WaxContext, type LatestProps, type WaxContextValue } from './context'
 import { parse } from './htmlFormat'
-import { createPortalStore, NodeViewPortals, type NodeViews } from './nodeViews'
+import {
+  createPortalStore,
+  NodeViewPortals,
+  nodeViewsPlugin,
+  type NodeViews,
+  type PortalStore,
+} from './nodeViews'
+import createPlugins from './plugins'
 import buildSchema from './schema'
 import createStore from './store'
 
@@ -19,6 +29,31 @@ const SAVED_HISTORY_SIZE = 20
 const noop = (): void => {}
 const noNodeViews: NodeViews = {}
 const noTransactionContext: TransactionContext = {}
+
+type StateInputs = {
+  schema: Schema
+  features: WaxFeature[]
+  nodeViews: NodeViews
+  portalStore: PortalStore
+  value: string
+  placeholder: string
+}
+
+const createState = ({
+  schema,
+  features,
+  nodeViews,
+  portalStore,
+  value,
+  placeholder,
+}: StateInputs): EditorState =>
+  EditorState.create({
+    doc: parse(schema, value),
+    plugins: [
+      ...createPlugins({ features, schema, placeholder }),
+      nodeViewsPlugin(nodeViews, portalStore),
+    ],
+  })
 
 export type WaxProviderProps = {
   children?: ReactNode
@@ -43,9 +78,23 @@ const WaxProvider = ({
   transactionContext = noTransactionContext,
   value = '',
 }: WaxProviderProps): ReactNode => {
-  const [store] = useState(createStore)
   const [portalStore] = useState(createPortalStore)
   const schema = useMemo(() => buildSchema(features), [features])
+
+  const [store] = useState(() =>
+    createStore(
+      createState({
+        schema,
+        features,
+        nodeViews,
+        portalStore,
+        value,
+        placeholder,
+      }),
+    ),
+  )
+
+  const builtFrom = useRef({ features, nodeViews })
   const savedValues = useRef<string[]>([value])
 
   const latest = useRef<LatestProps>({
@@ -77,21 +126,20 @@ const WaxProvider = ({
     if (savedValues.current.includes(value)) return
     if (features.some(feature => feature.name === 'yjs')) return
 
-    const { view } = store.getSnapshot()
-    if (!view || view.isDestroyed) return
-
-    const doc = parse(view.state.schema, value)
+    const { view, state } = store.getSnapshot()
+    const doc = parse(state.schema, value)
     savedValues.current = [...savedValues.current, value].slice(
       -SAVED_HISTORY_SIZE,
     )
-    if (doc.eq(view.state.doc)) return
+    if (doc.eq(state.doc)) return
 
-    view.dispatch(
-      view.state.tr
-        .replaceWith(0, view.state.doc.content.size, doc.content)
-        .setMeta('addToHistory', false)
-        .setMeta('externalUpdate', true),
-    )
+    const tr = state.tr
+      .replaceWith(0, state.doc.content.size, doc.content)
+      .setMeta('addToHistory', false)
+      .setMeta('externalUpdate', true)
+
+    if (view && !view.isDestroyed) view.dispatch(tr)
+    else store.setSnapshot({ view: undefined, state: state.apply(tr) })
   }, [features, store, value])
 
   useEffect(() => {
@@ -99,16 +147,43 @@ const WaxProvider = ({
     if (view && !view.isDestroyed) view.setProps({ editable: () => !readonly })
   }, [store, readonly])
 
-  const engine = useMemo<WaxEngine>(
-    () => ({ schema, features, nodeViews, portalStore, store, latest }),
-    [schema, features, nodeViews, portalStore, store],
+  const ensureState = useCallback((): EditorState => {
+    const { view, state } = store.getSnapshot()
+
+    if (
+      builtFrom.current.features === features &&
+      builtFrom.current.nodeViews === nodeViews
+    )
+      return state
+
+    const next = createState({
+      schema,
+      features,
+      nodeViews,
+      portalStore,
+      value: latest.current.value,
+      placeholder: latest.current.placeholder,
+    })
+
+    builtFrom.current = { features, nodeViews }
+    store.setSnapshot({ view, state: next })
+    return next
+  }, [schema, features, nodeViews, portalStore, store])
+
+  useLayoutEffect(() => {
+    ensureState()
+  }, [ensureState])
+
+  const context = useMemo<WaxContextValue>(
+    () => ({ schema, features, store, latest, ensureState }),
+    [schema, features, store, ensureState],
   )
 
   return (
-    <WaxEngineContext.Provider value={engine}>
+    <WaxContext.Provider value={context}>
       {children}
       <NodeViewPortals store={portalStore} />
-    </WaxEngineContext.Provider>
+    </WaxContext.Provider>
   )
 }
 
