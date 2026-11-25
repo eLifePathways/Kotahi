@@ -45,7 +45,6 @@ class ListItemConverter extends BlockConverter {
   ])
   protected readonly selectors = ['li']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaBlock | null {
     return { type: 'ListItem', children }
   }

@@ -21,7 +21,6 @@ class CitationCalloutConverter extends InlineConverter {
     return super.matches(el) && citationIds(el).length > 0
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element): OxaInline | null {
     const cites: OxaCite[] = citationIds(el).map(xref => ({
       type: 'Cite',

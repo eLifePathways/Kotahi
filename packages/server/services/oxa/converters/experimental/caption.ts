@@ -12,7 +12,6 @@ class CaptionConverter extends BlockConverter {
   ])
   protected readonly selectors = ['caption', 'figcaption']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(el: Element, children: OxaNode[]): OxaBlock | null {
     if (!children.length) return null
 
@@ -22,7 +21,6 @@ class CaptionConverter extends BlockConverter {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(
     el: Element,
     children: OxaNode[],

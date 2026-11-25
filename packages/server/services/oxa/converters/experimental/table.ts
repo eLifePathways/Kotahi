@@ -32,7 +32,6 @@ class TableConverter extends BlockConverter {
     return { type: 'Figure', children: [...captions, table] }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(
     el: Element,
     children: OxaNode[],

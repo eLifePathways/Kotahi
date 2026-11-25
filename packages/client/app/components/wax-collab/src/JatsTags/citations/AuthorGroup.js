@@ -10,14 +10,12 @@ class AuthorGroup extends Tools {
   // icon = 'title'
   name = 'AuthorGroup'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       removeOrToggleMark(state, dispatch, 'authorGroup')
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = state => {
     const {
       selection: { from },
@@ -27,7 +25,6 @@ class AuthorGroup extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return state => {
       return Commands.markActive(state.config.schema.marks.authorGroup)(state)

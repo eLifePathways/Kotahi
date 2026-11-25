@@ -9,7 +9,6 @@ class ReferenceTool extends Tools {
   label = i18next.t('waxEditor.Reference')
   name = 'Reference'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     // This fires when the tool is shown
 
@@ -47,7 +46,6 @@ class ReferenceTool extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return (state, activeViewId) => {
       let isActive = false
@@ -66,7 +64,6 @@ class ReferenceTool extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId) => {
     if (activeViewId !== 'main' && activeViewId.indexOf('note-') !== 0) {
       return false
@@ -75,7 +72,6 @@ class ReferenceTool extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return state => {
       return Commands.setBlockType(state.config.schema.nodes.reference)(state)

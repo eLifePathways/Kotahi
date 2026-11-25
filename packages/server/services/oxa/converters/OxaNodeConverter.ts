@@ -98,7 +98,6 @@ abstract class OxaNodeConverter<T extends OxaNode> {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected escapeHtml(value: string): string {
     return value
       .replace(/&/g, '&amp;')
@@ -140,19 +139,16 @@ abstract class OxaNodeConverter<T extends OxaNode> {
     return normalizeChildren(result)
   }
 
-  // eslint-disable-next-line class-methods-use-this
   reset(): void {}
 
   /**
    * Allows converters to define additions to metadata, which will then be
    * collected by OxaConverter.
    */
-  // eslint-disable-next-line class-methods-use-this
   metadata(): Record<string, unknown> {
     return {}
   }
 
-  // eslint-disable-next-line class-methods-use-this
   fromMetadata(
     _metadata: Record<string, unknown>,
     _renderInlines: RenderInlines,
@@ -169,7 +165,6 @@ abstract class OxaNodeConverter<T extends OxaNode> {
    * the end of the document. It is only called by collectEndBlocks, which in
    * turn is called only by OxaConverter, which will do the actual appending.
    */
-  // eslint-disable-next-line class-methods-use-this
   protected endBlocks(): OxaBlock[] {
     return []
   }
@@ -233,7 +228,6 @@ abstract class OxaNodeConverter<T extends OxaNode> {
 export abstract class BlockConverter extends OxaNodeConverter<OxaBlock> {
   readonly kind = 'block'
 
-  // eslint-disable-next-line class-methods-use-this
   protected oxaBlockAttributes(el: Element): OxaBlockAttributes {
     const attributes: OxaBlockAttributes = {}
 
@@ -244,7 +238,6 @@ export abstract class BlockConverter extends OxaNodeConverter<OxaBlock> {
     return attributes
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected htmlBlockAttributes(node: OxaNode): HtmlAttributes {
     return { id: node.id, class: (node.classes ?? []).join(' ') }
   }

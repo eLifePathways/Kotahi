@@ -10,7 +10,6 @@ class FundingStatement extends Tools {
   color = 'colorFundingStatement'
   className = 'fundingstatement'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       Commands.setBlockType(state.config.schema.nodes.fundingStatement)(
@@ -20,7 +19,6 @@ class FundingStatement extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return (state, activeViewId) => {
       let isActive = false
@@ -36,13 +34,11 @@ class FundingStatement extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return state => {
       return Commands.setBlockType(state.config.schema.nodes.fundingStatement)(

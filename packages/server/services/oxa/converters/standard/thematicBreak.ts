@@ -6,7 +6,6 @@ class ThematicBreakConverter extends BlockConverter {
   readonly oxaTypes = ['ThematicBreak']
   protected readonly selectors = ['hr']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(): OxaBlock | null {
     return { type: 'ThematicBreak' }
   }

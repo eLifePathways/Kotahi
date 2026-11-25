@@ -17,14 +17,12 @@ class FrontMatter extends Tools {
   //     )
   //   }
   // }
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       wrapIn(state.config.schema.nodes.frontMatter)(state, dispatch)
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return (state, activeViewId) => {
       let isActive = false
@@ -40,13 +38,11 @@ class FrontMatter extends Tools {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = (state, activeViewId) => {
     if (activeViewId !== 'main') return false
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get enable() {
     return state => {
       return Commands.setBlockType(state.config.schema.nodes.frontMatter)(state)

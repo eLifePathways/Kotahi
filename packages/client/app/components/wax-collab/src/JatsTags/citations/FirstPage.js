@@ -10,14 +10,12 @@ class FirstPage extends Tools {
   // icon = 'title'
   name = 'FirstPage'
 
-  // eslint-disable-next-line class-methods-use-this
   get run() {
     return (state, dispatch) => {
       removeOrToggleMark(state, dispatch, 'firstPage')
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   select = state => {
     const {
       selection: { from },
@@ -27,7 +25,6 @@ class FirstPage extends Tools {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get active() {
     return state => {
       return Commands.markActive(state.config.schema.marks.firstPage)(state)

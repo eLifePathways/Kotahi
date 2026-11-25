@@ -10,12 +10,10 @@ class RemovedConverter extends InlineConverter {
   readonly skipChildren = true
   protected readonly selectors = ['script', 'style', 'span.deletion']
 
-  // eslint-disable-next-line class-methods-use-this
   protected toOxa(): OxaInline | null {
     return null
   }
 
-  // eslint-disable-next-line class-methods-use-this
   fromOxa(): string {
     return ''
   }

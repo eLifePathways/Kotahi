@@ -83,7 +83,6 @@ export class ImageConverter extends BlockConverter {
     return { type: 'Image', ...fields }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(el: Element): OxaBlock | null {
     const alt = el.attribs.alt?.trim()
     if (!alt) return null
@@ -124,7 +123,6 @@ export class InlineImageConverter extends InlineConverter {
     return { type: 'InlineImage', ...fields }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected fallback(el: Element): OxaInline | null {
     const alt = el.attribs.alt?.trim()
     if (!alt) return null
