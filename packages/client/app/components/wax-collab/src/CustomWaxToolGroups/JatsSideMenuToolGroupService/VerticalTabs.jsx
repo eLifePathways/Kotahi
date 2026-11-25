@@ -6,9 +6,9 @@
 
 import React, { useState, useContext } from 'react'
 import { th, override } from '@coko/client'
-import { WaxContext } from 'wax-prosemirror-core'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
+import { WaxContext } from '../../../../../ui/wax/wax-prosemirror-core'
 import Icon from './Icon'
 
 // n.b. Henrik's current design is at https://www.figma.com/file/uDxsjgDWxjiof0qSNFLelr/Kotahi-storybook?node-id=6256%3A11486

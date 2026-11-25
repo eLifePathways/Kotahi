@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Wax } from 'wax-prosemirror-core'
+import { Wax } from '../../../../ui/wax/wax-prosemirror-core'
 import yjsConfig from '../../../wax-collab/src/config/yjsConfig'
 import SimpleWaxEditorLayout from '../../../wax-collab/src/layout/SimpleWaxEditorLayout'
 import simpleWaxEditorConfig from '../../../wax-collab/src/config/SimpleWaxEditorConfig'

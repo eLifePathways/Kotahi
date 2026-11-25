@@ -9,7 +9,7 @@ import {
   WaxView,
   ComponentPlugin,
   DocumentHelpers,
-} from 'wax-prosemirror-core'
+} from '../../../../ui/wax/wax-prosemirror-core'
 
 import { NotesAreaContainer, NotesHeading, NotesContainer } from './NotesStyles'
 import {
@@ -29,8 +29,6 @@ import {
   CommentTrackTools,
   // CommentTrackOptions,
 } from './CommentsStyles'
-import 'wax-prosemirror-core/dist/index.css'
-import 'wax-prosemirror-services/dist/index.css'
 
 const getNotes = main => {
   const notes = DocumentHelpers.findChildrenByType(

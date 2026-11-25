@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../../ui/wax/wax-prosemirror-core'
 import orderedListNode from './schema/orderedListNode'
 import OrderedList from './OrderedList'
 

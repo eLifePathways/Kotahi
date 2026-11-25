@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Service } from 'wax-prosemirror-core'
+import { Service } from '../../../../../../ui/wax/wax-prosemirror-core'
 import { liftListItem, sinkListItem } from 'prosemirror-schema-list'
 import Lift from './Lift'
 

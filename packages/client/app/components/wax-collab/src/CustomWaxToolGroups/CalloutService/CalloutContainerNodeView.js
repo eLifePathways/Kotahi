@@ -1,4 +1,4 @@
-import { QuestionsNodeView } from 'wax-prosemirror-core'
+import { QuestionsNodeView } from '../../../../../ui/wax/wax-prosemirror-core'
 
 export default class CalloutPopUpContainerNodeView extends QuestionsNodeView {
   constructor(

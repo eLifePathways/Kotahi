@@ -8,8 +8,11 @@ import { decorate, injectable, inject } from 'inversify'
 import { isEmpty } from 'lodash'
 import { uuid } from '@coko/client'
 import styled from 'styled-components'
-import { WaxContext, ToolGroup } from 'wax-prosemirror-core'
 import Dropdown from 'react-dropdown'
+import {
+  WaxContext,
+  ToolGroup,
+} from '../../../../../ui/wax/wax-prosemirror-core'
 import 'react-dropdown/style.css'
 
 const DropdownStyled = styled(Dropdown)`

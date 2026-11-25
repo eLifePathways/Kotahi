@@ -9,5 +9,6 @@
     "skipLibCheck": true,
     "types": ["vite/client"]
   },
-  "include": ["app", "stories", ".storybook"]
+  "include": ["app", "stories", ".storybook"],
+  "exclude": ["app/ui/wax"]
 }

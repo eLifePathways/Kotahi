@@ -1,5 +1,5 @@
-import { Service } from 'wax-prosemirror-core'
 import autocomplete from 'prosemirror-autocomplete'
+import { Service } from '../../../../ui/wax/wax-prosemirror-core'
 
 class MentionService extends Service {
   name = 'MentionService'
