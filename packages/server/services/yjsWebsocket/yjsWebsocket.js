@@ -1,13 +1,16 @@
-const { config, logger, verifyJWT } = require('@coko/server')
-const { omit } = require('lodash')
+const { config, logger } = require('@coko/server')
 const map = require('lib0/map')
 // const Y = require('yjs')
-const { WebSocketServer } = require('ws')
+const { WebSocket, WebSocketServer } = require('ws')
 
 const WSSharedDoc = require('./wsSharedDoc')
 const utils = require('./utils')
+const { authoriseConnection } = require('./access')
 
 const pingTimeout = 30000
+
+// Application-defined close code (4000–4999) for refused connections
+const UNAUTHORISED_CLOSE_CODE = 4401
 
 const messageListener = (conn, doc, message) => {
   try {
@@ -40,54 +43,49 @@ const messageListener = (conn, doc, message) => {
   }
 }
 
-module.exports = () => {
+module.exports = ({ port = config.get('wsYjsServerPort') } = {}) => {
   try {
     const WSServer = new WebSocketServer({
-      port: config.get('wsYjsServerPort'),
+      port,
       clientTracking: true,
     })
 
     WSServer.on('connection', async (injectedWS, request) => {
       injectedWS.binaryType = 'arraybuffer'
 
-      const parts = request.url.split('/')
-      const lastPart = parts.pop()
+      // The client starts syncing as soon as the socket opens, so hold on to
+      // anything that arrives while access is being checked
+      const pendingMessages = []
+      const queueMessage = message => pendingMessages.push(message)
+      injectedWS.on('message', queueMessage)
 
-      const [id, params] = lastPart.split('?')
-      const variables = {}
-      params.split('&').forEach(pair => {
-        const [key, value] = pair.split('=')
-        variables[key] = value || ''
-      })
-
-      let userId = null
+      let access = null
 
       try {
-        userId = await new Promise((resolve, reject) => {
-          verifyJWT(variables.token, (_, usr) => {
-            if (usr) {
-              resolve(usr)
-            } else {
-              reject()
-            }
-          })
-        })
-      } catch (e) {
-        logger.error(`failed to Connect ${e.message}`)
-        userId = null
+        access = await authoriseConnection(request.url)
+      } catch (error) {
+        logger.error('Yjs connection: access check failed', error)
       }
 
-      const extraData = {
-        groupId: variables.groupId,
-        objectId: id,
-        ...omit(variables, ['token']),
+      if (!access) {
+        injectedWS.close(UNAUTHORISED_CLOSE_CODE, 'Unauthorised')
+        return
       }
 
-      const doc = getYDoc(id, userId, extraData)
+      if (injectedWS.readyState !== WebSocket.OPEN) return
+
+      const { docName, userId, extraData } = access
+      const doc = getYDoc(docName, userId, extraData)
 
       doc.conns.set(injectedWS, new Set())
 
+      injectedWS.off('message', queueMessage)
+
       injectedWS.on('message', message =>
+        messageListener(injectedWS, doc, new Uint8Array(message)),
+      )
+
+      pendingMessages.forEach(message =>
         messageListener(injectedWS, doc, new Uint8Array(message)),
       )
 
@@ -156,6 +154,8 @@ module.exports = () => {
         utils.docs.set(docName, doc)
         return doc
       })
+
+    return WSServer
   } catch (error) {
     throw new Error(error)
   }
