@@ -28,6 +28,7 @@ import {
 } from 'antd'
 import type {
   FilterDropdownProps,
+  FilterValue,
   SorterResult,
   TableCurrentDataSource,
   TablePaginationConfig,
@@ -189,8 +190,12 @@ const renderEditableOption = (
       labelRender={({ value: selectedValue }): ReactNode =>
         renderSingleOption(selectedValue as string, options)
       }
-      onChange={(newValue: string | undefined): void =>
-        onOptionChange?.(column.key, id, newValue ?? null)
+      onChange={(newValue: unknown): void =>
+        onOptionChange?.(
+          column.key,
+          id,
+          (newValue as string | undefined) ?? null,
+        )
       }
       onClick={(event: MouseEvent): void => event.stopPropagation()}
       optionRender={option =>
@@ -1658,7 +1663,7 @@ const ManuscriptsTable = ({
    */
   const handleTableChange = (
     pagination: TablePaginationConfig,
-    filters: Record<string, (string | number | boolean)[] | null>,
+    filters: Record<string, FilterValue | null>,
     sorter:
       | SorterResult<Record<string, any>>
       | SorterResult<Record<string, any>>[],

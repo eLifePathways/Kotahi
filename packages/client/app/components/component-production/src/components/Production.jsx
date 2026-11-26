@@ -132,24 +132,27 @@ const Production = ({
     v => v.manuscript?.authorFeedback?.previousSubmissions?.length > 0,
   )
 
-  const saveCurrentVersion = async source => {
+  const [source, setSource] = useState(manuscript.meta.source)
+
+  const saveCurrentVersion = async newSource => {
     // This just saves the current version of the manuscript on demand if it has changed.
     // This returns true if there's a new version.
     if (manuscript.meta?.previousVersions.length > 0) {
-      if (source === manuscript.meta.previousVersions[0].source) {
+      if (newSource === manuscript.meta.previousVersions[0].source) {
         // if it's the same as before, don't save.
         console.error('Nothing has changed, not saving!')
         return false
       }
     }
 
-    await updateManuscript(manuscript.id, { meta: { source } })
+    setSource(newSource)
+    await updateManuscript(manuscript.id, { meta: { source: newSource } })
     return true
   }
 
   const debouncedSave = useCallback(
-    debounce(source => {
-      updateManuscript(manuscript.id, { meta: { source } })
+    debounce(newSource => {
+      updateManuscript(manuscript.id, { meta: { source: newSource } })
     }, 2000),
     [],
   )
@@ -250,7 +253,10 @@ const Production = ({
                 onAssetManager={onAssetManager}
                 onSuggestingChange={onSuggestingChange}
                 readonly={isReadOnlyVersion || false}
-                saveSource={debouncedSave}
+                saveSource={newSource => {
+                  setSource(newSource)
+                  debouncedSave(newSource)
+                }}
                 setComments={getManuscriptComments}
                 suggesting={suggesting}
                 updateAnystyle={updateAnystyle}
@@ -259,7 +265,7 @@ const Production = ({
                 updateCrossRef={updateCrossRef}
                 uploadImage={uploadImage}
                 user={currentUser}
-                value={manuscript.meta.source}
+                value={source}
               />
             ) : (
               <Spinner fullpage />

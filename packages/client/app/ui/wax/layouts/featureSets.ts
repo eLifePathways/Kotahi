@@ -27,7 +27,7 @@ import subscript from '../features/subscript'
 import superscript from '../features/superscript'
 import tables from '../features/tables'
 import title from '../features/title'
-import trackChanges from '../features/trackChanges'
+import trackChanges, { type TrackChangesConfig } from '../features/trackChanges'
 import typography from '../features/typography'
 import underline from '../features/underline'
 import type { WaxFeature } from '../features/types'
@@ -55,6 +55,8 @@ type CommentOptions = {
 }
 
 type ImageOptions = { imageConfig?: unknown }
+
+type TrackChangesOptions = { trackChanges?: TrackChangesConfig }
 
 export const simpleFeatures = ({
   handlebarsActions,
@@ -93,7 +95,8 @@ export const fullFeatures = ({
   initialComments,
   onCommentsChange,
   imageConfig,
-}: CommentOptions & ImageOptions = {}): WaxFeature[] => [
+  trackChanges: trackChangesConfig,
+}: CommentOptions & ImageOptions & TrackChangesOptions = {}): WaxFeature[] => [
   trackedParagraph,
   typography,
   askAi,
@@ -107,7 +110,7 @@ export const fullFeatures = ({
   notes,
   tables,
   ...blocks(),
-  trackChanges,
+  trackChanges(trackChangesConfig),
   comments({ showTitle: true, initialComments, onChange: onCommentsChange }),
   jatsTags,
   citation(),
@@ -118,7 +121,8 @@ export const productionFeatures = ({
   initialComments,
   onCommentsChange,
   imageConfig,
-}: CommentOptions & ImageOptions = {}): WaxFeature[] => [
+  trackChanges: trackChangesConfig,
+}: CommentOptions & ImageOptions & TrackChangesOptions = {}): WaxFeature[] => [
   trackedParagraph,
   typography,
   askAi,
@@ -130,7 +134,7 @@ export const productionFeatures = ({
   notes,
   comments({ showTitle: true, initialComments, onChange: onCommentsChange }),
   link,
-  trackChanges,
+  trackChanges(trackChangesConfig),
   math,
   findAndReplace,
   tables,

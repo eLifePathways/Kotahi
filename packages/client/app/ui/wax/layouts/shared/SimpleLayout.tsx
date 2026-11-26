@@ -33,7 +33,7 @@ const SimpleLayout = ({
           className="wax-surface-scroll"
           data-testid={testId ?? 'read-only-simple-editor-div'}
         >
-          <WaxSurface spellCheck={spellCheck} />
+          <WaxSurface readonly={readonly} spellCheck={spellCheck} />
         </ReadOnlySimpleEditorDiv>
       ) : (
         <>
@@ -41,7 +41,7 @@ const SimpleLayout = ({
             <SimpleToolbar />
           </SimpleMenu>
           <SimpleEditorDiv className="wax-surface-scroll" data-testid={testId}>
-            <WaxSurface spellCheck={spellCheck} />
+            <WaxSurface readonly={readonly} spellCheck={spellCheck} />
           </SimpleEditorDiv>
         </>
       )}

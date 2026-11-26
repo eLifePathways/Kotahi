@@ -84,6 +84,8 @@ const FullWaxEditor = ({
     [citationStyleName],
   )
   const yjsFeatures = useYjsFeatures({ wsProvider, ydoc, name })
+  const waxUser = toWaxUser(user)
+  const { userId, username } = waxUser
 
   const features = useMemo(
     () => [
@@ -91,10 +93,11 @@ const FullWaxEditor = ({
         initialComments,
         onCommentsChange: (comments): void =>
           latest.current?.getComments?.(comments),
+        trackChanges: { enabled: suggesting, user: { userId, username } },
       }),
       ...yjsFeatures,
     ],
-    [initialComments, latest, yjsFeatures],
+    [initialComments, latest, yjsFeatures, suggesting, userId, username],
   )
 
   const save = useMemo(
@@ -118,7 +121,6 @@ const FullWaxEditor = ({
     }
   }, [save])
 
-  const waxUser = toWaxUser(user)
   const permissions = allowAll(!readonly)
 
   const toolbar = (
@@ -154,8 +156,6 @@ const FullWaxEditor = ({
           nodeViews={nodeViews}
           onChange={ydoc ? undefined : save}
           placeholder={placeholder}
-          readonly={readonly}
-          transactionContext={{ trackChanges: suggesting, user: waxUser }}
           value={ydoc ? '' : value}
         >
           <ActiveViewDom onChange={getActiveViewDom} />

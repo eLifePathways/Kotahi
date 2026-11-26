@@ -130,6 +130,7 @@ const Submit = ({
       content: (
         <EditorSection
           currentUser={currentUser}
+          key={version.id}
           manuscript={version}
           onSuggestingChange={onSuggestingChange}
           readonly={!userCanEditManuscriptAndFormData}

@@ -170,6 +170,7 @@ const DecisionVersion = ({
         <EditorSection
           currentUser={user}
           editorSection="CPEditor"
+          key={manuscript.id}
           manuscript={manuscript}
           onSuggestingChange={onSuggestingChange}
           queryAI={queryAI}

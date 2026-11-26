@@ -11,8 +11,10 @@ type Row = {
   status: string
 }
 
+const RowTable = Table<Row>
+
 const meta = preview.meta({
-  component: Table,
+  component: RowTable,
 })
 
 const columns = [

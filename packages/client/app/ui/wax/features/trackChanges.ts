@@ -38,8 +38,8 @@ type Permission = { accept: boolean; reject: boolean }
 
 export type TrackPermissions = { own: Permission; others: Permission }
 
-export type TrackChangesContext = {
-  trackChanges?: boolean
+export type TrackChangesConfig = {
+  enabled: boolean
   user?: TrackingUser
 }
 
@@ -556,8 +556,10 @@ export const setChangesVisible =
 export type TrackingUser = {
   userId: string
   username: string
-  userColor: { addition: string; deletion: string }
 }
+
+const insertionStyle = 'color: royalblue;'
+const deletionStyle = 'color: indianred;'
 
 type StepContext = {
   state: EditorState
@@ -586,7 +588,7 @@ const markInsertion = (
   const insertionMark = tr.doc.type.schema.marks.insertion.create({
     user: user.userId,
     username: user.username,
-    style: `color: ${user.userColor.addition};`,
+    style: insertionStyle,
     // date
   })
 
@@ -645,7 +647,7 @@ const markDeletion = (
   const deletionMark = tr.doc.type.schema.marks.deletion.create({
     user: user.userId,
     username: user.username,
-    style: `color: ${user.userColor.deletion};`,
+    style: deletionStyle,
     // date
   })
 
@@ -739,7 +741,7 @@ const markDeletion = (
           type: 'deletion',
           user: user.userId,
           username: user.username,
-          style: `color: ${user.userColor.deletion};`,
+          style: deletionStyle,
           date,
           group,
           viewid: viewId,
@@ -1570,7 +1572,32 @@ const hideShowPlugin = (): Plugin<HideShowState> =>
     } as Plugin<HideShowState>['props'],
   })
 
-const trackChanges: WaxFeature = {
+const configKey = new PluginKey<TrackChangesConfig>('trackChangesConfig')
+
+const configPlugin = (
+  initialConfig: TrackChangesConfig,
+): Plugin<TrackChangesConfig> =>
+  new Plugin<TrackChangesConfig>({
+    key: configKey,
+    state: {
+      init: (): TrackChangesConfig => initialConfig,
+      apply: (tr, config): TrackChangesConfig =>
+        tr.getMeta(configKey) ?? config,
+    },
+  })
+
+export const setTrackChangesConfig =
+  (config: TrackChangesConfig): Command =>
+  (state, dispatch) => {
+    dispatch?.(
+      state.tr.setMeta(configKey, config).setMeta('addToHistory', false),
+    )
+    return true
+  }
+
+const trackChanges = (
+  config: TrackChangesConfig = { enabled: false },
+): WaxFeature => ({
   name: 'trackChanges',
   waxMarks: {
     format_change: formatChangeSpec,
@@ -1588,11 +1615,14 @@ const trackChanges: WaxFeature = {
   plugins: () => ({
     trackChangePlugin: trackChangePlugin(),
     hideShowPlugin: hideShowPlugin(),
+    trackChangesConfigPlugin: configPlugin(config),
   }),
-  transformTransaction: (tr, state, context) => {
-    const { trackChanges: enabled, user } = context as TrackChangesContext
+  transformTransaction: (tr, state): Transaction => {
+    if (tr.getMeta(configKey)) return tr
+    const { enabled, user } = configKey.getState(state) ?? { enabled: false }
     return enabled && user ? trackedTransaction(tr, state, user) : tr
   },
-}
+  sync: setTrackChangesConfig(config),
+})
 
 export default trackChanges

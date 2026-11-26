@@ -174,7 +174,7 @@ const panelFeatures = [
   emphasis,
   title,
   headings,
-  trackChanges,
+  trackChanges(),
   notes,
   images(),
   comments({ showTitle: true }),

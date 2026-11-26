@@ -80,6 +80,9 @@ const ProductionWaxEditor = ({
   const [fullScreen, setFullScreen] = useState(false)
   const [initialComments] = useState(() => setComments?.() ?? [])
   const yjsFeatures = useYjsFeatures({ wsProvider, ydoc, name })
+  const waxUser = toWaxUser(user)
+  const { userId, username } = waxUser
+  const trackingOn = isAuthorProofingVersion || suggesting
 
   const features = useMemo(
     () => [
@@ -87,10 +90,11 @@ const ProductionWaxEditor = ({
         initialComments,
         onCommentsChange: (comments): void =>
           latest.current?.getComments?.(comments),
+        trackChanges: { enabled: trackingOn, user: { userId, username } },
       }),
       ...yjsFeatures,
     ],
-    [initialComments, latest, yjsFeatures],
+    [initialComments, latest, yjsFeatures, trackingOn, userId, username],
   )
 
   const references = useMemo<ReferenceServices>(
@@ -114,9 +118,6 @@ const ProductionWaxEditor = ({
       citationStyleName,
     ],
   )
-
-  const waxUser = toWaxUser(user)
-  const trackingOn = isAuthorProofingVersion || suggesting
 
   const toolbar = (
     <FullToolbar
@@ -150,8 +151,6 @@ const ProductionWaxEditor = ({
           nodeViews={nodeViews}
           onChange={saveSource ?? undefined}
           placeholder={placeholder}
-          readonly={readonly}
-          transactionContext={{ trackChanges: trackingOn, user: waxUser }}
           value={value}
         >
           <SaveOnUnmount onSave={saveSource} />

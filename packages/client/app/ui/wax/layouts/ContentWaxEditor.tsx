@@ -9,7 +9,6 @@ import { contentFeatures, simpleFeatures } from './featureSets'
 import BlurArea from './shared/BlurArea'
 import { inlineImage } from './shared/imageUpload'
 import { FullToolbar, SimpleToolbar, fullScreenStyle } from './shared/toolbars'
-import { toWaxUser, type KotahiUser } from './shared/user'
 import {
   EditorDiv,
   FullWaxEditorGrid,
@@ -44,7 +43,6 @@ export type ContentWaxEditorProps = {
   placeholder?: string
   fileUpload?: (file: File) => Promise<UploadResult>
   readonly?: boolean
-  user?: KotahiUser
   onAssetManager?: () => Promise<AssetFile | AssetFile[] | null>
   handlebarsVariables?: HandlebarsVariable[]
   simple?: boolean
@@ -57,7 +55,6 @@ const ContentWaxEditor = ({
   placeholder = '',
   fileUpload = inlineImage,
   readonly = false,
-  user,
   onAssetManager,
   handlebarsVariables,
   simple = false,
@@ -83,8 +80,6 @@ const ContentWaxEditor = ({
         key={`${simple}:${withHandlebars}`}
         onChange={onChange}
         placeholder={placeholder}
-        readonly={readonly}
-        transactionContext={{ user: toWaxUser(user) }}
         value={value}
       >
         <BlurArea onBlur={onBlur}>
@@ -113,7 +108,7 @@ const ContentWaxEditor = ({
                   $hideComments
                   className="wax-surface-scroll panelWrapper"
                 >
-                  <WaxSurface />
+                  <WaxSurface readonly={readonly} />
                   {handlebarsVariables ? (
                     <HandlebarsAutocomplete
                       listener={listener}

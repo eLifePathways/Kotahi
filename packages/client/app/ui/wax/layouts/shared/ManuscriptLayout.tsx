@@ -204,11 +204,11 @@ export const FullLayout = ({
       <FullWaxEditorGrid $useComments={false}>
         {readonly ? (
           <ReadOnlyEditorDiv className="wax-surface-scroll panelWrapper">
-            <WaxSurface />
+            <WaxSurface readonly={readonly} />
           </ReadOnlyEditorDiv>
         ) : (
           <EditorDiv $hideComments className="wax-surface-scroll panelWrapper">
-            <WaxSurface />
+            <WaxSurface readonly={readonly} />
           </EditorDiv>
         )}
         <Notes readonly={readonly} />
@@ -235,7 +235,7 @@ export const ProductionLayout = ({
         <EditorArea className="editorArea production">
           <WaxSurfaceScroll className="panelWrapper">
             <EditorContainer>
-              <WaxSurface />
+              <WaxSurface readonly={readonly} />
             </EditorContainer>
             {comments ? <Comments {...comments} /> : null}
           </WaxSurfaceScroll>

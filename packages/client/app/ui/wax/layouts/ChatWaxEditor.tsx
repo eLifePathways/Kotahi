@@ -405,17 +405,20 @@ const ChatWaxEditor = ({
     <div className={validationStatus}>
       <WaxProvider
         features={features}
-        focusOnMount={autoFocus}
         onChange={onChange}
         placeholder={placeholder}
-        readonly={readonly}
         value={value}
       >
         <EditorHandle editorRef={editorRef} />
         <SimpleGrid $readonly={readonly}>
           {readonly ? (
             <ReadOnlySimpleEditorDiv className="wax-surface-scroll">
-              <WaxSurface className={editorType} spellCheck={spellCheck} />
+              <WaxSurface
+                className={editorType}
+                focusOnMount={autoFocus}
+                readonly={readonly}
+                spellCheck={spellCheck}
+              />
             </ReadOnlySimpleEditorDiv>
           ) : (
             <>
@@ -430,7 +433,12 @@ const ChatWaxEditor = ({
                   onClick={(): void => setIsTopBarOpen(!isTopBarOpen)}
                 />
                 <SimpleEditorDiv className="wax-surface-scroll">
-                  <WaxSurface className={editorType} spellCheck={spellCheck} />
+                  <WaxSurface
+                    className={editorType}
+                    focusOnMount={autoFocus}
+                    readonly={readonly}
+                    spellCheck={spellCheck}
+                  />
                 </SimpleEditorDiv>
                 <SendMessage />
               </Row>

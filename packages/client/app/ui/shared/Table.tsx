@@ -1,11 +1,11 @@
-import { type ComponentProps, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import styled from 'styled-components'
-import { Table as AntTable } from 'antd'
+import { Table as AntTable, type TableProps as AntTableProps } from 'antd'
 import { th, grid } from '@coko/client'
 
 import Spinner from './Spinner'
 
-type TableProps = Omit<ComponentProps<typeof AntTable>, 'loading'> & {
+type TableProps<RecordType> = Omit<AntTableProps<RecordType>, 'loading'> & {
   loading?: boolean
 }
 
@@ -117,13 +117,15 @@ const Wrapper = styled.div`
   }
 `
 
-const Table = (props: TableProps): ReactNode => {
+const Table = <RecordType extends object>(
+  props: TableProps<RecordType>,
+): ReactNode => {
   const { className, loading = false, ...rest } = props
 
   return (
     <Wrapper className={className}>
       <Spinner spinning={loading}>
-        <AntTable {...rest} />
+        <AntTable<RecordType> {...rest} />
       </Spinner>
     </Wrapper>
   )

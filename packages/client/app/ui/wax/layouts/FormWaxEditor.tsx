@@ -44,7 +44,6 @@ const FormWaxEditor = ({
         key={yjsKey({ wsProvider, ydoc, name })}
         onChange={ydoc ? undefined : onChange}
         placeholder={placeholder}
-        readonly={readonly}
         value={ydoc ? '' : value}
       >
         <BlurArea onBlur={onBlur}>

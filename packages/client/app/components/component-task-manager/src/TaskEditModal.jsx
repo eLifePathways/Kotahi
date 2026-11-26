@@ -171,10 +171,6 @@ const TaskEditModal = ({
     setTaskNotifications(task.emailNotifications ?? [])
   }, [isOpen, task])
 
-  useEffect(() => {
-    setTaskDescription(task.description)
-  }, [task])
-
   const updateTaskDescriptionDebounce = useCallback(
     debounce(updateTask ?? (() => {}), 1000),
     [],

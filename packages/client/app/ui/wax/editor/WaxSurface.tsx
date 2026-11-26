@@ -1,17 +1,14 @@
 import {
   useContext,
-  useEffect,
   useLayoutEffect,
-  useRef,
+  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react'
-import type { Transaction } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
 import styled, { keyframes } from 'styled-components'
 import { th } from '@coko/client'
 
 import { WaxContext } from './context'
-import { serialize } from './htmlFormat'
 
 // #region styled
 const cursorBlink = keyframes`
@@ -125,6 +122,8 @@ const Mount = styled.div`
 
 type WaxSurfaceProps = {
   className?: string
+  focusOnMount?: boolean
+  readonly?: boolean
   spellCheck?: boolean
 }
 
@@ -138,79 +137,33 @@ const attributesFor = (
 
 const WaxSurface = ({
   className,
+  focusOnMount = false,
+  readonly = false,
   spellCheck = false,
 }: WaxSurfaceProps): ReactNode => {
   const context = useContext(WaxContext)
   if (!context) throw new Error('WaxSurface must be used inside a WaxProvider')
 
-  const { schema, features, store, latest } = context
-  const mount = useRef<HTMLDivElement>(null)
-  const viewRef = useRef<EditorView | null>(null)
-  const attributes = useRef(attributesFor(spellCheck, className))
+  const { store, setMount } = context
+  const [focusOnMountAtStart] = useState(focusOnMount)
+
+  const view = useSyncExternalStore(
+    store.subscribe,
+    () => store.getSnapshot().view,
+  )
 
   useLayoutEffect(() => {
-    attributes.current = attributesFor(spellCheck, className)
-  })
+    view?.setProps({
+      attributes: attributesFor(spellCheck, className),
+      editable: () => !readonly,
+    })
+  }, [view, spellCheck, className, readonly])
 
   useLayoutEffect(() => {
-    const { state } = store.getSnapshot()
+    if (view && focusOnMountAtStart) view.focus()
+  }, [view, focusOnMountAtStart])
 
-    const view: EditorView = new EditorView(
-      { mount: mount.current },
-      {
-        state,
-        editable: (): boolean => !latest.current.readonly,
-        attributes: attributes.current,
-        dispatchTransaction(transaction: Transaction): void {
-          const current = latest.current
-          const external = !!transaction.getMeta('externalUpdate')
-
-          const tr: Transaction = external
-            ? transaction
-            : features.reduce(
-                (next, feature) =>
-                  feature.transformTransaction
-                    ? feature.transformTransaction(
-                        next,
-                        view.state,
-                        current.transactionContext,
-                      )
-                    : next,
-                transaction,
-              )
-
-          const previous = view.state.doc
-          const next = view.state.apply(tr)
-          view.updateState(next)
-          store.setSnapshot({ view, state: next })
-
-          if (
-            !external &&
-            (!previous.eq(next.doc) || tr.getMeta('forceUpdate'))
-          )
-            current.onSave(serialize(schema, next.doc.content))
-        },
-      },
-    )
-
-    viewRef.current = view
-    store.setSnapshot({ view, state })
-    if (latest.current.focusOnMount) view.focus()
-
-    return (): void => {
-      viewRef.current = null
-      store.setSnapshot({ view: undefined, state: view.state })
-      view.destroy()
-    }
-  }, [schema, features, store, latest])
-
-  useEffect(() => {
-    const view = viewRef.current
-    if (view && !view.isDestroyed)
-      view.setProps({ attributes: attributesFor(spellCheck, className) })
-  }, [spellCheck, className])
-
-  return <Mount ref={mount} />
+  return <Mount ref={setMount} />
 }
 
 export default WaxSurface

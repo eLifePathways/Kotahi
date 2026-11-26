@@ -63,7 +63,6 @@ const SimpleWaxEditor = ({
         key={`${yjsKey({ wsProvider, ydoc, name })}:${withHandlebars}`}
         onChange={save}
         placeholder={placeholder}
-        readonly={readonly}
         value={ydoc ? '' : value}
       >
         <BlurArea

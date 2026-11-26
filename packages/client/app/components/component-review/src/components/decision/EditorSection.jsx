@@ -2,7 +2,7 @@
 
 /* eslint-disable react/prop-types */
 
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -37,6 +37,13 @@ const EditorSection = ({
   const {
     submission: { submissionPage = {} },
   } = useContext(ConfigContext)
+
+  const [source, setSource] = useState(manuscript.meta.source)
+
+  const handleSaveSource = html => {
+    setSource(html)
+    saveSource?.(html)
+  }
 
   const {
     showModal,
@@ -151,7 +158,7 @@ const EditorSection = ({
           onAssetManager={onAssetManager}
           onSuggestingChange={onSuggestingChange}
           readonly={readonly}
-          saveSource={saveSource}
+          saveSource={handleSaveSource}
           setComments={() => JSON.parse(manuscript.meta.comments) || []}
           suggesting={suggesting}
           uploadImage={uploadImage}
@@ -164,7 +171,7 @@ const EditorSection = ({
             )
           }
           user={currentUser}
-          value={manuscript.meta.source}
+          value={source}
         />
       </Wrapper>
     </>

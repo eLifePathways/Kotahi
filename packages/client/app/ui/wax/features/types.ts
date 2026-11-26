@@ -42,8 +42,6 @@ export type WaxNodeSpec = Omit<NodeSpec, 'parseDOM' | 'toDOM'> & {
   toDOM?: HookToDOM<Node>
 }
 
-export type TransactionContext = Record<string, unknown>
-
 export type WaxFeature = {
   name: string
   marks?: Record<string, MarkSpec>
@@ -53,10 +51,7 @@ export type WaxFeature = {
   shortcuts?: Record<string, Command>
   plugins?: () => Record<string, Plugin>
   rules?: (schema: Schema) => InputRule[]
-  transformTransaction?: (
-    tr: Transaction,
-    state: EditorState,
-    context: TransactionContext,
-  ) => Transaction
+  transformTransaction?: (tr: Transaction, state: EditorState) => Transaction
+  sync?: Command
   flushSchemaOnRegister?: boolean
 }
