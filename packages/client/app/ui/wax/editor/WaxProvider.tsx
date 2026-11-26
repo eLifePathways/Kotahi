@@ -25,7 +25,7 @@ import createStore from './store'
 const noop = (): void => {}
 const noNodeViews: NodeViews = {}
 
-export type WaxProviderProps = {
+type WaxProviderProps = {
   children?: ReactNode
   features: WaxFeature[]
   nodeViews?: NodeViews

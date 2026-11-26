@@ -1,5 +1,4 @@
-export { default as WaxProvider, type WaxProviderProps } from './WaxProvider'
+export { default as WaxProvider } from './WaxProvider'
 export { default as WaxSurface } from './WaxSurface'
 export { default as useWax } from './useWax'
-export type { NodeViewProps, NodeViews } from './nodeViews'
-export type { WaxSnapshot } from './store'
+export type { NodeViewProps } from './nodeViews'

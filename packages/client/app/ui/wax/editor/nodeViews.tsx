@@ -142,5 +142,3 @@ type NodeViewPortalsProps = {
 
 export const NodeViewPortals = ({ store }: NodeViewPortalsProps): ReactNode =>
   useSyncExternalStore(store.subscribe, store.getPortals, store.getPortals)
-
-export type { PortalStore }
