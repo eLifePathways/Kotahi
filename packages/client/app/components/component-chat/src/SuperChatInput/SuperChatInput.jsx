@@ -37,7 +37,6 @@ const SuperChatInput = ({
   const [text, changeText] = React.useState('')
 
   const { scrollToBottom } = useAppScroller()
-  const editorRef = React.useRef()
 
   // On mount, set the text state to the cached value if one exists
   // $FlowFixMe
@@ -52,16 +51,14 @@ const SuperChatInput = ({
     localStorage.setItem(cacheKey, text)
   }, [text])
 
-  const onEnterPress = () => {
-    submit()
+  const onEnterPress = html => {
+    submit(html)
   }
 
   const sendMessage = ({ body }) =>
     sendChannelMessages({ content: body, channelId: channelId })
 
-  const submit = async e => {
-    if (e) e.preventDefault()
-
+  const submit = async html => {
     if (!networkOnline) {
       console.error('No internet')
       // return props.dispatch(
@@ -105,13 +102,11 @@ const SuperChatInput = ({
         })
     }
 
-    const msg = editorRef.current.getContent()
-
-    if (msg.length === 0) return
+    if (!html) return
 
     // workaround react-mentions bug by replacing @[username] with @username
     // @see withspectrum/spectrum#4587
-    sendMessage({ body: msg.replace(/@\[([a-z0-9_-]+)\]/g, '@$1') })
+    sendMessage({ body: html.replace(/@\[([a-z0-9_-]+)\]/g, '@$1') })
 
     // Clear the chat input now that we're sending a message for sure
     removeQuotedMessage()
@@ -152,7 +147,7 @@ const SuperChatInput = ({
               onValidated={previewMedia}
             />
           )} */}
-        <Form onSubmit={submit}>
+        <Form onSubmit={event => event.preventDefault()}>
           <InputWrapper
             $networkDisabled={networkDisabled}
             // hasAttachment={!!quotedMessage || !!mediaPreview}
@@ -178,7 +173,6 @@ const SuperChatInput = ({
             )}
             <EditorMention
               autoFocus
-              editorRef={editorRef}
               field={{
                 name: 'comment',
               }}

@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode, type Ref } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import type { Options } from 'prosemirror-autocomplete'
 import { Send } from 'react-feather'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +12,6 @@ import { WordCount } from '../ui'
 import featureStyles from '../ui/featureStyles'
 import { chatFeatures } from './featureSets'
 import ToolbarButton from './shared/ChatToolbarButton'
-import EditorHandle, { type EditorHandleRef } from './shared/EditorHandle'
 import { SimpleToolbar } from './shared/toolbars'
 import useLatest from './shared/useLatest'
 
@@ -370,7 +369,6 @@ export type ChatWaxEditorProps = {
   placeholder?: string
   spellCheck?: boolean
   onEnterPress?: (html: string) => void
-  editorRef?: Ref<EditorHandleRef>
   autoCompleteReducer?: Options['reducer']
   editorType?: string
 }
@@ -384,7 +382,6 @@ const ChatWaxEditor = ({
   placeholder = '',
   spellCheck = false,
   onEnterPress,
-  editorRef,
   autoCompleteReducer,
   editorType,
 }: ChatWaxEditorProps): ReactNode => {
@@ -409,7 +406,6 @@ const ChatWaxEditor = ({
         placeholder={placeholder}
         value={value}
       >
-        <EditorHandle editorRef={editorRef} />
         <SimpleGrid $readonly={readonly}>
           {readonly ? (
             <ReadOnlySimpleEditorDiv className="wax-surface-scroll">

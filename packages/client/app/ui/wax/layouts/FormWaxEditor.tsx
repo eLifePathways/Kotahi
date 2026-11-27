@@ -11,7 +11,7 @@ export type FormWaxEditorProps = YjsProps & {
   validationStatus?: string
   readonly?: boolean
   onChange?: (html: string) => void
-  onBlur?: (html: string) => void
+  onBlur?: () => void
   placeholder?: string
   spellCheck?: boolean
   'data-testid'?: string

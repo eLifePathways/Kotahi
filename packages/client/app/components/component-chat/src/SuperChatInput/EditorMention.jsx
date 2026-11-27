@@ -63,7 +63,6 @@ const EditorMention = ({
   readOnly,
   id,
   onEnterPress,
-  editorRef,
   placeholder,
   autoFocus,
   hasAttachment,
@@ -298,7 +297,6 @@ const EditorMention = ({
       <ChatWaxEditor
         autoCompleteReducer={autoCompleteReducer}
         autoFocus={autoFocus}
-        editorRef={editorRef}
         editorType="issues"
         field={{ name, value }}
         form={{ setFieldValue }}

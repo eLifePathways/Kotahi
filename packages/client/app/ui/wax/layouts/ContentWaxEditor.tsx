@@ -39,7 +39,7 @@ const WaxContainer = styled.div`
 export type ContentWaxEditorProps = {
   value?: string
   onChange?: (html: string) => void
-  onBlur?: (html: string) => void
+  onBlur?: () => void
   placeholder?: string
   fileUpload?: (file: File) => Promise<UploadResult>
   readonly?: boolean

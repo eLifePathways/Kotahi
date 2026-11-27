@@ -14,7 +14,7 @@ export type SimpleWaxEditorProps = YjsProps & {
   value?: string
   validationStatus?: string
   readonly?: boolean
-  onBlur?: (html: string) => void
+  onBlur?: () => void
   onChange?: (html: string) => void
   placeholder?: string
   spellCheck?: boolean
@@ -66,10 +66,9 @@ const SimpleWaxEditor = ({
         value={ydoc ? '' : value}
       >
         <BlurArea
-          onBlur={(html): void => {
-            save.cancel()
-            onChange?.(html)
-            onBlur?.(html)
+          onBlur={(): void => {
+            save.flush()
+            onBlur?.()
           }}
         >
           <SimpleLayout

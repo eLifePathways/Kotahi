@@ -1,12 +1,9 @@
 import type { FocusEvent, ReactNode } from 'react'
 
-import { useWax } from '../../editor'
-import { serialize } from '../../editor/htmlFormat'
-
 type BlurAreaProps = {
   children: ReactNode
   className?: string
-  onBlur?: (html: string) => void
+  onBlur?: () => void
 }
 
 const BlurArea = ({
@@ -14,12 +11,10 @@ const BlurArea = ({
   className,
   onBlur,
 }: BlurAreaProps): ReactNode => {
-  const { view } = useWax()
-
   const handleBlur = (event: FocusEvent<HTMLDivElement>): void => {
-    if (!onBlur || !view) return
+    if (!onBlur) return
     if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
-    onBlur(serialize(view.state.schema, view.state.doc.content))
+    onBlur()
   }
 
   return (

@@ -11,7 +11,6 @@ import {
   type ReferenceServices,
 } from '../ui'
 import { productionFeatures } from './featureSets'
-import { SaveOnUnmount } from './shared/EditorEffects'
 import useImageUpload, { type UploadImage } from './shared/imageUpload'
 import { ProductionLayout } from './shared/ManuscriptLayout'
 import { FullToolbar, type AiConfig } from './shared/toolbars'
@@ -153,7 +152,6 @@ const ProductionWaxEditor = ({
           placeholder={placeholder}
           value={value}
         >
-          <SaveOnUnmount onSave={saveSource} />
           <ProductionLayout
             comments={
               useComments
