@@ -5,15 +5,15 @@
 
 import { useEffect, useState, useContext } from 'react'
 import { DOMParser, DOMSerializer, Fragment } from 'prosemirror-model'
-import {
-  WaxContext,
-  ApplicationContext,
-  DocumentHelpers,
-} from 'wax-prosemirror-core'
 import { sanitize } from 'isomorphic-dompurify'
 import striptags from 'striptags'
 import { Loader, List, CheckCircle } from 'react-feather'
 import { useTheme } from 'styled-components'
+import {
+  WaxContext,
+  ApplicationContext,
+  DocumentHelpers,
+} from '../../../../../../ui/wax/wax-prosemirror-core'
 
 import Spinner from '../../../../../../ui/shared/Spinner'
 import Modal from '../../../../../component-modal/src/Modal'

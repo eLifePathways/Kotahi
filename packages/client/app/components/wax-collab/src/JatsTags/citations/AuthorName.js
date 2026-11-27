@@ -1,5 +1,5 @@
 import { decorate, injectable } from 'inversify'
-import { Commands, Tools } from 'wax-prosemirror-core'
+import { Commands, Tools } from '../../../../../ui/wax/wax-prosemirror-core'
 import removeOrToggleMark from '../removeOrToggleMark'
 
 class AuthorName extends Tools {

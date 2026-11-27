@@ -1,4 +1,4 @@
-// import { YjsService } from 'wax-prosemirror-services'
+// import { YjsService } from '../../../../ui/wax/wax-prosemirror-services'
 import YjsService from './YjsService'
 
 export default (config, { wsProvider, ydoc, yjsType }) => {

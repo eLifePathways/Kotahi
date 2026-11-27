@@ -5,8 +5,8 @@
 
 import { useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Wax } from 'wax-prosemirror-core'
 import { debounce } from 'lodash'
+import { Wax } from '../../../ui/wax/wax-prosemirror-core'
 import yjsConfig from './config/yjsConfig'
 import simpleWaxEditorConfig from './config/SimpleWaxEditorConfig'
 import SimpleWaxEditorLayout from './layout/SimpleWaxEditorLayout'

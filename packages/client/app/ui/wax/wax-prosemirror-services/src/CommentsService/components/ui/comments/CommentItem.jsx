@@ -1,0 +1,66 @@
+/* eslint-disable react/prop-types */
+
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+import { grid, th, override } from '../../../../helpers'
+
+dayjs.extend(relativeTime)
+
+const Wrapper = styled.div``
+
+const Head = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  margin-bottom: ${grid(2)};
+
+  ${override('Wax.CommentInfoWrapper')}
+`
+
+const Name = styled.div`
+  font-size: ${th('fontSizeBase')};
+
+  ${override('Wax.CommentName')}
+`
+
+const Timestamp = styled.div`
+  color: gray;
+  font-size: ${th('fontSizeBaseSmall')};
+
+  ${override('Wax.CommentTimestamp')}
+`
+
+const Content = styled.div`
+  font-family: ${th('fontReading')};
+  font-size: ${th('fontSizeBaseLarge')};
+
+  ${override('Wax.CommentContent')}
+`
+
+const CommentItem = props => {
+  const { className, content, displayName, timestamp, active = false } = props
+  return (
+    <Wrapper active={active} className={className}>
+      <Head active={active}>
+        <Name>{displayName}</Name>
+        <Timestamp>{timestamp && dayjs(timestamp).fromNow()}</Timestamp>
+      </Head>
+      <Content active={active}>{content}</Content>
+    </Wrapper>
+  )
+}
+
+CommentItem.propTypes = {
+  active: PropTypes.bool,
+  /** Actual comment text */
+  content: PropTypes.string.isRequired,
+  /** Display name of user that made the comment */
+  displayName: PropTypes.string.isRequired,
+  /** When the comment was made */
+  timestamp: PropTypes.number.isRequired,
+}
+
+export default CommentItem

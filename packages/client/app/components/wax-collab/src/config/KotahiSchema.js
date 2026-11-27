@@ -1,4 +1,6 @@
-import { EditoriaSchema /* SchemaHelpers */ } from 'wax-prosemirror-core'
+import {
+  EditoriaSchema /* SchemaHelpers */,
+} from '../../../../ui/wax/wax-prosemirror-core'
 
 const KotahiSchema = {
   marks: { ...EditoriaSchema.marks },
