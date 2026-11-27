@@ -3055,6 +3055,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:^19.2.3":
+  version: 19.3.0
+  resolution: "@types/react-dom@npm:19.3.0"
+  peerDependencies:
+    "@types/react": ^19.3.0
+  checksum: 10c0/ce0066d28b62bc6afdd17ca84756b8fbe0f6ffc0c8b1e60739abc30e81510da2edbc1007e6ab3d974d30f5a8c25bb0f7de8d7ce09736c909fe84c0f9aed0b946
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:*":
   version: 18.3.3
   resolution: "@types/react@npm:18.3.3"
@@ -3065,12 +3074,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.2.14":
-  version: 19.2.14
-  resolution: "@types/react@npm:19.2.14"
+"@types/react@npm:^19.2.17":
+  version: 19.3.3
+  resolution: "@types/react@npm:19.3.3"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 10c0/7d25bf41b57719452d86d2ac0570b659210402707313a36ee612666bf11275a1c69824f8c3ee1fdca077ccfe15452f6da8f1224529b917050eb2d861e52b59b7
+  checksum: 10c0/b435951e715578f769df747431bcdd95e07b93238008365622b76d46e3ec76235c869d3007b2ea9063c30f05c35dc3baa2d9833bf09c3faf1e548f0e028f79ec
   languageName: node
   linkType: hard
 
@@ -5531,7 +5540,8 @@ __metadata:
     "@storybook/addon-docs": "npm:^10.4.6"
     "@storybook/react-vite": "npm:^10.4.6"
     "@types/lodash": "npm:^4.17.25"
-    "@types/react": "npm:^19.2.14"
+    "@types/react": "npm:^19.2.17"
+    "@types/react-dom": "npm:^19.2.3"
     "@uiw/react-codemirror": "npm:^4.21.20"
     antd: "npm:^6.3.7"
     color: "npm:^3.0.0"
@@ -5563,11 +5573,11 @@ __metadata:
     prosemirror-transform: "npm:^1.12.7"
     prosemirror-view: "npm:^1.43.0"
     rc-tooltip: "npm:5.1.1"
-    react: "npm:^19.2.5"
+    react: "npm:^19.2.9"
     react-calendar: "npm:^3.9.0"
     react-contenteditable: "npm:^3.3.6"
     react-date-picker: "npm:^8.2.0"
-    react-dom: "npm:^19.2.5"
+    react-dom: "npm:^19.2.9"
     react-dropdown: "npm:^1.11.0"
     react-dropzone: "npm:10.2.2"
     react-feather: "npm:^2.0.10"
@@ -7041,6 +7051,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^19.2.9":
+  version: 19.3.1
+  resolution: "react-dom@npm:19.3.1"
+  dependencies:
+    scheduler: "npm:^0.28.0"
+  peerDependencies:
+    react: ^19.3.1
+  checksum: 10c0/382700916313b2ebc46acee80642f300bb8601eac6a9e7fefade5b8b30e66b05bf3aaa56a3c964589fcd578d27b486e847470c2697d879264e766661ff49fac7
+  languageName: node
+  linkType: hard
+
 "react-dropdown@npm:^1.11.0":
   version: 1.11.0
   resolution: "react-dropdown@npm:1.11.0"
@@ -7328,6 +7349,13 @@ __metadata:
   version: 19.2.5
   resolution: "react@npm:19.2.5"
   checksum: 10c0/4b5f231dbef92886f602533c9ce3bde04d99f0e71dfb5d794c43e02726efaad0421c08688f75fc98a6d6e1dc017372e1af7abbfecdc86a79968f461675931a7a
+  languageName: node
+  linkType: hard
+
+"react@npm:^19.2.9":
+  version: 19.3.1
+  resolution: "react@npm:19.3.1"
+  checksum: 10c0/f0ed036d1223562c09c8347858ca712733ea6e27a30db709ee9c3f3f176d3e9e767afce735d59956addf3d030102e256bba82dea635fc1bdb0e01107e98fef10
   languageName: node
   linkType: hard
 
@@ -7708,6 +7736,13 @@ __metadata:
   version: 0.27.0
   resolution: "scheduler@npm:0.27.0"
   checksum: 10c0/4f03048cb05a3c8fddc45813052251eca00688f413a3cee236d984a161da28db28ba71bd11e7a3dd02f7af84ab28d39fb311431d3b3772fed557945beb00c452
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "scheduler@npm:0.28.0"
+  checksum: 10c0/783c8e5ce89d41273a02ed6dc0e3d24bd60e05c9e8f7e3adfc6c82e7c69935500d90e343f1ee26d592fc7504e8a2532573c6368def3e93bfe812391fa53efaf4
   languageName: node
   linkType: hard
 
