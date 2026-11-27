@@ -4,7 +4,7 @@ import type { MarkType } from 'prosemirror-model'
 import type { Command, EditorState } from 'prosemirror-state'
 
 import { createLink, isOnSameTextBlock, markActive } from './helpers'
-import type { WaxFeature, WaxMarkSpec } from './types'
+import type { WaxFeature, WaxMarkSpec } from '../editor'
 
 const linkMark: WaxMarkSpec = {
   attrs: {

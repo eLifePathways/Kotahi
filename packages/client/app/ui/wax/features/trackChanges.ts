@@ -31,7 +31,7 @@ import {
   parseFormatList,
   parseTracks,
 } from './helpers'
-import type { WaxFeature, WaxMarkSpec, WaxNodeSpec } from './types'
+import type { WaxFeature, WaxMarkSpec, WaxNodeSpec } from '../editor'
 
 type TrackUser = { username: string }
 

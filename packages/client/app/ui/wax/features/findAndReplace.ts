@@ -8,7 +8,7 @@ import {
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { findMatches } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 type Match = { from: number; to: number }
 

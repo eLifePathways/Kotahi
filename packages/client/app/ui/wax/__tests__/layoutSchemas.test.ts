@@ -11,7 +11,7 @@ import {
   productionFeatures,
   simpleFeatures,
 } from '../layouts/featureSets'
-import type { WaxFeature } from '../features/types'
+import type { WaxFeature } from '../editor'
 import describeSchema from './describeSchema'
 
 vi.mock(

@@ -1,6 +1,6 @@
 import { ellipsis, emDash } from 'prosemirror-inputrules'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 const typography: WaxFeature = {
   name: 'typography',

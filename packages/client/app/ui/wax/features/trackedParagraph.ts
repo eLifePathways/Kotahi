@@ -1,7 +1,7 @@
 import type { Attrs, NodeSpec } from 'prosemirror-model'
 
 import { parseTracks } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 const blockLevelToDOM = (attrs: Attrs): Attrs =>
   attrs.track && attrs.track.length

@@ -7,7 +7,7 @@ import {
 } from 'prosemirror-model'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 type EnterOptions = {
   getContentOnEnter: (html: string) => void

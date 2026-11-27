@@ -6,7 +6,7 @@ import type { Schema } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import type { WaxFeature } from '../features/types'
+import type { WaxFeature } from './types'
 import createKeymap from './keymap'
 
 const placeholderKey = new PluginKey('placeHolderText')

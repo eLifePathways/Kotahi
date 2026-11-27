@@ -8,7 +8,7 @@ import {
 import type { Command, EditorState } from 'prosemirror-state'
 
 import { blockActive, parseTracks } from './helpers'
-import type { WaxFeature, WaxNodeSpec } from './types'
+import type { WaxFeature, WaxNodeSpec } from '../editor'
 
 const trackAttrs = {
   id: { default: '' },

@@ -29,7 +29,7 @@ import title from '../features/title'
 import trackChanges, { type TrackChangesConfig } from '../features/trackChanges'
 import typography from '../features/typography'
 import underline from '../features/underline'
-import type { WaxFeature } from '../features/types'
+import type { WaxFeature } from '../editor'
 
 export type HandlebarsActions = (action: AutocompleteAction) => void
 

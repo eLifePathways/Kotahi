@@ -6,7 +6,7 @@ import {
   type EditorState,
 } from 'prosemirror-state'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 const blockQuoteNode: NodeSpec = {
   content: 'block+',

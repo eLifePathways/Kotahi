@@ -1,5 +1,5 @@
 import { hasSelection, isMarkActive, toggleMarkByName } from './helpers'
-import type { WaxFeature, WaxMarkSpec } from './types'
+import type { WaxFeature, WaxMarkSpec } from '../editor'
 
 const subscriptMark: WaxMarkSpec = {
   excludes: 'superscript',

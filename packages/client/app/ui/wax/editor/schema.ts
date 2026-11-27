@@ -1,6 +1,6 @@
 import { Schema, type MarkSpec, type NodeSpec } from 'prosemirror-model'
 
-import type { WaxFeature } from '../features/types'
+import type { WaxFeature } from './types'
 
 const baseNodes: Record<string, NodeSpec> = {
   doc: {

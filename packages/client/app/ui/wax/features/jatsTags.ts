@@ -4,7 +4,7 @@ import type { Command, EditorState } from 'prosemirror-state'
 
 import { markActive, setBlockType, toggleMarkByName } from './helpers'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 const jatsNodes: Record<string, NodeSpec> = {
   refList: {

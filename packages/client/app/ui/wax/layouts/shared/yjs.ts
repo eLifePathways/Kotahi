@@ -3,7 +3,7 @@ import type { Awareness } from 'y-protocols/awareness'
 import type { Doc } from 'yjs'
 
 import yjs from '../../features/yjs'
-import type { WaxFeature } from '../../features/types'
+import type { WaxFeature } from '../../editor'
 
 export type YjsProps = {
   wsProvider?: { awareness: Awareness; roomname?: string }

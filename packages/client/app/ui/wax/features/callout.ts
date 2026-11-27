@@ -9,7 +9,7 @@ import {
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { uuid } from '@coko/client'
 
-import type { WaxFeature, WaxNodeSpec } from './types'
+import type { WaxFeature, WaxNodeSpec } from '../editor'
 
 const calloutNode: WaxNodeSpec = {
   group: 'inline',

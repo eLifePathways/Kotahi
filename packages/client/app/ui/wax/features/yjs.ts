@@ -3,7 +3,7 @@ import type { Plugin } from 'prosemirror-state'
 import type { Awareness } from 'y-protocols/awareness'
 import type { XmlFragment } from 'yjs'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 type YjsOptions = {
   type: XmlFragment

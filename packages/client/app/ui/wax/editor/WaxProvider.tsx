@@ -9,7 +9,7 @@ import {
 import { EditorState, type Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-import type { WaxFeature } from '../features/types'
+import type { WaxFeature } from './types'
 import { WaxContext, type WaxContextValue } from './context'
 import { parse, serialize } from './htmlFormat'
 import {

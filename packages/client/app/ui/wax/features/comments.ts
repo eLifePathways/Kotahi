@@ -12,7 +12,7 @@ import {
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { uuid } from '@coko/client'
 
-import type { WaxFeature, WaxMarkSpec } from './types'
+import type { WaxFeature, WaxMarkSpec } from '../editor'
 
 const commentMark = (showTitle: boolean): WaxMarkSpec => {
   const comment: WaxMarkSpec = {

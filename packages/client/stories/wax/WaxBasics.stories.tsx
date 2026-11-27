@@ -11,7 +11,7 @@ import strong, {
   toggleStrong,
 } from '../../app/ui/wax/features/strong'
 import emphasis from '../../app/ui/wax/features/emphasis'
-import type { WaxFeature } from '../../app/ui/wax/features/types'
+import type { WaxFeature } from '../../app/ui/wax/editor'
 import { CommandButton } from '../../app/ui/wax/ui'
 
 const plainFeatures = [strong, emphasis]

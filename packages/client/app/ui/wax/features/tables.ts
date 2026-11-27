@@ -25,7 +25,7 @@ import {
 import { Decoration, DecorationSet, type EditorProps } from 'prosemirror-view'
 
 import { canInsert, createTable } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 export {
   addColumnAfter,

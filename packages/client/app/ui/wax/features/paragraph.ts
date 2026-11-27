@@ -1,7 +1,7 @@
 import type { Command, EditorState } from 'prosemirror-state'
 
 import { blockActive, setBlockType } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 export const setParagraph: Command = (state, dispatch) =>
   setBlockType(state.schema.nodes.paragraph, { class: 'paragraph' })(

@@ -2,7 +2,7 @@ import type { AutocompleteAction } from 'prosemirror-autocomplete'
 import type { Command } from 'prosemirror-state'
 
 import autocomplete from './autocomplete'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 export type HandlebarsVariable = {
   value: string

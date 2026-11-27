@@ -7,7 +7,7 @@ import {
 } from 'prosemirror-state'
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 type AiSelection = { from: number; to: number } | null
 

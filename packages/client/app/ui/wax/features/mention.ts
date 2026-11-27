@@ -3,7 +3,7 @@ import type { MarkSpec } from 'prosemirror-model'
 import type { Plugin } from 'prosemirror-state'
 
 import { keyedPlugins } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 type MentionOptions = {
   reducer: Options['reducer']

@@ -1,7 +1,7 @@
 import type { MarkSpec } from 'prosemirror-model'
 
 import { hasSelection, isMarkActive, toggleMarkByName } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 const strongMark: MarkSpec = {
   parseDOM: [

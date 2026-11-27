@@ -3,7 +3,7 @@ import { Plugin, type Command } from 'prosemirror-state'
 import type { NodeView } from 'prosemirror-view'
 import { uuid } from '@coko/client'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 const footNoteNode: NodeSpec = {
   group: 'notes inline',

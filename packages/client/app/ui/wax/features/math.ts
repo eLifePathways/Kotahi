@@ -29,7 +29,7 @@ import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js'
 import { RegisterHTMLHandler as registerHTMLHandler } from 'mathjax-full/js/handlers/html'
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js'
 
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 /**
  * A ProseMirror command for determining whether to exit a math block, based on

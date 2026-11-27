@@ -1,7 +1,7 @@
 import type { Command, EditorState } from 'prosemirror-state'
 
 import { setBlockType } from './helpers'
-import type { WaxFeature, WaxNodeSpec } from './types'
+import type { WaxFeature, WaxNodeSpec } from '../editor'
 
 export type HeadingLevel = 2 | 3 | 4 | 5 | 6
 

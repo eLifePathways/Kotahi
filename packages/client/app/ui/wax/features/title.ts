@@ -1,7 +1,7 @@
 import type { Command, EditorState } from 'prosemirror-state'
 
 import { blockActive, findChildrenByType, setBlockType } from './helpers'
-import type { WaxFeature, WaxNodeSpec } from './types'
+import type { WaxFeature, WaxNodeSpec } from '../editor'
 
 const titleNode: WaxNodeSpec = {
   attrs: {

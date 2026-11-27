@@ -2,7 +2,7 @@ import autocomplete, { type Options } from 'prosemirror-autocomplete'
 import type { MarkSpec } from 'prosemirror-model'
 
 import { keyedPlugins } from './helpers'
-import type { WaxFeature } from './types'
+import type { WaxFeature } from '../editor'
 
 type AutocompleteOptions = {
   markName: string

@@ -20,7 +20,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { uuid } from '@coko/client'
 
 import { setBlockType } from './helpers'
-import type { WaxFeature, WaxNodeSpec } from './types'
+import type { WaxFeature, WaxNodeSpec } from '../editor'
 
 const referenceNode: WaxNodeSpec = {
   content: 'inline*',
