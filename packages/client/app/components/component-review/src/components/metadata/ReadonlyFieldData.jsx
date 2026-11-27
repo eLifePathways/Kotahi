@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable new-cap */
 
-import { DateParser } from '@coko/client'
 import { get } from 'lodash'
 
+import DateParser from '../../../../../ui/shared/DateParser'
 import FormCollaborateWax from '../../../../component-formbuilder/src/components/FormCollaborativeWax'
 import CollaborativeTextFieldBuilder from '../../../../component-formbuilder/src/components/builderComponents/CollaborativeTextField'
 import SimpleWaxEditor from '../../../../wax-collab/src/SimpleWaxEditor'
