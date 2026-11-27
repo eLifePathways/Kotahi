@@ -1,5 +1,6 @@
 import { Fragment, type Node, type NodeSpec } from 'prosemirror-model'
-import type { Command } from 'prosemirror-state'
+import { Plugin, type Command } from 'prosemirror-state'
+import type { NodeView } from 'prosemirror-view'
 import { uuid } from '@coko/client'
 
 import type { WaxFeature } from './types'
@@ -12,9 +13,7 @@ const footNoteNode: NodeSpec = {
   attrs: {
     id: { default: '' },
   },
-  toDOM: node => {
-    return ['footnote', node.attrs]
-  },
+  toDOM: node => ['footnote', node.attrs, 0],
   parseDOM: [
     {
       tag: 'footnote',
@@ -53,9 +52,20 @@ export const findNotes = (doc: Node): Note[] => {
   return result
 }
 
+const footnoteMarker = (node: Node): NodeView => {
+  const dom = document.createElement('footnote')
+  dom.setAttribute('id', node.attrs.id)
+  return { dom }
+}
+
 const notes: WaxFeature = {
   name: 'notes',
   nodes: { footnote: footNoteNode },
+  plugins: () => ({
+    footnoteMarker: new Plugin({
+      props: { nodeViews: { footnote: footnoteMarker } },
+    }),
+  }),
 }
 
 export default notes
