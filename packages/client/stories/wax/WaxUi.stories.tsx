@@ -10,7 +10,6 @@ import code from '../../app/ui/wax/features/code'
 import emphasis from '../../app/ui/wax/features/emphasis'
 import findAndReplace from '../../app/ui/wax/features/findAndReplace'
 import headings from '../../app/ui/wax/features/headings'
-import history from '../../app/ui/wax/features/history'
 import images from '../../app/ui/wax/features/images'
 import link from '../../app/ui/wax/features/link'
 import lists from '../../app/ui/wax/features/lists'
@@ -70,7 +69,6 @@ import {
 } from '../../app/ui/wax/ui'
 
 const features = [
-  history,
   strong,
   emphasis,
   underline,
@@ -169,7 +167,6 @@ export const Base = meta.story({
 })
 
 const panelFeatures = [
-  history,
   strong,
   emphasis,
   title,
@@ -242,7 +239,7 @@ export const Panels = meta.story({
   parameters: { docs: { source: { type: 'code' } } },
 })
 
-const referenceFeatures = [history, strong, citation(), callout(), askAi]
+const referenceFeatures = [strong, citation(), callout(), askAi]
 
 const nodeViews = { reference: CitationView, callout: CalloutView }
 

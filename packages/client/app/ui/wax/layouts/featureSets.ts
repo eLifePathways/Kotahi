@@ -11,7 +11,6 @@ import enter from '../features/enter'
 import findAndReplace from '../features/findAndReplace'
 import handlebars from '../features/handlebars'
 import headings from '../features/headings'
-import history from '../features/history'
 import images from '../features/images'
 import jatsTags from '../features/jatsTags'
 import trackedParagraph from '../features/trackedParagraph'
@@ -62,7 +61,6 @@ export const simpleFeatures = ({
   handlebarsActions,
 }: { handlebarsActions?: HandlebarsActions } = {}): WaxFeature[] => [
   typography,
-  history,
   ...marks(),
   link,
   ...listFeatures(),
@@ -80,7 +78,6 @@ export const chatFeatures = ({
   autoCompleteReducer: Options['reducer']
 }): WaxFeature[] => [
   typography,
-  history,
   mention({ reducer: autoCompleteReducer }),
   enter({ getContentOnEnter: onEnterPress }),
   ...marks(),
@@ -100,7 +97,6 @@ export const fullFeatures = ({
   trackedParagraph,
   typography,
   askAi,
-  history,
   findAndReplace,
   images(imageConfig),
   ...marks(),
@@ -126,7 +122,6 @@ export const productionFeatures = ({
   trackedParagraph,
   typography,
   askAi,
-  history,
   images(imageConfig),
   ...marks(),
   ...listFeatures(),
@@ -148,7 +143,6 @@ export const contentFeatures = ({
 }: ImageOptions = {}): WaxFeature[] => [
   trackedParagraph,
   typography,
-  history,
   findAndReplace,
   images(imageConfig),
   ...marks(),

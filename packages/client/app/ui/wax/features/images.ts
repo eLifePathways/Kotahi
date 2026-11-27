@@ -680,6 +680,22 @@ const captionPlugin = (name: string): Plugin<DecorationSet> =>
     },
   })
 
+const imageEnter: Command = (state, dispatch) => {
+  const { $from, to, from } = state.selection
+
+  if (state.doc.resolve(from).parent.type.name === 'figcaption') return true
+
+  const selected = (state.selection as NodeSelection).node
+
+  if (selected && selected.type.name === 'image') {
+    const pos = $from.before($from.sharedDepth(to))
+    dispatch?.(state.tr.setSelection(NodeSelection.create(state.doc, pos)))
+    return true
+  }
+
+  return false
+}
+
 const images = (config: unknown = {}): WaxFeature => ({
   name: 'images',
   nodes: {
@@ -687,6 +703,7 @@ const images = (config: unknown = {}): WaxFeature => ({
     figcaption: figureCaptionNode,
   },
   waxNodes: { image: imageNode },
+  shortcuts: { Enter: imageEnter },
   plugins: () => ({
     imageDetectionPlugin: imageDetectionPlugin(config as DetectionOptions),
     selectFigureOnCutPlugin: selectFigureOnCutPlugin(),

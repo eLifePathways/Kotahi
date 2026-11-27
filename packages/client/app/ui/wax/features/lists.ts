@@ -1,5 +1,10 @@
 import { joinUp as pmJoinUp, lift as pmLift } from 'prosemirror-commands'
-import { liftListItem, sinkListItem, wrapInList } from 'prosemirror-schema-list'
+import {
+  liftListItem,
+  sinkListItem,
+  splitListItem,
+  wrapInList,
+} from 'prosemirror-schema-list'
 import type { Command, EditorState } from 'prosemirror-state'
 
 import { blockActive, parseTracks } from './helpers'
@@ -167,6 +172,8 @@ const lists: WaxFeature = {
     orderedlist: orderedListNode,
   },
   shortcuts: {
+    Enter: (state, dispatch) =>
+      splitListItem(state.schema.nodes.list_item)(state, dispatch),
     'Shift-Ctrl-8': wrapInBulletList,
     'Shift-Ctrl-9': wrapInOrderedList,
     'Mod-[': liftItem,

@@ -39,9 +39,25 @@ export const canSetTitle = (state: EditorState): boolean => {
   return $from.parent === $to.parent && findTitle(state) === null
 }
 
+const titleEnter: Command = state => {
+  const { nodes } = state.schema
+  const { from } = state.selection
+  if (setBlockType(nodes.title)(state)) return false
+
+  const [found, ...others] = findChildrenByType(state.doc, nodes.title, true)
+
+  return (
+    !!found &&
+    others.length === 0 &&
+    from > found.pos + 1 &&
+    from < found.pos + found.node.nodeSize - 1
+  )
+}
+
 const title: WaxFeature = {
   name: 'title',
   waxNodes: { title: titleNode },
+  shortcuts: { Enter: titleEnter },
 }
 
 export default title

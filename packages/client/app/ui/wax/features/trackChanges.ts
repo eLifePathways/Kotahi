@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash'
+import { isHistoryTransaction } from 'prosemirror-history'
 import { Slice, type Attrs, type Mark, type Node } from 'prosemirror-model'
 import {
   NodeSelection,
@@ -1126,7 +1127,8 @@ const trackedTransaction = (
   if (
     !tr.steps.length ||
     (meta && !Object.keys(meta).every(key => untrackedMeta.includes(key))) ||
-    ['AcceptReject', 'Undo', 'Redo'].includes(tr.getMeta('inputType'))
+    tr.getMeta('inputType') === 'AcceptReject' ||
+    isHistoryTransaction(tr)
   ) {
     return tr
   }
@@ -1182,10 +1184,14 @@ const trackedTransaction = (
       | { to: number }
       | undefined
 
+    const deletedRange =
+      !state.selection.empty &&
+      tr.selection.empty &&
+      tr.selection.from === state.selection.from
+
     if (
       tr.selection instanceof TextSelection &&
-      (tr.selection.from < state.selection.from ||
-        tr.getMeta('inputType') === 'backwardsDelete')
+      (tr.selection.from < state.selection.from || deletedRange)
     ) {
       const caretPos = map.map(tr.selection.from, -1)
       newTr.setSelection(new TextSelection(newTr.doc.resolve(caretPos)))

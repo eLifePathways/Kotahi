@@ -596,6 +596,28 @@ const inlineRule = (pattern: RegExp, nodeType: NodeType): InputRule =>
     )
   })
 
+const mathBackspace: Command = (state, dispatch) => {
+  const { $from, $to } = state.selection
+  const { nodeBefore } = $from
+
+  if (nodeBefore && nodeBefore.type.name === 'math_inline') {
+    const index = $from.index($from.depth)
+    const $before = state.doc.resolve($from.posAtIndex(index - 1))
+    dispatch?.(state.tr.setSelection(new NodeSelection($before)))
+    return true
+  }
+
+  state.doc.nodesBetween($from.pos, $to.pos, node => {
+    if (node.type.name === 'math_display') {
+      const $start = state.tr.doc.resolve(state.tr.selection.$anchor.start())
+      const $end = state.tr.doc.resolve(state.tr.selection.$anchor.end())
+      dispatch?.(state.tr.setSelection(new TextSelection($start, $end)))
+    }
+  })
+
+  return false
+}
+
 const math: WaxFeature = {
   name: 'math',
   nodes: {
@@ -603,6 +625,7 @@ const math: WaxFeature = {
     math_inline: mathInlineNode,
   },
   marks: { math_select: mathSelectMark },
+  shortcuts: { Backspace: mathBackspace },
   plugins: () => ({
     mathplugin: mathPlugin,
     mathselectplugin: mathSelectPlugin,

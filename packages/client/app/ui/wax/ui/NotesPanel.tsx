@@ -7,8 +7,8 @@ import { EditorView } from 'prosemirror-view'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 
+import { redo, undo } from 'prosemirror-history'
 import { useWax } from '../editor'
-import { redo, undo } from '../features/history'
 import { findNotes, type Note } from '../features/notes'
 import { PanelEmpty, PanelHeading, PanelList, PanelMeta } from './Panel'
 
